@@ -1,0 +1,24 @@
+version: "3.8"
+services:
+  postgres:
+    image: postgres
+    restart: always
+    env_file: .env
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  rabbitmq:
+    image: rabbitmq
+    restart: always
+    env_file: .env
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
