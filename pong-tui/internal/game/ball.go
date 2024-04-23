@@ -1,7 +1,7 @@
 package game
 
 import (
-	"transcendence/pong-tui/pkg/consts"
+	"transcendence/pong-tui/internal/consts"
 )
 
 type Ball struct {

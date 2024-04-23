@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
-	"transcendence/pong-tui/pkg/consts"
+	"transcendence/pong-tui/internal/consts"
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
@@ -92,6 +92,8 @@ func (g *Game) handleMessage(message []byte) {
 		g.handleOpponentMove(data["d"].(map[string]interface{}))
 	case "HELLO":
 		g.handleHello(data["d"].(map[string]interface{}))
+	case "GAME_OVER":
+		g.handleGameOver(data["d"].(map[string]interface{}))
 	}
 }
 
@@ -133,6 +135,10 @@ func (g *Game) handleHello(data map[string]interface{}) {
 		g.me = g.player2
 		g.opponent = g.player1
 	}
+}
+
+func (g *Game) handleGameOver(data map[string]interface{}) {
+	//var playerSuckAtThisGame bool = data["winner"].(string) == g.me.name
 }
 
 func NewGame() *Game {
