@@ -58,8 +58,3 @@ func (p *Player) MoveDown() {
 		p.PositionY[i]++
 	}
 }
-
-func (p *Player) Reset() {
-	p.PositionY = initPositionY()
-	p.PositionX = initPositionX(p.number)
-}

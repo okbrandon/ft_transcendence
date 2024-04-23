@@ -218,9 +218,3 @@ func (g *Game) helpView() string {
 	}
 	return g.help.ShortHelpView(bindings)
 }
-
-func (g *Game) Reset() {
-	g.ball.Reset()
-	g.player1.Reset()
-	g.player2.Reset()
-}
