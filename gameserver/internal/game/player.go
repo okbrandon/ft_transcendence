@@ -1,6 +1,7 @@
 package game
 
 import (
+	"sync"
 	"transcendence/gameserver/internal/consts"
 
 	"github.com/gorilla/websocket"
@@ -14,6 +15,7 @@ type Player struct {
 	Side       string `json:"side"` // left or right, first player is always left
 	Score      int    `json:"score"`
 	Connection *websocket.Conn
+	WriteMutex sync.Mutex
 }
 
 func initPositionY() [consts.PlayerHeight]int {

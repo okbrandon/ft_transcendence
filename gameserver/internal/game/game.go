@@ -65,7 +65,9 @@ func HandleGame(w http.ResponseWriter, r *http.Request) {
 		},
 	})
 
+	player.WriteMutex.Lock()
 	conn.WriteMessage(websocket.TextMessage, hello)
+	player.WriteMutex.Unlock()
 
 	for {
 		messageType, message, err := conn.ReadMessage()
@@ -89,10 +91,13 @@ func HandleGame(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
+		player.WriteMutex.Lock()
 		if err := conn.WriteMessage(messageType, message); err != nil {
+			player.WriteMutex.Unlock()
 			log.Error(err)
 			return
 		}
+		player.WriteMutex.Unlock()
 	}
 }
 
@@ -155,8 +160,12 @@ func gameLoop(game *Game) {
 		},
 	})
 
+	game.Player1.WriteMutex.Lock()
 	game.Player1.Connection.WriteMessage(websocket.TextMessage, gameOver)
+	game.Player1.WriteMutex.Unlock()
+	game.Player2.WriteMutex.Lock()
 	game.Player2.Connection.WriteMessage(websocket.TextMessage, gameOver)
+	game.Player2.WriteMutex.Unlock()
 	delete(Games, game.ID)
 }
 
@@ -166,8 +175,12 @@ func sendUpdates(game *Game) {
 		"d": game.Ball,
 	})
 
+	game.Player1.WriteMutex.Lock()
 	game.Player1.Connection.WriteMessage(websocket.TextMessage, ballUpdate)
+	game.Player1.WriteMutex.Unlock()
+	game.Player2.WriteMutex.Lock()
 	game.Player2.Connection.WriteMessage(websocket.TextMessage, ballUpdate)
+	game.Player2.WriteMutex.Unlock()
 
 	scoreUpdate, _ := json.Marshal(map[string]interface{}{
 		"e": "SCORE_UPDATE",
@@ -178,8 +191,12 @@ func sendUpdates(game *Game) {
 		},
 	})
 
+	game.Player1.WriteMutex.Lock()
 	game.Player1.Connection.WriteMessage(websocket.TextMessage, scoreUpdate)
+	game.Player1.WriteMutex.Unlock()
+	game.Player2.WriteMutex.Lock()
 	game.Player2.Connection.WriteMessage(websocket.TextMessage, scoreUpdate)
+	game.Player2.WriteMutex.Unlock()
 
 	var data map[string]interface{}
 	json.Unmarshal(ballUpdate, &data)
@@ -198,9 +215,13 @@ func handlePaddleMove(game *Game, player *Player, direction string) {
 
 	log.Debug("Dispatching event to players", "type", "OPPONENT_MOVE", "direction", direction, "from", player.ID)
 	if game.Player2.Connection == player.Connection {
+		game.Player1.WriteMutex.Lock()
 		game.Player1.Connection.WriteMessage(websocket.TextMessage, []byte(`{"e":"OPPONENT_MOVE","d":{"direction":"`+direction+`"}}`))
+		game.Player1.WriteMutex.Unlock()
 	} else {
+		game.Player2.WriteMutex.Lock()
 		game.Player2.Connection.WriteMessage(websocket.TextMessage, []byte(`{"e":"OPPONENT_MOVE","d":{"direction":"`+direction+`"}}`))
+		game.Player2.WriteMutex.Unlock()
 	}
 }
 
