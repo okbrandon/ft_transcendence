@@ -15,7 +15,7 @@
 
 ### DevOps
 
-[ ] Setup RabbitMQ
+[x] Setup RabbitMQ
 
 ### Live Chat
 
