@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	gateway := "ws://127.0.0.1:8080/game"
+	gateway := "ws://127.0.0.1:8089/game"
 	gwFromEnv := os.Getenv("GATEWAY")
 	if gwFromEnv != "" {
 		gateway = gwFromEnv

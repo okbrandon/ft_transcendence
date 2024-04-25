@@ -3,6 +3,7 @@ package game
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"time"
 	"transcendence/pong-tui/internal/consts"
 
@@ -30,6 +31,7 @@ type Game struct {
 	conn         *websocket.Conn
 	gameID       string
 	opponentName string
+	timeLeft     int
 }
 
 type keymap struct {
@@ -116,6 +118,7 @@ func (g *Game) handleBallUpdate(data map[string]interface{}) {
 func (g *Game) handleScoreUpdate(data map[string]interface{}) {
 	g.player1Score = int(data["me"].(float64))
 	g.player2Score = int(data["opponent"].(float64))
+	g.timeLeft = int(data["timeLeft"].(float64))
 }
 
 func (g *Game) handleOpponentMove(data map[string]interface{}) {
@@ -138,7 +141,17 @@ func (g *Game) handleHello(data map[string]interface{}) {
 }
 
 func (g *Game) handleGameOver(data map[string]interface{}) {
-	//var playerSuckAtThisGame bool = data["winner"].(string) == g.me.name
+	var playerSuckAtThisGame bool = data["winner"].(string) != g.me.name
+	g.quitting = true
+
+	if playerSuckAtThisGame {
+		fmt.Println("You lost!")
+	} else {
+		fmt.Println("You won!")
+	}
+
+	time.Sleep(5 * time.Second)
+	os.Exit(0)
 }
 
 func NewGame() *Game {
@@ -202,7 +215,7 @@ func (g *Game) View() string {
 	for i := 0; i < g.screenHeight; i++ {
 		for j := 0; j < g.screenWidth; j++ {
 			if i == 0 && j == g.screenWidth/2-2 {
-				screen += fmt.Sprintf("%d - %d", g.player1Score, g.player2Score)
+				screen += fmt.Sprintf("%d (%ds left) %d", g.player1Score, g.timeLeft, g.player2Score)
 				j += 4 // Skip the next 4 cells to avoid overwriting the score
 			} else {
 				screen += g.render(i, j)

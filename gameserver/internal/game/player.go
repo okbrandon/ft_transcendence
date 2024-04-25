@@ -8,14 +8,15 @@ import (
 )
 
 type Player struct {
-	ID         string `json:"id"`
-	Name       string `json:"name"`
-	PositionY  [consts.PlayerHeight]int
-	PositionX  int
-	Side       string `json:"side"` // left or right, first player is always left
-	Score      int    `json:"score"`
-	Connection *websocket.Conn
-	WriteMutex sync.Mutex
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	PositionY   [consts.PlayerHeight]int
+	PositionX   int
+	Side        string `json:"side"` // left or right, first player is always left
+	Score       int    `json:"score"`
+	Connection  *websocket.Conn
+	IsSpectator bool
+	WriteMutex  sync.Mutex
 }
 
 func initPositionY() [consts.PlayerHeight]int {

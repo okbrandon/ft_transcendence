@@ -61,6 +61,7 @@ func HandleGame(w http.ResponseWriter, r *http.Request) {
 			"screenWidth":  consts.ScreenWidth,
 			"screenHeight": consts.ScreenHeight,
 			"playerHeight": consts.PlayerHeight,
+			"spectator":    player.IsSpectator,
 			"fps":          consts.FPS,
 		},
 	})
@@ -144,8 +145,6 @@ func gameLoop(game *Game) {
 
 	// Send final score update and close connections
 	sendUpdates(game)
-	game.Player1.Connection.Close()
-	game.Player2.Connection.Close()
 
 	var winner *Player
 	if game.Player1.Score > game.Player2.Score {
@@ -166,6 +165,9 @@ func gameLoop(game *Game) {
 	game.Player2.WriteMutex.Lock()
 	game.Player2.Connection.WriteMessage(websocket.TextMessage, gameOver)
 	game.Player2.WriteMutex.Unlock()
+
+	game.Player1.Connection.Close()
+	game.Player2.Connection.Close()
 	delete(Games, game.ID)
 }
 
