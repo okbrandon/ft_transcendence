@@ -15,6 +15,6 @@ func main() {
 
 	game.Games = make(map[string]*game.Game)
 	http.HandleFunc("/game", game.HandleGame)
-	log.Info("Game server is ready", "port", "8089")
-	log.Fatal(http.ListenAndServe(":8089", nil))
+	log.Info("Game server is ready", "port", "8080")
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
