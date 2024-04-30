@@ -1,7 +1,19 @@
-name: Build & publish transcendence images
+name: Docker
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
 on:
-  release:
-    types: [published]
+  schedule:
+    - cron: '17 5 * * *'
+  push:
+    branches: [ "main" ]
+    # Publish semver tags as releases.
+    tags: [ 'v*.*.*' ]
+  pull_request:
+    branches: [ "main" ]
 
 env:
   REGISTRY: ghcr.io
