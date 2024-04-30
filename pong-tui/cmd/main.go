@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"transcendence/pong-tui/internal/game"
@@ -9,22 +10,21 @@ import (
 )
 
 func main() {
-	gateway := "ws://127.0.0.1:8089/game"
-	gwFromEnv := os.Getenv("GATEWAY")
-	if gwFromEnv != "" {
-		gateway = gwFromEnv
-	}
+	gateway := flag.String("gw", "ws://127.0.0.1:8089/game", "Gateway for the game server")
+	gameID := flag.String("gameid", "", "Game to join")
 
-	game := game.NewGame()
-	err := game.ConnectToServer(gateway)
+	flag.Parse()
+
+	game := game.NewGame(*gameID)
+	err := game.ConnectToServer(*gateway)
 	if err != nil {
-		// Handle error
+		fmt.Printf("Oops something went wrong and i crashed, %v\n", err)
 		return
 	}
 
 	p := tea.NewProgram(game, tea.WithAltScreen())
 	if _, err := p.Run(); err != nil {
-		fmt.Printf("Oops something went wrong and i crashed: %v", err)
+		fmt.Printf("Oops something went wrong and i crashed: %v\n", err)
 		os.Exit(1)
 	}
 }

@@ -1,9 +1,7 @@
 package game
 
 import (
-	"encoding/json"
 	"fmt"
-	"os"
 	"time"
 	"transcendence/pong-tui/internal/consts"
 
@@ -68,94 +66,16 @@ func (g *Game) ConnectToServer(url string) error {
 				// Handle error
 				return
 			}
-			g.handleMessage(message)
+			handleMessage(g, message)
 		}
 	}()
 
 	return nil
 }
 
-func (g *Game) handleMessage(message []byte) {
-	var data map[string]interface{}
-	err := json.Unmarshal(message, &data)
-	if err != nil {
-		// Handle error
-		return
-	}
-
-	switch data["e"] {
-	case "GAME_UPDATE":
-		g.handleGameUpdate(data["d"].(map[string]interface{}))
-	case "BALL_UPDATE":
-		g.handleBallUpdate(data["d"].(map[string]interface{}))
-	case "SCORE_UPDATE":
-		g.handleScoreUpdate(data["d"].(map[string]interface{}))
-	case "OPPONENT_MOVE":
-		g.handleOpponentMove(data["d"].(map[string]interface{}))
-	case "HELLO":
-		g.handleHello(data["d"].(map[string]interface{}))
-	case "GAME_OVER":
-		g.handleGameOver(data["d"].(map[string]interface{}))
-	}
-}
-
-// For now this is ignored, values are currently hard-coded until I find
-// a better way to do this
-func (g *Game) handleGameUpdate(data map[string]interface{}) {
-	options := data["options"].(map[string]interface{})
-	g.screenWidth = int(options["width"].(float64))
-	g.screenHeight = int(options["height"].(float64))
-	fps = data["fps"].(time.Duration)
-	g.gameID = data["game_id"].(string)
-	g.opponentName = data["opponent_name"].(string)
-}
-
-func (g *Game) handleBallUpdate(data map[string]interface{}) {
-	g.ball.PositionX = int(data["x"].(float64))
-	g.ball.PositionY = int(data["y"].(float64))
-}
-
-func (g *Game) handleScoreUpdate(data map[string]interface{}) {
-	g.player1Score = int(data["me"].(float64))
-	g.player2Score = int(data["opponent"].(float64))
-	g.timeLeft = int(data["timeLeft"].(float64))
-}
-
-func (g *Game) handleOpponentMove(data map[string]interface{}) {
-	direction := data["direction"].(string)
-	if direction == "up" {
-		g.opponent.MoveUp()
-	} else {
-		g.opponent.MoveDown()
-	}
-}
-
-func (g *Game) handleHello(data map[string]interface{}) {
-	if data["side"].(string) == "left" {
-		g.me = g.player1
-		g.opponent = g.player2
-	} else {
-		g.me = g.player2
-		g.opponent = g.player1
-	}
-}
-
-func (g *Game) handleGameOver(data map[string]interface{}) {
-	var playerSuckAtThisGame bool = data["winner"].(string) != g.me.name
-	g.quitting = true
-
-	if playerSuckAtThisGame {
-		fmt.Println("You lost!")
-	} else {
-		fmt.Println("You won!")
-	}
-
-	time.Sleep(5 * time.Second)
-	os.Exit(0)
-}
-
-func NewGame() *Game {
+func NewGame(gameID string) *Game {
 	return &Game{
+		gameID:       gameID,
 		screenWidth:  consts.ScreenWidth,
 		screenHeight: consts.ScreenHeight,
 		ball:         NewBall(),
@@ -189,25 +109,18 @@ func (g *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, g.keymap.quit):
+			SendQuitting(g.conn)
 			g.quitting = true
 			return g, tea.Quit
 		case key.Matches(msg, g.keymap.up):
-			g.sendPaddleMove("up")
+			SendPaddleMove(g.conn, "up")
 			g.me.MoveUp()
 		case key.Matches(msg, g.keymap.down):
-			g.sendPaddleMove("down")
+			SendPaddleMove(g.conn, "down")
 			g.me.MoveDown()
 		}
 	}
 	return g, nil
-}
-
-func (g *Game) sendPaddleMove(direction string) {
-	message, _ := json.Marshal(map[string]interface{}{
-		"e": "PADDLE_MOVE",
-		"d": map[string]string{"direction": direction},
-	})
-	g.conn.WriteMessage(websocket.TextMessage, message)
 }
 
 func (g *Game) View() string {
