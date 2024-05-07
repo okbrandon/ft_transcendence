@@ -90,6 +90,10 @@ func HandleGame(w http.ResponseWriter, r *http.Request) {
 				handlePaddleMove(game, player, data["d"].(map[string]interface{})["direction"].(string))
 				log.Debug("Paddle move event received", "player", player.ID, "direction", data["d"].(map[string]interface{})["direction"].(string))
 			}
+		default:
+			{
+				log.Debug("Received unhandled event from player", "player", player.ID, "event_type", data["e"])
+			}
 		}
 
 		player.WriteMutex.Lock()
