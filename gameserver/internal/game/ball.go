@@ -50,7 +50,7 @@ func newBall() *Ball {
 		PositionX:  consts.ScreenWidth/2 - 1,
 		PositionY:  consts.ScreenHeight / 2,
 		DirectionX: 1,
-		DirectionY: 1,
+		DirectionY: -1,
 	}
 }
 
@@ -82,5 +82,5 @@ func (b *Ball) isCollidingWithPlayer(posX int, posY [consts.PlayerHeight]int) bo
 }
 
 func (b *Ball) isCollidingWithWall() bool {
-	return b.PositionY == 1 || b.PositionY == consts.ScreenHeight-1
+	return b.PositionY == 0 || b.PositionY == consts.ScreenHeight-1
 }

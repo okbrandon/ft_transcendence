@@ -36,19 +36,19 @@ func initPositionX(number int) int {
 }
 
 func (p *Player) moveUp() {
-	if p.PositionY[0]-1 < 0 {
-		return
-	}
-	for i := 0; i < len(p.PositionY); i++ {
-		p.PositionY[i]--
-	}
-}
-
-func (p *Player) moveDown() {
 	if p.PositionY[len(p.PositionY)-1]+1 >= consts.ScreenHeight {
 		return
 	}
 	for i := 0; i < len(p.PositionY); i++ {
 		p.PositionY[i]++
+	}
+}
+
+func (p *Player) moveDown() {
+	if p.PositionY[0]-1 < 0 {
+		return
+	}
+	for i := 0; i < len(p.PositionY); i++ {
+		p.PositionY[i]--
 	}
 }
