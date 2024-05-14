@@ -50,7 +50,7 @@ func newBall() *Ball {
 		PositionX:  consts.ScreenWidth/2 - 1,
 		PositionY:  consts.ScreenHeight / 2,
 		DirectionX: 1,
-		DirectionY: -1,
+		DirectionY: 1,
 	}
 }
 
