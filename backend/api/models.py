@@ -8,14 +8,14 @@ class Match(models.Model):
     scores = models.JSONField # ex: {"user_202020202020": 5, "user_202020202021", 3}
     startedAt = models.DateTimeField
     finishedAt = models.DateTimeField
-    flags = models.IntegerField # is AI game = 0x1
+    flags = models.IntegerField # is AI game = 1 << 0
 
     def __str__(self):
         return self.matchID
 
-class User(AbstractUser):
+class User(AbstractUser):                      
     userID = models.CharField(max_length = 48, unique=True)
-    username = models.CharField(max_length = 16)
+    username = models.CharField(max_length = 16, unique=True)
     displayName = models.CharField(max_length = 16, null = True)
     email = models.CharField(max_length = 64)
     mfaToken = models.CharField(max_length = 32, null = True)
@@ -26,7 +26,7 @@ class User(AbstractUser):
     password = models.CharField(max_length = 128)
     flags = models.IntegerField(default = 0) # 1 << 0 = AI account
 
-        # Override the groups and user_permissions to avoid field clashes
+    # Override the groups and user_permissions to avoid field clashes
     groups = models.ManyToManyField(
         'auth.Group',
         verbose_name='groups',
@@ -59,6 +59,8 @@ class Relationship(models.Model):
     relationshipID = models.CharField(max_length = 48)
     userA = models.CharField(max_length = 48)
     userB = models.CharField(max_length = 48)
+    # for evan from the future: I don't like it being called status, "type" would be better
+    # but im too lazy to do db migrations
     status = models.IntegerField # 0 = pending, 1 = accepted, 2 = blocked
 
     def __str__(self):
