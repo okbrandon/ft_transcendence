@@ -16,12 +16,51 @@ func getEnv(key string) string {
 	return ""
 }
 
+func getUsersWithFlag(flag int) ([]string, error) {
+	dbHost := "postgres"
+	dbPort := "5432"
+	dbUser := getEnv("POSTGRES_USER")
+	dbPassword := getEnv("POSTGRES_PASSWORD")
+	dbName := getEnv("POSTGRES_DB")
+
+	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		dbHost, dbPort, dbUser, dbPassword, dbName)
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+	defer db.Close()
+
+	query := "SELECT userID FROM users WHERE (userFlag & $1) = $1"
+	rows, err := db.Query(query, flag)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var userIDs []string
+	for rows.Next() {
+		var userID string
+		if err := rows.Scan(&userID); err != nil {
+			return nil, err
+		}
+		userIDs = append(userIDs, userID)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return userIDs, nil
+}
+
 func getUserData(userID string, tableColumns map[string]string) (map[string][][]string, error) {
-	dbHost := getEnv("DB_HOST")
-	dbPort := getEnv("DB_PORT")
-	dbUser := getEnv("DB_USER")
-	dbPassword := getEnv("DB_PASSWORD")
-	dbName := getEnv("DB_NAME")
+	dbHost := "postgres"
+	dbPort := "5432"
+	dbUser := getEnv("POSTGRES_USER")
+	dbPassword := getEnv("POSTGRES_PASSWORD")
+	dbName := getEnv("POSTGRES_DB")
 
 	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		dbHost, dbPort, dbUser, dbPassword, dbName)
