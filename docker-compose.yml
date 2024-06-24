@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   postgres:
     image: postgres
@@ -7,18 +6,34 @@ services:
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
     networks:
-      - backend
+      - transcendance
 
-  rabbitmq:
-    image: rabbitmq
+  # rabbitmq:
+  #   image: rabbitmq
+  #   restart: always
+  #   env_file: .env
+  #   ports:
+  #     - 5672:5672
+  #     - 15672:15672
+  #   networks:
+  #     - backend
+
+  backend:
+    build: ./backend
     restart: always
     env_file: .env
     ports:
-      - 5672:5672
-      - 15672:15672
+      - 8000:8000
     networks:
-      - backend
+      - transcendance
+
+  harvester:
+    build: ./harvester
+    restart: always
+    env_file: .env
+    networks:
+      - transcendance
 
 networks:
-  backend:
+  transcendance:
     driver: bridge
