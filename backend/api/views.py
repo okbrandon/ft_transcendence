@@ -10,33 +10,10 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, get_user_model
 from django.db.models import Q
-from .models import User, Message, Match, Token, Relationship
-from .serializers import UserSerializer, TokenSerializer, PartialUserUpdateSerializer, MatchSerializer, RelationshipSerializer
+from .models import User, Message, Match, Token, Relationship, UserSettings
+from .serializers import UserSerializer, TokenSerializer, MatchSerializer, RelationshipSerializer, UserSettingsSerializer
 from .util import generate_id, generate_jwt
-
-class UserProfileApiView(APIView):
-    def get_object(self, user_id):
-        try:
-            return User.objects.get(userID=user_id)
-        except User.DoesNotExist:
-            return None
-
-    def get(self, request, userID, *args, **kwargs):
-        user = self.get_object(userID)
-        if not user:
-            return Response(
-                status=status.HTTP_404_NOT_FOUND
-            )
-
-        serializer = UserSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-class UserMatchesApiView(APIView):
-    def get(self, request, userID, *args, **kwargs):
-        user = User.objects.get(userID=userID)
-        matches = Match.objects.filter(playerA__id__contains=user.userID) | Match.objects.filter(playerB__id__contains=user.userID)
-        serializer = MatchSerializer(matches, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+from .log import log_to_discord
     
 class MeProfileApiView(APIView):
     def get(self, request, *args, **kwargs):
@@ -46,12 +23,31 @@ class MeProfileApiView(APIView):
 
     def patch(self, request, *args, **kwargs):
         me = request.user
-        serializer = UserSerializer(me, data=request.data, partial=True)  # Allow partial updates
+        data = request.data
+        allowed_fields = ['displayName', 'email', 'mfaToken', 'lang', 'avatarID', 'password']
+        updated_fields = {}
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        for field in allowed_fields:
+            if field in data:
+                updated_fields[field] = data[field]
+
+        if 'password' in updated_fields:
+            updated_fields['password'] = make_password(updated_fields['password'])
+
+        for field, value in updated_fields.items():
+            setattr(me, field, value)
+
+        me.save()
+        serializer = UserSerializer(me)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class MeMatchesApiView(APIView):
+    def get(self, request, *args, **kwargs):
+        me = request.user
+        matches = Match.objects.all()
+        matches = [match for match in matches if match.playerA['id'] == me.userID or match.playerB['id'] == me.userID]
+        serializer = MatchSerializer(matches, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class MeRelationshipsApiView(APIView):
     def get(self, request, *args, **kwargs):
@@ -109,6 +105,106 @@ class MeRelationshipsApiView(APIView):
         message = "Friend request sent" if relationship_type == 0 else "You are now friends"
         return Response({"status": message}, status=status.HTTP_200_OK)
     
+class MeSettingsApiView(APIView):
+    def get(self, request, *args, **kwargs):
+        me = request.user
+        settings = UserSettings.objects.get(user=me)
+        serializer = UserSettingsSerializer(settings)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def patch(self, request, *args, **kwargs):
+        me = request.user
+        data = request.data
+        allowed_fields = ['theme', 'colorblind']
+        updated_fields = {}
+        for field in allowed_fields:
+            if field in data:
+                updated_fields[field] = data[field]
+        for field, value in updated_fields.items():
+            setattr(me, field, value)
+
+        me.save()
+        serializer = UserSettingsSerializer(me)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class MeDeleteApiView(APIView):
+    def get(self, request, *args, **kwargs):
+        me = request.user
+        return Response({"scheduled_deletion": me.flags & 1 == 1}, status=status.HTTP_200_OK)
+    
+    def delete(self, request, *args, **kwargs):
+        me = request.user
+
+        if me.flags & 1 != 1:
+            return Response({"error": "User is not scheduled for deletion"}, status=status.HTTP_400_BAD_REQUEST)
+
+        me.flags = me.flags & ~1
+        me.save()
+        
+        log_to_discord(f"User account {me.userID} has retracted their request for anonymization")
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def post(self, request, *args, **kwargs):
+        me = request.user
+        me.flags = me.flags | 1
+        me.save()
+
+        log_to_discord(f"User account {me.userID} has been flagged for anonymization")
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+class MeHarvestApiView(APIView):
+    def get(self, request, *args, **kwargs):
+        me = request.user
+        return Response({"scheduled_harvesting": me.flags & 2 == 2}, status=status.HTTP_200_OK)
+    
+    def delete(self, request, *args, **kwargs):
+        me = request.user
+
+        if me.flags & 2 != 2:
+            return Response({"error": "User is not scheduled for harvesting"}, status=status.HTTP_400_BAD_REQUEST)
+
+        me.flags = me.flags & ~2
+        me.save()
+        
+        log_to_discord(f"User account {me.userID} has retracted their data export request")
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def post(self, request, *args, **kwargs):
+        me = request.user
+        me.flags = me.flags | 2
+        me.save()
+
+        log_to_discord(f"User account {me.userID} has been flagged for data export")
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class UserProfileApiView(APIView):
+    def get_object(self, user_id):
+        try:
+            return User.objects.get(userID=user_id)
+        except User.DoesNotExist:
+            return None
+
+    def get(self, request, userID, *args, **kwargs):
+        user = self.get_object(userID)
+        if not user:
+            return Response(
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer = UserSerializer(user)
+        data = serializer.data
+        if 'email' in data:
+            del data['email']
+        return Response(data, status=status.HTTP_200_OK)
+
+class UserMatchesApiView(APIView):
+    def get(self, request, userID, *args, **kwargs):
+        user = User.objects.get(userID=userID)
+        matches = Match.objects.all()
+        matches = [match for match in matches if match.playerA['id'] == user.userID or match.playerB['id'] == user.userID]
+        serializer = MatchSerializer(matches, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 @permission_classes([AllowAny])
 class UserRegisterApiView(APIView):
     def post(self, request, *args, **kwargs):
@@ -122,7 +218,6 @@ class UserRegisterApiView(APIView):
         
         if User.objects.filter(email=data['email']).exists():
             return Response({"error": "Email is already in use"}, status=status.HTTP_409_CONFLICT)
-        
 
         user = User.objects.create(
             userID=generate_id('user'),
@@ -199,11 +294,3 @@ class UserLoginApiView(APIView):
             "username": username,
             "password": password
         }
-    
-class MeMatchesApiView(APIView):
-
-    def get(self, request, *args, **kwargs):
-        me = request.user
-        matches = Match.objects.filter(playerA__contains={"id": me.userID}) | Match.objects.filter(playerB__contains={"id": me.userID})
-        serializer = MatchSerializer(matches, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)

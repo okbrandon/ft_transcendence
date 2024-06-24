@@ -47,6 +47,14 @@ class User(AbstractUser):
     def __str__(self):
         return self.userID
 
+class UserSettings(models.Model):
+    userID = models.CharField(max_length = 48)
+    theme = models.CharField(max_length = 16)
+    colorblind = models.BooleanField(default = False)
+    
+    def __str__(self):
+        return self.userID
+
 class Message(models.Model):
     messageID = models.CharField(max_length = 48)
     content = models.CharField(max_length = 256)

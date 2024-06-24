@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Match, Message, Token, Relationship
+from .models import User, Match, Message, Token, Relationship, UserSettings
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -28,3 +28,8 @@ class TokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = Token
         fields = ["tokenID", "token", "revoked"]
+
+class UserSettingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserSettings
+        fields = ["userID", "theme", "colorblind"]
