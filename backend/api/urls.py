@@ -4,9 +4,9 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView
 )
 
-from views.auth import *
-from views.users import *
-from views.tournaments import *
+from .views.auth import *
+from .views.users import *
+from .views.tournaments import *
 
 urlpatterns = [
     path('auth/register', AuthRegister.as_view()),

@@ -25,6 +25,7 @@ class User(AbstractUser):
     # passwords should be limited to 72 **bytes** because of a bcrypt limitation
     password = models.CharField(max_length = 128)
     flags = models.IntegerField(default = 0) # 1 << 0 = AI account
+    money = models.IntegerField(default = 0)
 
     # Override the groups and user_permissions to avoid field clashes
     groups = models.ManyToManyField(
