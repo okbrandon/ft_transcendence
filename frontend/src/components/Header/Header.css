@@ -1,0 +1,99 @@
+/* ** Default Font-family ** */
+@font-face {
+	font-family: 'VT323-Regular';
+	src: url('./Fonts/VT323-Regular.ttf') format('truetype'); 
+}
+
+/* ** Reset everything ** */
+* {
+	/* Resetting everything as browsers have different default styles */
+	margin: 0;
+	padding: 0;
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+	box-sizing: border-box;
+}
+
+/* ** Header Styles ** */
+.header {
+	font-family: 'VT323-Regular', sans-serif;
+	text-transform: uppercase;
+}
+
+/* ** Navbar default ** */
+.navbar {
+	background-color: #272727;
+	padding: 10px 20px;
+	display: flex;
+	justify-content: space-between; /* Distribute space between items */
+	align-items: center; /* Center items vertically */
+}
+
+/* ** List of items in the Navbar ** */
+.nav-list {
+	list-style: none; /* Removing the bullet points */
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
+}
+
+/* ** Hyperlinks in the Navbar ** */
+a {
+	text-decoration: none; /* Remove underline from links */
+}
+
+/* ** Navbar item on left hand side ** */
+.nav-item-left {
+	margin-right: auto; /* Pushes the item to the left */
+}
+
+/* ** Navbar item on right hand side ** */
+.nav-item-right {
+	margin-left: auto; /* Pushes the item to the right */
+}
+
+.nav-item-left a:hover {
+	/* purple */
+	color: #d318d3;
+}
+
+.btn-login {
+	background: #fff;
+	color: #333;
+	position: relative;
+	display: inline-flex;
+	transition: .25s;
+	border: 1px solid #333;
+	border-radius: 10%;
+	padding: 10px 20px;
+	cursor: pointer;
+}
+
+.btn-login:hover {
+	transform-style: preserve-3d;
+	transform: translateZ(-25px);
+	transition: .25s;
+}
+
+.btn-login::before,
+.btn-login::after {
+	position: absolute;
+	display: flex;
+	border: 5px solid #333;
+	box-sizing: border-box;
+	border-radius: 5px;
+}
+
+.btn-login:before {
+	background: #fff;
+	transform: rotateY(0deg) translateZ(25px);
+}
+
+.btn-login:after {
+	color: #000;
+	background: #fff;
+	transform: rotateY(90deg) translateZ(25px);
+}
+
+.btn-login:hover {
+	transform: translateZ(-25px) rotateX(-90deg);
+}
