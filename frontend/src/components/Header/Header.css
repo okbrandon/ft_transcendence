@@ -57,11 +57,9 @@ a {
 }
 
 .btn-login {
-	/* background: #fff; */
+	background: #fff;
 	position: relative;
 	display: inline-flex;
-	width: 90px;
-	height: 23px;
 	margin: 0 15px;
 	perspective: 1000px;
 }
@@ -82,7 +80,7 @@ a {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	border: 5px solid #fff;
+	border: 5px solid #272727;
 	box-sizing: border-box;
 	border-radius: 5px;
 }
