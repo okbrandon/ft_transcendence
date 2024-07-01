@@ -46,54 +46,59 @@ a {
 	margin-right: auto; /* Pushes the item to the left */
 }
 
-/* ** Navbar item on right hand side ** */
-.nav-item-right {
-	margin-left: auto; /* Pushes the item to the right */
-}
-
 .nav-item-left a:hover {
 	/* purple */
 	color: #d318d3;
 }
 
+/* ** Navbar item on right hand side ** */
+.nav-item-right {
+	margin-left: auto; /* Pushes the item to the right */
+}
+
 .btn-login {
-	background: #fff;
-	color: #333;
+	/* background: #fff; */
 	position: relative;
 	display: inline-flex;
-	transition: .25s;
-	border: 1px solid #333;
-	border-radius: 10%;
-	padding: 10px 20px;
-	cursor: pointer;
+	width: 90px;
+	height: 23px;
+	margin: 0 15px;
+	perspective: 1000px;
 }
 
-.btn-login:hover {
+.btn-login a {
+	font-size: 10px;
+	letter-spacing: 1px;
 	transform-style: preserve-3d;
 	transform: translateZ(-25px);
-	transition: .25s;
+	transition: transform 0.25s;
+	font-family: 'VT323-Regular', sans-serif;
 }
 
-.btn-login::before,
-.btn-login::after {
+.btn-login a::before,
+.btn-login a::after {
 	position: absolute;
+	content: "CONNECT";
 	display: flex;
-	border: 5px solid #333;
+	align-items: center;
+	justify-content: center;
+	border: 5px solid #fff;
 	box-sizing: border-box;
 	border-radius: 5px;
 }
 
-.btn-login:before {
+.btn-login a::before{
+	color: #272727;
 	background: #fff;
 	transform: rotateY(0deg) translateZ(25px);
 }
 
-.btn-login:after {
-	color: #000;
-	background: #fff;
+.btn-login a::after {
+	color: #fff;
+	background: #333;
 	transform: rotateY(90deg) translateZ(25px);
 }
 
-.btn-login:hover {
+.btn-login a:hover {
 	transform: translateZ(-25px) rotateX(-90deg);
 }

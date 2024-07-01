@@ -7,7 +7,11 @@ const Header = () => {
 			<nav className='navbar'>
 				<ul className='nav-list'>
 					<li className='nav-item-left'><a href='#home'>PONG.</a></li>
-					<li className='nav-item-right'><a className='btn-login' href='#login'>Connect</a></li>
+					<li className='nav-item-right'>
+						<span className='btn-login'>
+							<a href='#login'></a>
+						</span>
+					</li>
 				</ul>
 			</nav>
 		</header>
