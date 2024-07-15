@@ -1,12 +1,14 @@
 import React from 'react';
-import Background from '../styles/Background.styled';
 import { Outlet } from 'react-router-dom';
+import { PongBar, PongBall } from '../styles/PongBackground.styled';
 
 const Root = () => {
 	return (
-		<Background>
+		<>
+			<PongBar/>
+			<PongBall/>
 			<Outlet/>
-		</Background>
+		</>
 	);
 };
 

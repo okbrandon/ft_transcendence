@@ -1,11 +1,15 @@
 import React from 'react';
+import GlobalStyles from '../components/styles/Global';
 import Router from './Router';
 import { RouterProvider } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = () => {
   return (
-    <RouterProvider router={Router}/>
+    <>
+      <GlobalStyles/>
+      <RouterProvider router={Router}/>
+    </>
   );
 }
 

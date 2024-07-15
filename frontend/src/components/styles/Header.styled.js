@@ -1,8 +1,30 @@
 import styled from 'styled-components';
 
 const StyledHeader = styled.h1`
-	font-size: 110px;
+	font-size: 200px;
 	text-align: center;
+	margin-bottom: 60px;
+	position: relative;
+
+	&::before {
+		content: '';
+		position: absolute;
+		height: 20px;
+		width: 200px;
+		background: #fff;
+		border-radius: 10px;
+		bottom: 0;
+	}
+
+	&::after {
+		content: '';
+		position: absolute;
+		height: 35px;
+		width: 35px;
+		background: #fff;
+		border-radius: 50%;
+		bottom: 0;
+	}
 `
 
 export default StyledHeader;
