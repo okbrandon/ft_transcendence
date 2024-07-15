@@ -1,9 +1,9 @@
 import React from 'react';
 import StyledButtonPong from '../styles/ButtonPong.styled';
 
-const ButtonPong = ({ title }) => {
+const ButtonPong = ({ title, variant, onClick }) => {
 	return (
-		<StyledButtonPong variant="light">
+		<StyledButtonPong variant={variant} onClick={onClick}>
 			{title || 'Pong'}
 		</StyledButtonPong>
 	);

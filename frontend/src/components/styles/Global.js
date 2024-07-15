@@ -12,12 +12,11 @@ const GlobalStyles = createGlobalStyle`
 	*::before,
 	*::after {
 		box-sizing: border-box;
+		overflow: hidden;
 	}
 
 	html, body {
-		display: flex;
-		justify-content: center;
-		align-items: center;
+		display: relative;
 		background-color: #000;
 		color: white;
 		height: 100%;
@@ -25,6 +24,6 @@ const GlobalStyles = createGlobalStyle`
 		margin: 0;
 		padding: 0;
 	}
-`;
+`
 
 export default GlobalStyles;

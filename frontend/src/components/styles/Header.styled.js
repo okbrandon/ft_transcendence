@@ -5,6 +5,7 @@ const StyledHeader = styled.h1`
 	text-align: center;
 	margin-bottom: 60px;
 	position: relative;
+	user-select: none;
 
 	&::before {
 		content: '';
@@ -24,6 +25,7 @@ const StyledHeader = styled.h1`
 		background: #fff;
 		border-radius: 50%;
 		bottom: 0;
+		right: 0;
 	}
 `
 
