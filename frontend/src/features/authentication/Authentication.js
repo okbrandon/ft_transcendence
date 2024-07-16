@@ -24,6 +24,6 @@ const Authentication = () => {
 			</Stack>
 		</Container>
 	);
-}
+};
 
 export default Authentication;

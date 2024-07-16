@@ -7,6 +7,6 @@ const ButtonPong = ({ title, variant, onClick }) => {
 			{title || 'Pong'}
 		</StyledButtonPong>
 	);
-}
+};
 
 export default ButtonPong;

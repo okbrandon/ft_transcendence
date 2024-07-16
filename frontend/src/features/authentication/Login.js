@@ -1,22 +1,32 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import Button from 'react-bootstrap/Button';
 import StyledForm from './styles/Form.styled';
 import Container from '../../components/styles/Container.styled';
+import BackButton from '../../components/styles/BackButton.styled';
 
 const Login = () => {
+	const handleSubmit = (event) => {
+		event.preventDefault();
+		alert('not functional yet');
+	};
+
 	return (
 		<Container>
-			<StyledForm>
+			<StyledForm onSubmit={handleSubmit}>
+				<BackButton to='/'><i className='bi bi-arrow-left' style={{'font-size': '25px'}}></i></BackButton>
+				<h1>Login</h1>
 				<StyledForm.Group className="mb-3" controlId="formBasicEmail">
-					<StyledForm.Label htmlFor='mailInput'>Email address</StyledForm.Label>
-					<StyledForm.Control id='mailInput' type="email" placeholder="Enter email" />
+					<StyledForm.Control type="email" placeholder="Enter email" />
 				</StyledForm.Group>
 				<StyledForm.Group className="mb-3" controlId="formBasicPassword">
-					<StyledForm.Label htmlFor='passwordInput'>Password</StyledForm.Label>
-					<StyledForm.Control id='passwordInput' type="password" placeholder="Password" />
+					<StyledForm.Control type="password" placeholder="Password" />
 				</StyledForm.Group>
+				<p>Not Signed Up ? <Link to='/signup'>Sign Up</Link></p>
+				<Button variant='success' type='submit'>Submit</Button>
 			</StyledForm>
 		</Container>
 	);
-}
+};
 
 export default Login;

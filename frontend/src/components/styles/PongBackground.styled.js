@@ -10,7 +10,7 @@ const floatBarAnimation = keyframes`
 	100% {
 		transform: translateY(0vh) rotate(-40deg);
 	}
-`
+`;
 
 const floatBallAnimation = keyframes`
 	0% {
@@ -22,7 +22,7 @@ const floatBallAnimation = keyframes`
 	100% {
 		transform: translateY(0vh);
 	}
-`
+`;
 
 export const PongBar = styled.div`
 	position: absolute;
@@ -35,9 +35,10 @@ export const PongBar = styled.div`
 	transform: rotate(-40deg);
 	animation: ${floatBarAnimation} 2s ease-in-out infinite forwards;
 	opacity: 0.7;
-`
-
-export const PongBall = styled.div`
+	z-index: 0;
+	`;
+	
+	export const PongBall = styled.div`
 	position: absolute;
 	top: 55vh;
 	right: 22vw;
@@ -47,4 +48,5 @@ export const PongBall = styled.div`
 	border-radius: 50%;
 	animation: ${floatBallAnimation} 3s ease-in-out infinite forwards;
 	opacity: 0.7;
-`
+	z-index: 0;
+`;
