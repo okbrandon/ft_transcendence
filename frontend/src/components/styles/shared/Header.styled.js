@@ -1,11 +1,12 @@
 import styled from 'styled-components';
 
-const StyledHeader = styled.h1`
+const Header = styled.h1`
 	font-size: 200px;
 	text-align: center;
 	margin-bottom: 100px;
 	position: relative;
 	user-select: none;
+	z-index: 5;
 
 	&::before {
 		content: '';
@@ -29,4 +30,4 @@ const StyledHeader = styled.h1`
 	}
 `;
 
-export default StyledHeader;
+export default Header;

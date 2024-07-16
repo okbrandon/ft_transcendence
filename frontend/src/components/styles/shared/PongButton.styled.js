@@ -1,7 +1,7 @@
 import Button from 'react-bootstrap/Button';
 import styled from 'styled-components';
 
-const StyledButtonPong = styled(Button)`
+const StyledPongButton = styled(Button)`
 	font-family: sans-serif;
 	font-weight: 900;
 	font-size: 35px;
@@ -9,7 +9,7 @@ const StyledButtonPong = styled(Button)`
 	width: 400px;
 	height: 70px;
 	letter-spacing: 2px;
-	z-index: 1;
+	z-index: 5;
 `;
 
-export default StyledButtonPong;
+export default StyledPongButton;

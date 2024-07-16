@@ -35,8 +35,8 @@ export const PongBar = styled.div`
 	transform: rotate(-40deg);
 	animation: ${floatBarAnimation} 2s ease-in-out infinite forwards;
 	opacity: 0.7;
-	z-index: 0;
-	`;
+	z-index: 3;
+`;
 	
 	export const PongBall = styled.div`
 	position: absolute;
@@ -48,5 +48,5 @@ export const PongBar = styled.div`
 	border-radius: 50%;
 	animation: ${floatBallAnimation} 3s ease-in-out infinite forwards;
 	opacity: 0.7;
-	z-index: 0;
+	z-index: 3;
 `;
