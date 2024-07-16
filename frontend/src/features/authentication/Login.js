@@ -1,14 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
+import Image from 'react-bootstrap/Image';
 import StyledForm from './styles/Form.styled';
 import Container from '../../components/styles/Container.styled';
 import BackButton from '../../components/styles/BackButton.styled';
+import FortyTwoLoginButton from './styles/FortyTwoLogin.styled';
 
 const Login = () => {
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		alert('not functional yet');
 	};
 
 	return (
@@ -16,10 +17,12 @@ const Login = () => {
 			<StyledForm onSubmit={handleSubmit}>
 				<BackButton to='/'><i className='bi bi-arrow-left' style={{'font-size': '25px'}}></i></BackButton>
 				<h1>Login</h1>
-				<StyledForm.Group className="mb-3" controlId="formBasicEmail">
-					<StyledForm.Control type="email" placeholder="Enter email" />
+				<FortyTwoLoginButton variant='secondary'><Image src='./42_Logo.png' alt='42 Logo'/>Login with 42</FortyTwoLoginButton>
+				<p>- Or -</p>
+				<StyledForm.Group className="mb-3">
+					<StyledForm.Control type="email" placeholder="Email / Username" />
 				</StyledForm.Group>
-				<StyledForm.Group className="mb-3" controlId="formBasicPassword">
+				<StyledForm.Group className="mb-3">
 					<StyledForm.Control type="password" placeholder="Password" />
 				</StyledForm.Group>
 				<p>Not Signed Up ? <Link to='/signup'>Sign Up</Link></p>

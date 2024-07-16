@@ -17,7 +17,10 @@ const SignUp = () => {
 				<BackButton to='/'><i className='bi bi-arrow-left' style={{'font-size': '25px'}}></i></BackButton>
 				<h1>Sign Up</h1>
 				<StyledForm.Group className="mb-3">
-					<StyledForm.Control type="email" placeholder="Enter email" />
+					<StyledForm.Control type="username" placeholder="Username" />
+				</StyledForm.Group>
+				<StyledForm.Group className="mb-3">
+					<StyledForm.Control type="email" placeholder="Email" />
 				</StyledForm.Group>
 				<StyledForm.Group className="mb-3">
 					<StyledForm.Control type="password" placeholder="Password" />

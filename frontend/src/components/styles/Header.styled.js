@@ -3,7 +3,7 @@ import styled from 'styled-components';
 const StyledHeader = styled.h1`
 	font-size: 200px;
 	text-align: center;
-	margin-bottom: 60px;
+	margin-bottom: 100px;
 	position: relative;
 	user-select: none;
 

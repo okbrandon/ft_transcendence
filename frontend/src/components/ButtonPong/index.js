@@ -1,5 +1,5 @@
 import React from 'react';
-import StyledButtonPong from '../styles/ButtonPong.styled';
+import StyledButtonPong from '../styles/PongButton.styled';
 
 const ButtonPong = ({ title, variant, onClick }) => {
 	return (
