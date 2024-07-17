@@ -7,7 +7,7 @@ const drop = keyframes`
 	100% {
 		top: 110%;
 	}
-`
+`;
 
 export const Lines = styled.div`
 	position: absolute;

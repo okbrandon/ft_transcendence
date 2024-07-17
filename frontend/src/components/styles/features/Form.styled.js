@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 const StyledForm = styled(Form)`
 	border-radius: 50px;
-	background: #fff;
+	background: linear-gradient(to bottom, #fff 0%, #bfbfbf 100%);
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -20,14 +20,15 @@ const StyledForm = styled(Form)`
 	}
 
 	& > p {
-		color: #c8c8c8;
+		color: #ababab;
 		font-size: 13px;
 	}
 
 	& .form-control {
 		border: none;
 		border-radius: 0;
-		border-bottom: 1px solid #dbdbdb;
+		background-color: transparent;
+		border-bottom: 1px solid #c9c9c9;
 		margin: 10px 0;
 		&:focus {
 			outline: none;

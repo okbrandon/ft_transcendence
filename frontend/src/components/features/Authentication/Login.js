@@ -17,7 +17,7 @@ const Login = () => {
 	const handleFortyTwoLogin = (event) => {
 		event.preventDefault();
 		navigate('/mainmenu');
-	}
+	};
 
 	return (
 		<Container>
