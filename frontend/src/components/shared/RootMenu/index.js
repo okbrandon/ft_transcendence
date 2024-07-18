@@ -1,6 +1,7 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import { Lines, Line } from "../../styles/layouts/Lines.styled";
+import { Lines, Line } from "../../styles/animations/Lines.styled";
+import Navigation from "../NavBar";
 
 const RootMenu = () => {
 	return (
@@ -10,6 +11,7 @@ const RootMenu = () => {
 				<Line/>
 				<Line/>
 			</Lines>
+			<Navigation/>
 			<Outlet/>
 		</>
 	);

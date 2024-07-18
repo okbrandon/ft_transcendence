@@ -4,8 +4,8 @@ import RootMenu from '../components/shared/RootMenu';
 import Authentication from '../components/features/Authentication/Authentication';
 import Login from '../components/features/Authentication/Login';
 import SignUp from '../components/features/Authentication/SignUp';
-import MainMenu from '../components/features/Menu/MainMenu';
-import PlayMenu from '../components/features/Menu/PlayMenu';
+import MainMenu from '../components/features/Home/MainMenu';
+import PlayMenu from '../components/features/Home/PlayMenu';
 
 const Router = createBrowserRouter(createRoutesFromElements(
 	<Route path="/" element={ <Root/> }>

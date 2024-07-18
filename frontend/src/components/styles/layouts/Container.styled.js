@@ -1,13 +1,14 @@
 import styled from 'styled-components';
 
 const Container = styled.div`
-	margin-top: 23vh;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	height: 100%;
-	width: 100%;
 `;
 
 export default Container;

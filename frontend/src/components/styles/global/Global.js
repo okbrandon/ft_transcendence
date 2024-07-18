@@ -12,15 +12,14 @@ const GlobalStyles = createGlobalStyle`
 	*::before,
 	*::after {
 		box-sizing: border-box;
-		overflow: hidden;
 	}
 
 	html, body {
 		display: relative;
 		background-color: #000;
 		color: white;
-		height: 100%;
-		width: 100%;
+		height: 100vh;
+		width: 100vw;
 		margin: 0;
 		padding: 0;
 	}

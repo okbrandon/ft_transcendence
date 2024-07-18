@@ -2,8 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import PongButton from '../../shared/PongButton';
 import Stack from 'react-bootstrap/Stack';
-import { PongBall, PongBar } from '../../styles/layouts/PongBackground.styled';
-import Header from '../../styles/shared/Header.styled';
+import { PongBall, PongBar } from '../../styles/animations/PongBackground.styled';
+import Title from '../../styles/shared/Title.styled';
 import Container from '../../styles/layouts/Container.styled';
 
 const Authentication = () => {
@@ -21,7 +21,7 @@ const Authentication = () => {
 			<PongBar/>
 			<PongBall/>
 			<Container>
-				<Header>PONG</Header>
+				<Title>PONG</Title>
 				<Stack gap={5} className="mx-auto">
 					<PongButton title="Login" variant="light" onClick={handleLogin}/>
 					<PongButton title="Sign Up" variant="light" onClick={handleSignUp}/>

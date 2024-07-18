@@ -26,8 +26,8 @@ const floatBallAnimation = keyframes`
 
 export const PongBar = styled.div`
 	position: absolute;
-	top: 21vh;
-	left: 10vw;
+	top: 22vh;
+	left: 5vw;
 	width: 800px;
 	height: 150px;
 	background: linear-gradient(0deg, rgba(255,255,255,1) 0%, rgba(50,50,50,1) 100%);
@@ -37,11 +37,11 @@ export const PongBar = styled.div`
 	opacity: 0.7;
 	z-index: 3;
 `;
-	
-	export const PongBall = styled.div`
+
+export const PongBall = styled.div`
 	position: absolute;
-	top: 55vh;
-	right: 22vw;
+	bottom: 10vh;
+	right: 18vw;
 	width: 250px;
 	height: 250px;
 	background: linear-gradient(133deg, rgba(255,255,255,1) 0%, rgba(50,50,50,1) 100%);
