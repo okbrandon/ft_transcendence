@@ -4,7 +4,7 @@ import { Lines, Line } from "../../styles/animations/Lines.styled";
 import Navigation from "../../features/Navigation/Navigation";
 import FriendsList from "../../features/Friends/FriendsList";
 
-const RootMenu = () => {
+const RootHome = () => {
 	const [showFriends, setShowFriends] = useState(false);
 
 	const handleFriends = () => {
@@ -25,4 +25,4 @@ const RootMenu = () => {
 	);
 };
 
-export default RootMenu;
+export default RootHome;
