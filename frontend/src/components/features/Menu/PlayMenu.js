@@ -8,7 +8,7 @@ const PlayMenu = () => {
 	const navigate = useNavigate();
 
 	const handleBack = () => {
-		navigate('/mainmenu');
+		navigate('/home');
 	};
 
 	return (

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Button from 'react-bootstrap/esm/Button';
 
-const FortyTwoLoginButton = styled(Button)`
+const FortyTwoButton = styled(Button)`
 	font-size: 12px;
 	cursor: pointer;
 	letter-spacing: 2px;
@@ -16,4 +16,4 @@ const FortyTwoLoginButton = styled(Button)`
 	}
 `;
 
-export default FortyTwoLoginButton;
+export default FortyTwoButton;

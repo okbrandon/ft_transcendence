@@ -1,5 +1,5 @@
 import React from 'react';
-import StyledPongButton from '../../styles/shared/PongButton.styled';
+import StyledPongButton from '../../styles/shared/button/PongButton.styled';
 
 const PongButton = ({ title, variant, onClick }) => {
 	return (

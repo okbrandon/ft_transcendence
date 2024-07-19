@@ -2,21 +2,21 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Image from 'react-bootstrap/Image';
-import StyledForm from '../../styles/features/Form.styled';
+import StyledForm from '../../styles/layouts/Form.styled';
 import Container from '../../styles/layouts/Container.styled';
-import BackButton from '../../styles/shared/BackButton.styled';
-import FortyTwoLoginButton from '../../styles/features/FortyTwoLogin.styled';
+import BackButton from '../../styles/shared/button/BackButton.styled';
+import FortyTwoButton from '../../styles/shared/button/FortyTwoButton.styled';
 
 const Login = () => {
 	const navigate = useNavigate();
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		navigate('/mainmenu');
+		navigate('/home');
 	};
-	const handleFortyTwoLogin = (event) => {
+	const handleFortyTwoButton = (event) => {
 		event.preventDefault();
-		navigate('/mainmenu');
+		navigate('/home');
 	};
 
 	return (
@@ -24,7 +24,7 @@ const Login = () => {
 			<StyledForm onSubmit={handleSubmit}>
 				<BackButton to='/'><i className='bi bi-arrow-left' style={{'font-size': '25px'}}></i></BackButton>
 				<h1>Login</h1>
-				<FortyTwoLoginButton variant='secondary' onClick={handleFortyTwoLogin}><Image src='./42_Logo.png' alt='42 Logo'/>Login with 42</FortyTwoLoginButton>
+				<FortyTwoButton variant='secondary' onClick={handleFortyTwoButton}><Image src='./42_Logo.png' alt='42 Logo'/>Login with 42</FortyTwoButton>
 				<p>- Or -</p>
 				<StyledForm.Group className="mb-3">
 					<StyledForm.Control type="email" placeholder="Email / Username" required/>

@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
-import StyledForm from '../../styles/features/Form.styled';
+import StyledForm from '../../styles/layouts/Form.styled';
 import Container from '../../styles/layouts/Container.styled';
-import BackButton from '../../styles/shared/BackButton.styled';
+import BackButton from '../../styles/shared/button/BackButton.styled';
 
 const SignUp = () => {
 	const navigate = useNavigate();
