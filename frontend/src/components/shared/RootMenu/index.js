@@ -1,9 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { Lines, Line } from "../../styles/animations/Lines.styled";
-import NavBar from "../NavBar";
+import Navigation from "../../features/Navigation/Navigation";
+import FriendsList from "../../features/Friends/FriendsList";
 
 const RootMenu = () => {
+	const [showFriends, setShowFriends] = useState(false);
+
+	const handleFriends = () => {
+		setShowFriends(!showFriends);
+	};
+
 	return (
 		<>
 			<Lines>
@@ -11,7 +18,8 @@ const RootMenu = () => {
 				<Line/>
 				<Line/>
 			</Lines>
-			<NavBar/>
+			<Navigation handleFriends={handleFriends}/>
+			<FriendsList showFriends={showFriends} handleFriends={handleFriends}/>
 			<Outlet/>
 		</>
 	);
