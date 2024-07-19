@@ -1,16 +1,16 @@
 import React from 'react';
-import Offcanvas from 'react-bootstrap/Offcanvas';
+import StyledFriendsList from '../../styles/features/FriendsList.styled';
 
 const FriendsList = ({ showFriends, handleFriends }) => {
 	return (
-		<Offcanvas show={showFriends} onHide={handleFriends}>
-			<Offcanvas.Header closeButton>
-				<Offcanvas.Title>Friends</Offcanvas.Title>
-			</Offcanvas.Header>
-			<Offcanvas.Body>
+		<StyledFriendsList show={showFriends} onHide={handleFriends}>
+			<StyledFriendsList.Header closeButton>
+				<StyledFriendsList.Title>Friends</StyledFriendsList.Title>
+			</StyledFriendsList.Header>
+			<StyledFriendsList.Body>
 				NO FRIENDS
-			</Offcanvas.Body>
-		</Offcanvas>
+			</StyledFriendsList.Body>
+		</StyledFriendsList>
 	);
 };
 
