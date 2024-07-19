@@ -6,7 +6,6 @@ import StyledNavLink from '../../styles/shared/NavLink.styled';
 const NavBar = () => {
 	return (
 		<NavContainer>
-			{/* Nav items go here */}
 			<StyledNavLink to="/mainmenu">Friends</StyledNavLink>
 			<StyledNavLink to="/mainmenu">Leaderbord</StyledNavLink>
 			<TitleNav to="/mainmenu">PONG</TitleNav>

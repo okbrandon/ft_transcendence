@@ -2,12 +2,12 @@ import Form from 'react-bootstrap/Form';
 import styled from 'styled-components';
 
 const StyledForm = styled(Form)`
-	border-radius: 50px;
-	background: linear-gradient(to bottom, #fff 0%, #bfbfbf 100%);
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	border-radius: 50px;
+	background: linear-gradient(to bottom, #fff 0%, #bfbfbf 100%);
 	position: relative;
 	width: 600px;
 	height: 600px;

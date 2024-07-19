@@ -7,7 +7,7 @@ const Title = styled.h1`
 	margin-bottom: 100px;
 	position: relative;
 	user-select: none;
-	z-index: 5;
+	z-index: 1000;
 
 	&::before {
 		content: '';
@@ -33,13 +33,14 @@ const Title = styled.h1`
 
 export const TitleNav = styled(Link)`
 	position: relative;
+	height: 140px;
 	font-size: 100px;
 	text-align: center;
-	margin: 0 10vw;
+	margin: 0 5vw;
 	padding: 0;
 	color: #fff;
 	text-decoration: none;
-	z-index: 5;
+	z-index: 1000;
 
 	&::before {
 		content: '';

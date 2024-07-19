@@ -9,7 +9,7 @@ const StyledPongButton = styled(Button)`
 	width: 400px;
 	height: 70px;
 	letter-spacing: 2px;
-	z-index: 5;
+	z-index: 500;
 `;
 
 export default StyledPongButton;
