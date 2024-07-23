@@ -12,7 +12,7 @@ const ProfileButton = () => {
 				<ProfileDropdownLink to="/home">Edit</ProfileDropdownLink>
 			</Dropdown.Item>
 			<Dropdown.Divider/>
-			<Dropdown.Item>
+			<Dropdown.Item to="/">
 				<ProfileDropdownLink to="/">Logout</ProfileDropdownLink>
 			</Dropdown.Item>
 		</StyledProfileButton>

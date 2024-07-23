@@ -29,9 +29,11 @@ const StyledProfileButton = styled(DropdownButton)`
 
 	& .dropdown-menu {
 		background-color: #fff;
+		--bs-dropdown-link-active-bg: #ececec;
 	}
 
 	& .dropdown-item {
+		padding: 0;
 		color: #000;
 		font-size: 18px;
 		font-weight: 550;
@@ -39,8 +41,10 @@ const StyledProfileButton = styled(DropdownButton)`
 `;
 
 export const ProfileDropdownLink = styled(Link)`
+	display: block;
 	color: #000;
 	text-decoration: none;
+	padding: 8px 18px;
 `;
 
 export default StyledProfileButton;
