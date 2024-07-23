@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import DropdownButton from 'react-bootstrap/DropdownButton';
-import { Link } from 'react-router-dom';
 
 const StyledProfileButton = styled(DropdownButton)`
 	Background-color: #fff;
@@ -30,23 +29,17 @@ const StyledProfileButton = styled(DropdownButton)`
 	& .dropdown-menu {
 		background-color: #fff;
 		--bs-dropdown-link-active-bg: #ececec;
+		font-size: 18px;
+		font-weight: 550;
 	}
 
 	& .dropdown-item {
-		padding: 0;
-		color: #000;
 		font-size: 18px;
 		font-weight: 550;
 		--bs-dropdown-link-hover-bg: #e9e9e9;
 		--bs-dropdown-link-active-bg: #d1d1d1;
+		--bs-dropdown-link-active-color: #000;
 	}
-`;
-
-export const ProfileDropdownLink = styled(Link)`
-	display: block;
-	color: #000;
-	text-decoration: none;
-	padding: 8px 18px;
 `;
 
 export default StyledProfileButton;

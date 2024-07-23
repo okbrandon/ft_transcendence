@@ -22,15 +22,15 @@ const Login = () => {
 	return (
 		<Container>
 			<StyledForm onSubmit={handleSubmit}>
-				<BackButton to='/'><i className='bi bi-arrow-left' style={{'font-size': '25px'}}></i></BackButton>
+				<BackButton to='/'><i className='bi bi-arrow-left' style={{'fontSize': '25px'}}></i></BackButton>
 				<h1>Login</h1>
 				<FortyTwoButton variant='secondary' onClick={handleFortyTwoButton}><Image src='./42_Logo.png' alt='42 Logo'/>Login with 42</FortyTwoButton>
 				<p>- Or -</p>
 				<StyledForm.Group className="mb-3">
-					<StyledForm.Control type="email" placeholder="Email / Username" required/>
+					<StyledForm.Control id="id" type="email" placeholder="Email / Username" required/>
 				</StyledForm.Group>
 				<StyledForm.Group className="mb-3">
-					<StyledForm.Control type="password" placeholder="Password" required/>
+					<StyledForm.Control id="password" type="password" placeholder="Password" required/>
 				</StyledForm.Group>
 				<p>Not Signed Up ? <Link to='/signup'>Sign Up</Link></p>
 				<Button variant='success' type='submit'>Submit</Button>

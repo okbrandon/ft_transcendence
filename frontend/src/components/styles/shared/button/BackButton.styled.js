@@ -12,7 +12,7 @@ const BackButton = styled(Link)`
 	cursor: pointer;
 
 	&:hover {
-		color: ${({ hoverColor }) => hoverColor || '#000'};
+		color: ${({ hovercolor }) => hovercolor || '#000'};
 	}
 `;
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import GameContainer, { GameSeparator } from '../../styles/layouts/GameContainer.styled';
-import PongBall from '../../styles/shared/game/PongBall';
-import PongPaddle from '../../styles/shared/game/PongPaddle';
+import PongBall from '../../styles/shared/game/PongBall.styled';
+import PongPaddle from '../../styles/shared/game/PongPaddle.styled';
 import { TitleGame } from '../../styles/shared/Title.styled';
 import BackButton from '../../styles/shared/button/BackButton.styled';
 
@@ -9,8 +9,8 @@ const Game = () => {
 	/* ball pos x: 485 y: 285 and paddles from top: 247 */
 	const [leftBarPressed, setLeftBarPressed] = useState({up: false, down: false});
 	const [rightBarPressed, setRightBarPressed] = useState({up: false, down: false});
-	const [leftBarTop, setLeftBarTop] = useState(247);
-	const [rightBarTop, setRightBarTop] = useState(247);
+	const [leftPaddleTop, setLeftBarTop] = useState(247);
+	const [rightPaddleTop, setRightBarTop] = useState(247);
 
 	useEffect(() => {
 		const handleKeydown = (event) => {
@@ -67,10 +67,10 @@ const Game = () => {
 	return (
 		<>
 			<TitleGame>PONG</TitleGame>
-			<BackButton to='/home/game' hoverColor='#fff'><i className='bi bi-arrow-left' style={{'font-size': '35px'}}></i></BackButton>
+			<BackButton to='/home/game' hovercolor='#fff'><i className='bi bi-arrow-left' style={{'fontSize': '35px'}}></i></BackButton>
 			<GameContainer>
-				<PongPaddle side="left" leftBarTop={leftBarTop}/>
-				<PongPaddle side="right" rightBarTop={rightBarTop}/>
+				<PongPaddle $side="left" $leftPaddleTop={leftPaddleTop}/>
+				<PongPaddle $side="right" $rightPaddleTop={rightPaddleTop}/>
 				<PongBall x={485} y={285}/>
 				<GameSeparator/>
 			</GameContainer>
