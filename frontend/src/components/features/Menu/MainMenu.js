@@ -8,7 +8,7 @@ const MainMenu = () => {
 	const navigate = useNavigate();
 
 	const handlePlay = () => {
-		navigate('play');
+		navigate('game');
 	};
 
 	return (

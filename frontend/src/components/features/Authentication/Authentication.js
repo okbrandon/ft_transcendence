@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import PongButton from '../../shared/PongButton';
 import Stack from 'react-bootstrap/Stack';
-import { PongBall, PongBar } from '../../styles/animations/PongBackground.styled';
+import { PongBallBackground, PongPaddleBackground } from '../../styles/animations/PongBackground.styled';
 import Title from '../../styles/shared/Title.styled';
 import Container from '../../styles/layouts/Container.styled';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -23,8 +23,8 @@ const Authentication = () => {
 				initial={{opacity: 0}}
 				animate={{opacity: 1}}
 				transition={{duration: 1.5}}>
-				<PongBar/>
-				<PongBall/>
+				<PongPaddleBackground/>
+				<PongBallBackground/>
 				<Container>
 					<Title>PONG</Title>
 					<Stack gap={5} className="mx-auto">

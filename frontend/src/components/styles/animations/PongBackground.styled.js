@@ -24,7 +24,7 @@ const floatBallAnimation = keyframes`
 	}
 `;
 
-export const PongBar = styled.div`
+export const PongPaddleBackground = styled.div`
 	position: absolute;
 	top: 22vh;
 	left: 5vw;
@@ -38,7 +38,7 @@ export const PongBar = styled.div`
 	overflow: hidden;
 `;
 
-export const PongBall = styled.div`
+export const PongBallBackground = styled.div`
 	position: absolute;
 	bottom: 10vh;
 	right: 18vw;

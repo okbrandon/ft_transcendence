@@ -64,4 +64,37 @@ export const TitleNav = styled(Link)`
 	}
 `;
 
+export const TitleGame = styled.h1`
+	position: absolute;
+	margin-top: 5vh;
+	left: 50%;
+	transform: translate(-50%);
+	text-align: center;
+	font-size: 90px;
+	color: #fff;
+	user-select: none;
+	z-index: 1000;
+
+	&::before {
+		content: '';
+		position: absolute;
+		height: 10px;
+		width: 100px;
+		background: #fff;
+		border-radius: 10px;
+		bottom: 0;
+	}
+
+	&::after {
+		content: '';
+		position: absolute;
+		height: 16px;
+		width: 16px;
+		background: #fff;
+		border-radius: 50%;
+		bottom: 0;
+		right: 0;
+	}
+`;
+
 export default Title;
