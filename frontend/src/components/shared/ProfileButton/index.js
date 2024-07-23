@@ -1,22 +1,20 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import StyledProfileButton from '../../styles/shared/button/ProfileButton.styled';
+import StyledProfileButton, { ProfileDropdownLink } from '../../styles/shared/button/ProfileButton.styled';
 import Dropdown from 'react-bootstrap/Dropdown';
 
 const ProfileButton = () => {
-	const navigate = useNavigate();
-
-	const handleLogout = event => {
-		event.preventDefault();
-		navigate('/');
-	};
-
 	return (
 		<StyledProfileButton id="dropdown-basic-button" title="Profile">
-			<Dropdown.Item>Profile</Dropdown.Item>
-			<Dropdown.Item>Edit</Dropdown.Item>
+			<Dropdown.Item>
+				<ProfileDropdownLink to="/home">Profile</ProfileDropdownLink>
+			</Dropdown.Item>
+			<Dropdown.Item>
+				<ProfileDropdownLink to="/home">Edit</ProfileDropdownLink>
+			</Dropdown.Item>
 			<Dropdown.Divider/>
-			<Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
+			<Dropdown.Item>
+				<ProfileDropdownLink to="/">Logout</ProfileDropdownLink>
+			</Dropdown.Item>
 		</StyledProfileButton>
 	);
 };
