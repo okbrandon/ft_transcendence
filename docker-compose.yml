@@ -18,6 +18,15 @@ services:
   #   networks:
   #     - backend
 
+  # frontend:
+  #   build: ./frontend
+  #   restart: always
+  #   env_file: .env
+  #   ports:
+  #     - 3000:3000
+  #   networks:
+  #     - transcendance
+
   backend:
     build: ./backend
     restart: always
@@ -27,12 +36,12 @@ services:
     networks:
       - transcendance
 
-  harvester:
-    build: ./harvester
-    restart: always
-    env_file: .env
-    networks:
-      - transcendance
+  # harvester:
+  #   build: ./harvester
+  #   restart: always
+  #   env_file: .env
+  #   networks:
+  #     - transcendance
 
 networks:
   transcendance:

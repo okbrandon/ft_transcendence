@@ -8,6 +8,9 @@ from django.contrib.auth.hashers import check_password
 
 class AuthBackend(BaseBackend):
     def authenticate(self, request: HttpRequest, username: str | None = ..., password: str | None = ..., **kwargs: Any) -> AbstractBaseUser | None:
-        user = User.objects.get(username=username)
-        if user is not None and check_password(password, user.password):
-            return user
+        try:
+            user = User.objects.get(username=username)
+            if user is not None and check_password(password, user.password):
+                return user
+        except User.DoesNotExist:
+            return None
