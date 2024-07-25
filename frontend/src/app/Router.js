@@ -7,6 +7,7 @@ import SignUp from '../components/features/Authentication/SignUp';
 import MainMenu from '../components/features/Menu/MainMenu';
 import PlayMenu from '../components/features/Menu/PlayMenu';
 import Game from '../components/features/Game/Game';
+import Profile from '../components/features/Profile/Profile';
 
 const Router = createBrowserRouter(createRoutesFromElements(
 	<Route path="/" element={ <Root/> }>
@@ -17,6 +18,7 @@ const Router = createBrowserRouter(createRoutesFromElements(
 			<Route index element={ <MainMenu/> }/>
 			<Route path="game" element={ <PlayMenu/> }/>
 		</Route>
+		<Route path="profile" element={ <Profile/> }/>
 		<Route path="solo-vs-ai" element={ <Game/> }/>
 	</Route>
 ));

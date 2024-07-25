@@ -11,10 +11,13 @@ const ProfileButton = () => {
 		localStorage.removeItem('refresh');
 		navigate('/');
 	};
+	const handleProfile = () => {
+		navigate('/profile');
+	};
 
 	return (
 		<StyledProfileButton id="dropdown-basic-button" title="Profile">
-			<Dropdown.Item>Profile</Dropdown.Item>
+			<Dropdown.Item onClick={handleProfile}>Profile</Dropdown.Item>
 			<Dropdown.Item>Edit</Dropdown.Item>
 			<Dropdown.Divider/>
 			<Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>

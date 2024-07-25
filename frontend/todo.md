@@ -1,14 +1,14 @@
 # TODO
 ## priority
-- login
-- friends
-- profile
+- [ ] profile
+- [x] login
+- [ ] friends
 
 ## secondary
-- match history
-- inscription/register
-- settings -> language
-- /harvest pour recuperer les donnees (c'est chaud laisse tomber)
+- [ ] match history
+- [ ] inscription/register
+- [ ] settings -> language
+- [ ] /harvest pour recuperer les donnees (c'est chaud laisse tomber)
 
 ## temporary stuff
 
