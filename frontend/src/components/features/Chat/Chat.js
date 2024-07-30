@@ -15,18 +15,9 @@ const Chat = () => {
 	}
 
 	return (
-		<header className='msg-window-header'>
-			<div className='msg-window-container'>
-				<div className='msg-window-details'>
-					<div className='msg-avatar'>
-						{/* img avatar profile */}
-					</div>
-					<button className='msg-username'>
-						<span>Messages</span>
-					</button>
-				</div>
-			</div>
-		</header>
+		<div className='chat-container border rounded'>
+			
+		</div>
 	);
 };
 
