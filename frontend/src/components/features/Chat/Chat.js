@@ -4,6 +4,11 @@ import {
 	ChatHeader,
 	UsernameButton,
 	ChatBody,
+	MessageItem,
+	ChatFooter,
+	InputGroup,
+	InputField,
+	SendButton
 } from '../../styles/chat/Chat.styled'
 
 const Chat = () => {
@@ -27,9 +32,24 @@ const Chat = () => {
 			</ChatHeader>
 			<ChatBody>
 				{messages.map((msg, index) => (
-					
+					<MessageItem key={index}>
+						{msg}
+					</MessageItem>
 				))}
 			</ChatBody>
+			<ChatFooter>
+				<InputGroup>
+					<InputField
+						type="text"
+						value="{input}"
+						onChange={(e) => setInput(e.target.value)}
+						placeholder="Type text here..."
+					/>
+					<SendButton onClick={handleSend}>
+						Send
+					</SendButton>
+				</InputGroup>
+			</ChatFooter>
 		</ChatContainer>
 	);
 };
