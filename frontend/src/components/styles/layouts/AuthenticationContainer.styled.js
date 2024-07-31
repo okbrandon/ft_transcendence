@@ -1,7 +1,7 @@
 import Form from 'react-bootstrap/Form';
 import styled from 'styled-components';
 
-const StyledForm = styled(Form)`
+const AuthenticationContainer = styled(Form)`
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -37,4 +37,4 @@ const StyledForm = styled(Form)`
 	}
 `;
 
-export default StyledForm;
+export default AuthenticationContainer;

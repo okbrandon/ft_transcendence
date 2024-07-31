@@ -1,14 +1,16 @@
 import React from 'react';
 import BackButton from '../../styles/shared/button/BackButton.styled';
 import ProfileContainer from '../../styles/layouts/ProfileContainer.styled';
-import SearchBar from '../../shared/SearchBar';
+import UserProfile from './UserProfile';
+import TabsProfile from './TabsProfile';
 
 const Profile = () => {
 	return (
 		<>
-			<BackButton to='/home/game' hovercolor='#fff'><i className='bi bi-arrow-left' style={{'fontSize': '35px'}}></i></BackButton>
+			<BackButton to='/home' hovercolor='#fff'><i className='bi bi-arrow-left' style={{'fontSize': '35px'}}></i></BackButton>
 			<ProfileContainer>
-				<SearchBar/>
+				<UserProfile/>
+				<TabsProfile/>
 			</ProfileContainer>
 		</>
 	);
