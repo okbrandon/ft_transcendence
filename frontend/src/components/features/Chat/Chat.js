@@ -1,56 +1,42 @@
 import React, { useState } from 'react';
 import {
-	ChatContainer,
-	ChatHeader,
-	UsernameButton,
-	ChatBody,
-	MessageItem,
-	ChatFooter,
-	InputGroup,
-	InputField,
-	SendButton
-} from '../../styles/chat/Chat.styled'
+	DropupContainer,
+	DropupButton,
+	DropupContent,
+	FriendItem
+} from '../../styles/chat/Chat.styled';
 
 const Chat = () => {
+	const [showChat, setshowChat] = useState(false);
+	const [friends, setFriends] = useState([
+		'Friend 1',
+		'Friend 2',
+		'Friend 3',
+		'Friend 4',
+		'Friend 5'
+	]);
 
-	const [messages, setMessage] = useState('[]'); // message variable used to store the messages
-	const [input, setInput] = useState(''); // input variable used to store the input value
+	const toggleMenu = () => {
+		setshowChat(!showChat);
+	};
 
-	const handleSend = () => {
-		// check if input is empty
-		if (input === '') {
-			return;
-		}
-		setMessage([...messages, input]); // add the input value to the message
-		setInput(''); // clear the input value
-	}
+	const handleFriendClick = (friend) => {
+		alert(`Chat with ${friend}`);
+	};
 
 	return (
-		<ChatContainer>
-			<ChatHeader>
-				<UsernameButton>Messages</UsernameButton>
-			</ChatHeader>
-			<ChatBody>
-				{messages.map((msg, index) => (
-					<MessageItem key={index}>
-						{msg}
-					</MessageItem>
+		<DropupContainer>
+			<DropupButton onClick={toggleMenu}>
+				Messaging
+			</DropupButton>
+			<DropupContent show={showChat}>
+				{friends.map((friend, index) => (
+					<FriendItem key={index} onClick={() => handleFriendClick(friend)}>
+						{friend}
+					</FriendItem>
 				))}
-			</ChatBody>
-			<ChatFooter>
-				<InputGroup>
-					<InputField
-						type="text"
-						value="{input}"
-						onChange={(e) => setInput(e.target.value)}
-						placeholder="Type text here..."
-					/>
-					<SendButton onClick={handleSend}>
-						Send
-					</SendButton>
-				</InputGroup>
-			</ChatFooter>
-		</ChatContainer>
+			</DropupContent>
+		</DropupContainer>
 	);
 };
 

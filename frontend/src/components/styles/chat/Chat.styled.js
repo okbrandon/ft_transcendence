@@ -1,78 +1,76 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
-// Container for chat window
-export const ChatContainer = styled.div`
-	width: 300px;
-	height: 400px;
-	display: flex;
-	flex-direction: column;
+const slideUp = keyframes`
+	from {
+		transform: translateY(100%);
+	} to {
+		transform: translateY(0);
+	}
+`;
+
+const slideDown = keyframes`
+	from {
+		transform: translateY(0);
+	} to {
+		transform: translateY(100%);
+	}
+`;
+
+export const DropupContainer = styled.div`
+	position: fixed;
+	bottom: 0px;
+	right: 20px;
+	display: inline-block;
+`;
+
+export const DropupButton = styled.button`
+	font-family: 'VT323', monospace;
+	background-color: #000;
 	border: 1px solid #ddd;
-	border-radius: 8px;
-`;
-
-// Header
-export const ChatHeader = styled.div`
-	padding: 8px;
-	display: flex;
-	align-items: center;
-`;
-
-// Avatar
-// export const Avatar = styled.div`
-// 	margin-right: 8px;
-// `;
-
-export const UsernameButton = styled.button`
-	background: none;
-	border: none;
+	color: #fff;
+	padding: 10px;
+	width: 200px;
+	height: 50px;
 	font-size: 16px;
+	border-radius: 4px 4px 0 0;
 	cursor: pointer;
+	text-align: left;
+	padding-left: 20px;
+	position: relative;
+	z-index: 2;
+
+	&:hover {
+		background-color: #ddd;
+		color: #000;
+	}
+
+	&.expended {
+		border-radius: 4px 4px 0 0;
+	}
 `;
 
-export const ChatBody = styled.div`
-	flex-grow: 1;
-	padding: 16px;
+export const DropupContent = styled.div`
+	display: ${props => (props.show ? 'block' : 'none')};
+	position: absolute;
+	bottom: 50px;
+	right: 0;
+	background-color: #ddd;
+	width: 200px;
+	max-height: 300px;
 	overflow-y: auto;
+	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	z-index: 1;
+	animation: ${props => (props.show ? slideUp : slideDown)} 0.3s forwards;
+	padding-top: 50px;
+	border-radius: 4px 4px 0 0;
 `;
 
-// Individual message item
-export const MessageItem = styled.div`
-	margin-bottom: 8px;
-	padding: 8px;
-	border: 1px solid #ddd;
-	border-radius: 8px;
-	background-color: #f1f1f1;
-`;
-
-// Footer of the chat window
-export const ChatFooter = styled.footer`
-	padding: 8px;
-	border-top: 1px solid #ddd;
-`;
-
-// Input group for the message input and send button
-export const InputGroup = styled.div`
-	display: flex;
-`;
-
-// Input field for the message
-export const InputField = styled.input`
-	flex-grow: 1;
-	padding: 8px;
-	border: 1px solid #ddd;
-	border-radius: 8px 0 0 8px;
-`;
-
-// Send button
-export const SendButton = styled.button`
-	padding: 8px 16px;
-	border: 1px solid #007bff;
-	border-radius: 0 8px 8px 0;
-	background-color: #007bff;
-	color: white;
+export const FriendItem = styled.div`
+	padding: 12px 16px;
+	border-bottom: 1px solid #ddd;
 	cursor: pointer;
 
 	&:hover {
-		background-color: #0056b3;
+		background-color: #ddd;
 	}
 `;
