@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/Button';
 import StyledForm from '../../styles/layouts/Form.styled';
 import Container from '../../styles/layouts/Container.styled';
 import BackButton from '../../styles/shared/button/BackButton.styled';
+import signup from '../../../api/authentication/signup';
 
 const SignUp = () => {
 	const navigate = useNavigate();
@@ -14,22 +15,13 @@ const SignUp = () => {
 	const [cfPassword, setCfPassword] = useState('');
 
 	const handleSubmit = (event) => {
-		alert('triggered');
 		event.preventDefault();
-		let data = {
-			username: username,
-			email: email,
-			password: password,
-			lang: 'fr'
-		};
-		let response = fetch('http://localhost:8000/api/v1/auth/register', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(data),
-		});
-		// navigate('/home');
+		signup(username, email, password)
+			.then(() => {
+				navigate('/login');
+			}).catch((error) => {
+				alert(error);
+			});
 	};
 
 	return (
@@ -38,7 +30,7 @@ const SignUp = () => {
 				<BackButton to='/'><i className='bi bi-arrow-left' style={{'fontSize': '25px'}}></i></BackButton>
 				<h1>Sign Up</h1>
 				<StyledForm.Group className="mb-3">
-					<StyledForm.Control id="id" type="username" placeholder="Username" required pattern='[a-zA-Z\-\_]{3,20}' value={username} onChange={(e) => setUsername(e.target.value)}/>
+					<StyledForm.Control id="id" type="username" placeholder="Username" required pattern='[a-zA-Z\-_]{3,20}' value={username} onChange={(e) => setUsername(e.target.value)}/>
 				</StyledForm.Group>
 				<StyledForm.Group className="mb-3">
 					<StyledForm.Control id="mail" type="email" placeholder="Email" required value={email} onChange={(e) => setEmail(e.target.value)}/>

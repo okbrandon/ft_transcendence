@@ -6,6 +6,7 @@ import StyledForm from '../../styles/layouts/Form.styled';
 import Container from '../../styles/layouts/Container.styled';
 import BackButton from '../../styles/shared/button/BackButton.styled';
 import FortyTwoButton from '../../styles/shared/button/FortyTwoButton.styled';
+import login from '../../../api/authentication/login';
 
 const Login = () => {
 	const navigate = useNavigate();
@@ -14,31 +15,12 @@ const Login = () => {
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		let data = {
-			username: username,
-			password: password
-		};
-		// GET, PATCH, POST, etc...
-		let response = fetch('http://localhost:8000/api/v1/auth/token', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			}, // requetes que l'utilisateur fait, il faut un autre header
-			body: JSON.stringify(data),
-		}).then((response) => {
-			if (response.status === 200) {
-				response.json().then(res => {
-					console.log(res); // Log the content of the body
-					localStorage.setItem('token', res.access);
-					localStorage.setItem('refresh', res.refresh);
-					navigate('/home');
-				});
-			} else {
-				alert('pasteque vs melon');
-			}
-		}).catch((error) => {
-			console.error('Error:', error);
-		});
+		login(username, password)
+			.then(() => {
+				navigate('/home');
+			}).catch((error) => {
+				alert(error);
+			});
 	};
 	const handleFortyTwoButton = (event) => {
 		event.preventDefault();
