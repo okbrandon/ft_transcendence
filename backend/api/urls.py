@@ -7,6 +7,7 @@ from rest_framework_simplejwt.views import (
 from .views.auth import *
 from .views.users import *
 from .views.tournaments import *
+from .views.internal import *
 
 urlpatterns = [
     path('auth/register', AuthRegister.as_view()),
@@ -24,4 +25,6 @@ urlpatterns = [
 
     # path('tournaments/<tournamentID>', TournamentInfo.as_view()), # GET, DELETE, PATCH
     # path('tournaments', TournamentCreate.as_view()), # POST
+
+    path('__internal/check_user_exists/<userID>', CheckUserExists.as_view()), # GET
 ]

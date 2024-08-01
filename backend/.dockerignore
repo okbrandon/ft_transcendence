@@ -1,0 +1,3 @@
+propel.toml
+.git/
+*.sqlite3
