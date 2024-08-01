@@ -8,16 +8,6 @@ services:
     networks:
       - transcendance
 
-  # rabbitmq:
-  #   image: rabbitmq
-  #   restart: always
-  #   env_file: .env
-  #   ports:
-  #     - 5672:5672
-  #     - 15672:15672
-  #   networks:
-  #     - backend
-
   # frontend:
   #   build: ./frontend
   #   restart: always
@@ -35,6 +25,36 @@ services:
       - 8000:8000
     networks:
       - transcendance
+
+  gameserver:
+    build: ./gameserver-v2
+    restart: always
+    env_file: .env
+    ports:
+      - 8080:8080
+    networks:
+      - transcendance   
+
+  # prometheus:
+  #   image: prom/prometheus
+  #   restart: always
+  #   volumes:
+  #     - ./prometheus:/etc/prometheus
+  #   ports:
+  #     - 9090:9090
+  #   networks:
+  #     - transcendance
+
+  # grafana:
+  #   image: grafana/grafana
+  #   restart: always
+  #   env_file: .env
+  #   volumes:
+  #     - ./grafana:/var/lib/grafana
+  #   ports:
+  #     - 3000:3000
+  #   networks:
+  #     - transcendance
 
   # harvester:
   #   build: ./harvester
