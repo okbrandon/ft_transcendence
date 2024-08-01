@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Form from 'react-bootstrap/Form';
 
-const SearchBarContainer = styled(Form)`
+const SearchBar = styled(Form)`
 	display: flex;
 	align-items: center;
 	background-color: white;
@@ -22,4 +22,4 @@ const SearchBarContainer = styled(Form)`
 	}
 `;
 
-export default SearchBarContainer;
+export default SearchBar;

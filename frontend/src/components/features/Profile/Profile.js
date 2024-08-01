@@ -1,6 +1,6 @@
 import React from 'react';
 import BackButton from '../../styles/shared/button/BackButton.styled';
-import ProfileContainer from '../../styles/layouts/ProfileContainer.styled';
+import ProfileContainer from '../../styles/layouts/profile/ProfileContainer.styled';
 import UserProfile from './UserProfile';
 import TabsProfile from './TabsProfile';
 

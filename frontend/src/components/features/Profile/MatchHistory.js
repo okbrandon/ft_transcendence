@@ -1,12 +1,16 @@
 import React from "react";
-import MatchCardContainer from "../../styles/layouts/MatchCardContainer.styled";
+import MatchCardContainer from "../../styles/layouts/profile/MatchCardContainer.styled";
 import MatchCard from "../../styles/shared/profile/matchCard.styled";
 
 const matchArrayTest = [
 	{player1: "roger", player2: "bradon", winner: "bradon", score1: 20, score2: 21, won: true},
 	{player1: "van", player2: "bradon", winner: "bradon", score1: 1, score2: 21, won: true},
 	{player1: "min", player2: "bradon", winner: "bradon", score1: 19, score2: 21, won: true},
-	{player1: "ian", player2: "bradon", winner: "ian", score1: 20, score2: 19, won: false}
+	{player1: "ian", player2: "bradon", winner: "ian", score1: 20, score2: 19, won: false},
+	{player1: "roger", player2: "bradon", winner: "bradon", score1: 20, score2: 21, won: true},
+	{player1: "van", player2: "bradon", winner: "bradon", score1: 1, score2: 21, won: true},
+	{player1: "min", player2: "bradon", winner: "bradon", score1: 19, score2: 21, won: true},
+	{player1: "ian", player2: "bradon", winner: "ian", score1: 20, score2: 19, won: false},
 ];
 
 const MatchHistory = () => {
@@ -22,8 +26,8 @@ const MatchHistory = () => {
 										<td>
 											<h3>{match.player1} vs {match.player2}</h3>
 										</td>
-										<td>
-											<p><strong>WINNER: {match.winner}</strong></p>
+										<td style={{textAlign: 'center'}}>
+											<h3><strong>{match.won ? 'Victory' : 'Defeat'}</strong></h3>
 										</td>
 										<td>
 											<h1>{match.score1} - {match.score2}</h1>
