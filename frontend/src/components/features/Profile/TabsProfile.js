@@ -1,19 +1,20 @@
 import React from 'react';
-import Tabs from 'react-bootstrap/Tabs';
-import Tab from 'react-bootstrap/Tab';
+import Tab from 'react-bootstrap/Tabs';
+import ProfileTabs from '../../styles/shared/profile/profileTabs.styled';
 import TabsProfileContainer from '../../styles/layouts/TabsProfileContainer.styled';
+import MatchHistory from './MatchHistory';
 
 const TabsProfile = () => {
 	return (
 		<TabsProfileContainer>
-			<Tabs defaultActiveKey="history" id="uncontrolled-tab-example" className="mb-3">
+			<ProfileTabs defaultActiveKey="history" className="mb-3">
 				<Tab eventKey="history" title="History">
-					<p>yippie</p>
+					<MatchHistory/>
 				</Tab>
 				<Tab eventKey="stats" title="Stats">
 					<p>Tapas</p>
 				</Tab>
-			</Tabs>
+			</ProfileTabs>
 		</TabsProfileContainer>
 	);
 };
