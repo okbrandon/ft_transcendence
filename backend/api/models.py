@@ -20,7 +20,7 @@ class User(AbstractUser):
     email = models.CharField(max_length = 64)
     mfaToken = models.CharField(max_length = 32, null = True)
     lang = models.CharField(max_length = 6)
-    avatarID = models.CharField(max_length = 68, null = True)
+    avatarID = models.TextField(null=True)  # Store base64 encoded image as text
     oauthUid = models.CharField(max_length = 64, null = True)
     # passwords should be limited to 72 **bytes** because of a bcrypt limitation
     password = models.CharField(max_length = 128)

@@ -1,12 +1,11 @@
 ### User Management
 
 [x] Login and registration endpoints
-[-] User settings endpoint (change display name, avatar, ...)
-[-] Friend and status system
-[ ] Profile endpoint which returns stats such as wins and losses
-[-] Match history endpoint which returns 1v1 games, dates and relevant details
+[x] User settings endpoint (change display name, avatar, ...)
+[x] Friend and status system (Friend is done, status is managed by livechat and WS connection liveliness)
+[x] Match history endpoint which returns 1v1 games, dates and relevant details
 [ ] Authentication using the 42 API
-[ ] Account deletion, data export and anonymization
+[-] Account deletion, data export and anonymization
 
 ### Monitoring system
 

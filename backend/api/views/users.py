@@ -26,6 +26,14 @@ class UserProfileMe(APIView):
         if 'password' in updated_fields:
             updated_fields['password'] = make_password(updated_fields['password'])
 
+        if 'avatarID' in updated_fields:
+            avatar_data = updated_fields['avatarID']
+            if len(avatar_data) > 1 * 1024 * 1024:  # Check if the base64 string is larger than 1MB
+                return Response({"error": "Avatar image size exceeds 2MB limit"}, status=status.HTTP_400_BAD_REQUEST)
+            # Here you would typically save the image to a file or a storage service and set the avatarID to the file path or URL
+            # For simplicity, we'll just set it directly
+            updated_fields['avatarID'] = avatar_data
+
         for field, value in updated_fields.items():
             setattr(me, field, value)
 
