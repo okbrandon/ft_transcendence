@@ -73,6 +73,7 @@
         let playerID;
         let isPlaying = false;
         let players = [];
+        let keyPressed = null;
 
         function addPlayer() {
             const playerInput = document.getElementById('playerInput');
@@ -182,19 +183,44 @@
         document.addEventListener('keydown', (event) => {
             switch (event.key) {
                 case 'ArrowUp':
-                    sendMove('up');
+                    keyPressed = 'up';
                     break;
                 case 'ArrowDown':
-                    sendMove('down');
+                    keyPressed = 'down';
                     break;
             }
         });
+
+        document.addEventListener('keyup', (event) => {
+            switch (event.key) {
+                case 'ArrowUp':
+                    if (keyPressed === 'up')
+                        keyPressed = null;
+                    break;
+                case 'ArrowDown':
+                    if (keyPressed === 'down')
+                        keyPressed = null;
+                    break;
+            }
+        });
+
+        function checkKeyPress() {
+            if (keyPressed === 'up') {
+                sendMove('up');
+            } else if (keyPressed === 'down') {
+                sendMove('down');
+            }
+            requestAnimationFrame(checkKeyPress);
+        }
 
         // Add button to join tournament
         const joinTournamentBtn = document.createElement('button');
         joinTournamentBtn.textContent = 'Join Tournament';
         joinTournamentBtn.onclick = connectWebSocket;
         document.getElementById('tournamentCreation').appendChild(joinTournamentBtn);
+
+        // Start loop to check key press
+        checkKeyPress();
     </script>
 </body>
 </html>
