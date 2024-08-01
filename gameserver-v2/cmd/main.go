@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"math/rand"
 	"net/http"
 	"sync"
@@ -49,6 +50,19 @@ func corsMiddleware(next http.Handler) http.Handler {
 }
 
 func handleWebSocket(w http.ResponseWriter, r *http.Request) {
+	token := r.URL.Query().Get("token")
+	if token == "" {
+		http.Error(w, "Token is required", http.StatusUnauthorized)
+		return
+	}
+
+	user, err := internal.GetUserFromToken(token)
+	if err != nil {
+		internal.Logger.Error("Invalid token:", "error", err)
+		http.Error(w, "Invalid token", http.StatusUnauthorized)
+		return
+	}
+
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		internal.Logger.Error("WebSocket upgrade error:", "error", err)
@@ -56,7 +70,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close()
 
-	userID := r.URL.Query().Get("userID")
+	userID := user.UserID
 	tournamentID := r.URL.Query().Get("tournamentID")
 
 	tournamentMutex.Lock()
@@ -70,7 +84,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 
 	player := &internal.Player{
 		UserID:   userID,
-		Username: r.URL.Query().Get("username"),
+		Username: user.Username,
 		Conn:     conn,
 	}
 
@@ -110,6 +124,14 @@ func handleCreateTournament(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&tournamentData); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
+	}
+
+	// Validate each user ID in the Players array
+	for _, userID := range tournamentData.Players {
+		if _, err := internal.GetUserByID(userID); err != nil {
+			http.Error(w, fmt.Sprintf("Invalid user ID: %s", userID), http.StatusBadRequest)
+			return
+		}
 	}
 
 	tournamentMutex.Lock()

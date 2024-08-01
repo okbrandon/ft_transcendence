@@ -1,0 +1,18 @@
+app = 'transcendence-game'
+project = 'transcendence'
+region = 'eu-west-1'
+
+[env]
+  PORT = '8080'
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  dns_name = gwtrans.evan.sh 
+  path = '/'
+
+[vm]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
+  replicas = 1
