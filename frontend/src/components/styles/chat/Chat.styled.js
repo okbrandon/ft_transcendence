@@ -1,26 +1,21 @@
 import styled, { keyframes } from 'styled-components';
 
+// Keyframe animations for sliding up and down
 const slideUp = keyframes`
-	from {
-		transform: translateY(100%);
-	} to {
-		transform: translateY(0);
-	}
+	from { transform: translateY(100%); }
+	to { transform: translateY(0); }
 `;
 
 const slideDown = keyframes`
-	from {
-		transform: translateY(0);
-	} to {
-		transform: translateY(100%);
-	}
+	from { transform: translateY(0); }
+	to { transform: translateY(100%); }
 `;
 
 export const DropupContainer = styled.div`
 	position: fixed;
-	bottom: 0px;
+	bottom: 50px;
 	right: 20px;
-	display: inline-block;
+	width: 200px;
 `;
 
 export const DropupButton = styled.button`
@@ -29,40 +24,42 @@ export const DropupButton = styled.button`
 	border: 1px solid #ddd;
 	color: #fff;
 	padding: 10px;
-	width: 200px;
+	width: 100%;
 	height: 50px;
 	font-size: 16px;
-	border-radius: 4px 4px 0 0;
 	cursor: pointer;
 	text-align: left;
 	padding-left: 20px;
-	position: relative;
+	position: absolute;
+	top: 0;
+	left: 0;
 	z-index: 2;
+	border-radius: 4px 4px 0 0;
 
 	&:hover {
 		background-color: #ddd;
 		color: #000;
 	}
 
-	&.expended {
+	&.expanded {
 		border-radius: 4px 4px 0 0;
 	}
 `;
 
 export const DropupContent = styled.div`
-	display: ${props => (props.show ? 'block' : 'none')};
 	position: absolute;
-	bottom: 50px;
-	right: 0;
-	background-color: #ddd;
-	width: 200px;
+	bottom: 0;
+	left: 0;
+	background-color: #000;
+	width: 100%;
 	max-height: 300px;
 	overflow-y: auto;
 	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 	z-index: 1;
 	animation: ${props => (props.show ? slideUp : slideDown)} 0.3s forwards;
-	padding-top: 50px;
 	border-radius: 4px 4px 0 0;
+	padding-top: 50px; /* Space for the button */
+	border: 1px solid #ddd;
 `;
 
 export const FriendItem = styled.div`
@@ -72,5 +69,6 @@ export const FriendItem = styled.div`
 
 	&:hover {
 		background-color: #ddd;
+	color: #000;
 	}
 `;

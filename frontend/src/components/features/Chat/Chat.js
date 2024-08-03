@@ -7,17 +7,22 @@ import {
 } from '../../styles/chat/Chat.styled';
 
 const Chat = () => {
-	const [showChat, setshowChat] = useState(false);
+	const [showChat, setShowChat] = useState(false);
 	const [friends, setFriends] = useState([
-		'Friend 1',
-		'Friend 2',
-		'Friend 3',
-		'Friend 4',
-		'Friend 5'
+	'Friend 1',
+	'Friend 2',
+	'Friend 3',
+	'Friend 4',
+	'Friend 5',
+	'Friend 6',
+	'Friend 7',
+	'Friend 8',
+	'Friend 9',
+	`Friend 10`
 	]);
 
 	const toggleMenu = () => {
-		setshowChat(!showChat);
+		setShowChat(!showChat);
 	};
 
 	const handleFriendClick = (friend) => {
@@ -26,10 +31,10 @@ const Chat = () => {
 
 	return (
 		<DropupContainer>
-			<DropupButton onClick={toggleMenu}>
-				Messaging
-			</DropupButton>
 			<DropupContent show={showChat}>
+				<DropupButton onClick={toggleMenu} className={showChat ? 'expanded' : ''}>
+					Messaging
+				</DropupButton>
 				{friends.map((friend, index) => (
 					<FriendItem key={index} onClick={() => handleFriendClick(friend)}>
 						{friend}
