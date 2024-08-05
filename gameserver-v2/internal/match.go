@@ -21,6 +21,10 @@ type Match struct {
 }
 
 func (m *Match) HandlePlayerMove(player *Player, move string) {
+	if !player.CanMove() {
+		player.Conn.WriteMessage(websocket.TextMessage, []byte(`{"error": "You cannot move yet"}`))
+	}
+
 	m.paddleMutex.Lock()
 	defer m.paddleMutex.Unlock()
 
