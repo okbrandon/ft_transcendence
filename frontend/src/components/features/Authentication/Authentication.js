@@ -10,13 +10,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 const Authentication = () => {
 	const navigate = useNavigate();
 
-	const handleLogin = () => {
-		navigate('/login');
-	};
-	const handleSignUp = () => {
-		navigate('/signup');
-	};
-
 	return (
 		<AnimatePresence>
 			<motion.div
@@ -28,8 +21,8 @@ const Authentication = () => {
 				<Container>
 					<Title>PONG</Title>
 					<Stack gap={5} className="mx-auto">
-						<PongButton title="Login" variant="light" onClick={handleLogin}/>
-						<PongButton title="Sign Up" variant="light" onClick={handleSignUp}/>
+						<PongButton title="Login" variant="light" onClick={() => { navigate('/login') }}/>
+						<PongButton title="Sign Up" variant="light" onClick={() => { navigate('/signup') }}/>
 					</Stack>
 				</Container>
 			</motion.div>

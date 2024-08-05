@@ -1,55 +1,24 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import API from "./api";
+import { jwtDecode } from "jwt-decode";
 
-const CheckToken = async () => {
-	const navigate = useNavigate();
+const refreshToken = async () => {
+	const refresh = localStorage.getItem("refresh");
 
-	useEffect(() => {
-		const validateToken = async () => {
-			try {
-				const token = localStorage.getItem('token');
-				const refreshToken = localStorage.getItem('refresh');
+	if (!refresh) {
+		throw new Error("No refresh token found");
+	}
 
-				if (!token || !refreshToken) {
-					throw new Error('No token found.');
-				}
+	const decoded = jwtDecode(refresh);
+	
+	if (decoded.exp < Date.now() / 1000) {
+		throw new Error("Refresh token expired");
+	}
 
-				const response = await fetch('http://localhost:8000/api/v1/users/@me/profile', {
-					method: 'GET',
-					headers: {
-						'Content-Type': 'application/json',
-						'Authorization': 'Bearer ' + localStorage.getItem('token'),
-					},
-				});
+	const response = await API.post("auth/token/refresh/", { refresh });
+	const newToken = response.data.access;
 
-				if (!response.ok) {
-					console.log('Error: Token expired:', response.status);
-
-					const refreshResponse = await fetch('http://localhost:8000/api/v1/auth/token/refresh', {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json',
-						},
-						body: JSON.stringify({ refresh: localStorage.getItem('refresh') }),
-					});
-
-					if (!refreshResponse.ok) {
-						throw new Error('Refresh Failed.');
-					} else {
-						const data = await refreshResponse.json();
-
-						localStorage.setItem('token', data.access);
-						console.log('Refresh successful:', data);
-					}
-				}
-			} catch (error) {
-				console.log(error);
-				navigate('/login');
-			}
-		};
-
-		validateToken();
-	}, [navigate]);
+	localStorage.setItem("token", newToken);
+	return newToken;
 };
 
-export default CheckToken;
+export default refreshToken;

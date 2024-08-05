@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import AuthenticationContainer from '../../styles/layouts/AuthenticationContainer.styled';
 import Container from '../../styles/layouts/Container.styled';
@@ -7,6 +7,7 @@ import BackButton from '../../styles/shared/button/BackButton.styled';
 import { ApiSignup } from '../../../api/auth';
 
 const SignUp = () => {
+	const navigate = useNavigate();
 	const [username, setUsername] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -14,7 +15,9 @@ const SignUp = () => {
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		ApiSignup(username, email, password);
+		ApiSignup(username, email, password)
+			.then(() => { navigate('/login') })
+			.catch((error) => { console.log(error); });
 	};
 
 	return (

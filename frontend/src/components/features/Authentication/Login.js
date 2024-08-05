@@ -15,9 +15,11 @@ const Login = () => {
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		ApiLogin(username, password);
+		ApiLogin(username, password)
+			.then(() => { navigate('/home'); })
+			.catch((error) => { console.log(error); });
 	};
-	const handleFortyTwoButton = (event) => {
+	const handleFortyTwo = (event) => {
 		event.preventDefault();
 		navigate('/home');
 	};
@@ -27,7 +29,7 @@ const Login = () => {
 			<AuthenticationContainer onSubmit={handleSubmit}>
 				<BackButton to='/'><i className='bi bi-arrow-left' style={{'fontSize': '25px'}}></i></BackButton>
 				<h1>Login</h1>
-				<FortyTwoButton variant='secondary' onClick={handleFortyTwoButton}><Image src='./42_Logo.png' alt='42 Logo'/>Login with 42</FortyTwoButton>
+				<FortyTwoButton variant='secondary' onClick={handleFortyTwo}><Image src='./42_Logo.png' alt='42 Logo'/>Login with 42</FortyTwoButton>
 				<p>- Or -</p>
 				<AuthenticationContainer.Group className="mb-3">
 					<AuthenticationContainer.Control id="id" type="username" placeholder="Username" required value={username} onChange={(e) => setUsername(e.target.value)}/>

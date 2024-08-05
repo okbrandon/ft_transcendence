@@ -3,12 +3,9 @@ import { Outlet } from "react-router-dom";
 import { Lines, Line } from "../../styles/animations/Lines.styled";
 import Navigation from "../../features/Navigation/Navigation";
 import Friends from "../../features/Friends/Friends";
-import CheckToken from "../../../api/token";
 
 const RootHome = () => {
 	const [showFriends, setShowFriends] = useState(false);
-
-	CheckToken();
 
 	const handleFriends = () => {
 		setShowFriends(!showFriends);
