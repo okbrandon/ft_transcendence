@@ -1,18 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Outlet } from "react-router-dom";
 import { Lines, Line } from "../../styles/animations/Lines.styled";
 import Navigation from "../../features/Navigation/Navigation";
 import Friends from "../../features/Friends/Friends";
-import checkToken from "../../../api/token/checkToken";
-import refreshToken from "../../../api/token/refreshToken";
+import CheckToken from "../../../api/token";
 
 const RootHome = () => {
-	const navigate = useNavigate();
 	const [showFriends, setShowFriends] = useState(false);
 
-	useEffect(() => {
-		checkToken().catch(() => refreshToken().catch(() => navigate('/login')));
-	}, [navigate]);
+	CheckToken();
 
 	const handleFriends = () => {
 		setShowFriends(!showFriends);

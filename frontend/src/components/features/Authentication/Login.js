@@ -6,7 +6,7 @@ import AuthenticationContainer from '../../styles/layouts/AuthenticationContaine
 import Container from '../../styles/layouts/Container.styled';
 import BackButton from '../../styles/shared/button/BackButton.styled';
 import FortyTwoButton from '../../styles/shared/button/FortyTwoButton.styled';
-import login from '../../../api/authentication/login';
+import { ApiLogin } from '../../../api/auth';
 
 const Login = () => {
 	const navigate = useNavigate();
@@ -15,12 +15,7 @@ const Login = () => {
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		login(username, password)
-			.then(() => {
-				navigate('/home');
-			}).catch((error) => {
-				alert(error);
-			});
+		ApiLogin(username, password);
 	};
 	const handleFortyTwoButton = (event) => {
 		event.preventDefault();

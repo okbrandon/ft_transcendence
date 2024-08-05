@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import AuthenticationContainer from '../../styles/layouts/AuthenticationContainer.styled';
 import Container from '../../styles/layouts/Container.styled';
 import BackButton from '../../styles/shared/button/BackButton.styled';
-import signup from '../../../api/authentication/signup';
+import { ApiSignup } from '../../../api/auth';
 
 const SignUp = () => {
-	const navigate = useNavigate();
-
 	const [username, setUsername] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -16,12 +14,7 @@ const SignUp = () => {
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		signup(username, email, password)
-			.then(() => {
-				navigate('/login');
-			}).catch((error) => {
-				alert(error);
-			});
+		ApiSignup(username, email, password);
 	};
 
 	return (
