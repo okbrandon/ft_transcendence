@@ -2,7 +2,7 @@ import API from './api';
 
 const GetUser = async () => {
 	console.log('Getting user...');
-	await API.get('users/@me/profile');
+	return await API.get('users/@me/profile');
 };
 
 export default GetUser;

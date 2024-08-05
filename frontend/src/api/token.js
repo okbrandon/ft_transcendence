@@ -1,5 +1,5 @@
-import API from "./api";
 import { jwtDecode } from "jwt-decode";
+import axios from "axios";
 
 const refreshToken = async () => {
 	const refresh = localStorage.getItem("refresh");
@@ -9,15 +9,16 @@ const refreshToken = async () => {
 	}
 
 	const decoded = jwtDecode(refresh);
-	
+
 	if (decoded.exp < Date.now() / 1000) {
 		throw new Error("Refresh token expired");
 	}
 
-	const response = await API.post("auth/token/refresh/", { refresh });
+	const response = await axios.post("http://localhost:8000/api/v1/auth/token/refresh", { refresh });
 	const newToken = response.data.access;
 
 	localStorage.setItem("token", newToken);
+	console.log('Token refreshed', newToken);
 	return newToken;
 };
 

@@ -11,7 +11,6 @@ import Profile from '../components/features/Profile/Profile';
 import { isLoggedIn } from '../api/api';
 
 const PrivateRoutes = () => {
-	console.log('is logged in:', isLoggedIn());
 	return (
 		isLoggedIn() ? <Outlet/> : <Navigate to="/login"/>
 	);

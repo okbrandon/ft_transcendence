@@ -3,15 +3,17 @@ import UserProfileContainer from '../../styles/layouts/profile/UserProfileContai
 import ProfileImage from '../../styles/shared/profile/profileImage.styled';
 import UserInfoContainer from '../../styles/layouts/profile/UserInfoContainer.styled';
 import GetUser from '../../../api/user';
+import { useNavigate } from 'react-router-dom';
 
 const UserProfile = () => {
+	const navigate = useNavigate();
 	const [user, setUser] = useState({});
 
 	useEffect(() => {
 		GetUser()
-			.then((response) => { setUser(response) })
-			.catch((error) => console.error(error));
-	}, []);
+			.then((response) => { setUser(response.data); })
+			.catch((error) => { console.log(error); navigate('/login')});
+	}, [navigate]);
 
 	return (
 		<UserProfileContainer>

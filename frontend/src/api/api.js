@@ -3,7 +3,7 @@ import { jwtDecode } from 'jwt-decode';
 import refreshToken from './token';
 
 export const isLoggedIn = () => {
-	return !isTokenExpired() && !isRefreshExpired();
+	return !isTokenExpired() || !isRefreshExpired();
 };
 
 export const isTokenExpired = () => {
@@ -13,21 +13,32 @@ export const isTokenExpired = () => {
 		const decodedToken = jwtDecode(token);
 	
 		if (decodedToken.exp < Date.now() / 1000) {
-			console.log('Token expired');
+			console.log('INFO: Token expired');
 			return true;
 		}
+	} else {
+		console.log('INFO: No token found');
+		return true;
 	}
+	console.log('INFO: Token is valid');
 	return false;
 };
 
 export const isRefreshExpired = () => {
 	const refresh = localStorage.getItem('refresh');
-	const decodedRefresh = jwtDecode(refresh);
 
-	if (decodedRefresh.exp < Date.now() / 1000) {
-		console.log('Refresh expired');
+	if (refresh) {
+		const decodedRefresh = jwtDecode(refresh);
+	
+		if (decodedRefresh.exp < Date.now() / 1000) {
+			console.log('INFO: Refresh expired');
+			return true;
+		}
+	} else {
+		console.log('INFO: No refresh found');
 		return true;
 	}
+	console.log('INFO: Refresh is valid');
 	return false;
 };
 
@@ -39,11 +50,11 @@ API.interceptors.request.use(
 	async (config) => {
 		try {
 			const token = localStorage.getItem('token');
-			if (token && isLoggedIn()) {
-				console.log('FIRST');
+			if (token && !isTokenExpired()) {
+				console.log('interceptor: Token is valid');
 				config.headers.Authorization = `Bearer ${token}`;
 			} else {
-				console.log('SECOND');
+				console.log('interceptor: Refreshing token');
 				const newToken = await refreshToken();
 				config.headers.Authorization = `Bearer ${newToken}`;
 			}
