@@ -1,4 +1,5 @@
 import styled, { keyframes } from 'styled-components';
+import { motion } from 'framer-motion';
 
 const floatBarAnimation = keyframes`
 	0% {
@@ -24,9 +25,9 @@ const floatBallAnimation = keyframes`
 	}
 `;
 
-export const PongPaddleBackground = styled.div`
+export const PongPaddleBackground = styled(motion.div)`
 	position: absolute;
-	top: 100px;
+	top: 250px;
 	left: -50px;
 	width: 800px;
 	height: 150px;
@@ -39,7 +40,7 @@ export const PongPaddleBackground = styled.div`
 	z-index: -1;
 `;
 
-export const PongBallBackground = styled.div`
+export const PongBallBackground = styled(motion.div)`
 	position: absolute;
 	bottom: 150px;
 	right: 300px;

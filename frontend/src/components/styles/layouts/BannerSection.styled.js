@@ -2,7 +2,7 @@ import styled from "styled-components";
 import Section from "./Section.styled";
 
 const BannerSection = styled(Section)`
-	min-height: 85vh;
+	min-height: 90vh;
 	border-bottom: 5px solid #fff;
 
 	& > h1 {
