@@ -1,15 +1,17 @@
-import { createBrowserRouter, createRoutesFromElements, Route, Navigate, Outlet } from 'react-router-dom';
-import Root from '../components/shared/Root';
-import RootHome from '../components/shared/RootHome';
-import Authentication from '../components/features/Authentication/Authentication';
-import Login from '../components/features/Authentication/Login';
-import SignUp from '../components/features/Authentication/SignUp';
-import MainMenu from '../components/features/Menu/MainMenu';
-import PlayMenu from '../components/features/Menu/PlayMenu';
-import Game from '../components/features/Game/Game';
-import Profile from '../components/features/Profile/Profile';
+import {
+	createBrowserRouter,
+	createRoutesFromElements,
+	Route,
+	Navigate,
+	Outlet,
+} from 'react-router-dom';
 import { isLoggedIn } from '../api/api';
-import Home from '../components/features/Home/Home';
+import Root from '../components/Root';
+import Login from '../components/Authentication/Login';
+import SignUp from '../components/Authentication/SignUp';
+import Profile from '../components/Profile/Profile';
+import Game from '../components/Game/Game';
+import Home from '../components/Home/Home';
 
 const PrivateRoutes = () => {
 	return (
@@ -23,10 +25,6 @@ const Router = createBrowserRouter(createRoutesFromElements(
 		<Route path="login" element={ <Login/> }/>
 		<Route path="signup" element={ <SignUp/> }/>
 		<Route element={ <PrivateRoutes/>}>
-			<Route path="home" element={ <RootHome/> }>
-				<Route index element={ <MainMenu/> }/>
-				<Route path="game" element={ <PlayMenu/> }/>
-			</Route>
 			<Route path="profile" element={ <Profile/> }/>
 			<Route path="solo-vs-ai" element={ <Game/> }/>
 		</Route>
