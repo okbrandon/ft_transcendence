@@ -4,6 +4,9 @@ import ProfileImage from '../../styles/shared/profile/profileImage.styled';
 import UserInfoContainer from '../../styles/layouts/profile/UserInfoContainer.styled';
 import GetUser from '../../../api/user';
 import { useNavigate } from 'react-router-dom';
+import ProfileImageContainer from '../../styles/layouts/profile/ProfileImageContainer.styled';
+
+// <i className="bi bi-circle-fill" style={{ fontSize: '20px', color: 'green' }}></i>
 
 const UserProfile = () => {
 	const navigate = useNavigate();
@@ -17,11 +20,23 @@ const UserProfile = () => {
 
 	return (
 		<UserProfileContainer>
-			<ProfileImage src='./prune.jpg' alt='profile picture' roundedCircle/>
+			<ProfileImageContainer>
+				<ProfileImage src='./prune.jpg' alt='profile picture' roundedCircle/>
+				<h2>{user ? user.displayName : ''}</h2>
+			</ProfileImageContainer>
 			<UserInfoContainer>
-				<h2 style={{fontSize: '2rem'}}><i className="bi bi-circle-fill" style={{ fontSize: '20px', color: 'green' }}></i> {user ? user.displayName : ''}</h2>
-				<p><strong>Rank: </strong>Dummy</p>
-				<p><strong>Last online: </strong>xx/xx/xxxx xx:xx</p>
+				<div>
+					<h2 style={{textAlign: 'center'}}>-</h2>
+					<h2>Ranking</h2>
+				</div>
+				<div>
+					<h2 style={{textAlign: 'center'}}>-</h2>
+					<h2>Total Wins</h2>
+				</div>
+				<div>
+					<h2 style={{textAlign: 'center'}}>-</h2>
+					<h2>Ratio</h2>
+				</div>
 			</UserInfoContainer>
 		</UserProfileContainer>
 	);

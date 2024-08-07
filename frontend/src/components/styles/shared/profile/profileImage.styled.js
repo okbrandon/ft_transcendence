@@ -5,7 +5,8 @@ const ProfileImage = styled(Image)`
 	width: 190px;
 	height: 190px;
 	object-fit: cover;
-	margin: 20px;
+	margin-bottom: 10px;
+	border: 3px solid #b865ff;
 `;
 
 export default ProfileImage;
