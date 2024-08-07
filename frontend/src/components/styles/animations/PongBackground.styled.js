@@ -26,27 +26,29 @@ const floatBallAnimation = keyframes`
 
 export const PongPaddleBackground = styled.div`
 	position: absolute;
-	top: 22vh;
-	left: 5vw;
+	top: 100px;
+	left: -50px;
 	width: 800px;
 	height: 150px;
-	background: linear-gradient(0deg, rgba(255,255,255,1) 0%, rgba(50,50,50,1) 100%);
+	background-repeat: no-repeat;
+	background: linear-gradient(0deg, rgba(150,150,150,1) 0%, rgba(20,20,20,1) 100%);
 	border-radius: 400px;
 	transform: rotate(-40deg);
 	animation: ${floatBarAnimation} 2s ease-in-out infinite forwards;
-	opacity: 0.7;
 	overflow: hidden;
+	z-index: -1;
 `;
 
 export const PongBallBackground = styled.div`
 	position: absolute;
-	bottom: 10vh;
-	right: 18vw;
-	width: 250px;
-	height: 250px;
-	background: linear-gradient(133deg, rgba(255,255,255,1) 0%, rgba(50,50,50,1) 100%);
+	bottom: 150px;
+	right: 300px;
+	width: 180px;
+	height: 180px;
+	background-repeat: no-repeat;
+	background: linear-gradient(133deg, rgba(150,150,150,1) 0%, rgba(20,20,20,1) 100%);
 	border-radius: 50%;
 	animation: ${floatBallAnimation} 3s ease-in-out infinite forwards;
-	opacity: 0.7;
 	overflow: hidden;
+	z-index: -1;
 `;

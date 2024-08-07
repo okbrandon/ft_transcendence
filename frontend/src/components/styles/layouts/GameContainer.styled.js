@@ -5,6 +5,7 @@ const GameContainer = styled.div`
 	position: absolute;
 	margin-top: 7vh;
 	border: 3px solid white;
+	box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.5);
 	width: 1000px;
 	height: 600px;
 	top: 50%;

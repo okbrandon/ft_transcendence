@@ -33,6 +33,7 @@ const Title = styled.h1`
 
 export const TitleNav = styled(Link)`
 	position: relative;
+	font-family: 'Inter', sans-serif;
 	height: 85px;
 	font-size: 60px;
 	text-align: center;

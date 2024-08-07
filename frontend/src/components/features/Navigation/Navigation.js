@@ -17,7 +17,7 @@ const NavBar = ({ handleFriends }) => {
 							<TitleNav to="/">PONG</TitleNav>
 							<SpaceBetweenContainer $gap='100px'>
 								<StyledNavLink onClick={handleFriends}>Friends</StyledNavLink>
-								<StyledNavLink to="/">Leaderbord</StyledNavLink>
+								<StyledNavLink to="/">Leaderboard</StyledNavLink>
 								<StyledNavLink to="/">Store</StyledNavLink>
 							</SpaceBetweenContainer>
 						</SpaceBetweenContainer>
