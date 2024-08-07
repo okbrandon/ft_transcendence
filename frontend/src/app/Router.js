@@ -9,6 +9,7 @@ import PlayMenu from '../components/features/Menu/PlayMenu';
 import Game from '../components/features/Game/Game';
 import Profile from '../components/features/Profile/Profile';
 import { isLoggedIn } from '../api/api';
+import Home from '../components/features/Home/Home';
 
 const PrivateRoutes = () => {
 	return (
@@ -18,7 +19,7 @@ const PrivateRoutes = () => {
 
 const Router = createBrowserRouter(createRoutesFromElements(
 	<Route path="/" element={ <Root/> }>
-		<Route index element={ <Authentication/> }/>
+		<Route index element={ <Home/> }/>
 		<Route path="login" element={ <Login/> }/>
 		<Route path="signup" element={ <SignUp/> }/>
 		<Route element={ <PrivateRoutes/>}>

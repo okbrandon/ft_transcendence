@@ -33,10 +33,10 @@ const Title = styled.h1`
 
 export const TitleNav = styled(Link)`
 	position: relative;
-	height: 140px;
-	font-size: 100px;
+	height: 85px;
+	font-size: 60px;
 	text-align: center;
-	margin: 0 5vw;
+	margin: 0;
 	padding: 0;
 	color: #fff;
 	text-decoration: none;
@@ -45,7 +45,7 @@ export const TitleNav = styled(Link)`
 	&::before {
 		content: '';
 		position: absolute;
-		height: 10px;
+		height: 5px;
 		width: 100px;
 		background: #fff;
 		border-radius: 10px;
@@ -55,8 +55,8 @@ export const TitleNav = styled(Link)`
 	&::after {
 		content: '';
 		position: absolute;
-		height: 16px;
-		width: 16px;
+		height: 8px;
+		width: 8px;
 		background: #fff;
 		border-radius: 50%;
 		bottom: 0;
