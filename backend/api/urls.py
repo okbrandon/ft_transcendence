@@ -8,6 +8,7 @@ from .views.auth import *
 from .views.users import *
 from .views.tournaments import *
 from .views.internal import *
+from .views.oauth import *
 
 urlpatterns = [
     path('auth/register', AuthRegister.as_view()),
@@ -27,4 +28,7 @@ urlpatterns = [
     # path('tournaments', TournamentCreate.as_view()), # POST
 
     path('__internal/check_user_exists/<userID>', CheckUserExists.as_view()), # GET
+
+    path('auth/42/login', OAuth42Login.as_view(), name='oauth42_login'),
+    path('auth/42/callback', OAuth42Callback.as_view(), name='oauth42_callback'),
 ]
