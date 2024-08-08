@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from .util import generate_id
 
 class Match(models.Model):
     matchID = models.CharField(max_length = 48)
@@ -14,7 +15,7 @@ class Match(models.Model):
         return self.matchID
 
 class User(AbstractUser):                      
-    userID = models.CharField(max_length = 48, unique=True)
+    userID = models.CharField(max_length=48, unique=True, default=generate_id('user'))
     username = models.CharField(max_length = 16, unique=True)
     displayName = models.CharField(max_length = 16, null = True)
     email = models.CharField(max_length = 64)

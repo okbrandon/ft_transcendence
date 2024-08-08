@@ -11,7 +11,7 @@ from django.contrib.auth.hashers import make_password
 
 from ..models import User
 from ..serializers import UserSerializer
-from ..util import generate_id, generate_jwt
+from ..util import generate_id
 
 @permission_classes([AllowAny])
 class AuthRegister(APIView):
