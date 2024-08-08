@@ -8,6 +8,7 @@ from ..models import User
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import permission_classes
 from rest_framework_simplejwt.tokens import RefreshToken  # Import RefreshToken
+from ..util import generate_id
 
 @permission_classes([AllowAny])
 class OAuth42Login(APIView):
@@ -42,6 +43,7 @@ class OAuth42Callback(APIView):
 
         user_info = user_info_response.json()
         user, created = User.objects.get_or_create(username=user_info['login'], defaults={
+            'userID': generate_id('user'),
             'email': user_info.get('email', ''),
             'displayName': user_info['usual_full_name'],
             'avatarID': user_info['image']['link'] if 'image' in user_info else None,

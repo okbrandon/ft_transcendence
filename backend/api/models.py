@@ -15,7 +15,7 @@ class Match(models.Model):
         return self.matchID
 
 class User(AbstractUser):                      
-    userID = models.CharField(max_length=48, unique=True, default=generate_id('user'))
+    userID = models.CharField(max_length=48, unique=True)
     username = models.CharField(max_length = 16, unique=True)
     displayName = models.CharField(max_length = 16, null = True)
     email = models.CharField(max_length = 64)
