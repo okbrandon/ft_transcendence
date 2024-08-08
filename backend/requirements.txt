@@ -16,3 +16,4 @@ typing_extensions==4.12.1
 urllib3==2.2.2
 psycopg2-binary
 django-cors-headers
+gunicorn
