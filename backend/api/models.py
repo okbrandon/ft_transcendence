@@ -8,7 +8,7 @@ class Match(models.Model):
     playerB = models.JSONField 
     scores = models.JSONField # ex: {"user_202020202020": 5, "user_202020202021", 3}
     startedAt = models.DateTimeField
-    finishedAt = models.DateTimeField
+    finishedAt = models.DateTimeField(auto_now_add=True)
     flags = models.IntegerField # is AI game = 1 << 0
 
     def __str__(self):

@@ -48,7 +48,7 @@ func GetUserFromToken(token string) (*User, error) {
 
 func GetUserByID(userID string) (*User, error) {
 	Logger.Debug("Creating new HTTP request", "userID", userID)
-	req, err := http.NewRequest("GET", fmt.Sprintf("http://backend:8000/__internal/check_user_exists/%s", userID), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("http://backend:8000/api/v1/__internal/check_user_exists/%s", userID), nil)
 	if err != nil {
 		Logger.Error("Failed to create HTTP request", "error", err)
 		return nil, err

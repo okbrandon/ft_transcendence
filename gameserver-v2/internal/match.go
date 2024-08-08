@@ -1,7 +1,10 @@
 package internal
 
 import (
+	"bytes"
 	"encoding/json"
+	"log"
+	"net/http"
 	"sync"
 	"time"
 
@@ -18,6 +21,15 @@ type Match struct {
 	ball        Ball
 	spectators  []*Player
 	paddleMutex sync.Mutex
+}
+
+type MatchHistory struct {
+	MatchID   string         `json:"matchID"`
+	PlayerA   string         `json:"playerA"`
+	PlayerB   string         `json:"playerB"`
+	Winner    string         `json:"winner"`
+	Scores    map[string]int `json:"scores"`
+	StartedAt time.Time      `json:"startedAt"`
 }
 
 func (m *Match) HandlePlayerMove(player *Player, move string) {
@@ -102,6 +114,7 @@ func (m *Match) Start() {
 
 	m.FinishedAt = time.Now()
 	Logger.Info("Match finished", "matchID", m.MatchID, "scores", m.Scores)
+	CreateMatchHistory(m.MatchID, m.PlayerA.UserID, m.PlayerB.UserID, m.Scores, m.StartedAt)
 }
 
 func (m *Match) broadcastGameState() {
@@ -136,5 +149,32 @@ func (m *Match) RemoveSpectator(player *Player) {
 			m.spectators = append(m.spectators[:i], m.spectators[i+1:]...)
 			break
 		}
+	}
+}
+
+func CreateMatchHistory(matchID string, playerA string, playerB string, scores map[string]int, startedAt time.Time) {
+	matchHistory := MatchHistory{
+		MatchID:   matchID,
+		PlayerA:   playerA,
+		PlayerB:   playerB,
+		Scores:    scores,
+		StartedAt: startedAt,
+	}
+
+	jsonData, err := json.Marshal(matchHistory)
+	if err != nil {
+		log.Fatalf("Error marshaling match history: %v", err)
+	}
+
+	resp, err := http.Post("http://backend:8000/api/v1/__internal/create_match", "application/json", bytes.NewBuffer(jsonData))
+	if err != nil {
+		log.Fatalf("Error sending match history: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusCreated {
+		log.Printf("Failed to create match history: %s", resp.Status)
+	} else {
+		log.Println("Match history created successfully.")
 	}
 }
