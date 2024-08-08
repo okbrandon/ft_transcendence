@@ -30,6 +30,11 @@ ALLOWED_HOSTS = [
     "*",
 ]
 
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=28),
+}
+
 OAUTH2_CLIENT_ID = os.getenv("OAUTH2_CLIENT_ID")
 OAUTH2_CLIENT_SECRET = os.getenv("OAUTH2_CLIENT_SECRET")
 OAUTH2_REDIRECT_URI = os.getenv("OAUTH2_REDIRECT_URI")
