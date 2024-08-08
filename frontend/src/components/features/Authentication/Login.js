@@ -42,7 +42,7 @@ const Login = () => {
 	};
 	const handleFortyTwoButton = (event) => {
 		event.preventDefault();
-		navigate('/home');
+		window.location.href = 'http://localhost:8000/api/v1/auth/42/login';
 	};
 
 	return (
