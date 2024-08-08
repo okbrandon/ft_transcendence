@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { MatchCardContainer, MatchCard } from "../../styles/Profile.styled";
 
@@ -25,15 +25,30 @@ const variants = {
 	}),
 };
 
-const MatchHistory = () => {
+const MatchHistory = ({ setTabsLoaded }) => {
+	const [matchArray, setMatchArray] = useState(null);
+
+	// simulate a fetch request
+	useEffect(() => {
+		setTimeout(() => {
+			setTabsLoaded(true);
+			setMatchArray(matchArrayTest);
+		}, 2000); // 2 seconds
+	}, [setTabsLoaded]); // 2 seconds
+
+	if (!matchArray) {
+		console.log('MathHistory: matchArray is null');
+		return null;
+	}
+
 	return (
 		<div>
 			{
-				matchArrayTest.length === 0 ? (
+				matchArray.length === 0 ? (
 					<p>No matches played yet</p>
 				) : (
 					<AnimatePresence>
-						{matchArrayTest.map((match, index) => (
+						{matchArray.map((match, index) => (
 								<MatchCardContainer
 									key={index}
 									$won={match.won}

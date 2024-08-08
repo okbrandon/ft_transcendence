@@ -8,20 +8,25 @@ import {
 	UserInfoContainer,
 } from '../../styles/Profile.styled';
 
-const UserProfile = () => {
+const UserProfile = ({ setUserLoaded }) => {
 	const navigate = useNavigate();
-	const [user, setUser] = useState({});
+	const [user, setUser] = useState(null);
 
 	useEffect(() => {
 		GetUser()
-			.then((response) => { setUser(response.data); })
+			.then((response) => { setUser(response.data); setUserLoaded(true); })
 			.catch((error) => { console.log(error); navigate('/login')});
-	}, [navigate]);
+	}, [navigate, setUserLoaded]);
+
+	if (!user) {
+		console.log('UserProfile: user is null');
+		return null;
+	}
 
 	return (
 		<UserProfileContainer>
 			<ProfileImageContainer>
-				<ProfileImage src='./prune.jpg' alt='profile picture' roundedCircle/>
+				<ProfileImage src='./images/prune.jpg' alt='profile picture' roundedCircle/>
 				<h2>{user ? user.displayName : ''}</h2>
 			</ProfileImageContainer>
 			<UserInfoContainer>

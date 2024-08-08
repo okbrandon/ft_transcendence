@@ -5,8 +5,6 @@ import Button from 'react-bootstrap/Button';
 import { ApiLogin } from '../../api/auth';
 import FortyTwoButton from '../../styles/shared/button/FortyTwoButton.styled';
 import { AuthenticationContainer, FormContainer } from '../../styles/Authentication.styled';
-import NavBar from '../Navigation/Navigation';
-import Footer from '../Footer/Footer';
 
 const Login = () => {
 	const navigate = useNavigate();
@@ -27,25 +25,21 @@ const Login = () => {
 	};
 
 	return (
-		<>
-			<NavBar/>
-			<AuthenticationContainer>
-				<FormContainer onSubmit={handleSubmit}>
-					<h1>Login</h1>
-					<FortyTwoButton variant='secondary' onClick={handleFortyTwo}><Image src='./images/42_Logo.png' alt='42 Logo'/>Login with 42</FortyTwoButton>
-					<p>- Or -</p>
-					<FormContainer.Group className="mb-3">
-						<FormContainer.Control id="id" type="username" placeholder="Username" required value={username} onChange={(e) => setUsername(e.target.value)}/>
-					</FormContainer.Group>
-					<FormContainer.Group className="mb-3">
-						<FormContainer.Control id="password" type="password" placeholder="Password" required value={password} onChange={(e) => setPassword(e.target.value)}/>
-					</FormContainer.Group>
-					<p>Not Signed Up ? <Link to="/signup">Sign Up</Link></p>
-					<Button variant='success' type='submit'>Submit</Button>
-				</FormContainer>
-			</AuthenticationContainer>
-			<Footer/>
-		</>
+		<AuthenticationContainer>
+			<FormContainer onSubmit={handleSubmit}>
+				<h1>Login</h1>
+				<FortyTwoButton variant='secondary' onClick={handleFortyTwo}><Image src='./images/42_Logo.png' alt='42 Logo'/>Login with 42</FortyTwoButton>
+				<p>- Or -</p>
+				<FormContainer.Group className="mb-3">
+					<FormContainer.Control id="id" type="username" placeholder="Username" required value={username} onChange={(e) => setUsername(e.target.value)}/>
+				</FormContainer.Group>
+				<FormContainer.Group className="mb-3">
+					<FormContainer.Control id="password" type="password" placeholder="Password" required value={password} onChange={(e) => setPassword(e.target.value)}/>
+				</FormContainer.Group>
+				<p>Not Signed Up ? <Link to="/signup">Sign Up</Link></p>
+				<Button variant='success' type='submit'>Submit</Button>
+			</FormContainer>
+		</AuthenticationContainer>
 	);
 };
 

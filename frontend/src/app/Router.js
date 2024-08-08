@@ -20,15 +20,20 @@ const PrivateRoutes = () => {
 };
 
 const Router = createBrowserRouter(createRoutesFromElements(
-	<Route path="/" element={ <Root/> }>
-		<Route index element={ <Home/> }/>
-		<Route path="login" element={ <Login/> }/>
-		<Route path="signup" element={ <SignUp/> }/>
+	<>
+		<Route path="/" element={ <Root/> }>
+			<Route index element={ <Home/> }/>
+			<Route path="login" element={ <Login/> }/>
+			<Route path="signup" element={ <SignUp/> }/>
+			<Route element={ <PrivateRoutes/> }>
+				<Route path="profile" element={ <Profile/> }/>
+			</Route>
+		</Route>
 		<Route element={ <PrivateRoutes/>}>
-			<Route path="profile" element={ <Profile/> }/>
 			<Route path="solo-vs-ai" element={ <Game/> }/>
 		</Route>
-	</Route>
+		<Route path="*" element={ <Navigate to="/"/> }/>
+	</>
 ));
 
 export default Router;
