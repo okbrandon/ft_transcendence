@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import ProfileButton from './ProfileButton';
 import { TitleLink } from '../../styles/Title.styled';
 import {
@@ -7,19 +7,21 @@ import {
 	StyledNavLink,
 	ConnectButton
 } from '../../styles/Navigation.styled';
-import { isLoggedIn } from '../../api/api';
+import { AuthContext } from '../../context/AuthContext';
 
-const NavBar = ({ handleFriends }) => {
+const NavBar = () => {
+	const { isLoggedIn } = useContext(AuthContext);
+
 	// While in the login page, it keeps refreshing the following component
 	return (
 		<NavContainer>
 			{
-				isLoggedIn() ? (
+				isLoggedIn ? (
 					<>
 						<NavItemsContainer $gap='100px'>
 							<TitleLink to="/">PONG</TitleLink>
 							<NavItemsContainer $gap='100px'>
-								<StyledNavLink onClick={handleFriends}>Friends</StyledNavLink>
+								<StyledNavLink>Friends</StyledNavLink>
 								<StyledNavLink to="/">Leaderboard</StyledNavLink>
 								<StyledNavLink to="/">Store</StyledNavLink>
 							</NavItemsContainer>

@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Dropdown from 'react-bootstrap/Dropdown';
 import { ProfileButtonContainer } from '../../styles/Navigation.styled';
+import { AuthContext } from '../../context/AuthContext';
 
 const ProfileButton = () => {
 	const navigate = useNavigate();
+	const { setIsLoggedIn } = useContext(AuthContext);
 
 	const handleLogout = () => {
+		setIsLoggedIn(false);
 		localStorage.removeItem('token');
 		localStorage.removeItem('refresh');
-		navigate('/login');
+		navigate('/');
 	};
 
 	return (

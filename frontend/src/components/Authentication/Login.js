@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Image from 'react-bootstrap/Image';
 import Button from 'react-bootstrap/Button';
 import { ApiLogin } from '../../api/auth';
 import FortyTwoButton from '../../styles/shared/button/FortyTwoButton.styled';
 import { AuthenticationContainer, FormContainer } from '../../styles/Authentication.styled';
+import { AuthContext } from '../../context/AuthContext';
 
 const Login = () => {
 	const navigate = useNavigate();
+	const { setIsLoggedIn } = useContext(AuthContext);
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 
@@ -16,8 +18,8 @@ const Login = () => {
 	const handleSubmit = (event) => {
 		event.preventDefault();
 		ApiLogin(username, password)
-			.then(() => { navigate('/'); })
-			.catch((error) => { console.log(error); });
+			.then(() => { setIsLoggedIn(true); navigate('/'); })
+			.catch((error) => { setIsLoggedIn(false); console.log(error); });
 	};
 	const handleFortyTwo = (event) => {
 		event.preventDefault();

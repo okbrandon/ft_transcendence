@@ -5,17 +5,23 @@ import {
 	Navigate,
 	Outlet,
 } from 'react-router-dom';
-import { isLoggedIn } from '../api/api';
+import { isValidToken } from '../api/api';
 import Root from '../components/Root';
 import Login from '../components/Authentication/Login';
 import SignUp from '../components/Authentication/SignUp';
 import Profile from '../components/Profile/Profile';
 import Game from '../components/Game/Game';
 import Home from '../components/Home/Home';
+import { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
 
 const PrivateRoutes = () => {
+	const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+
+	setIsLoggedIn(isValidToken());
+
 	return (
-		isLoggedIn() ? <Outlet/> : <Navigate to="/login"/>
+		isLoggedIn ? <Outlet/> : <Navigate to="/login"/>
 	);
 };
 

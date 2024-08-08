@@ -2,7 +2,7 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import refreshToken from './token';
 
-export const isLoggedIn = () => {
+export const isValidToken = () => {
 	return !isTokenExpired() || !isRefreshExpired();
 };
 
@@ -11,7 +11,7 @@ export const isTokenExpired = () => {
 
 	if (token) {
 		const decodedToken = jwtDecode(token);
-	
+
 		if (decodedToken.exp < Date.now() / 1000) {
 			console.log('INFO: Token expired');
 			return true;
