@@ -1,16 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { AnimatePresence } from "framer-motion";
-import { MatchCardContainer, MatchCard } from "../../styles/Profile.styled";
+import React from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { MatchCardTable } from "../../styles/Profile.styled";
 
 const matchArrayTest = [
-	{player1: "roger", player2: "bradon", winner: "bradon", score1: 20, score2: 21, won: true},
-	{player1: "van", player2: "bradon", winner: "bradon", score1: 1, score2: 21, won: true},
-	{player1: "min", player2: "bradon", winner: "bradon", score1: 19, score2: 21, won: true},
-	{player1: "ian", player2: "bradon", winner: "ian", score1: 20, score2: 19, won: false},
-	{player1: "roger", player2: "bradon", winner: "bradon", score1: 20, score2: 21, won: true},
-	{player1: "van", player2: "bradon", winner: "bradon", score1: 1, score2: 21, won: true},
-	{player1: "min", player2: "bradon", winner: "bradon", score1: 19, score2: 21, won: true},
-	{player1: "ian", player2: "bradon", winner: "ian", score1: 20, score2: 19, won: false},
+	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Brandon"}, scores: {playerA: 9, playerB: 10}, startedAt: "2021-09-01T12:28:01Z", finishedAt: "2021-09-01T12:30:38Z"},
+	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Evan"}, scores: {playerA: 10, playerB: 8}, startedAt: "2021-09-01T12:31:08Z", finishedAt: "2021-09-01T12:35:40Z"},
+	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Kian"}, scores: {playerA: 10, playerB: 9}, startedAt: "2021-09-01T12:38:48Z", finishedAt: "2021-09-01T12:40:51Z"},
 ];
 
 const variants = {
@@ -25,16 +20,29 @@ const variants = {
 	}),
 };
 
-const MatchHistory = ({ setTabsLoaded }) => {
-	const [matchArray, setMatchArray] = useState(null);
+const getDuration = (startedAt, finishedAt) => {
+	const startDate = new Date(startedAt);
+	const endDate = new Date(finishedAt);
 
-	// simulate a fetch request
-	useEffect(() => {
-		setTimeout(() => {
-			setTabsLoaded(true);
-			setMatchArray(matchArrayTest);
-		}, 2000); // 2 seconds
-	}, [setTabsLoaded]); // 2 seconds
+	const durationMs = endDate - startDate;
+	const durationSeconds = Math.floor((durationMs % 60000) / 1000);
+	const durationMinutes = Math.floor(durationMs / 60000);
+
+	return `${durationMinutes}m ${durationSeconds}s`;
+};
+
+const getDate = (timestamp) => {
+	const date = new Date(timestamp);
+
+	const year = date.getFullYear();
+	const month = String(date.getMonth() + 1).padStart(2, '0');
+	const day = String(date.getDate()).padStart(2, '0');
+
+	return `${year}/${month}/${day}`;
+}
+
+const MatchHistory = () => {
+	const matchArray = matchArrayTest;
 
 	if (!matchArray) {
 		console.log('MathHistory: matchArray is null');
@@ -42,42 +50,44 @@ const MatchHistory = ({ setTabsLoaded }) => {
 	}
 
 	return (
-		<div>
+		<>
 			{
 				matchArray.length === 0 ? (
 					<p>No matches played yet</p>
 				) : (
 					<AnimatePresence>
-						{matchArray.map((match, index) => (
-								<MatchCardContainer
-									key={index}
-									$won={match.won}
-									initial="hidden"
-									animate="visible"
-									custom={index}
-									variants={variants}
-								>
-									<MatchCard>
-										<tbody>
-											<tr>
-												<td>
-													<h3>{match.player1} vs {match.player2}</h3>
-												</td>
-												<td style={{textAlign: 'center'}}>
-													<h3 style={{fontWeight: 'bold'}}>{match.won ? 'Victory' : 'Defeat'}</h3>
-												</td>
-												<td>
-													<h1>{match.score1} - {match.score2}</h1>
-												</td>
-											</tr>
-										</tbody>
-									</MatchCard>
-								</MatchCardContainer>
-						))}
+						<MatchCardTable>
+							<thead>
+								<tr>
+									<th>Opponent</th>
+									<th>Duration</th>
+									<th>Score</th>
+									<th>Result</th>
+									<th>Date</th>
+								</tr>
+							</thead>
+							<tbody>
+								{matchArray.map((match, index) => (
+									<motion.tr
+										key={index}
+										initial="hidden"
+										animate="visible"
+										custom={index}
+										variants={variants}
+									>
+										<td>{match.playerB.displayName}</td>
+										<td>{getDuration(match.startedAt, match.finishedAt)}</td>
+										<td>{match.scores.playerA} - {match.scores.playerB}</td>
+										<td>{match.scores.playerA > match.scores.playerB ? "Victory" : "Defeat"}</td>
+										<td>{getDate(match.finishedAt)}</td>
+									</motion.tr>
+								))}
+							</tbody>
+						</MatchCardTable>
 					</AnimatePresence>
 				)
 			}
-		</div>
+		</>
 	);
 };
 

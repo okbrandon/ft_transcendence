@@ -1,13 +1,12 @@
 import styled from "styled-components";
 import Image from 'react-bootstrap/Image';
 import Tabs from 'react-bootstrap/Tabs';
-import { motion } from 'framer-motion';
 
 export const ProfileContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	margin: 0 auto;
+	margin: 150px auto 0 auto;
 	width: 1000px;
 	padding: 20px;
 	min-height: 100vh;
@@ -15,8 +14,9 @@ export const ProfileContainer = styled.div`
 
 export const UserProfileContainer = styled.div`
 	width: 100%;
-	margin: 20px;
+	margin-bottom: 50px;
 	display: flex;
+	flex-direction: column;
 	align-items: center;
 `;
 
@@ -25,7 +25,7 @@ export const ProfileImageContainer = styled.div`
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	padding: 20px;
+	margin-bottom: 20px;
 
 	& h2 {
 		font-size: 2rem;
@@ -44,7 +44,7 @@ export const ProfileImageContainer = styled.div`
 			bottom: 0;
 			width: 100%;
 			height: 2px;
-			background-image: linear-gradient(to right, #b865ff 45%, #b865ff4D 55%);
+			background-image: linear-gradient(to right, #ffffff 45%, #ffffff4D 55%);
 			background-repeat: no-repeat;
 			background-size: 220% 100%;
 			background-position: 100% 50%;
@@ -58,7 +58,7 @@ export const ProfileImage = styled(Image)`
 	height: 190px;
 	object-fit: cover;
 	margin-bottom: 10px;
-	border: 3px solid #b865ff;
+	border: 3px solid #fff;
 `;
 
 export const UserInfoContainer = styled.div`
@@ -68,10 +68,26 @@ export const UserInfoContainer = styled.div`
 	position: relative;
 	width: 600px;
 	height: 175px;
-	margin-left: 30px;
-	padding: 0;
 	background-repeat: no-repeat;
 	background: radial-gradient(circle at center, #2d2d2d, transparent);
+`;
+
+export const UserInfoItem = styled.div`
+	display: flex;
+	min-width: 180px;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	& #title {
+		font-size: 25px;
+		font-weight: 900;
+	}
+
+	& h2 {
+		font-size: 28px;
+		padding: 10px 0;
+	}
 `;
 
 export const TabsContainer = styled.div`
@@ -81,21 +97,50 @@ export const TabsContainer = styled.div`
 export const ProfileTabs = styled(Tabs)`
 	--bs-nav-link-color: #fff;
 	--bs-nav-link-hover-color: #fff;
+
+	& .nav-link {
+		font-size: 20px;
+	}
 `;
 
-export const MatchCardContainer = styled(motion.div)`
-	padding: 10px;
-	margin: 10px;
-	border-radius: 20px;
-	background: ${({ $won }) => $won ? 'linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(36,210,0,1) 100%)' : 'linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(255,0,0,1) 100%)'};
-`;
-
-export const MatchCard = styled.table`
+export const MatchCardTable = styled.table`
+	margin-top: 30px;
 	width: 100%;
+	border-collapse: collapse;
+	text-align: center;
+
+	& thead {
+		background: #0f0f0f;
+		font-size: 18px;
+	}
+
+	& th {
+		padding: 30px;
+	}
 
 	& td {
-		width: calc(100% / 3);
-		text-align: center;
-		vertical-align: middle;
+		padding: 16px;
+		font-size: 18px;
 	}
+
+	& tbody > tr:nth-child(even) {
+		background: linear-gradient(90deg, rgba(0,0,0,0.6) 0%, rgba(201,201,201,0.6) 100%);
+	}
+
+	& tbody > tr:nth-child(odd) {
+		background: linear-gradient(90deg, rgba(201,201,201,0.6) 0%, rgba(0,0,0,0.6) 100%);
+	}
+`;
+
+export const ChartContainer = styled.div`
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 600px;
+`;
+
+export const DonutChartContainer = styled.div`
+	width: 500px;
+	height: 500px;
 `;

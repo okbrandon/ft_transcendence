@@ -9,11 +9,11 @@ import { isValidToken } from '../api/api';
 import Root from '../components/Root';
 import Login from '../components/Authentication/Login';
 import SignUp from '../components/Authentication/SignUp';
-import Profile from '../components/Profile/Profile';
 import Game from '../components/Game/Game';
 import Home from '../components/Home/Home';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import { ProfileParent } from '../components/Profile/Profile';
 
 const PrivateRoutes = () => {
 	const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
@@ -32,7 +32,7 @@ const Router = createBrowserRouter(createRoutesFromElements(
 			<Route path="login" element={ <Login/> }/>
 			<Route path="signup" element={ <SignUp/> }/>
 			<Route element={ <PrivateRoutes/> }>
-				<Route path="profile" element={ <Profile/> }/>
+				<Route path="profile" element={ <ProfileParent/> }/>
 			</Route>
 		</Route>
 		<Route element={ <PrivateRoutes/>}>

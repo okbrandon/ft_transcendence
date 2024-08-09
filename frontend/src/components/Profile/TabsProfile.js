@@ -2,6 +2,7 @@ import React from 'react';
 import Tab from 'react-bootstrap/Tabs';
 import MatchHistory from './MatchHistory';
 import { TabsContainer, ProfileTabs } from '../../styles/Profile.styled';
+import Stats from './Stats';
 
 const TabsProfile = ({ setTabsLoaded }) => {
 	return (
@@ -11,7 +12,7 @@ const TabsProfile = ({ setTabsLoaded }) => {
 					<MatchHistory setTabsLoaded={setTabsLoaded}/>
 				</Tab>
 				<Tab eventKey="stats" title="Stats">
-					<p>Tapas</p>
+					<Stats/>
 				</Tab>
 			</ProfileTabs>
 		</TabsContainer>
