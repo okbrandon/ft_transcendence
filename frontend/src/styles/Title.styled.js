@@ -4,8 +4,9 @@ import { Link } from 'react-router-dom';
 export const Title = styled.h1`
 	position: relative;
 	font-family: 'Inter', sans-serif;
-	height: 85px;
-	font-size: 60px;
+	height: 62px;
+	font-size: 50px;
+	font-weight: 400;
 	text-align: center;
 	margin: 0;
 	padding: 0;
@@ -40,6 +41,7 @@ export const TitleLink = styled(Link)`
 	font-family: 'Inter', sans-serif;
 	height: 85px;
 	font-size: 60px;
+	font-weight: 400;
 	text-align: center;
 	margin: 0;
 	padding: 0;
