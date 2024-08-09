@@ -27,7 +27,7 @@ const BannerPaddle = styled.div`
 	position: absolute;
 	width: 70px;
 	height: 350px;
-	bottom: -50vh;
+	bottom: -40vh;
 	background-color: white;
 	border-radius: 100px;
 `;
@@ -35,7 +35,7 @@ const BannerPaddle = styled.div`
 const getRotationAnimation = (scale, rotation) => keyframes`
 	100% {
 		transform: scale(${scale}) rotate(${rotation}deg);
-		bottom: 150vh;
+		bottom: 90vh;
 	}
 `;
 
