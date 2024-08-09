@@ -41,7 +41,6 @@ const getRotationAnimation = (scale, rotation) => keyframes`
 
 const StyledBannerPaddle = styled(BannerPaddle)`
 	left: ${props => props.$left}%;
-	z-index: ${props => props.$i + 7};
 	filter: blur(${props => props.$blurPx}px);
 	transform: scale(${props => 0.3 * props.$i - 0.6});
 	animation: ${props => getRotationAnimation(0.3 * props.$i - 0.6, props.$dir)} ${props => props.$animationDuration}s linear infinite;
@@ -50,26 +49,19 @@ const StyledBannerPaddle = styled(BannerPaddle)`
 
 export const BannerPaddles = () => {
 	const paddles = [];
-	const leftValues = Array.from({length: totalPaddles}, (_, i) => 80 / totalPaddles * (i + 1));
 
-	// Fisher-Yates (Knuth) Shuffle algorithm for leftValues
-	for (let i = leftValues.length - 1; i > 0; i--) {
-		const j = Math.floor(Math.random() * (i + 1));
-		[leftValues[i], leftValues[j]] = [leftValues[j], leftValues[i]];
-	}
-
-	for (let i = 1; i <= totalPaddles; i++) {
-		const left = leftValues[i - 1];
+	for (let i = 1; i <= totalPaddles + 1; i++) {
+		const left = i % 2 ? Math.random() * 45 : 55 + Math.random() * 30;
 		const animationDuration = 6 + Math.random() * 15;
-		const animationDelay = Math.random() * 5 - 5;
-		const blurPx = i * 5;
+		const animationDelay = Math.random() * 6;
+		const blurPx = i * 2;
 
 		const paddle = (
 			<StyledBannerPaddle
 				key={i}
 				$left={left}
 				$i={i}
-				$dir={i % 2 ? 360 : -360}
+				$dir={Math.floor(Math.random() * 2) ? 360 : -360}
 				$blurPx={blurPx}
 				$animationDuration={animationDuration}
 				$animationDelay={animationDelay}

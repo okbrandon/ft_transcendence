@@ -12,7 +12,6 @@ import { AuthContext } from '../../context/AuthContext';
 const NavBar = () => {
 	const { isLoggedIn } = useContext(AuthContext);
 
-	// While in the login page, it keeps refreshing the following component
 	return (
 		<NavContainer>
 			{
