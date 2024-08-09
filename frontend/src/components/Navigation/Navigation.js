@@ -21,9 +21,10 @@ const NavBar = () => {
 						<NavItemsContainer $gap='100px'>
 							<TitleLink to="/">PONG</TitleLink>
 							<NavItemsContainer $gap='100px'>
-								<StyledNavLink>Friends</StyledNavLink>
-								<StyledNavLink to="/">Leaderboard</StyledNavLink>
-								<StyledNavLink to="/">Store</StyledNavLink>
+								<StyledNavLink>FRIENDS</StyledNavLink>
+								<StyledNavLink to="/">LEADERBOARD</StyledNavLink>
+								<StyledNavLink to="/">STORE</StyledNavLink>
+								<StyledNavLink to="solo-vs-ai">PLAY</StyledNavLink>
 							</NavItemsContainer>
 						</NavItemsContainer>
 						<ProfileButton/>
@@ -31,7 +32,7 @@ const NavBar = () => {
 				) : (
 					<>
 						<TitleLink to="/">PONG</TitleLink>
-						<ConnectButton to="/login">Connect</ConnectButton>
+						<ConnectButton to="/login">CONNECT</ConnectButton>
 					</>
 				)
 			}

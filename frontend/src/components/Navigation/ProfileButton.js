@@ -16,7 +16,7 @@ const ProfileButton = () => {
 	};
 
 	return (
-		<ProfileButtonContainer id="dropdown-basic-button" title="Profile">
+		<ProfileButtonContainer id="dropdown-basic-button" title="PROFILE">
 			<Dropdown.Item onClick={() => { navigate('/profile') }}>Profile</Dropdown.Item>
 			<Dropdown.Item>Edit</Dropdown.Item>
 			<Dropdown.Divider/>
