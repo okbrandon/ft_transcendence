@@ -100,7 +100,7 @@ export const ConnectButton = styled(NavLink)`
 	&:hover::before {
 		transform: scaleX(1);
 	}
-	
+
 	&::before {
 		content: "";
 		position: absolute;
