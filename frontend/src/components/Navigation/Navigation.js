@@ -1,12 +1,12 @@
 import React, { useContext } from 'react';
-import ProfileButton from './ProfileButton';
+import ProfileDropdown from './ProfileDropdown';
 import { TitleLink } from '../../styles/Title.styled';
 import {
 	NavContainer,
 	NavItemsContainer,
 	StyledNavLink,
-	ConnectButton
 } from '../../styles/Navigation.styled';
+import ConnectButton from '../../styles/shared/button/ConnectButton.styled';
 import { AuthContext } from '../../context/AuthContext';
 
 const NavBar = () => {
@@ -26,7 +26,7 @@ const NavBar = () => {
 								<StyledNavLink to="solo-vs-ai">PLAY</StyledNavLink>
 							</NavItemsContainer>
 						</NavItemsContainer>
-						<ProfileButton/>
+						<ProfileDropdown/>
 					</>
 				) : (
 					<>

@@ -38,7 +38,7 @@ export const PresentationDiv = styled.div`
 	letter-spacing: 1px;
 
 	& > h1 {
-		color: rgb(200,200,200);
+		color: #fff;
 		font-family: 'VT323';
 		font-size: 90px;
 		margin-bottom: 50px;

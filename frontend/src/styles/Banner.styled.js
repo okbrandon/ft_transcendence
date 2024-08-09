@@ -9,13 +9,12 @@ export const BannerSection = styled.section`
 	width: 100%;
 	z-index: 100;
 	min-height: 90vh;
+	background: linear-gradient(80deg, rgba(150, 93, 233, 0.15) 10%, rgba(99, 88, 238, 0.15) 95%);
 	border-bottom: 5px solid #fff;
-	${({ height }) => height && `height: ${height};`}
 
 	& > h1 {
-		color: rgb(200,200,200);
 		font-family: 'Orbitron', serif;
-		font-size: 70px;
+		font-size: 90px;
 		z-index: 100;
 		margin-bottom: 30px;
 	}
@@ -28,7 +27,7 @@ const BannerPaddle = styled.div`
 	width: 70px;
 	height: 350px;
 	bottom: -40vh;
-	background-color: white;
+	background: linear-gradient(90deg, rgba(150, 150, 150, 0.7) 10%, rgba(255, 255, 255, 0.7) 95%);
 	border-radius: 100px;
 `;
 

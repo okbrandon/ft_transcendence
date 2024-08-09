@@ -9,7 +9,6 @@ const GlobalStyles = createGlobalStyle`
 	}
 
 	html, body {
-		display: relative;
 		background-color: #000;
 		color: white;
 		height: 100vh;
