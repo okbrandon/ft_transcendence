@@ -21,7 +21,7 @@ const Stats = () => {
 		stroke: { width: 0 },
 		legend: { show: false },
 		fill: { colors: ['#8BD742', '#F74D52'] },
-		tooltip: { enabled: false },
+		tooltip: { enabled: true },
 		plotOptions: {
 			pie: {
 				expandOnClick: false,

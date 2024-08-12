@@ -13,16 +13,17 @@ const fadeIn = keyframes`
 
 const ProfileDropdownButton = styled(Dropdown)`
 	& .btn-primary {
+		color: rgba(255,255,255,0.8);
 		border: none;
 		background: none;
 		text-align: center;
-		font-size: 20px;
+		font-size: 16px;
 		font-weight: 500;
 		z-index: 500;
 		text-decoration: none;
 
 		&:hover {
-			color: rgba(150,93,233,1);
+			color: rgba(255,255,255,1);
 		}
 			
 		&:active {
@@ -38,7 +39,7 @@ const ProfileDropdownButton = styled(Dropdown)`
 			rgba(99,88,238,1) 95%
 		);
 		--bs-dropdown-link-active-bg: #ececec;
-		font-size: 18px;
+		font-size: 16px;
 		font-weight: 550;
 		animation: ${fadeIn} 0.5s ease;
 	}

@@ -8,6 +8,7 @@ import {
 } from '../../styles/Navigation.styled';
 import ConnectButton from '../../styles/shared/button/ConnectButton.styled';
 import { AuthContext } from '../../context/AuthContext';
+import SearchBar from './SearchBar';
 
 const NavBar = () => {
 	const { isLoggedIn } = useContext(AuthContext);
@@ -26,7 +27,10 @@ const NavBar = () => {
 								<StyledNavLink to="solo-vs-ai">PLAY</StyledNavLink>
 							</NavItemsContainer>
 						</NavItemsContainer>
-						<ProfileDropdown/>
+						<NavItemsContainer $gap='50px'>
+							<SearchBar/>
+							<ProfileDropdown/>
+						</NavItemsContainer>
 					</>
 				) : (
 					<>

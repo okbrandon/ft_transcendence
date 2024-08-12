@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import GetUser from '../api/user';
+import { GetUser } from '../api/user';
 import { useNavigate } from 'react-router-dom';
 
 export const ProfileContext = createContext();

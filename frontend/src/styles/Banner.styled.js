@@ -14,7 +14,7 @@ export const BannerSection = styled.section`
 
 	& > h1 {
 		font-family: 'Orbitron', serif;
-		font-size: 90px;
+		font-size: 70px;
 		z-index: 100;
 		margin-bottom: 30px;
 	}
@@ -26,7 +26,7 @@ const BannerPaddle = styled.div`
 	position: absolute;
 	width: 70px;
 	height: 350px;
-	bottom: -40vh;
+	bottom: -55vh;
 	background: linear-gradient(90deg, rgba(150, 150, 150, 0.7) 10%, rgba(255, 255, 255, 0.7) 95%);
 	border-radius: 100px;
 `;

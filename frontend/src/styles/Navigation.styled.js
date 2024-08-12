@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
+import Form from "react-bootstrap/Form";
 
 export const NavContainer = styled.nav`
 	display: flex;
@@ -8,12 +9,12 @@ export const NavContainer = styled.nav`
 	justify-content: space-between;
 	align-items: center;
 	position: fixed;
-	padding-left: 6rem;
+	padding-left: 2rem;
 	padding-right: 6rem;
 	top: 0;
 	left: 0;
 	width: 100vw;
-	height: 150px;
+	height: 80px;
 	z-index: 10000;
 `;
 
@@ -25,14 +26,69 @@ export const NavItemsContainer = styled.div`
 `;
 
 export const StyledNavLink = styled(NavLink)`
-	color: #fff;
+	color: rgba(255,255,255,0.8);
 	text-align: center;
-	font-size: 20px;
+	font-size: 16px;
 	font-weight: 500;
 	z-index: 1000;
 	text-decoration: none;
 
-	&:hover {
-		color: rgba(150,93,233,1);
+	&:hover::after {
+		width: 100%;
+		background-color: rgba(255,255,255,1);
 	}
+
+	&::after {
+		content: '';
+		text-align: center;
+		display: block;
+		height: 2px;
+		width: 0;
+		background: transparent;
+		transition: width 0.5s ease, background-color 0.5s ease;
+	}
+
+	&:hover {
+		color: rgba(255,255,255,1);
+	}
+`;
+
+export const SearchBarContainer = styled(Form)`
+	display: flex;
+	position: relative;
+	align-items: center;
+	width: 210px;
+	border: 1px solid rgba(255,255,255,0.5);
+
+	& i {
+		margin-right: 10px;
+		font-size: 19px;
+		cursor: pointer;
+	}
+
+	& .form-control {
+		color: white;
+		border: none;
+		border-radius: 0;
+		background-color: transparent;
+		border-bottom: 1px solid rgba(255,255,255,0.5);
+
+		&::placeholder {
+			color: rgba(255,255,255,0.3);
+		}
+
+		&:focus {
+			outline: none;
+			box-shadow: none;
+		}
+	}
+`;
+
+export const ProfileListContainer = styled.div`
+	position: absolute;
+	border: 1px solid rgba(255,255,255,0.5);
+	bottom: -50px;
+	width: 100%;
+	background-color: rgba(0,0,0,0.9);
+	z-index: 1000;
 `;
