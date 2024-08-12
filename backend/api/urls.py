@@ -23,6 +23,7 @@ urlpatterns = [
     path('users/@me/relationships', UserRelationshipsMe.as_view()), # GET, PUT
     path('users/@me/harvest', UserHarvestMe.as_view()), # POST, GET, DELETE
     path('users/@me/delete', UserDeleteMe.as_view()), # POST, GET, DELETE
+    path('users/search', UserSearch.as_view()), # GET
 
     path('auth/42/login', OAuth42Login.as_view(), name='oauth42_login'),
     path('auth/42/callback', OAuth42Callback.as_view(), name='oauth42_callback'),

@@ -204,3 +204,13 @@ class UserMatchesMe(APIView):
         matches = [match for match in matches if match.playerA['id'] == me.userID or match.playerB['id'] == me.userID]
         serializer = MatchSerializer(matches, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class UserSearch(APIView):
+    def get(self, request, *args, **kwargs):
+        content = request.query_params.get('content', None)
+        if not content:
+            return Response({"error": "No search content provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+        users = User.objects.filter(models.Q(displayName__icontains=content) | models.Q(username__icontains=content))
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
