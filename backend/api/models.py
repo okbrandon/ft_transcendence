@@ -14,6 +14,24 @@ class Match(models.Model):
     def __str__(self):
         return self.matchID
 
+class StoreItem(models.Model):
+    itemID = models.CharField(max_length=48, unique=True)
+    name = models.CharField(max_length=100)
+    description = models.TextField(null=True, blank=True)
+    price = models.IntegerField()
+
+    def __str__(self):
+        return self.itemID
+
+class Purchase(models.Model):
+    purchaseID = models.CharField(max_length=48, unique=True)
+    userID = models.CharField(max_length=48)
+    itemID = models.ForeignKey(StoreItem, on_delete=models.CASCADE)
+    purchaseDate = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.purchaseID
+
 class User(AbstractUser):                      
     userID = models.CharField(max_length=48, unique=True)
     username = models.CharField(max_length = 16, unique=True)

@@ -9,6 +9,7 @@ from .views.users import *
 from .views.tournaments import *
 from .views.internal import *
 from .views.oauth import *
+from .views.store import *
 
 urlpatterns = [
     path('auth/register', AuthRegister.as_view()),
@@ -24,6 +25,10 @@ urlpatterns = [
     path('users/@me/harvest', UserHarvestMe.as_view()), # POST, GET, DELETE
     path('users/@me/delete', UserDeleteMe.as_view()), # POST, GET, DELETE
     path('users/search', UserSearch.as_view()), # GET
+
+    path('store/items', StoreItemsList.as_view()), # GET
+    path('users/@me/purchases', UserPurchasesList.as_view()), # GET
+    path('store/<itemID>/purchase', MakePurchase.as_view()), # POST
 
     path('auth/42/login', OAuth42Login.as_view(), name='oauth42_login'),
     path('auth/42/callback', OAuth42Callback.as_view(), name='oauth42_callback'),

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Match, Message, Token, Relationship, UserSettings
+from .models import User, Match, Message, Token, Relationship, UserSettings, StoreItem, Purchase
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,6 +17,16 @@ class RelationshipSerializer(serializers.ModelSerializer):
     class Meta:
         model = Relationship
         fields = ["relationshipID", "userA", "userB", "status", "flags"]
+
+class StoreItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StoreItem
+        fields = ["itemID", "name", "description", "price"]
+
+class PurchaseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Purchase
+        fields = ["purchaseID", "userID", "itemID", "purchaseDate"]
 
 # Users can only update their display name, email, language, and avatar
 class PartialUserUpdateSerializer(serializers.ModelSerializer):
