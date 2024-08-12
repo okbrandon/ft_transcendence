@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.hashers import make_password
+from django.db import models
 
 from ..log import log_to_discord
 from ..models import User, Match, Relationship, UserSettings

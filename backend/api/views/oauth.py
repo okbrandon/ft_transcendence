@@ -7,7 +7,8 @@ from django.contrib.auth import login
 from ..models import User
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import permission_classes
-from rest_framework_simplejwt.tokens import RefreshToken  # Import RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework import status
 from ..util import generate_id
 
 @permission_classes([AllowAny])
@@ -29,6 +30,7 @@ class OAuth42Callback(APIView):
         })
 
         if token_response.status_code != 200:
+            print("Error obtaining access token from 42 API, did the secret expire?")
             return JsonResponse({"error": "Failed to obtain access token"}, status=status.HTTP_400_BAD_REQUEST)
 
         token_data = token_response.json()
