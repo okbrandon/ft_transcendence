@@ -4,7 +4,7 @@
 - [] add colors
 - [] 42 auth
 - [] authentication pages
-- [] profile page background
+- [x] profile page background
 
 ## priority
 - [x] profile

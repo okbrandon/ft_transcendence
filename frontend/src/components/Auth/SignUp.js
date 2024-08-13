@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import { ApiSignup } from '../../api/auth';
-import { AuthenticationContainer, FormContainer } from '../../styles/Authentication.styled';
+import { AuthenticationContainer, FormContainer } from '../../styles/Auth/Authentication.styled';
 
 const SignUp = () => {
 	const navigate = useNavigate();

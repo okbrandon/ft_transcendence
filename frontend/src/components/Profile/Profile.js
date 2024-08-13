@@ -1,11 +1,14 @@
-import React, { useContext } from 'react';
-import { ProfileContainer } from '../../styles/Profile.styled';
-import UserProfile from './UserProfile';
-import TabsProfile from './TabsProfile';
+import React, { useContext, useEffect } from 'react';
+import { ProfileContainer, ProfileBanner, ProfileContentContainer } from '../../styles/Profile/Profile.styled';
+import User from './User';
 import Loader from '../../styles/shared/Loader.styled';
 import ProfileProvider, { ProfileContext } from '../../context/ProfileContext';
 
 export const ProfileParent = () => {
+	useEffect(() => {
+		window.scrollTo(0, 0);
+	}, []);
+
 	return (
 		<ProfileProvider>
 			<Profile/>
@@ -21,8 +24,10 @@ const Profile = () => {
 			{
 				loading ? <Loader/> : (
 					<>
-						<UserProfile/>
-						<TabsProfile/>
+						<ProfileBanner/>
+						<ProfileContentContainer>
+							<User/>
+						</ProfileContentContainer>
 					</>
 				)
 			}

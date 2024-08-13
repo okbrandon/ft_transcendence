@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import FormControl from 'react-bootstrap/FormControl';
-import { SearchBarContainer } from '../../styles/Navigation.styled';
+import { SearchBarContainer } from '../../styles/Home/Navigation.styled';
 import SearchList from './SearchList';
 import { GetUsers } from '../../api/user';
 
@@ -10,7 +10,7 @@ const SearchBar = () => {
 
 	const handleInput = (event) => {
 		setInput(event.target.value);
-		setResults(GetUsers());
+		// setResults(GetUsers());
 		console.log(results);
 	}
 
@@ -27,7 +27,7 @@ const SearchBar = () => {
 				value={input}
 				onChange={handleInput}
 			/>
-			{input && <SearchList input={input}/>}
+			{input && <SearchList input={input} results={results}/>}
 		</SearchBarContainer>
 	);
 };

@@ -1,11 +1,5 @@
 import React, { useContext } from 'react';
-import {
-	UserProfileContainer,
-	ProfileImageContainer,
-	ProfileImage,
-	UserInfoContainer,
-	UserInfoItem,
-} from '../../styles/Profile.styled';
+import { UserInfoItem, UserInfoContainer } from "../../styles/Profile/User.styled";
 import { ProfileContext } from '../../context/ProfileContext';
 
 const matchArrayTest = [
@@ -28,36 +22,30 @@ const calculateWinDefeatRatio = (matchArray) => {
 	return (wins / matchArray.length).toFixed(2);
 };
 
-const UserProfile = () => {
+const UserInfo = () => {
 	const { user } = useContext(ProfileContext);
 
 	if (!user) {
-		console.log('UserProfile: user is null');
+		console.log('UserInfo: user is null');
 		return null;
 	}
 
 	return (
-		<UserProfileContainer>
-			<ProfileImageContainer>
-				<ProfileImage src='./images/prune.jpg' alt='profile picture' roundedCircle/>
-				<h2>{user ? user.displayName : ''}</h2>
-			</ProfileImageContainer>
-			<UserInfoContainer>
-				<UserInfoItem>
-					<h2 style={{textAlign: 'center'}}>-</h2>
-					<h2 id="title">RANKING</h2>
-				</UserInfoItem>
-				<UserInfoItem>
-					<h2 style={{textAlign: 'center'}}>{calculateTotalWins(matchArrayTest)}</h2>
-					<h2 id="title">WINS</h2>
-				</UserInfoItem>
-				<UserInfoItem>
-					<h2 style={{textAlign: 'center'}}>{calculateWinDefeatRatio(matchArrayTest)}</h2>
-					<h2 id="title">RATIO</h2>
-				</UserInfoItem>
-			</UserInfoContainer>
-		</UserProfileContainer>
+		<UserInfoContainer>
+			<UserInfoItem>
+				<h2 style={{textAlign: 'center'}}>-</h2>
+				<h2 id="title">RANKING</h2>
+			</UserInfoItem>
+			<UserInfoItem>
+				<h2 style={{textAlign: 'center'}}>{calculateTotalWins(matchArrayTest)}</h2>
+				<h2 id="title">WINS</h2>
+			</UserInfoItem>
+			<UserInfoItem>
+				<h2 style={{textAlign: 'center'}}>{calculateWinDefeatRatio(matchArrayTest)}</h2>
+				<h2 id="title">RATIO</h2>
+			</UserInfoItem>
+		</UserInfoContainer>
 	);
 };
 
-export default UserProfile;
+export default UserInfo;

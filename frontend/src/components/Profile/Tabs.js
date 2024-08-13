@@ -1,10 +1,10 @@
 import React from 'react';
 import Tab from 'react-bootstrap/Tabs';
 import MatchHistory from './MatchHistory';
-import { TabsContainer, ProfileTabs } from '../../styles/Profile.styled';
+import { TabsContainer, ProfileTabs } from '../../styles/Profile/Profile.styled';
 import Stats from './Stats';
 
-const TabsProfile = ({ setTabsLoaded }) => {
+const Tabs = ({ setTabsLoaded }) => {
 	return (
 		<TabsContainer>
 			<ProfileTabs defaultActiveKey="history" className="mb-3">
@@ -19,4 +19,4 @@ const TabsProfile = ({ setTabsLoaded }) => {
 	);
 };
 
-export default TabsProfile;
+export default Tabs;

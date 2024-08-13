@@ -9,11 +9,12 @@ export const BannerSection = styled.section`
 	width: 100%;
 	z-index: 100;
 	min-height: 90vh;
-	background: linear-gradient(80deg, rgba(150, 93, 233, 0.15) 10%, rgba(99, 88, 238, 0.15) 95%);
+	background: #0f0d23;
 	border-bottom: 5px solid #fff;
 
 	& > h1 {
 		font-family: 'Orbitron', serif;
+		color: #fff;
 		font-size: 70px;
 		z-index: 100;
 		margin-bottom: 30px;

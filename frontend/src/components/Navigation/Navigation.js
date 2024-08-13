@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
 import ProfileDropdown from './ProfileDropdown';
-import { TitleLink } from '../../styles/Title.styled';
+import { TitleLink } from '../../styles/shared/Title.styled';
 import {
 	NavContainer,
 	NavItemsContainer,
 	StyledNavLink,
-} from '../../styles/Navigation.styled';
+} from '../../styles/Home/Navigation.styled';
 import ConnectButton from '../../styles/shared/button/ConnectButton.styled';
 import { AuthContext } from '../../context/AuthContext';
 import SearchBar from './SearchBar';

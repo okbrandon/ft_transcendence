@@ -58,7 +58,6 @@ export const SearchBarContainer = styled(Form)`
 	position: relative;
 	align-items: center;
 	width: 210px;
-	border: 1px solid rgba(255,255,255,0.5);
 
 	& i {
 		margin-right: 10px;
@@ -86,7 +85,6 @@ export const SearchBarContainer = styled(Form)`
 
 export const ProfileListContainer = styled.div`
 	position: absolute;
-	border: 1px solid rgba(255,255,255,0.5);
 	bottom: -50px;
 	width: 100%;
 	background-color: rgba(0,0,0,0.9);

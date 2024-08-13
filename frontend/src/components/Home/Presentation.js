@@ -4,7 +4,7 @@ import {
 	PresentationDiv,
 	PongPaddleBackground,
 	PongBallBackground,
-} from "../../styles/Presentation.styled";
+} from "../../styles/Home/Presentation.styled";
 
 const slideInLeft = {
 	hidden: { left: '-300px', opacity: 0 },
@@ -34,7 +34,7 @@ const Presentation = () => {
 	}, []);
 
 	return (
-		<PresentationSection height='700px'>
+		<PresentationSection>
 			<PongPaddleBackground
 				initial="hidden"
 				animate={visible ? "visible" : "hidden"}

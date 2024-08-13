@@ -1,6 +1,6 @@
 import React from "react";
 import ReactApexChart from "react-apexcharts";
-import { ChartContainer, DonutChartContainer } from "../../styles/Profile.styled";
+import { ChartContainer, DonutChartContainer } from "../../styles/Profile/Profile.styled";
 
 const matchArrayTest = [
 	{player1: "roger", player2: "bradon", winner: "bradon", score1: 20, score2: 21, won: true},

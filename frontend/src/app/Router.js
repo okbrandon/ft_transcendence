@@ -7,8 +7,8 @@ import {
 } from 'react-router-dom';
 import { isValidToken } from '../api/api';
 import Root from '../components/Root';
-import Login from '../components/Authentication/Login';
-import SignUp from '../components/Authentication/SignUp';
+import Login from '../components/Auth/Login';
+import SignUp from '../components/Auth/SignUp';
 import Game from '../components/Game/Game';
 import Home from '../components/Home/Home';
 import { useContext } from 'react';

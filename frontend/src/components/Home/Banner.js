@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { BannerSection, BannerPaddles } from "../../styles/Banner.styled";
+import { BannerSection, BannerPaddles } from "../../styles/Home/Banner.styled";
 import PongButton from "../../styles/shared/button/PongButton.styled";
 import { motion } from 'framer-motion';
 

@@ -33,15 +33,16 @@ const ProfileDropdownButton = styled(Dropdown)`
 	}
 
 	& .dropdown-menu {
-		background: linear-gradient(
-			80deg,
-			rgba(150,93,233,1) 10%,
-			rgba(99,88,238,1) 95%
-		);
+		background: #0f0d23;
+		border: 1px solid rgba(255,255,255,0.3);
 		--bs-dropdown-link-active-bg: #ececec;
 		font-size: 16px;
 		font-weight: 550;
 		animation: ${fadeIn} 0.5s ease;
+	}
+
+	& .dropdown-divider {
+		border-top: 1px solid rgba(255,255,255,0.3);
 	}
 
 	& .dropdown-item {

@@ -1,6 +1,6 @@
 import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { MatchCardTable } from "../../styles/Profile.styled";
+import { MatchCardTable } from "../../styles/Profile/Profile.styled";
 
 const matchArrayTest = [
 	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Brandon"}, scores: {playerA: 9, playerB: 10}, startedAt: "2021-09-01T12:28:01Z", finishedAt: "2021-09-01T12:30:38Z"},

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import GameContainer, { GameSeparator } from '../../styles/layouts/GameContainer.styled';
-import PongBall from '../../styles/shared/game/PongBall.styled';
-import PongPaddle from '../../styles/shared/game/PongPaddle.styled';
+import GameContainer, { GameSeparator } from '../../styles/Game/GameContainer.styled';
+import PongBall from '../../styles/Game/PongBall.styled';
+import PongPaddle from '../../styles/Game/PongPaddle.styled';
 import BackButton from '../../styles/shared/button/BackButton.styled';
 
 const Game = () => {

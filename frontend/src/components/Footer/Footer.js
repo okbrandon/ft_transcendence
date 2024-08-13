@@ -1,6 +1,6 @@
 import React from "react";
-import { FooterContainer } from "../../styles/Footer.styled";
-import { Title } from "../../styles/Title.styled";
+import { FooterContainer } from "../../styles/Home/Footer.styled";
+import { Title } from "../../styles/shared/Title.styled";
 
 const Footer = () => {
 	return (
