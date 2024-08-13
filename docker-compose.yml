@@ -8,14 +8,14 @@ services:
     networks:
       - transcendance
 
-  # frontend:
-  #   build: ./frontend
-  #   restart: always
-  #   env_file: .env
-  #   ports:
-  #     - 3000:3000
-  #   networks:
-  #     - transcendance
+  frontend:
+    build: ./frontend
+    restart: always
+    env_file: .env
+    ports:
+      - 3000:3000
+    networks:
+      - transcendance
 
   backend:
     build: ./backend

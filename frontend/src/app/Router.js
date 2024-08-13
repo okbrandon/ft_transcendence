@@ -5,6 +5,7 @@ import Authentication from '../components/features/Authentication/Authentication
 import Login from '../components/features/Authentication/Login';
 import SignUp from '../components/features/Authentication/SignUp';
 import Callback from '../components/features/Authentication/Callback';
+import Verify from '../components/features/Authentication/Verify';
 import MainMenu from '../components/features/Menu/MainMenu';
 import PlayMenu from '../components/features/Menu/PlayMenu';
 import Game from '../components/features/Game/Game';
@@ -14,6 +15,7 @@ const Router = createBrowserRouter(createRoutesFromElements(
 		<Route index element={ <Authentication/> }/>
 		<Route path="login" element={ <Login/> }/>
 		<Route path="callback" element={ <Callback /> }/>
+		<Route path="verify" element={ <Verify /> }/>
 		<Route path="signup" element={ <SignUp/> }/>
 		<Route path="home" element={ <RootHome/> }>
 			<Route index element={ <MainMenu/> }/>

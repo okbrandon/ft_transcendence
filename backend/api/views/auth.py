@@ -1,17 +1,24 @@
 import re
+import base64
+import pyotp
 
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import permission_classes
+from rest_framework_simplejwt.tokens import RefreshToken
 
+from django.contrib.auth import login
 from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import make_password
+from django.utils import timezone
 
-from ..models import User
+from ..models import User, VerificationCode
 from ..serializers import UserSerializer
-from ..util import generate_id
+from ..util import generate_id, send_verification_email
+from ..backends import AuthBackend
+
 
 @permission_classes([AllowAny])
 class AuthRegister(APIView):
@@ -34,9 +41,19 @@ class AuthRegister(APIView):
             email=data['email'],
             avatarID='default',
             password=make_password(data['password']),
-            lang=data['lang']
+            lang=data['lang'],
         )
         serializer = UserSerializer(user)
+
+        verification_code = generate_id('code')
+        VerificationCode.objects.create(
+            userID=user.userID,
+            code=verification_code,
+            expires_at=timezone.now() + timezone.timedelta(hours=1)  # Code expires in 1 hour
+        )
+        verification_link = f"http://localhost:3000/verify?code={base64.urlsafe_b64encode(f'{user.userID}.{verification_code}'.encode()).decode()}"
+        send_verification_email([data['email']], verification_link)
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def validate_request_data(self, data):
@@ -67,3 +84,57 @@ class AuthRegister(APIView):
             "password": password,
             "lang": lang
         }
+
+@permission_classes([AllowAny])
+class AuthLogin(APIView):
+    def post(self, request, *args, **kwargs):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        otp = request.data.get('otp', None)
+
+        user = AuthBackend.AuthBackend().authenticate(request, username=username, password=password, otp=otp)
+
+        if user is None:
+            return Response({"error": "Invalid credentials or OTP."}, status=status.HTTP_401_UNAUTHORIZED)
+
+        refresh = RefreshToken.for_user(user)
+        access = str(refresh.access_token)
+
+        return Response({
+            "refresh": str(refresh),
+            "access": access
+        }, status=status.HTTP_200_OK)
+
+class EnableTOTP(APIView):
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        
+        if user.mfaToken:
+            return Response({"error": "TOTP is already enabled."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.mfaToken = pyotp.random_base32()
+        user.save()
+
+        totp = pyotp.TOTP(user.mfaToken)
+        return Response({"message": "TOTP enabled successfully.", "token": user.mfaToken}, status=status.HTTP_200_OK)
+
+class ConfirmTOTP(APIView):
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        otp = request.data.get('otp')
+
+        if not otp:
+            return Response({"error": "OTP is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        totp = pyotp.TOTP(user.mfaToken)
+        if totp.verify(otp):
+            return Response({"message": "OTP confirmed successfully."}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Invalid OTP."}, status=status.HTTP_400_BAD_REQUEST)
+
+class DeleteTOTP(APIView):
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        user.mfaToken = None
+        user.save()
+        return Response({"message": "MFA has been disabled."}, status=status.HTTP_200_OK)

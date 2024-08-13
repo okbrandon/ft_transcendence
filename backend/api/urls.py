@@ -10,11 +10,15 @@ from .views.tournaments import *
 from .views.internal import *
 from .views.oauth import *
 from .views.store import *
+from .views.verification import *
 
 urlpatterns = [
     path('auth/register', AuthRegister.as_view()),
-    path('auth/token', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('auth/login', AuthLogin.as_view()),
     path('auth/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
+    path('auth/totp/enable', EnableTOTP.as_view()),
+    path('auth/totp/confirm', ConfirmTOTP.as_view()),
+    path('auth/totp/delete', DeleteTOTP.as_view()),
 
     path('users/@me/profile', UserProfileMe.as_view()), # GET, PATCH
     path('users/<userID>/profile', UserProfile.as_view()), # GET
@@ -30,12 +34,15 @@ urlpatterns = [
     path('users/@me/purchases', UserPurchasesList.as_view()), # GET
     path('store/<itemID>/purchase', MakePurchase.as_view()), # POST
 
-    path('auth/42/login', OAuth42Login.as_view(), name='oauth42_login'),
-    path('auth/42/callback', OAuth42Callback.as_view(), name='oauth42_callback'),
+    path('auth/42/login', OAuth42Login.as_view()),
+    path('auth/42/callback', OAuth42Callback.as_view()),
+
+    path('verify', VerifyEmail.as_view()),
 
     # path('tournaments/<tournamentID>', TournamentInfo.as_view()), # GET, DELETE, PATCH
     # path('tournaments', TournamentCreate.as_view()), # POST
 
     path('__internal/check_user_exists/<userID>', CheckUserExists.as_view()), # GET
     path('__internal/create_match', CreateMatchHistory.as_view()), # POST
+
 ]

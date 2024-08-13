@@ -37,13 +37,12 @@ class User(AbstractUser):
     username = models.CharField(max_length = 16, unique=True)
     displayName = models.CharField(max_length = 16, null = True)
     email = models.CharField(max_length = 64)
-    mfaToken = models.CharField(max_length = 32, null = True)
+    mfaToken = models.CharField(max_length = 128, null = True)
     lang = models.CharField(max_length = 6)
     avatarID = models.TextField(null=True)  # Store base64 encoded image as text
-    oauthUid = models.CharField(max_length = 64, null = True)
     # passwords should be limited to 72 **bytes** because of a bcrypt limitation
     password = models.CharField(max_length = 128)
-    flags = models.IntegerField(default = 0) # 1 << 0 = AI account
+    flags = models.IntegerField(default = 0) # 1 << 0 = EMAIL_VERIFIED, 1 << 1 = IS_AI
     money = models.IntegerField(default = 0)
 
     # Override the groups and user_permissions to avoid field clashes
@@ -66,6 +65,16 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.userID
+
+class VerificationCode(models.Model):
+    userID = models.CharField(max_length=48)
+    code = models.CharField(max_length=48)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+
+    def __str__(self):
+        return f"VerificationCode(userID={self.userID}, code={self.code})"
+
 
 class UserSettings(models.Model):
     userID = models.CharField(max_length = 48)

@@ -17,3 +17,5 @@ urllib3==2.2.2
 psycopg2-binary
 django-cors-headers
 gunicorn
+resend
+pyotp

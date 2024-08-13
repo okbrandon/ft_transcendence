@@ -1,11 +1,11 @@
 from rest_framework import serializers
-from .models import User, Match, Message, Token, Relationship, UserSettings, StoreItem, Purchase
+from .models import User, Match, Message, Token, Relationship, UserSettings, StoreItem, Purchase, VerificationCode
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["userID", "username", "displayName", "email", "lang", 
-                  "avatarID", "flags", "money"]
+                  "avatarID", "flags", "money", "mfaToken"]
         read_only_fields = ["userID", "username", "lang", "flags", "money"]
 
 class MatchSerializer(serializers.ModelSerializer):
@@ -22,6 +22,13 @@ class StoreItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = StoreItem
         fields = ["itemID", "name", "description", "price"]
+
+class VerificationCodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VerificationCode
+        fields = ["userID", "code", "created_at", "expires_at"]
+        read_only_fields = ["created_at", "expires_at"]
+
 
 class PurchaseSerializer(serializers.ModelSerializer):
     class Meta:
