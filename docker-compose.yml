@@ -56,12 +56,14 @@ services:
   #   networks:
   #     - transcendance
 
-  # harvester:
-  #   build: ./harvester
-  #   restart: always
-  #   env_file: .env
-  #   networks:
-  #     - transcendance
+  harvester:
+    build: ./harvester
+    restart: always
+    env_file: .env
+    volumes:
+      - ./data/exports:/exports
+    networks:
+      - transcendance
 
 networks:
   transcendance:

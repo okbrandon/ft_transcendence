@@ -5,8 +5,8 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["userID", "username", "displayName", "email", "lang", 
-                  "avatarID", "flags", "money", "mfaToken"]
-        read_only_fields = ["userID", "username", "lang", "flags", "money"]
+                  "avatarID", "flags", "money", "mfaToken", "phone_number", "password"]
+        read_only_fields = ["userID", "username", "lang", "flags", "money", "mfaToken"]
 
 class MatchSerializer(serializers.ModelSerializer):
     class Meta:

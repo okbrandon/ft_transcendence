@@ -1,3 +1,5 @@
+import pyotp
+
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -7,6 +9,7 @@ from django.db import models
 from ..log import log_to_discord
 from ..models import User, Match, Relationship, UserSettings
 from ..serializers import UserSerializer, UserSettingsSerializer, MatchSerializer, RelationshipSerializer
+from ..util import send_otp_via_sms
 
 class UserProfileMe(APIView):
     def get(self, request, *args, **kwargs):
@@ -17,7 +20,7 @@ class UserProfileMe(APIView):
     def patch(self, request, *args, **kwargs):
         me = request.user
         data = request.data
-        allowed_fields = ['displayName', 'email', 'mfaToken', 'lang', 'avatarID', 'password']
+        allowed_fields = ['displayName', 'email', 'mfaToken', 'lang', 'avatarID', 'password', 'phone_number']
         updated_fields = {}
 
         for field in allowed_fields:
@@ -31,9 +34,11 @@ class UserProfileMe(APIView):
             avatar_data = updated_fields['avatarID']
             if len(avatar_data) > 1 * 1024 * 1024:  # Check if the base64 string is larger than 1MB
                 return Response({"error": "Avatar image size exceeds 2MB limit"}, status=status.HTTP_400_BAD_REQUEST)
-            # Here you would typically save the image to a file or a storage service and set the avatarID to the file path or URL
-            # For simplicity, we'll just set it directly
             updated_fields['avatarID'] = avatar_data
+
+        if 'phone_number' in updated_fields:
+            otp = pyotp.TOTP(me.mfaToken)
+            send_otp_via_sms(updated_fields['phone_number'], otp)
 
         for field, value in updated_fields.items():
             setattr(me, field, value)
@@ -73,15 +78,15 @@ class UserMatches(APIView):
 class UserDeleteMe(APIView):
     def get(self, request, *args, **kwargs):
         me = request.user
-        return Response({"scheduled_deletion": me.flags & 1 == 1}, status=status.HTTP_200_OK)
+        return Response({"scheduled_deletion": me.flags & (1 << 4) == (1 << 4)}, status=status.HTTP_200_OK)
     
     def delete(self, request, *args, **kwargs):
         me = request.user
 
-        if me.flags & 1 != 1:
+        if me.flags & (1 << 4) != (1 << 4):
             return Response({"error": "User is not scheduled for deletion"}, status=status.HTTP_400_BAD_REQUEST)
 
-        me.flags = me.flags & ~1
+        me.flags = me.flags & ~(1 << 4)
         me.save()
         
         log_to_discord(f"User account {me.userID} has retracted their request for anonymization")
@@ -89,7 +94,7 @@ class UserDeleteMe(APIView):
 
     def post(self, request, *args, **kwargs):
         me = request.user
-        me.flags = me.flags | 1
+        me.flags = me.flags | (1 << 4)
         me.save()
 
         log_to_discord(f"User account {me.userID} has been flagged for anonymization")
@@ -98,15 +103,15 @@ class UserDeleteMe(APIView):
 class UserHarvestMe(APIView):
     def get(self, request, *args, **kwargs):
         me = request.user
-        return Response({"scheduled_harvesting": me.flags & 2 == 2}, status=status.HTTP_200_OK)
+        return Response({"scheduled_harvesting": me.flags & (1 << 3) == (1 << 3)}, status=status.HTTP_200_OK)
     
     def delete(self, request, *args, **kwargs):
         me = request.user
 
-        if me.flags & 2 != 2:
+        if me.flags & (1 << 3) != (1 << 3):
             return Response({"error": "User is not scheduled for harvesting"}, status=status.HTTP_400_BAD_REQUEST)
 
-        me.flags = me.flags & ~2
+        me.flags = me.flags & ~(1 << 3)
         me.save()
         
         log_to_discord(f"User account {me.userID} has retracted their data export request")
@@ -114,7 +119,7 @@ class UserHarvestMe(APIView):
 
     def post(self, request, *args, **kwargs):
         me = request.user
-        me.flags = me.flags | 2
+        me.flags = me.flags | (1 << 3)
         me.save()
 
         log_to_discord(f"User account {me.userID} has been flagged for data export")

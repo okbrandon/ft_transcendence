@@ -9,7 +9,7 @@ class Match(models.Model):
     scores = models.JSONField # ex: {"user_202020202020": 5, "user_202020202021", 3}
     startedAt = models.DateTimeField
     finishedAt = models.DateTimeField(auto_now_add=True)
-    flags = models.IntegerField # is AI game = 1 << 0
+    flags = models.IntegerField # 1<<0 EMAILED_VERIFIED, 1<<1 AI_ACCOUNT, 1<<3 SCHEDULED_HARVEST, 1<<4 SCHEDULED_DELETION
 
     def __str__(self):
         return self.matchID
@@ -41,6 +41,7 @@ class User(AbstractUser):
     lang = models.CharField(max_length = 6)
     avatarID = models.TextField(null=True)  # Store base64 encoded image as text
     # passwords should be limited to 72 **bytes** because of a bcrypt limitation
+    phone_number = models.CharField(max_length=15, null=True, blank=True)
     password = models.CharField(max_length = 128)
     flags = models.IntegerField(default = 0) # 1 << 0 = EMAIL_VERIFIED, 1 << 1 = IS_AI
     money = models.IntegerField(default = 0)
