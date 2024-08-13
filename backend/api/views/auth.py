@@ -73,8 +73,8 @@ class AuthRegister(APIView):
             raise ValidationError("Invalid email address, did not match regex pattern.")
         if len(password) < 8:
             raise ValidationError("Password must be at least 8 characters long.")
-        if len(password) > 128:
-            raise ValidationError("Password cannot be longer than 128 characters.")
+        if len(password.encode('utf-8')) > 72:
+            raise ValidationError("Password cannot be longer than 72 bytes.")
         if len(lang) != 2 or lang not in ['en', 'fr']:
             raise ValidationError("Unsupported language. Supported languages are 'en' and 'fr'.")
 
