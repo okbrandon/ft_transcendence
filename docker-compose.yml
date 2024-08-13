@@ -1,4 +1,18 @@
-services:
+services: 
+  traefik:
+    image: traefik:v2.5
+    restart: always
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+    networks:
+      - transcendance
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
   postgres:
     image: postgres
     restart: always
@@ -12,8 +26,10 @@ services:
     build: ./frontend
     restart: always
     env_file: .env
-    ports:
-      - 3000:3000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
     networks:
       - transcendance
 
@@ -21,10 +37,14 @@ services:
     build: ./backend
     restart: always
     env_file: .env
-    ports:
-      - 8000:8000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=PathPrefix(`/api/`)"
+      - "traefik.http.services.backend.loadbalancer.server.port=8000"
     networks:
       - transcendance
+    volumes:
+      - ./data/exports:/exports
 
   gameserver:
     build: ./gameserver-v2
@@ -33,7 +53,7 @@ services:
     ports:
       - 8080:8080
     networks:
-      - transcendance   
+      - transcendance
 
   # prometheus:
   #   image: prom/prometheus
