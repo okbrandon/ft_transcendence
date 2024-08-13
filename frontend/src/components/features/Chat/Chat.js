@@ -1,47 +1,49 @@
-import React, { useState } from 'react';
-import {
-	DropupContainer,
-	DropupButton,
-	DropupContent,
-	FriendItem
-} from '../../styles/chat/Chat.styled';
+import React from 'react';
+import styled from 'styled-components'
+import { ChatHeader } from './ChatHeader.js'
+
+const OverlayContainer = styled.div`
+  width: 100%;
+  position: fixed;
+  z-index: 9000;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+`;
+
+const ChatOverlayContainer = styled.aside`
+  height: 0;
+  pointer-events: auto;
+  overflow: visible;
+  display: flex;
+  flex-direction: row-reverse;
+  flex-wrap: nowrap;
+  align-items: flex-end;
+  flex: 1
+`;
+
+const ChatListBubble = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 100px);
+  flex: 0 0 288px;
+  width: 288px;
+  min-width: 0;
+  background-color: #fff;
+`;
 
 const Chat = () => {
-	const [showChat, setShowChat] = useState(false);
-	const [friends, setFriends] = useState([
-	'Friend 1',
-	'Friend 2',
-	'Friend 3',
-	'Friend 4',
-	'Friend 5',
-	'Friend 6',
-	'Friend 7',
-	'Friend 8',
-	'Friend 9',
-	`Friend 10`
-	]);
-
-	const toggleMenu = () => {
-		setShowChat(!showChat);
-	};
-
-	const handleFriendClick = (friend) => {
-		alert(`Chat with ${friend}`);
-	};
-
 	return (
-		<DropupContainer>
-			<DropupContent show={showChat}>
-				<DropupButton onClick={toggleMenu} className={showChat ? 'expanded' : ''}>
-					Messaging
-				</DropupButton>
-				{friends.map((friend, index) => (
-					<FriendItem key={index} onClick={() => handleFriendClick(friend)}>
-						{friend}
-					</FriendItem>
-				))}
-			</DropupContent>
-		</DropupContainer>
+    <OverlayContainer>
+      <ChatOverlayContainer>
+        <ChatListBubble>
+          <ChatHeader/>
+        </ChatListBubble>
+      </ChatOverlayContainer>
+    </OverlayContainer>
 	);
 };
 
