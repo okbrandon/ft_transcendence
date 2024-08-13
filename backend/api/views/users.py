@@ -1,10 +1,14 @@
 import pyotp
+import os
 
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+
 from django.contrib.auth.hashers import make_password
 from django.db import models
+from django.http import Http404, HttpResponse
 
 from ..log import log_to_discord
 from ..models import User, Match, Relationship, UserSettings
@@ -220,3 +224,17 @@ class UserSearch(APIView):
         users = User.objects.filter(models.Q(displayName__icontains=content) | models.Q(username__icontains=content))
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class UserExports(APIView):
+    def get(self, request, *args, **kwargs):
+        user_id = request.user.userID
+        export_dir = '/exports'
+        user_export_file = os.path.join(export_dir, f"{user_id}.zip")
+
+        if not os.path.exists(user_export_file):
+            raise Http404("Export file not found.")
+
+        with open(user_export_file, 'rb') as file:
+            response = HttpResponse(file.read(), content_type='application/zip')
+            response['Content-Disposition'] = f'attachment; filename="{user_id}.zip"'
+            return response
