@@ -44,7 +44,6 @@ const StyledBannerPaddle = styled(BannerPaddle)`
 	filter: blur(${props => props.$blurPx}px);
 	transform: scale(${props => 0.3 * props.$i - 0.6});
 	animation: ${props => getRotationAnimation(0.3 * props.$i - 0.6, props.$dir)} ${props => props.$animationDuration}s linear infinite;
-	animation-delay: ${props => props.$animationDelay}s;
 `;
 
 export const BannerPaddles = () => {
@@ -52,8 +51,7 @@ export const BannerPaddles = () => {
 
 	for (let i = 1; i <= totalPaddles + 1; i++) {
 		const left = i % 2 ? Math.random() * 45 : 55 + Math.random() * 30;
-		const animationDuration = 6 + Math.random() * 15;
-		const animationDelay = Math.random() * 6;
+		const animationDuration = 6 + Math.random() * 20;
 		const blurPx = i * 2;
 
 		const paddle = (
@@ -64,7 +62,6 @@ export const BannerPaddles = () => {
 				$dir={Math.floor(Math.random() * 2) ? 360 : -360}
 				$blurPx={blurPx}
 				$animationDuration={animationDuration}
-				$animationDelay={animationDelay}
 			/>
 		);
 
