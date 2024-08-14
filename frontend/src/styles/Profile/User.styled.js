@@ -1,22 +1,16 @@
 import styled from 'styled-components';
 import Image from 'react-bootstrap/Image';
 
-export const UserContainer = styled.div`
-	display: flex;
-	justify-content: space-between;
-	position: absolute;
-	width: 80%;
-	top: -100px;
-	left: 10%;
-`;
-
 export const ProfileImageContainer = styled.div`
+	position: absolute;
+	top: -100px;
+	transform: translateX(-50%);
+	left: 50%;
 	display: flex;
-	align-items: flex-end;
+	flex-direction: column;
+	align-items: center;
 
-	& h2 {
-		margin-bottom: 50px;
-		margin-left: 30px;
+	& > h2 {
 		font-size: 2rem;
 		font-weight: 900;
 		position: relative;
@@ -53,10 +47,11 @@ export const ProfileImage = styled(Image)`
 export const UserInfoContainer = styled.div`
 	display: flex;
 	justify-content: center;
-	height: 195px;
+	height: 160px;
 	width: 600px;
-	background: #15132f;
+	background: radial-gradient(circle at center, #1A183A, transparent);
 	border-radius: 30px;
+	margin-top: 30px;
 `;
 
 export const UserInfoItem = styled.div`
@@ -79,18 +74,41 @@ export const UserInfoItem = styled.div`
 
 export const LevelContainer = styled.div`
 	display: flex;
+	flex-direction: column;
 	align-items: center;
-	gap: 10px;
-	position: absolute;
-	left: 10%;
-	margin-top: 55px;
-	margin-left: 220px;
 	font-family: 'Inter', sans-serif;
-	font-size: 16px;
+	font-size: 18px;
 	font-weight: 900;
+	margin-top: 5px;
 
-	& > p {
-		width: 92px;
-		margin-top: 15px;
+	& p {
+		margin: 0;
 	}
+	& .progress-bar {
+		background-color: #fff;
+		color: #1A183A;
+	}
+	
+	& .progress {
+		width: 400px;
+		background-color: rgba(77,77,77,0.3);
+	}
+`;
+
+export const ProgressBarContainer = styled.div`
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 550px;
+
+	& p {
+		font-size: 14px;
+		font-weight: 900;
+	}
+`;
+
+export const UserSpacer = styled.div`
+	width: 100%;
+	background: #000;
+	height: 450px;
 `;

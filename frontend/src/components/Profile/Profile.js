@@ -1,8 +1,10 @@
 import React, { useContext, useEffect } from 'react';
-import { ProfileContainer, ProfileBanner, ProfileContentContainer } from '../../styles/Profile/Profile.styled';
+import { ProfileContainer, ProfileBanner } from '../../styles/Profile/Profile.styled';
 import User from './User';
 import Loader from '../../styles/shared/Loader.styled';
 import ProfileProvider, { ProfileContext } from '../../context/ProfileContext';
+import { UserSpacer } from '../../styles/Profile/User.styled';
+import Tabs from './Tabs';
 
 export const ProfileParent = () => {
 	useEffect(() => {
@@ -25,9 +27,9 @@ const Profile = () => {
 				loading ? <Loader/> : (
 					<>
 						<ProfileBanner/>
-						<ProfileContentContainer>
-							<User/>
-						</ProfileContentContainer>
+						<User/>
+						<UserSpacer/>
+						<Tabs/>
 					</>
 				)
 			}

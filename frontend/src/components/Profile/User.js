@@ -2,12 +2,13 @@ import React, { useContext } from 'react';
 import {
 	ProfileImageContainer,
 	ProfileImage,
-	UserContainer,
 	LevelContainer,
+	ProgressBarContainer,
 } from '../../styles/Profile/User.styled';
 import { ProfileContext } from '../../context/ProfileContext';
 import UserInfo from './UserInfo';
 import ProgressBar from 'react-bootstrap/ProgressBar';
+import { ProfileContentContainer } from '../../styles/Profile/Profile.styled';
 
 const User = () => {
 	const { user } = useContext(ProfileContext);
@@ -18,19 +19,21 @@ const User = () => {
 	}
 
 	return (
-		<>
-			<UserContainer>
-				<ProfileImageContainer>
-					<ProfileImage src='./images/prune.jpg' alt='profile picture' roundedCircle/>
-					<h2>{user ? user.displayName : ''}</h2>
-				</ProfileImageContainer>
+		<ProfileContentContainer>
+			<ProfileImageContainer>
+				<ProfileImage src='./images/prune.jpg' alt='profile picture' roundedCircle/>
+				<h2>{user ? user.displayName : ''}</h2>
+				<LevelContainer>
+					<p>Level 1</p>
+					<ProgressBarContainer>
+						<p>20xp</p>
+						<ProgressBar now={20}/>
+						<p>100xp</p>
+					</ProgressBarContainer>
+				</LevelContainer>
 				<UserInfo/>
-			</UserContainer>
-			<LevelContainer>
-				<p>Level 1</p>
-				<ProgressBar style={{width: '500px'}} variant="success" now={80} label={`${80} / ${100}xp`}/> {/* have to change those values */}
-			</LevelContainer>
-		</>
+			</ProfileImageContainer>
+		</ProfileContentContainer>
 	);
 };
 

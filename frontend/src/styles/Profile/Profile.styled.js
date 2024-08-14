@@ -1,9 +1,10 @@
 import styled from "styled-components";
-import Tabs from 'react-bootstrap/Tabs';
 
 export const ProfileContainer = styled.div`
+	position: relative;
 	width: 100%;
-	height: 100vh;
+	background: #0c0b1b;
+	height: 1500px;
 `;
 
 export const ProfileBanner = styled.div`
@@ -35,62 +36,6 @@ export const ProfileBanner = styled.div`
 `;
 
 export const ProfileContentContainer = styled.div`
-	display: flex;
 	position: relative;
 	width: 100%;
-`;
-
-export const TabsContainer = styled.div`
-	width: 1000px;
-`;
-
-export const ProfileTabs = styled(Tabs)`
-	--bs-nav-link-color: #fff;
-	--bs-nav-link-hover-color: #fff;
-
-	& .nav-link {
-		font-size: 20px;
-	}
-`;
-
-export const MatchCardTable = styled.table`
-	margin-top: 30px;
-	width: 100%;
-	border-collapse: collapse;
-	text-align: center;
-
-	& thead {
-		background: #0f0f0f;
-		font-size: 18px;
-	}
-
-	& th {
-		padding: 30px;
-	}
-
-	& td {
-		padding: 16px;
-		font-size: 18px;
-	}
-
-	& tbody > tr:nth-child(even) {
-		background: linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(201,201,201,1) 100%);
-	}
-
-	& tbody > tr:nth-child(odd) {
-		background: linear-gradient(90deg, rgba(201,201,201,1) 0%, rgba(0,0,0,1) 100%);
-	}
-`;
-
-export const ChartContainer = styled.div`
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 100%;
-	height: 600px;
-`;
-
-export const DonutChartContainer = styled.div`
-	width: 500px;
-	height: 500px;
 `;

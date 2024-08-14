@@ -1,8 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { MatchCardTable } from "../../styles/Profile/Profile.styled";
+import { MatchCardTable, Pagination } from "../../styles/Profile/Tabs.styled";
 
 const matchArrayTest = [
+	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Brandon"}, scores: {playerA: 9, playerB: 10}, startedAt: "2021-09-01T12:28:01Z", finishedAt: "2021-09-01T12:30:38Z"},
+	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Evan"}, scores: {playerA: 10, playerB: 8}, startedAt: "2021-09-01T12:31:08Z", finishedAt: "2021-09-01T12:35:40Z"},
+	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Kian"}, scores: {playerA: 10, playerB: 9}, startedAt: "2021-09-01T12:38:48Z", finishedAt: "2021-09-01T12:40:51Z"},
+	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Brandon"}, scores: {playerA: 9, playerB: 10}, startedAt: "2021-09-01T12:28:01Z", finishedAt: "2021-09-01T12:30:38Z"},
+	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Evan"}, scores: {playerA: 10, playerB: 8}, startedAt: "2021-09-01T12:31:08Z", finishedAt: "2021-09-01T12:35:40Z"},
+	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Kian"}, scores: {playerA: 10, playerB: 9}, startedAt: "2021-09-01T12:38:48Z", finishedAt: "2021-09-01T12:40:51Z"},
+	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Brandon"}, scores: {playerA: 9, playerB: 10}, startedAt: "2021-09-01T12:28:01Z", finishedAt: "2021-09-01T12:30:38Z"},
+	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Evan"}, scores: {playerA: 10, playerB: 8}, startedAt: "2021-09-01T12:31:08Z", finishedAt: "2021-09-01T12:35:40Z"},
+	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Kian"}, scores: {playerA: 10, playerB: 9}, startedAt: "2021-09-01T12:38:48Z", finishedAt: "2021-09-01T12:40:51Z"},
 	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Brandon"}, scores: {playerA: 9, playerB: 10}, startedAt: "2021-09-01T12:28:01Z", finishedAt: "2021-09-01T12:30:38Z"},
 	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Evan"}, scores: {playerA: 10, playerB: 8}, startedAt: "2021-09-01T12:31:08Z", finishedAt: "2021-09-01T12:35:40Z"},
 	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Kian"}, scores: {playerA: 10, playerB: 9}, startedAt: "2021-09-01T12:38:48Z", finishedAt: "2021-09-01T12:40:51Z"},
@@ -43,11 +52,19 @@ const getDate = (timestamp) => {
 
 const MatchHistory = () => {
 	const matchArray = matchArrayTest;
+	const matchesPerPage = 10;
+	const [currentPage, setCurrentPage] = useState(1);
 
 	if (!matchArray) {
-		console.log('MathHistory: matchArray is null');
+		console.log('MatchHistory: matchArray is null');
 		return null;
 	}
+
+	const indexOfLastMatch = currentPage * matchesPerPage;
+	const indexOfFirstMatch = indexOfLastMatch - matchesPerPage;
+	const currentMatches = matchArray.slice(indexOfFirstMatch, indexOfLastMatch);
+
+	const totalPages = Math.ceil(matchArray.length / matchesPerPage);
 
 	return (
 		<>
@@ -55,36 +72,45 @@ const MatchHistory = () => {
 				matchArray.length === 0 ? (
 					<p>No matches played yet</p>
 				) : (
-					<AnimatePresence>
-						<MatchCardTable>
-							<thead>
-								<tr>
-									<th>Opponent</th>
-									<th>Duration</th>
-									<th>Score</th>
-									<th>Result</th>
-									<th>Date</th>
-								</tr>
-							</thead>
-							<tbody>
-								{matchArray.map((match, index) => (
-									<motion.tr
-										key={index}
-										initial="hidden"
-										animate="visible"
-										custom={index}
-										variants={variants}
-									>
-										<td>{match.playerB.displayName}</td>
-										<td>{getDuration(match.startedAt, match.finishedAt)}</td>
-										<td>{match.scores.playerA} - {match.scores.playerB}</td>
-										<td>{match.scores.playerA > match.scores.playerB ? "Victory" : "Defeat"}</td>
-										<td>{getDate(match.finishedAt)}</td>
-									</motion.tr>
-								))}
-							</tbody>
-						</MatchCardTable>
-					</AnimatePresence>
+					<>
+						<AnimatePresence>
+							<MatchCardTable>
+								<thead>
+									<tr>
+										<th>Opponent</th>
+										<th>Duration</th>
+										<th>Score</th>
+										<th>Result</th>
+										<th>Date</th>
+									</tr>
+								</thead>
+								<tbody>
+									{currentMatches.map((match, index) => (
+										<motion.tr
+											key={index}
+											initial="hidden"
+											animate="visible"
+											custom={index}
+											variants={variants}
+										>
+											<td>{match.playerB.displayName}</td>
+											<td>{getDuration(match.startedAt, match.finishedAt)}</td>
+											<td>{match.scores.playerA} - {match.scores.playerB}</td>
+											<td>{match.scores.playerA > match.scores.playerB ? "Victory" : "Defeat"}</td>
+											<td>{getDate(match.finishedAt)}</td>
+										</motion.tr>
+									))}
+								</tbody>
+							</MatchCardTable>
+						</AnimatePresence>
+						<Pagination>
+							{Array.from({length: totalPages}, (_, i) => i + 1).map(pageNumber => (
+								<button key={pageNumber} onClick={() => setCurrentPage(pageNumber)}>
+									{pageNumber}
+								</button>
+							))}
+						</Pagination>
+					</>
 				)
 			}
 		</>
