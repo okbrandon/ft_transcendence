@@ -1,6 +1,7 @@
 import React from 'react';
-import styled from 'styled-components'
-import { ChatHeader } from './ChatHeader.js'
+import styled from 'styled-components';
+import { ChatHeader } from './ChatHeader.js';
+import { SearchFriends } from './SearchFriends.js';
 
 const OverlayContainer = styled.div`
   width: 100%;
@@ -41,6 +42,7 @@ const Chat = () => {
       <ChatOverlayContainer>
         <ChatListBubble>
           <ChatHeader/>
+          <SearchFriends/>
         </ChatListBubble>
       </ChatOverlayContainer>
     </OverlayContainer>
