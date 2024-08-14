@@ -37,11 +37,11 @@ export const ProfileImageContainer = styled.div`
 `;
 
 export const ProfileImage = styled(Image)`
+	position: absolute;
 	width: 190px;
 	height: 190px;
 	object-fit: cover;
 	margin-bottom: 10px;
-	border: 3px solid #fff;
 `;
 
 export const UserInfoContainer = styled.div`
@@ -69,41 +69,6 @@ export const UserInfoItem = styled.div`
 	& h2 {
 		font-size: 28px;
 		padding: 5px 0;
-	}
-`;
-
-export const LevelContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	font-family: 'Inter', sans-serif;
-	font-size: 18px;
-	font-weight: 900;
-	margin-top: 5px;
-
-	& p {
-		margin: 0;
-	}
-	& .progress-bar {
-		background-color: #fff;
-		color: #1A183A;
-	}
-	
-	& .progress {
-		width: 400px;
-		background-color: rgba(77,77,77,0.3);
-	}
-`;
-
-export const ProgressBarContainer = styled.div`
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	width: 550px;
-
-	& p {
-		font-size: 14px;
-		font-weight: 900;
 	}
 `;
 

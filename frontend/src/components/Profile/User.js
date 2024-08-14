@@ -2,13 +2,12 @@ import React, { useContext } from 'react';
 import {
 	ProfileImageContainer,
 	ProfileImage,
-	LevelContainer,
-	ProgressBarContainer,
 } from '../../styles/Profile/User.styled';
 import { ProfileContext } from '../../context/ProfileContext';
 import UserInfo from './UserInfo';
-import ProgressBar from 'react-bootstrap/ProgressBar';
 import { ProfileContentContainer } from '../../styles/Profile/Profile.styled';
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
 
 const User = () => {
 	const { user } = useContext(ProfileContext);
@@ -21,17 +20,22 @@ const User = () => {
 	return (
 		<ProfileContentContainer>
 			<ProfileImageContainer>
-				<ProfileImage src='./images/prune.jpg' alt='profile picture' roundedCircle/>
+				<div style={{width: '190px', height: '190px', position: 'relative'}}>
+					<ProfileImage src='./images/prune.jpg' alt='profile picture' roundedCircle />
+					<div style={{position: 'absolute'}}>
+						<CircularProgressbar
+							value={20}
+							strokeWidth={4}
+							styles={buildStyles({
+								rotation: 0.5,
+								pathColor: `#64ff61`,
+								trailColor: 'rgba(255,255,255,0.4)',
+							})}
+						/>
+					</div>
+				</div>
 				<h2>{user ? user.displayName : ''}</h2>
-				<LevelContainer>
-					<p>Level 1</p>
-					<ProgressBarContainer>
-						<p>20xp</p>
-						<ProgressBar now={20}/>
-						<p>100xp</p>
-					</ProgressBarContainer>
-				</LevelContainer>
-				<UserInfo/>
+				<UserInfo />
 			</ProfileImageContainer>
 		</ProfileContentContainer>
 	);
