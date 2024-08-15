@@ -1,0 +1,32 @@
+name: Build Docker Images
+
+on:
+  push:
+    branches:
+      - *
+  pull_request:
+    branches:
+      - *
+
+jobs:
+  build-images:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [frontend, backend, gameserver-v2, harvester]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Build ${{ matrix.service }} image
+      uses: docker/build-push-action@v4
+      with:
+        context: ./${{ matrix.service }}
+        push: false
+        tags: ${{ matrix.service }}:latest
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
