@@ -41,8 +41,7 @@ class UserProfileMe(APIView):
             updated_fields['avatarID'] = avatar_data
 
         if 'phone_number' in updated_fields:
-            otp = pyotp.TOTP(me.mfaToken)
-            send_otp_via_sms(updated_fields['phone_number'], otp)
+            send_otp_via_sms(updated_fields['phone_number'])
 
         for field, value in updated_fields.items():
             setattr(me, field, value)

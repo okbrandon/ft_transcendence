@@ -24,15 +24,18 @@ def send_verification_email(to: list, verification_link: str):
 
     email = resend.Emails.send(params)
 
-def send_otp_via_sms(to: str, otp: str):
+def send_otp_via_sms(to: str):
     auth_id = os.getenv("PLIVO_AUTHID")
     auth_token = os.getenv("PLIVO_AUTHTOKEN")
     client = RestClient(auth_id, auth_token)
 
+    otp = f"{random.randint(100000, 999999):06d}"
+    formatted_otp = f"{otp[:3]} {otp[3:]}"
+
     response = client.messages.create(
-        src='+19296056286',
+        src='Pong',
         dst=to,
-        text=f"Your verification code is: {otp}. Please use this code to verify your account."
+        text=f"Your verification code is: {formatted_otp}. Please use this code to verify your account."
     )
 
-    return response
+    return response, otp
