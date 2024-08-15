@@ -12,6 +12,12 @@ from .views.oauth import *
 from .views.store import *
 from .views.verification import *
 
+from django.http import JsonResponse
+
+class HealthCheck(APIView):
+    def get(self, request, *args, **kwargs):
+        return JsonResponse({"status": "healthy"}, status=200)
+
 urlpatterns = [
     path('auth/register', AuthRegister.as_view()),
     path('auth/login', AuthLogin.as_view()),
@@ -46,4 +52,5 @@ urlpatterns = [
     path('__internal/check_user_exists/<userID>', CheckUserExists.as_view()), # GET
     path('__internal/create_match', CreateMatchHistory.as_view()), # POST
 
+    path('health', HealthCheck.as_view()),
 ]
