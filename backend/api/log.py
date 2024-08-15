@@ -1,8 +1,9 @@
 import requests
 import json
+import os
 
 def log_to_discord(title, description=None):
-    webhook_url = "https://canary.discord.com/api/webhooks/1253713068739919943/39SncAOdefeUH_P7USH_SxF9M-Cb44ox8Y1ePh42nOor9C3wypC1GQVJBnl_pV01-FlJ"
+    webhook_url = os.environ.get('WEBHOOK_DISCORD')
     embed = {
         "title": title,
         "description": description,
