@@ -13,10 +13,11 @@ export const ProfilePictureLayout = styled.div`
 	& > h2 {
 		text-align: center;
 		font-size: 2rem;
-		font-weight: 900;
+		font-weight: 700;
 		position: relative;
 		cursor: default;
 		margin-top: 20px;
+		word-spacing: 5px;
 
 		&:hover::before {
 			background-position: 0% 50%;

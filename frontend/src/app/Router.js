@@ -14,6 +14,8 @@ import Home from '../components/Home/Home';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { ProfileParent } from '../components/Profile/Profile';
+import Verify from '../components/Auth/Verify';
+import Callback from '../components/Auth/Callback';
 
 const PrivateRoutes = () => {
 	const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
@@ -30,6 +32,8 @@ const Router = createBrowserRouter(createRoutesFromElements(
 		<Route path="/" element={ <Root/> }>
 			<Route index element={ <Home/> }/>
 			<Route path="login" element={ <Login/> }/>
+			<Route path="callback" element={ <Callback/> }/>
+			<Route path="verify" element={ <Verify/> }/>
 			<Route path="signup" element={ <SignUp/> }/>
 			<Route element={ <PrivateRoutes/> }>
 				<Route path="profile" element={ <ProfileParent/> }/>

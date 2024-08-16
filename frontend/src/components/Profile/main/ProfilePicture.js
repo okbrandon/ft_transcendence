@@ -6,7 +6,11 @@ const ProfilePicture = ({ user }) => {
 	return (
 		<ProfilePictureLayout>
 			<ProfilePictureContainer>
-				<ProfileImage src='./images/prune.jpg' alt='profile picture' roundedCircle />
+				<ProfileImage
+					src={user.avatarID !== 'default' ? user.avatarID : './images/anonymous.png'}
+					alt='profile picture'
+					roundedCircle
+				/>
 				<div>
 					<CircularProgressbar
 						value={20}
