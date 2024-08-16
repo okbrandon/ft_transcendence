@@ -51,14 +51,14 @@ class UserProfileMe(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 class UserProfile(APIView):
-    def get_object(self, user_id):
+    def get_object(self, identifier):
         try:
-            return User.objects.get(userID=user_id)
+            return User.objects.get(models.Q(userID=identifier) | models.Q(username=identifier))
         except User.DoesNotExist:
             return None
 
-    def get(self, request, userID, *args, **kwargs):
-        user = self.get_object(userID)
+    def get(self, request, identifier, *args, **kwargs):
+        user = self.get_object(identifier)
         if not user:
             return Response(
                 status=status.HTTP_404_NOT_FOUND

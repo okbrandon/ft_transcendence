@@ -27,7 +27,7 @@ urlpatterns = [
     path('auth/totp/delete', DeleteTOTP.as_view()),
 
     path('users/@me/profile', UserProfileMe.as_view()), # GET, PATCH
-    path('users/<userID>/profile', UserProfile.as_view()), # GET
+    path('users/<identifier>/profile', UserProfile.as_view()), # GET
     path('users/@me/matches', UserMatchesMe.as_view()), # GET
     path('users/<userID>/matches', UserMatches.as_view()), # GET
     path('users/@me/settings', UserSettingsMe.as_view()), # GET, PATCH
