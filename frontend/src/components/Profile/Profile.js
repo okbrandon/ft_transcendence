@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { ProfileContainer, UserContainer, UserProfileBanner } from '../../styles/Profile/Profile.styled';
-import User from './main/User';
+import MainBar from './main/MainBar';
 import Loader from '../../styles/shared/Loader.styled';
 import ProfileProvider, { ProfileContext } from '../../context/ProfileContext';
 import About from './content/About';
@@ -41,7 +41,7 @@ const Profile = () => {
 					<>
 						<UserProfileBanner $path=""/>
 						<UserContainer>
-							<User user={user} matchArray={matchArray}/>
+							<MainBar user={user} matchArray={matchArray}/>
 							<About user={user} matchArray={matchArray}/>
 							<Winrate matchArray={matchArray}/>
 							<MatchHistory matchArray={matchArray}/>

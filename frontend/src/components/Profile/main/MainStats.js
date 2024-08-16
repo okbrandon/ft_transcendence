@@ -1,8 +1,8 @@
 import React from 'react';
-import { MainInfoItem, MainInfoContainer } from "../../../styles/Profile/main/UserMainInfo.styled";
+import { MainInfoItem, MainInfoContainer } from "../../../styles/Profile/main/MainBar.styled";
 import { calculateTotalWins, calculateWinDefeatRatio } from '../scripts/match';
 
-const UserMainStats = ({ matchArray }) => {
+const MainStats = ({ matchArray }) => {
 	return (
 		<MainInfoContainer>
 			<MainInfoItem>
@@ -24,4 +24,4 @@ const UserMainStats = ({ matchArray }) => {
 	);
 };
 
-export default UserMainStats;
+export default MainStats;

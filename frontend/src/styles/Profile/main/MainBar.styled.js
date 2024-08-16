@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const UserMainInfoLayout = styled.div`
+export const MainBarLayout = styled.div`
 	grid-column: 1 / 4;
 	display: flex;
 	justify-content: space-around;
@@ -13,7 +13,7 @@ export const UserMainInfoLayout = styled.div`
 	border: 1px solid rgba(255,255,255,0.1);
 `;
 
-export const UserMainInfoContainer = styled.div`
+export const MainBarContainer = styled.div`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
