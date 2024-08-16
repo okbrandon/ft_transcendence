@@ -5,7 +5,7 @@ import Loader from '../../styles/shared/Loader.styled';
 import ProfileProvider, { ProfileContext } from '../../context/ProfileContext';
 import About from './content/About';
 import MatchHistory from './content/MatchHistory';
-import Activity from './content/Activity';
+import Winrate from './content/Winrate';
 
 const matchArray = [
 	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Brandon"}, scores: {playerA: 9, playerB: 10}, startedAt: "2021-09-01T12:28:01Z", finishedAt: "2021-09-01T12:30:38Z"},
@@ -43,7 +43,7 @@ const Profile = () => {
 						<UserContainer>
 							<User user={user} matchArray={matchArray}/>
 							<About user={user} matchArray={matchArray}/>
-							<Activity matchArray={matchArray}/>
+							<Winrate matchArray={matchArray}/>
 							<MatchHistory matchArray={matchArray}/>
 						</UserContainer>
 					</>

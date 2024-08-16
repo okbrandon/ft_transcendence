@@ -1,8 +1,7 @@
 import React from "react";
-import { AboutContainer, BalanceContainer } from "../../../styles/Profile/content/About.styled";
-import DonutStats from "../stats/DonutStats";
+import { AboutContainer, ActivityContainer, BalanceContainer } from "../../../styles/Profile/content/About.styled";
 import { CardTitle } from "../../../styles/Profile/Profile.styled";
-import { StatsContainer } from "../../../styles/Profile/Stats.styled";
+import LineStats from "../stats/LineStats";
 
 const About = ({ user, matchArray }) => {
 	return (
@@ -13,10 +12,10 @@ const About = ({ user, matchArray }) => {
 				<h3>Balance</h3>
 				<p><i className="bi bi-coin"/> {user.money} coins</p>
 			</BalanceContainer>
-			<StatsContainer>
-				<h3>Winrate</h3>
-				<DonutStats matchArray={matchArray}/>
-			</StatsContainer>
+			<ActivityContainer>
+				<h3>Activity</h3>
+				<LineStats matchArray={matchArray}/>
+			</ActivityContainer>
 		</AboutContainer>
 	);
 };
