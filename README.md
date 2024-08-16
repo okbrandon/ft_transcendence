@@ -1,4 +1,4 @@
-# ft_transcendance
+# ft_transcendence
 
 ### Documentation
 [API Docs](/docs/API.md)\

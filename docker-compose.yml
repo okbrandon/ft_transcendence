@@ -9,7 +9,7 @@ services:
   #   ports:
   #     - "9200:9200"
   #   networks:
-  #     - transcendance
+  #     - transcendence
 
   # logstash:
   #   image: bitnami/logstash:latest
@@ -25,7 +25,7 @@ services:
   #   depends_on:
   #     - elasticsearch
   #   networks:
-  #     - transcendance
+  #     - transcendence
 
   # kibana:
   #   image: bitnami/kibana:latest
@@ -39,7 +39,7 @@ services:
   #   depends_on:
   #     - elasticsearch
   #   networks:
-  #     - transcendance
+  #     - transcendence
 
   # prometheus:
   #   image: prom/prometheus
@@ -48,14 +48,14 @@ services:
   #   ports:
   #     - "9090:9090"
   #   networks:
-  #     - transcendance
+  #     - transcendence
 
   # grafana:
   #   image: grafana/grafana
   #   ports:
   #     - "3000:3000"
   #   networks:
-  #     - transcendance
+  #     - transcendence
 
   traefik:
     image: traefik:v2.5
@@ -67,7 +67,7 @@ services:
     ports:
       - "80:80"
     networks:
-      - transcendance
+      - transcendence
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     # healthcheck:
@@ -83,7 +83,7 @@ services:
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
     networks:
-      - transcendance
+      - transcendence
     # healthcheck:
     #   test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
     #   interval: 15s
@@ -100,7 +100,7 @@ services:
       - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
       - "traefik.http.services.frontend.loadbalancer.server.port=3000"
     networks:
-      - transcendance
+      - transcendence
     logging:
       driver: gelf
       options:
@@ -124,7 +124,7 @@ services:
       - "traefik.http.routers.backend.rule=PathPrefix(`/api`)"
       - "traefik.http.services.backend.loadbalancer.server.port=8000"
     networks:
-      - transcendance
+      - transcendence
     volumes:
       - ./data/exports:/exports
     logging:
@@ -152,7 +152,7 @@ services:
     ports:
       - 8080:8080
     networks:
-      - transcendance
+      - transcendence
     logging:
       driver: gelf
       options:
@@ -169,7 +169,7 @@ services:
     volumes:
       - ./data/exports:/exports
     networks:
-      - transcendance
+      - transcendence
     logging:
       driver: gelf
       options:
@@ -180,7 +180,7 @@ services:
     #     condition: service_healthy
 
 networks:
-  transcendance:
+  transcendence:
     driver: bridge
 
 volumes:
