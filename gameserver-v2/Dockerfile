@@ -18,5 +18,7 @@ WORKDIR /root/
 
 COPY --from=builder /app/gameserver .
 
+EXPOSE 8080
+
 CMD ["./gameserver"]
 
