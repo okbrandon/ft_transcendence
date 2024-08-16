@@ -10,7 +10,7 @@ const MainBar = ({ user, matchArray }) => {
 			<MainBarContainer>
 				<MainStats matchArray={matchArray}/>
 				<ProfilePicture user={user}/>
-				<p>testing</p>
+				<i className="bi bi-gear-fill"/>
 			</MainBarContainer>
 		</MainBarLayout>
 	);

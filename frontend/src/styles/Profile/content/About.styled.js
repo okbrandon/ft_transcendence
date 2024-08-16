@@ -4,7 +4,7 @@ export const AboutContainer = styled.div`
 	grid-column: 1;
 	grid-row: 2 / 4;
 	background: rgba(0,0,0,0.8);
-	margin-top: 30px;
+	margin-top: 50px;
 	border-radius: 30px;
 	height: 730px;
 	border: 1px solid rgba(255,255,255,0.1);

@@ -40,8 +40,6 @@ const DonutStats = ({ matchArray }) => {
 		}
 	};
 
-	console.log(matchArray);
-
 	return (
 		<DonutStatsContainer>
 			<ReactApexChart

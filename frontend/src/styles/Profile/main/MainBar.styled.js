@@ -20,11 +20,19 @@ export const MainBarContainer = styled.div`
 	position: relative;
 	width: 100%;
 	height: 100%;
+
+	& > i {
+		margin-right: 50px;
+		font-size: 40px;
+		color: #fff;
+		cursor: pointer;
+	}
 `;
 
 export const MainInfoContainer = styled.div`
 	display: flex;
 	justify-content: center;
+	margin-left: 50px;
 `;
 
 export const MainInfoItem = styled.div`

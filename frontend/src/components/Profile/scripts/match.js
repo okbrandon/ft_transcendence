@@ -13,7 +13,6 @@ export const calculateWinDefeatRatio = (matchArray) => {
 };
 
 export const getNumberOfMatchesPerMonth = (matchArray) => {
-	// Initialize an object with 12 zeros
 	const matchesPerMonth = Array.from({length: 12}, () => 0);
 
 	matchArray.forEach(match => {
@@ -21,7 +20,6 @@ export const getNumberOfMatchesPerMonth = (matchArray) => {
 		matchesPerMonth[month]++;
 	});
 
-	console.log(matchesPerMonth);
 	return matchesPerMonth;
 };
 
