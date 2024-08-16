@@ -36,7 +36,7 @@ const loadingStep = keyframes`
 
 const Loader = styled.div`
 	position: absolute;
-	top: 50%;
+	top: 50vh;
 	left: 50%;
 	transform: translate(-50%, -50%);
 	width: 120px;
