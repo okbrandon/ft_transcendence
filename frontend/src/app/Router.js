@@ -1,28 +1,45 @@
-import { createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom';
-import Root from '../components/shared/Root';
-import RootHome from '../components/shared/RootHome';
-import Authentication from '../components/features/Authentication/Authentication';
-import Login from '../components/features/Authentication/Login';
-import SignUp from '../components/features/Authentication/SignUp';
-import Callback from '../components/features/Authentication/Callback';
-import Verify from '../components/features/Authentication/Verify';
-import MainMenu from '../components/features/Menu/MainMenu';
-import PlayMenu from '../components/features/Menu/PlayMenu';
-import Game from '../components/features/Game/Game';
+import {
+	createBrowserRouter,
+	createRoutesFromElements,
+	Route,
+	Navigate,
+	Outlet,
+} from 'react-router-dom';
+import { isValidToken } from '../api/api';
+import Root from '../components/Root';
+import Login from '../components/Auth/Login';
+import SignUp from '../components/Auth/SignUp';
+import Game from '../components/Game/Game';
+import Home from '../components/Home/Home';
+import { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
+import { ProfileParent } from '../components/Profile/Profile';
+
+const PrivateRoutes = () => {
+	const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+
+	setIsLoggedIn(isValidToken());
+
+	return (
+		isLoggedIn ? <Outlet/> : <Navigate to="/login"/>
+	);
+};
 
 const Router = createBrowserRouter(createRoutesFromElements(
-	<Route path="/" element={ <Root/> }>
-		<Route index element={ <Authentication/> }/>
-		<Route path="login" element={ <Login/> }/>
-		<Route path="callback" element={ <Callback /> }/>
-		<Route path="verify" element={ <Verify /> }/>
-		<Route path="signup" element={ <SignUp/> }/>
-		<Route path="home" element={ <RootHome/> }>
-			<Route index element={ <MainMenu/> }/>
-			<Route path="game" element={ <PlayMenu/> }/>
+	<>
+		<Route path="/" element={ <Root/> }>
+			<Route index element={ <Home/> }/>
+			<Route path="login" element={ <Login/> }/>
+			<Route path="signup" element={ <SignUp/> }/>
+			<Route element={ <PrivateRoutes/> }>
+				<Route path="profile" element={ <ProfileParent/> }/>
+			</Route>
 		</Route>
-		<Route path="solo-vs-ai" element={ <Game/> }/>
-	</Route>
+		<Route element={ <PrivateRoutes/>}>
+			<Route path="solo-vs-ai" element={ <Game/> }/>
+		</Route>
+		<Route path="*" element={ <Navigate to="/"/> }/>
+	</>
 ));
 
 export default Router;

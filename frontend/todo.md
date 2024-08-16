@@ -1,11 +1,18 @@
 # TODO
+## today
+- [] navbar (profile button logout)
+- [] add colors
+- [] 42 auth
+- [] authentication pages
+- [x] profile page background
+
 ## priority
-- login
-- friends
-- profile
+- [x] profile
+- [x] login
+- [ ] friends
 
 ## secondary
-- match history
-- inscription/register
-- settings -> language
-- /harvest pour recuperer les donnees (c'est chaud laisse tomber)
+- [x] match history
+- [ ] inscription/register
+- [ ] settings -> language
+- [ ] /harvest pour recuperer les donnees (c'est chaud laisse tomber)

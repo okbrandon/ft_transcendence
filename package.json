@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "apexcharts": "^3.52.0",
+    "axios": "^1.7.3",
+    "jwt-decode": "^4.0.0",
+    "react-apexcharts": "^1.4.1"
+  }
+}
