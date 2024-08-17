@@ -6,6 +6,7 @@ import ProfileProvider, { ProfileContext } from '../../context/ProfileContext';
 import About from './content/About';
 import MatchHistory from './content/MatchHistory';
 import Winrate from './content/Winrate';
+import { useParams } from 'react-router-dom';
 
 const matchArray = [
 	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Brandon"}, scores: {playerA: 9, playerB: 10}, startedAt: "2021-09-01T12:28:01Z", finishedAt: "2021-09-01T12:30:38Z"},
@@ -20,12 +21,14 @@ const matchArray = [
 ];
 
 export const ProfileParent = () => {
+	const { username } = useParams();
+
 	useEffect(() => {
 		window.scrollTo(0, 0);
 	}, []);
 
 	return (
-		<ProfileProvider>
+		<ProfileProvider username={username}>
 			<Profile/>
 		</ProfileProvider>
 	);

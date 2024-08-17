@@ -11,7 +11,7 @@ import Login from '../components/Auth/Login';
 import SignUp from '../components/Auth/SignUp';
 import Game from '../components/Game/Game';
 import Home from '../components/Home/Home';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { ProfileParent } from '../components/Profile/Profile';
 import Verify from '../components/Auth/Verify';
@@ -20,7 +20,9 @@ import Callback from '../components/Auth/Callback';
 const PrivateRoutes = () => {
 	const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
 
-	setIsLoggedIn(isValidToken());
+	useEffect(() => {
+		setIsLoggedIn(isValidToken());
+	}, [setIsLoggedIn]);
 
 	return (
 		isLoggedIn ? <Outlet/> : <Navigate to="/login"/>
@@ -36,7 +38,7 @@ const Router = createBrowserRouter(createRoutesFromElements(
 			<Route path="verify" element={ <Verify/> }/>
 			<Route path="signup" element={ <SignUp/> }/>
 			<Route element={ <PrivateRoutes/> }>
-				<Route path="profile" element={ <ProfileParent/> }/>
+				<Route path="profile/:username" element={ <ProfileParent/> }/>
 			</Route>
 		</Route>
 		<Route element={ <PrivateRoutes/>}>

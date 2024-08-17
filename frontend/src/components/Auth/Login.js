@@ -30,7 +30,7 @@ const Login = () => {
 		<AuthenticationContainer>
 			<FormContainer onSubmit={handleSubmit}>
 				<h1>Login</h1>
-				<FortyTwoButton variant='secondary' onClick={handleFortyTwo}><Image src='./images/42_Logo.png' alt='42 Logo'/>Login with 42</FortyTwoButton>
+				<FortyTwoButton variant='secondary' onClick={handleFortyTwo}><Image src='/images/42_Logo.png' alt='42 Logo'/>Login with 42</FortyTwoButton>
 				<p>- Or -</p>
 				<FormContainer.Group className="mb-3">
 					<FormContainer.Control id="id" type="username" placeholder="Username" required value={username} onChange={(e) => setUsername(e.target.value)}/>
