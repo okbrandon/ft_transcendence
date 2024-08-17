@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const AboutContainer = styled.div`
 	grid-column: 1;
 	grid-row: 2 / 4;
-	background: rgba(0,0,0,0.8);
+	background: rgba(5,5,5,0.8);
 	margin-top: 50px;
 	border-radius: 30px;
 	height: 730px;
@@ -32,6 +32,10 @@ export const BalanceContainer = styled.div`
 	& > p {
 		padding-top: 10px;
 		font-size: 23px;
+
+		& > i {
+			margin-right: 10px;
+		}
 	}
 `;
 

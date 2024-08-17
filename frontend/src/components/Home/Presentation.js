@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
 	PresentationSection,
 	PresentationDiv,
@@ -20,10 +20,10 @@ const slideInRight = {
 
 const Presentation = () => {
 	const [visible, setVisible] = useState(false);
+	const presentationRef = useRef(null);
 
 	const handleScroll = () => {
-		const div = document.getElementById('presentation-div');
-		const rect = div.getBoundingClientRect();
+		const rect = presentationRef.current.getBoundingClientRect();
 		const isInView = rect.top >= 0 && rect.bottom <= window.innerHeight;
 		setVisible(isInView);
 	};
@@ -45,7 +45,7 @@ const Presentation = () => {
 				animate={visible ? "visible" : "hidden"}
 				variants={slideInRight}
 			/>
-			<PresentationDiv id="presentation-div">
+			<PresentationDiv ref={presentationRef}>
 				<h1>Welcome to Pong!</h1>
 				<p>Pong is a classic arcade game that has been a favorite among gamers for decades.</p>
 				<p>Now, you can enjoy this timeless game right here on our platform!</p>

@@ -17,7 +17,7 @@ const ProfilePicture = ({ user }) => {
 						strokeWidth={4}
 						styles={buildStyles({
 							rotation: 0.5,
-							pathColor: `#64ff61`,
+							pathColor: `#FFD700`,
 							trailColor: 'rgba(255,255,255,0.4)',
 						})}
 					/>
@@ -25,6 +25,7 @@ const ProfilePicture = ({ user }) => {
 				<p>0</p>
 			</ProfilePictureContainer>
 			<h2>{ user.displayName ? user.displayName : '' }</h2>
+			<h3>{user.username}</h3>
 		</ProfilePictureLayout>
 	);
 };

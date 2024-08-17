@@ -3,7 +3,7 @@ import Image from 'react-bootstrap/Image';
 
 export const ProfilePictureLayout = styled.div`
 	position: absolute;
-	top: -100px;
+	top: -130px;
 	left: 50%;
 	transform: translateX(-50%);
 	display: flex;
@@ -37,6 +37,12 @@ export const ProfilePictureLayout = styled.div`
 			transition: 0.3s ease-out;
 		}
 	}
+	
+	& > h3 {
+		font-size: 1.5rem;
+		margin-top: 5px;
+		color: rgb(200,200,200);
+	}
 `;
 
 export const ProfilePictureContainer = styled.div`
@@ -53,7 +59,7 @@ export const ProfilePictureContainer = styled.div`
 		bottom: -25px;
 		left: 50%;
 		transform: translateX(-50%);
-		border: 2px solid rgba(0,0,0,0.3);
+		border: 2px solid rgba(0,0,0,0.5);
 		min-width: 30px;
 		min-height: 30px;
 		padding: 0 5px;
@@ -62,6 +68,7 @@ export const ProfilePictureContainer = styled.div`
 		border-radius: 50%;
 		background: rgb(240,240,240);
 		color: black;
+		font-weight: 600;
 	}
 `;
 

@@ -6,7 +6,7 @@ export const DonutStatsContainer = styled.div`
 `;
 
 export const LineStatsContainer = styled.div`
-	width: 420px;
+	width: 430px;
 	margin: 20px auto 0 auto;
 	color: #000;
 `;
@@ -14,7 +14,7 @@ export const LineStatsContainer = styled.div`
 export const WinrateLayout = styled.div`
 	grid-column: 2 / 4;
 	grid-row: 2;
-	background: rgba(0,0,0,0.8);
+	background: rgba(5,5,5,0.8);
 	margin: 50px 0 0 30px;
 	border-radius: 30px;
 	border: 1px solid rgba(255,255,255,0.1);

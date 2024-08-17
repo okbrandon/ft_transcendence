@@ -29,13 +29,13 @@ export const MainBarContainer = styled.div`
 	}
 `;
 
-export const MainInfoContainer = styled.div`
+export const MainStatsContainer = styled.div`
 	display: flex;
 	justify-content: center;
 	margin-left: 50px;
 `;
 
-export const MainInfoItem = styled.div`
+export const MainStatsItem = styled.div`
 	display: flex;
 	min-width: 180px;
 	flex-direction: column;
@@ -43,12 +43,13 @@ export const MainInfoItem = styled.div`
 	align-items: center;
 	gap: 10px;
 
-	& .title {
-		font-size: 18px;
+	& > h2 {
+		font-size: 1.2rem;
 		font-weight: 700;
+		color: rgb(150,150,150);
 	}
 
-	& h2 {
-		font-size: 23px;
+	& p {
+		font-size: 1.5rem;
 	}
 `;

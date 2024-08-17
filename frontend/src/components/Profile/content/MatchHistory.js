@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { MatchHistoryContainer, MatchCardTable } from "../../../styles/Profile/content/MatchHistory.styled";
 import { CardTitle } from "../../../styles/Profile/Profile.styled";
@@ -17,6 +17,32 @@ const variants = {
 };
 
 const MatchHistory = ({ matchArray }) => {
+	const [visibleRows, setVisibleRows] = useState([]);
+	const containerRef = useRef(null);
+
+	const handleScroll = () => {
+		const rows = containerRef.current.querySelectorAll('.match-card');
+		if (!rows || rows.legnth === 0) return;
+
+		const visibleRows = [];
+		rows.forEach((row, index) => {
+			const rect = row.getBoundingClientRect();
+			const containerRect = containerRef.current.getBoundingClientRect();
+			const isInView = rect.bottom >= containerRect.top && rect.top < containerRect.bottom;
+			if (isInView) {
+				visibleRows.push(index);
+			}
+		});
+		setVisibleRows(visibleRows);
+	};
+
+	useEffect(() => {
+		const container = containerRef.current;
+		container.addEventListener('scroll', handleScroll);
+		handleScroll();
+		return () => container.removeEventListener('scroll', handleScroll);
+	}, [])
+
 	return (
 		<MatchHistoryContainer>
 			<CardTitle>MATCH HISTORY</CardTitle>
@@ -35,14 +61,15 @@ const MatchHistory = ({ matchArray }) => {
 									<th>Date</th>
 								</tr>
 							</thead>
-							<tbody>
+							<tbody ref={containerRef}>
 								{matchArray.map((match, index) => (
 									<motion.tr
 										key={index}
 										initial="hidden"
-										animate="visible"
+										animate={visibleRows.includes(index) ? "visible" : "hidden"}
 										custom={index}
 										variants={variants}
+										className="match-card"
 									>
 										<td>{match.playerB.displayName}</td>
 										<td>{getDuration(match.startedAt, match.finishedAt)}</td>
