@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ProfileContainer, UserContainer, UserProfileBanner } from '../../styles/Profile/Profile.styled';
 import MainBar from './main/MainBar';
 import Loader from '../../styles/shared/Loader.styled';
@@ -7,6 +7,7 @@ import About from './content/About';
 import MatchHistory from './content/MatchHistory';
 import Winrate from './content/Winrate';
 import { useParams } from 'react-router-dom';
+import Settings from './settings/Settings';
 
 const matchArray = [
 	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Brandon"}, scores: {playerA: 9, playerB: 10}, startedAt: "2021-09-01T12:28:01Z", finishedAt: "2021-09-01T12:30:38Z"},
@@ -44,6 +45,7 @@ export const ProfileParent = () => {
 };
 
 const Profile = () => {
+	const [showSettings, setShowSettings] = useState(false);
 	const { loading, user } = useContext(ProfileContext);
 
 	return (
@@ -53,7 +55,7 @@ const Profile = () => {
 					<>
 						<UserProfileBanner $path=""/>
 						<UserContainer>
-							<MainBar user={user} matchArray={matchArray}/>
+							<MainBar user={user} matchArray={matchArray} setShowSettings={setShowSettings}/>
 							<About user={user} matchArray={matchArray}/>
 							<Winrate matchArray={matchArray}/>
 							<MatchHistory matchArray={matchArray}/>
@@ -61,6 +63,7 @@ const Profile = () => {
 					</>
 				)
 			}
+			{ showSettings && <Settings user={user}/> }
 		</ProfileContainer>
 	);
 };

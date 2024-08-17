@@ -10,7 +10,7 @@ export const GetUserByUsername = async (username) => {
 	return await API.get(`users/${username}/profile`);
 };
 
-export const GetUsers = async () => {
-	console.log('Getting users...');
-	return await API.get('users');
+export const GetUsers = async (input) => {
+	console.log('Getting users via search bar...');
+	return await API.get(`users/search?content=${encodeURIComponent(input)}`);
 }

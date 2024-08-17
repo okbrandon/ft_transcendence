@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import FormControl from 'react-bootstrap/FormControl';
 import { SearchBarContainer } from '../../styles/Home/Navigation.styled';
 import SearchList from './SearchList';
-import { GetUsers } from '../../api/user';
 
 const SearchBar = () => {
 	const [input, setInput] = useState('');
@@ -10,7 +9,7 @@ const SearchBar = () => {
 
 	const handleInput = (event) => {
 		setInput(event.target.value);
-		// setResults(GetUsers());
+		// setResults(GetUsers(input));
 		console.log(results);
 	}
 

@@ -5,7 +5,7 @@ import ProfilePicture from './ProfilePicture';
 import MainStats from './MainStats';
 import { AuthContext } from '../../../context/AuthContext';
 
-const MainBar = ({ user, matchArray }) => {
+const MainBar = ({ user, matchArray, setShowSettings }) => {
 	const { username } = useContext(AuthContext);
 
 	return (
@@ -15,9 +15,9 @@ const MainBar = ({ user, matchArray }) => {
 				<ProfilePicture user={user}/>
 				{
 					username === user.username ? (
-						<i className="bi bi-gear-fill"/>
+						<i className="bi bi-gear-fill" onClick={() => setShowSettings(true)}/>
 					) : (
-						<i class="bi bi-person-fill-add"/>
+						<i className="bi bi-person-fill-add"/>
 					)
 				}
 			</MainBarContainer>
