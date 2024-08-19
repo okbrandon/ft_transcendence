@@ -18,7 +18,7 @@ export const PlayMenuContainer = styled.div`
 		background-image: url('/images/play-background.jpg');
 		background-repeat: no-repeat;
 		background-size: cover;
-		opacity: 0.2; /* Adjust the opacity as needed */
+		opacity: 0.2;
 	}
 `;
 

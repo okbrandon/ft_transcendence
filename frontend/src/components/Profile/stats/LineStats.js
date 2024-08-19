@@ -26,6 +26,7 @@ const LineStats = ({ matchArray }) => {
 		xaxis: {
 			categories: ['Jan', 'Feb', 'March', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
 		},
+		colors: ['#fff'],
 	}
 
 	return (
