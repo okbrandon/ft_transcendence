@@ -6,11 +6,24 @@ export const ProfileContainer = styled.div`
 	height: 1800px;
 	border: 1px solid transparent;
 
-	--color: rgba(20, 20, 20, 0.4);
-	background-color: rgb(2,2,2);
-	background-image: linear-gradient(0deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%,transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%,transparent),
-		linear-gradient(90deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%,transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%,transparent);
-	background-size: 55px 55px;
+	// --color: rgba(20, 20, 20, 0.4);
+	// background-color: rgb(2,2,2);
+	// background-image: linear-gradient(0deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%,transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%,transparent),
+	// 	linear-gradient(90deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%,transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%,transparent);
+	// background-size: 55px 55px;
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-image: url('/images/background.jpg');
+		background-repeat: no-repeat;
+		background-size: cover;
+		opacity: 0.2; /* Adjust the opacity as needed */
+	}
 `;
 
 export const UserProfileBanner = styled.div`
