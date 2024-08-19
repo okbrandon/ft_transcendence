@@ -21,7 +21,7 @@ export const FormContainer = styled(Form)`
 	height: 700px;
 	font-family: 'Inter', sans-serif;
 	border: 1px solid white;
-	
+
 	& > h1 {
 		font-family: 'Orbitron', sans-serif;
 		font-size: 3.5rem;
