@@ -8,12 +8,8 @@ const BackButton = styled(Link)`
 	background-color: transparent;
 	border: none;
 	font-size: 16px;
-	color: #c8c8c8;
+	color: #fff;
 	cursor: pointer;
-
-	&:hover {
-		color: ${({ hovercolor }) => hovercolor || '#000'};
-	}
 `;
 
 export default BackButton;

@@ -46,14 +46,16 @@ export const ProfileParent = () => {
 
 const Profile = () => {
 	const [showSettings, setShowSettings] = useState(false);
-	const { loading, user } = useContext(ProfileContext);
+	const { loading, user, setUser } = useContext(ProfileContext);
+
+	console.log(user);
 
 	return (
 		<ProfileContainer>
 			{
 				loading ? <Loader/> : (
 					<>
-						<UserProfileBanner $path=""/>
+						<UserProfileBanner $path={user.bannerID}/>
 						<UserContainer>
 							<MainBar user={user} matchArray={matchArray} setShowSettings={setShowSettings}/>
 							<About user={user} matchArray={matchArray}/>
@@ -63,7 +65,7 @@ const Profile = () => {
 					</>
 				)
 			}
-			{ showSettings && <Settings user={user}/> }
+			{ showSettings && <Settings user={user} setUser={setUser} setShowSettings={setShowSettings}/> }
 		</ProfileContainer>
 	);
 };

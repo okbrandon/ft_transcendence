@@ -7,7 +7,7 @@ const ProfilePicture = ({ user }) => {
 		<ProfilePictureLayout>
 			<ProfilePictureContainer>
 				<ProfileImage
-					src={user.avatarID !== 'default' ? user.avatarID : '/images/anonymous.png'}
+					src={user.avatarID !== 'default' && user.avatarID ? user.avatarID : '/images/anonymous.png'}
 					alt='profile picture'
 					roundedCircle
 				/>

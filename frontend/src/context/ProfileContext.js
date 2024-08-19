@@ -27,7 +27,7 @@ const ProfileProvider = ({ children, username }) => {
 	}, [navigate, username]);
 
 	return (
-		<ProfileContext.Provider value={{ user, loading }}>
+		<ProfileContext.Provider value={{ user, setUser, loading }}>
 			{children}
 		</ProfileContext.Provider>
 	);

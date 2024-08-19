@@ -7,7 +7,7 @@ const About = ({ user, matchArray }) => {
 	return (
 		<AboutContainer>
 			<CardTitle>ABOUT</CardTitle>
-			<p>Nothing interesting here.</p>
+			<p>{user.bio ? user.bio : 'Nothing interesting here.'}</p>
 			<BalanceContainer>
 				<h3>Balance</h3>
 				<p><i className="bi bi-coin"/> {user.money} coins</p>

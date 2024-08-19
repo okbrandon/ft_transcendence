@@ -40,6 +40,7 @@ export const CardTitle = styled.h2`
 	font-weight: 600;
 	margin: 0 auto;
 	text-align: center;
+	width: 100%;
 	border-bottom: 1px solid rgba(255,255,255,0.5);
 	border-radius: 30px 30px 0 0;
 	background: #000;
