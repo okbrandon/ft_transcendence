@@ -8,7 +8,7 @@ export const BannerSection = styled.section`
 	align-items: center;
 	width: 100%;
 	z-index: 100;
-	min-height: 90vh;
+	min-height: 75vh;
 	background: #0f0d23;
 	border-bottom: 5px solid #fff;
 
@@ -27,7 +27,7 @@ const BannerPaddle = styled.div`
 	position: absolute;
 	width: 70px;
 	height: 350px;
-	bottom: -55vh;
+	bottom: -35vh;
 	background: linear-gradient(90deg, rgba(150, 150, 150, 0.7) 10%, rgba(255, 255, 255, 0.7) 95%);
 	border-radius: 100px;
 `;

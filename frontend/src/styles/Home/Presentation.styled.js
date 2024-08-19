@@ -10,6 +10,7 @@ export const PresentationSection = styled.section`
 	height: 700px;
 	width: 100%;
 	z-index: 100;
+	border-bottom: 1px solid #fff;
 
 	background-color: #000;
 	background-image: linear-gradient(
