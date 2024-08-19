@@ -30,16 +30,30 @@ const Login = () => {
 		<AuthenticationContainer>
 			<FormContainer onSubmit={handleSubmit}>
 				<h1>Login</h1>
-				<FortyTwoButton variant='secondary' onClick={handleFortyTwo}><Image src='/images/42_Logo.png' alt='42 Logo'/>Login with 42</FortyTwoButton>
+				<FortyTwoButton variant='light' onClick={handleFortyTwo}><Image src='/images/42_Logo.png' alt='42 Logo'/>Login with 42</FortyTwoButton>
 				<p>- Or -</p>
 				<FormContainer.Group className="mb-3">
-					<FormContainer.Control id="id" type="username" placeholder="Username" required value={username} onChange={(e) => setUsername(e.target.value)}/>
+					<FormContainer.Control
+						id="username"
+						type="username"
+						required
+						value={username}
+						onChange={(e) => setUsername(e.target.value)}
+					/>
+					<span>USERNAME</span>
 				</FormContainer.Group>
 				<FormContainer.Group className="mb-3">
-					<FormContainer.Control id="password" type="password" placeholder="Password" required value={password} onChange={(e) => setPassword(e.target.value)}/>
+					<FormContainer.Control
+						id="password"
+						type="password"
+						required
+						value={password}
+						onChange={(e) => setPassword(e.target.value)}
+					/>
+					<span>PASSWORD</span>
 				</FormContainer.Group>
 				<p>Not Signed Up ? <Link to="/signup">Sign Up</Link></p>
-				<Button variant='success' type='submit'>Submit</Button>
+				<Button variant='light' type='submit'>Submit</Button>
 			</FormContainer>
 		</AuthenticationContainer>
 	);

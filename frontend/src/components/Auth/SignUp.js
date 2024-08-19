@@ -10,14 +10,17 @@ const SignUp = () => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [cfPassword, setCfPassword] = useState('');
-
-	// what if the user is already logged in and tries to go to this page ?
+	const [error, setError] = useState('');
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		ApiSignup(username, email, password)
-			.then(() => { navigate('/login') })
-			.catch((error) => { console.log(error); });
+		if (password !== cfPassword) {
+			setError('Passwords do not match');
+		} else {
+			ApiSignup(username, email, password)
+				.then(() => { navigate('/login') })
+				.catch((error) => { console.log(error); });
+		}
 	};
 
 	return (
@@ -25,19 +28,49 @@ const SignUp = () => {
 			<FormContainer onSubmit={handleSubmit}>
 				<h1>Sign Up</h1>
 				<FormContainer.Group className="mb-3">
-					<FormContainer.Control id="id" type="username" placeholder="Username" required pattern='[a-zA-Z\-_]{3,20}' value={username} onChange={(e) => setUsername(e.target.value)}/>
+					<FormContainer.Control
+						id="id"
+						type="username"
+						required
+						pattern='[a-zA-Z\-_]{3,20}'
+						value={username}
+						onChange={(e) => setUsername(e.target.value)}
+					/>
+					<span>USERNAME</span>
 				</FormContainer.Group>
 				<FormContainer.Group className="mb-3">
-					<FormContainer.Control id="mail" type="email" placeholder="Email" required value={email} onChange={(e) => setEmail(e.target.value)}/>
+					<FormContainer.Control
+						id="mail"
+						type="email"
+						required
+						value={email}
+						onChange={(e) => setEmail(e.target.value)}
+					/>
+					<span>E-MAIL</span>
 				</FormContainer.Group>
 				<FormContainer.Group className="mb-3">
-					<FormContainer.Control id="password" type="password" placeholder="Password" required value={password} onChange={(e) => setPassword(e.target.value)}/>
+					<FormContainer.Control
+						id="password"
+						type="password"
+						required
+						value={password}
+						onChange={(e) => setPassword(e.target.value)}
+					/>
+					<span>PASSWORD</span>
 				</FormContainer.Group>
 				<FormContainer.Group className="mb-3">
-					<FormContainer.Control id="cfpassword" type="password" placeholder="Confirm Password" required value={cfPassword} onChange={(e) => setCfPassword(e.target.value)}/>
+					<FormContainer.Control
+						id="cfpassword"
+						type="password"
+						required
+						value={cfPassword}
+						onChange={(e) => setCfPassword(e.target.value)}
+					/>
+					<span>CONFIRM</span>
 				</FormContainer.Group>
 				<p>Already Signed Up ? <Link to="/login">Login</Link></p>
-				<Button variant='success' type='submit'>Submit</Button>
+				{error && <p style={{color: 'red'}}>{error}</p>}
+				<Button variant='light' type='submit'>Submit</Button>
 			</FormContainer>
 		</AuthenticationContainer>
 	);

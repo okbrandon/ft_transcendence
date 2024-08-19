@@ -2,11 +2,11 @@ import styled from 'styled-components';
 import Button from 'react-bootstrap/esm/Button';
 
 const FortyTwoButton = styled(Button)`
-	font-size: 12px;
+	font-size: 1rem;
+	font-weight: 600;
 	cursor: pointer;
 	letter-spacing: 2px;
-	z-index: 2;
-	margin-bottom: 30px;
+	z-index: 1;
 	outline: none;
 
 	& > img {
