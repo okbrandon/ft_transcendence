@@ -7,19 +7,6 @@ export const PlayMenuContainer = styled.div`
 	gap: 50px;
 	height: 100vh;
 	width: 100%;
-
-	&::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background-image: url('/images/play-background.jpg');
-		background-repeat: no-repeat;
-		background-size: cover;
-		opacity: 0.2;
-	}
 `;
 
 export const PlayMenuCard = styled.div`
@@ -33,6 +20,7 @@ export const PlayMenuCard = styled.div`
 	height: 500px;
 	background: rgb(0,0,0);
 	z-index: 1;
+	user-select: none;
 
 	&:hover {
 		background: rgb(10,10,10);
