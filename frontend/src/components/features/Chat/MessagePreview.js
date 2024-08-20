@@ -27,7 +27,7 @@ const Sender = styled.strong`
 `;
 
 const MessageText = styled.span`
-  opacity: 0.5; /* Adjust the opacity value as needed */
+  opacity: 0.5;
 `;
 
 export const MessagePreview = ({ messages }) => {

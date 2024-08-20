@@ -39,6 +39,7 @@ const ChatListBubble = styled.div`
 
 const Chat = () => {
   const [openChats, setOpenChats] = useState([]);
+  const [selectedChat, setSelectedChat] = useState(null);
   const [messages, setMessages] = useState({
     'Alice': { sender: 'Alice', text: 'Hello!' },
     'Bob': { sender: 'Bob', text: 'Hi there!' },
@@ -54,14 +55,19 @@ const Chat = () => {
     }
   };
 
+  const handleSelectChat = (friendname) => {
+    setSelectedChat(friendname);
+  }
+
   return (
     <OverlayContainer>
       <ChatOverlayContainer>
+        {selectedChat && <ChatWindow friendname={selectedChat} messages={messages[selectedChat]} />}
         <ChatListBubble>
           <ChatHeader/>
           <SearchFriends onOpenChat={openChat} />
           {Object.keys(messages).map(friend => (
-            <MessagePreview key={friend} messages={[messages[friend]]} />
+            <MessagePreview key={friend} messages={[messages[friend]]} onClick={() => handleSelectChat(friend)} />
           ))}
         </ChatListBubble>
       </ChatOverlayContainer>
