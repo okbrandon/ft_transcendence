@@ -38,13 +38,29 @@ const FriendItem = styled.div`
   border-bottom: 1px solid #ccc;
   cursor: pointer;
   color: black;
+  display: flex;
+  justify-content: space-between; /* Space out the friend name and button */
   
   &:hover {
     background-color: #f0f0f0;
   }
 `;
 
-export const SearchFriends = () => {
+// Button styled component added to trigger chat opening
+const ChatButton = styled.button`
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+export const SearchFriends = ({ onOpenChat }) => { // onOpenChat is passed as a prop
   const [searchQuery, setSearchQuery] = useState('');
   const [friends, setFriends] = useState(['Alice', 'Bob', 'Brandonation', 'Evanescence', 'Hanministrateur', 'Kianatomy']);
 
@@ -64,7 +80,13 @@ export const SearchFriends = () => {
       {searchQuery && (
         <Dropdown>
           {filteredFriends.map((friend, index) => (
-            <FriendItem key={index}>{friend}</FriendItem>
+            <FriendItem key={index}>
+              {friend}
+              {/* Chat button to open a chat window with the selected friend */}
+              <ChatButton onClick={() => onOpenChat(friend)}>
+                Chat
+              </ChatButton>
+            </FriendItem>
           ))}
         </Dropdown>
       )}

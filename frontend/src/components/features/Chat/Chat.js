@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { ChatHeader } from './ChatHeader.js';
 import { SearchFriends } from './SearchFriends.js';
+import { MessagePreview } from './MessagePreview.js';
 
 const OverlayContainer = styled.div`
   width: 100%;
@@ -12,7 +13,7 @@ const OverlayContainer = styled.div`
   pointer-events: none;
   display: flex;
   flex-wrap: nowrap;
-  justify-content: flex-end;
+  justify-content: flex-start;
 `;
 
 const ChatOverlayContainer = styled.aside`
@@ -37,12 +38,31 @@ const ChatListBubble = styled.div`
 `;
 
 const Chat = () => {
-	return (
+  const [openChats, setOpenChats] = useState([]);
+  const [messages, setMessages] = useState({
+    'Alice': { sender: 'Alice', text: 'Hello!' },
+    'Bob': { sender: 'Bob', text: 'Hi there!' },
+    'Brandonation': { sender: 'Brandonation', text: 'Good morning!' },
+    'Evanescence': { sender: 'Evanescence', text: 'How are you?' },
+    'Hanministrateur': { sender: 'Hanministrateur', text: 'Let\'s meet up.' },
+    'Kianatomy': { sender: 'Kianatomy', text: 'See you soon!' }
+  });
+
+  const openChat = (friendname) => {
+    if (!openChats.includes(friendname)) {
+      setOpenChats([...openChats, friendname]);
+    }
+  };
+
+  return (
     <OverlayContainer>
       <ChatOverlayContainer>
         <ChatListBubble>
           <ChatHeader/>
-          <SearchFriends/>
+          <SearchFriends onOpenChat={openChat} />
+          {Object.keys(messages).map(friend => (
+            <MessagePreview key={friend} messages={[messages[friend]]} />
+          ))}
         </ChatListBubble>
       </ChatOverlayContainer>
     </OverlayContainer>
