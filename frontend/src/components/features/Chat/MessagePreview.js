@@ -8,6 +8,7 @@ const PreviewContainer = styled.div`
   color: #333;
   display: flex;
   align-items: center;
+  cursor: pointer;
 `;
 
 const ProfilePicture = styled.img`
@@ -34,7 +35,7 @@ export const MessagePreview = ({ messages }) => {
   const lastMessage = messages.length > 0 ? messages[messages.length - 1] : null;
 
   return (
-	<PreviewContainer>
+	<PreviewContainer onClick={onClick}>
       {lastMessage ? (
         <>
           <ProfilePicture src={defaultAvatar} alt={`${lastMessage.sender}'s profile`} />
