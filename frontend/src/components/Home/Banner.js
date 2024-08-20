@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { BannerPaddle, BannerPaddlesContainer, BannerSection, OverlayEffect } from "../../styles/Home/Banner.styled";
+import { BannerPaddle, BannerPaddlesContainer, BannerSection } from "../../styles/Home/Banner.styled";
 import PongButton from "../../styles/shared/button/PongButton.styled";
 
 const Banner = () => {
