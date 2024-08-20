@@ -9,6 +9,7 @@ export const MatchHistoryContainer = styled.div`
 	height: 800px;
 	padding: 0 0 50px 0;
 	border: 1px solid rgba(255,255,255,0.1);
+	box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1), 0 0 10px rgba(255, 255, 255, 0.2);
 
 	& > h2 {
 		position: sticky;

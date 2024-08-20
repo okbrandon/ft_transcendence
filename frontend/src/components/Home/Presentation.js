@@ -4,6 +4,8 @@ import {
 	PresentationDiv,
 	PongPaddleBackground,
 	PongBallBackground,
+	FeaturesContainer,
+	FeatureItem,
 } from "../../styles/Home/Presentation.styled";
 
 const slideInLeft = {
@@ -48,7 +50,22 @@ const Presentation = () => {
 			<PresentationDiv ref={presentationRef}>
 				<h1>Welcome to Pong!</h1>
 				<p>Pong is a classic arcade game that has been a favorite among gamers for decades.</p>
-				<p>Now, you can enjoy this timeless game right here on our platform!</p>
+				<p>Now, you can enjoy this timeless game right here on our platform with enhanced features, multiplayer support, and online
+				tournaments.</p>
+				<FeaturesContainer>
+					<FeatureItem>
+						<h3>Multiplayer Mode</h3>
+						<p>Challenge your friends or compete against other players in real-time multiplayer mode.</p>
+					</FeatureItem>
+					<FeatureItem>
+						<h3>Leaderboards</h3>
+						<p>Climb the global leaderboard and prove that you're the ultimate Pong master!</p>
+					</FeatureItem>
+					<FeatureItem>
+						<h3>Exclusive Skins</h3>
+						<p>Unlock custom paddles and ball designs to stand out in every match.</p>
+					</FeatureItem>
+				</FeaturesContainer>
 			</PresentationDiv>
 		</PresentationSection>
 	);

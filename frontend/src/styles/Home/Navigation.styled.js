@@ -3,9 +3,10 @@ import { NavLink } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 
 export const NavContainer = styled.nav`
-	display: flex;
-	background-repeat: no-repeat;
 	background: linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 100%);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	padding: 15px;
+	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	position: fixed;
@@ -26,16 +27,17 @@ export const NavItemsContainer = styled.div`
 `;
 
 export const StyledNavLink = styled(NavLink)`
-	color: rgba(255,255,255,0.8);
-	text-align: center;
+	color: #fff;
 	font-size: 16px;
 	font-weight: 500;
-	z-index: 1000;
+	padding: 10px 20px;
 	text-decoration: none;
+	transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
+	z-index: 1000;
 
 	&:hover::after {
 		width: 100%;
-		background-color: rgba(255,255,255,1);
+		background: #fff;
 	}
 
 	&::after {
@@ -49,7 +51,8 @@ export const StyledNavLink = styled(NavLink)`
 	}
 
 	&:hover {
-		color: rgba(255,255,255,1);
+		color: #fff;
+		text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 25px rgba(255, 255, 255, 0.6);
 	}
 `;
 

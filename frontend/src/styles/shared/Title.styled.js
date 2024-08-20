@@ -14,6 +14,10 @@ export const Title = styled.h1`
 	text-decoration: none;
 	z-index: 1000;
 
+	text-shadow:
+		0 0 10px rgba(255, 255, 255, 0.7),
+		0 0 20px rgba(200, 200, 200, 0.5);
+
 	&::before {
 		content: '';
 		position: absolute;
@@ -22,6 +26,9 @@ export const Title = styled.h1`
 		background: #fff;
 		border-radius: 10px;
 		bottom: 0;
+		box-shadow:
+			0 0 10px rgba(255, 255, 255, 0.7),
+			0 0 20px rgba(200, 200, 200, 0.5);
 	}
 
 	&::after {
@@ -33,6 +40,9 @@ export const Title = styled.h1`
 		border-radius: 50%;
 		bottom: 0;
 		right: 0;
+		box-shadow:
+			0 0 10px rgba(255, 255, 255, 0.7),
+			0 0 20px rgba(200, 200, 200, 0.5);
 	}
 `;
 
@@ -50,14 +60,21 @@ export const TitleLink = styled(Link)`
 	margin-bottom: 14px;
 	z-index: 1000;
 
+	text-shadow:
+		0 0 10px rgba(255, 255, 255, 0.7),
+		0 0 20px rgba(200, 200, 200, 0.5);
+
 	&::before {
 		content: '';
 		position: absolute;
 		height: 4px;
 		width: 50px;
-		background: #fff;
 		border-radius: 10px;
 		bottom: 0;
+		background: #fff;
+		box-shadow:
+			0 0 10px rgba(255, 255, 255, 0.7),
+			0 0 20px rgba(200, 200, 200, 0.5);
 	}
 
 	&::after {
@@ -65,9 +82,12 @@ export const TitleLink = styled(Link)`
 		position: absolute;
 		height: 7px;
 		width: 7px;
-		background: #fff;
 		border-radius: 50%;
 		bottom: 0;
 		right: 0;
+		background: #fff;
+		box-shadow:
+			0 0 10px rgba(255, 255, 255, 0.7),
+			0 0 20px rgba(200, 200, 200, 0.5);
 	}
 `;
