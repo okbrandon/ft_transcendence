@@ -1,0 +1,12 @@
+entryPoints:
+  web:
+    address: ":8888"
+
+api:
+  insecure: true
+  dashboard: true
+
+providers:
+  file:
+    filename: "/etc/traefik/traefik_dynamic.yml"  # Path inside the container
+    watch: true

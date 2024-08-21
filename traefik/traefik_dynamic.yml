@@ -1,0 +1,13 @@
+http:
+  routers:
+    my-router:
+      rule: "Host(`localhost`)"
+      service: my-service
+      entryPoints:
+        - web
+
+  services:
+    my-service:
+      loadBalancer:
+        servers:
+          - url: "http://backend:8000"

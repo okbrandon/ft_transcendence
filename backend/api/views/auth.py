@@ -51,7 +51,7 @@ class AuthRegister(APIView):
             code=verification_code,
             expires_at=timezone.now() + timezone.timedelta(hours=1)  # Code expires in 1 hour
         )
-        verification_link = f"http://localhost/verify?code={base64.urlsafe_b64encode(f'{user.userID}.{verification_code}'.encode()).decode()}"
+        verification_link = f"http://localhost:8888/verify?code={base64.urlsafe_b64encode(f'{user.userID}.{verification_code}'.encode()).decode()}"
         send_verification_email([data['email']], verification_link)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)

@@ -60,16 +60,13 @@ services:
   traefik:
     image: traefik:v2.5
     restart: always
-    command:
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--entrypoints.web.address=:80"
     ports:
-      - "80:80"
+      - "8888:8888"
     networks:
       - transcendence
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml
+      - ./traefik/traefik_dynamic.yml:/etc/traefik/traefik_dynamic.yml
     # healthcheck:
     #   test: ["CMD", "curl", "-f", "http://localhost:80"]
     #   interval: 15s
