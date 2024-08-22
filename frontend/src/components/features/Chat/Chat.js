@@ -42,6 +42,7 @@ const ChatListBubble = styled.div`
 const Chat = () => {
 	const [openChats, setOpenChats] = useState([]);
 	const [selectedChat, setSelectedChat] = useState(null);
+	const [isMinimized, setIsMinimized] = useState(false);
 	const [messages, setMessages] = useState({
 		'Alice': { sender: 'Alice', text: 'Hello!' },
 		'Bob': { sender: 'Bob', text: 'Hi there!' },
@@ -65,6 +66,10 @@ const Chat = () => {
 		setSelectedChat(null);
 	}
 
+	const handleToggleMinimize = () => {
+		setIsMinimized(!isMinimized);
+	}
+
 	return (
 		<OverlayContainer>
 			<ChatOverlayContainer>
@@ -75,7 +80,15 @@ const Chat = () => {
 						<MessagePreview key={friend} messages={[messages[friend]]} onClick={() => handleSelectChat(friend)} />
 					))}
 				</ChatListBubble>
-				{selectedChat && <ChatWindow friendname={selectedChat} messages={messages[selectedChat]} onClose={handleCloseChat} />}
+				{selectedChat && (
+					<ChatWindow
+						friendname={selectedChat}
+						messages={messages[selectedChat]}
+						onClose={handleCloseChat}
+						isMinimized={isMinimized}
+						onToggleMinimize={handleToggleMinimize}
+					/>
+				)}
 			</ChatOverlayContainer>
 		</OverlayContainer>
 	);

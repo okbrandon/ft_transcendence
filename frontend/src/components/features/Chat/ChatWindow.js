@@ -9,7 +9,7 @@ const ChatWindowContainer = styled.div`
   position: relative !important;
   margin-right: 1%;
   max-width: 350px;
-  height: 500px;
+  height: ${({ isMinimized }) => (isMinimized ? '40px' : '500px')};
 `;
 
 const ChatHeader = styled.div`
@@ -35,17 +35,28 @@ const CloseButton = styled.button`
 	}
 `;
 
+const MinimizeButton = styled.button`
+	background: none;
+	border: none;
+	color: #fff;
+	font-size: 16px;
+	cursor: pointer;
+	margin-right: 10px;
+`;
+
 const ChatMessages = styled.div`
   flex: 1;
   padding: 10px;
   overflow-y: auto;
   color: #333;
+  display: ${({ isMinimized }) => (isMinimized ? 'none' : 'block')};
 `;
 
 const ChatInputContainer = styled.div`
   padding: 10px;
   background-color: #fff;
   border-top: 1px solid #ddd;
+  display: ${({ isMinimized }) => (isMinimized ? 'none' : 'block')};
 `;
 
 const ChatInput = styled.input`
@@ -55,17 +66,17 @@ const ChatInput = styled.input`
   border-radius: 4px;
 `;
 
-export const ChatWindow = ({ friendname, messages, onClose }) => {
+export const ChatWindow = ({ friendname, messages, onClose, isMinimized }) => {
   return (
-	<ChatWindowContainer>
-	  <ChatHeader>
+	<ChatWindowContainer isMinimized={isMinimized}>
+	  <ChatHeader isMinimized={isMinimized}>
 		{friendname}
 		<CloseButton onClick={onClose}>X</CloseButton>
 		</ChatHeader>
-	  <ChatMessages>
+	  <ChatMessages isMinimized={isMinimized}>
 		<div>{messages.text}</div>
 	  </ChatMessages>
-	  <ChatInputContainer>
+	  <ChatInputContainer isMinimized={isMinimized}>
 		<ChatInput placeholder="Type a message..." />
 	  </ChatInputContainer>
 	</ChatWindowContainer>
