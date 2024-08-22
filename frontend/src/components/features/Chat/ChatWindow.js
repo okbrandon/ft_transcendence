@@ -4,21 +4,42 @@ import styled from 'styled-components';
 const ChatWindowContainer = styled.div`
   flex: 1;
   background-color: #f9f9f9;
-  border-right: 1px solid #ddd;
   display: flex;
   flex-direction: column;
+  position: relative !important;
+  margin-right: 1%;
+  max-width: 350px;
+  height: 500px;
 `;
 
 const ChatHeader = styled.div`
   padding: 10px;
-  background-color: #fff;
-  border-bottom: 1px solid #ddd;
+  background-color: #000;
+  border: 1px solid #ddd;
+  font-weight: bold;
+  color: #fff;
+`;
+
+const CloseButton = styled.button`
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	background: none;
+	border: none;
+	color: #fff;
+	font-size: 16px;
+	cursor: pointer;
+
+	&:hover {
+		color: #333;
+	}
 `;
 
 const ChatMessages = styled.div`
   flex: 1;
   padding: 10px;
   overflow-y: auto;
+  color: #333;
 `;
 
 const ChatInputContainer = styled.div`
@@ -34,10 +55,13 @@ const ChatInput = styled.input`
   border-radius: 4px;
 `;
 
-const ChatWindow = ({ friendname, messages }) => {
+export const ChatWindow = ({ friendname, messages, onClose }) => {
   return (
 	<ChatWindowContainer>
-	  <ChatHeader>{friendname}</ChatHeader>
+	  <ChatHeader>
+		{friendname}
+		<CloseButton onClick={onClose}>X</CloseButton>
+		</ChatHeader>
 	  <ChatMessages>
 		<div>{messages.text}</div>
 	  </ChatMessages>
@@ -47,5 +71,3 @@ const ChatWindow = ({ friendname, messages }) => {
 	</ChatWindowContainer>
   );
 };
-
-export default ChatWindow;

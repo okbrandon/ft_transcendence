@@ -31,7 +31,7 @@ const MessageText = styled.span`
   opacity: 0.5;
 `;
 
-export const MessagePreview = ({ messages }) => {
+export const MessagePreview = ({ messages, onClick }) => {
   const lastMessage = messages.length > 0 ? messages[messages.length - 1] : null;
 
   return (
