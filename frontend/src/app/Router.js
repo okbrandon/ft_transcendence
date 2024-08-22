@@ -18,6 +18,7 @@ import Verify from '../components/Auth/Verify';
 import Callback from '../components/Auth/Callback';
 import PlayMenu from '../components/Game/PlayMenu';
 import Store from '../components/Store/Store';
+import Tournament from '../components/Game/Tournament/Tournament';
 
 const PrivateRoutes = () => {
 	const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
@@ -43,6 +44,7 @@ const Router = createBrowserRouter(createRoutesFromElements(
 				<Route path="profile/:username" element={ <ProfileParent/> }/>
 				<Route path="store" element={ <Store/> }/>
 				<Route path="playmenu" element={ <PlayMenu/> }/>
+				<Route path="tournament" element={ <Tournament/> }/>
 			</Route>
 		</Route>
 		<Route element={ <PrivateRoutes/>}>

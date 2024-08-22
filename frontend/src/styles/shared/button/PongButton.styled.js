@@ -12,7 +12,7 @@ const PongButton = styled(Button)`
 	cursor: pointer;
 	text-transform: uppercase;
 	box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
-	transition: all 0.2s ease-in-out;
+	transition: all 0.1s ease-in-out;
 	outline: none;
 	cursor: pointer;
 	z-index: 500;

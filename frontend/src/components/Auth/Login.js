@@ -13,8 +13,6 @@ const Login = () => {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 
-	// what if the user is already logged in and tries to go to this page ?
-
 	const handleSubmit = (event) => {
 		event.preventDefault();
 		ApiLogin(username, password)

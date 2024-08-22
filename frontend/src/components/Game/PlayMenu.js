@@ -1,13 +1,16 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { PlayMenuCard, PlayMenuContainer } from "../../styles/Game/PlayMenu.styled";
 
 const PlayMenu = () => {
+	const navigate = useNavigate();
+
 	return (
 		<PlayMenuContainer>
 			<PlayMenuCard>
 				<h1>AI</h1>
 			</PlayMenuCard>
-			<PlayMenuCard>
+			<PlayMenuCard onClick={() => navigate('/tournament')}>
 				<h1>Tournament</h1>
 			</PlayMenuCard>
 			<PlayMenuCard>

@@ -92,6 +92,7 @@ export const FeatureItem = styled.div`
 		font-size: 16px;
 		color: rgba(255, 255, 255, 0.8);
 		line-height: 1.6;
+		user-select: none;
 	}
 `;
 
