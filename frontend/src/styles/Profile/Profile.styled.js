@@ -5,19 +5,11 @@ export const ProfileContainer = styled.div`
 	width: 100%;
 	height: 1800px;
 	border: 1px solid transparent;
-
-	&::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background-image: url('/images/background.jpg');
-		background-repeat: no-repeat;
-		background-size: cover;
-		opacity: 0.2;
-	}
+	background-color: #000000; /* Solid black background */
+	background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+		radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+	background-position: 0 0, 25px 25px;
+	background-size: 50px 50px;
 `;
 
 export const UserProfileBanner = styled.div`
