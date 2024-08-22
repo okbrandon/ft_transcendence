@@ -19,6 +19,7 @@ import Callback from '../components/Auth/Callback';
 import PlayMenu from '../components/Game/PlayMenu';
 import Store from '../components/Store/Store';
 import Tournament from '../components/Game/Tournament/Tournament';
+import JoinTournament from '../components/Game/Tournament/JoinTournament';
 
 const PrivateRoutes = () => {
 	const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
@@ -45,6 +46,7 @@ const Router = createBrowserRouter(createRoutesFromElements(
 				<Route path="store" element={ <Store/> }/>
 				<Route path="playmenu" element={ <PlayMenu/> }/>
 				<Route path="tournament" element={ <Tournament/> }/>
+				<Route path="tournament-room" element={ <JoinTournament/> }/> {/* ⚒️ testing... */}
 			</Route>
 		</Route>
 		<Route element={ <PrivateRoutes/>}>

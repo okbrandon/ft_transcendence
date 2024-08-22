@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
 	AvailableTournamentsSection,
 	AvailableTournamentsContainer,
@@ -22,6 +23,7 @@ const initialTournaments = [
 ];
 
 const AvailableTournaments = ({ setOptions }) => {
+	const navigate = useNavigate();
 	const [searchQuery, setSearchQuery] = useState("");
 	const [tournaments, setTournaments] = useState(initialTournaments);
 
@@ -41,7 +43,7 @@ const AvailableTournaments = ({ setOptions }) => {
 				/>
 				<TournamentList>
 					{filteredTournaments.map((tournament) => (
-						<TournamentCard key={tournament.id}>
+						<TournamentCard key={tournament.id} onClick={() => navigate('/tournament-room')}>
 							<h3>{tournament.name}</h3>
 							<p>Players: {tournament.players}</p>
 							<JoinButton>Join</JoinButton>
