@@ -5,7 +5,7 @@ export const ProfileContainer = styled.div`
 	width: 100%;
 	height: 1800px;
 	border: 1px solid transparent;
-	background-color: #000000; /* Solid black background */
+	background-color: #000;
 	background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
 		radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
 	background-position: 0 0, 25px 25px;
@@ -18,7 +18,7 @@ export const UserProfileBanner = styled.div`
 	border-radius: 30px;
 	height: 300px;
 	background-repeat: no-repeat;
-	background: url(${(props) => props.$path ? props.$path : '/images/profilebg.jpg'});
+	${props => props.$path ? `background-image: url(${props.$path});` : 'background-color: #111;'}
 	background-size: auto;
 	background-position: center;
 `;
