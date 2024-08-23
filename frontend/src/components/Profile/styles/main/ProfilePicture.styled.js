@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Image from 'react-bootstrap/Image';
 
-export const ProfilePictureLayout = styled.div`
+export const SectionContainer = styled.div`
 	position: absolute;
 	top: -130px;
 	left: 50%;

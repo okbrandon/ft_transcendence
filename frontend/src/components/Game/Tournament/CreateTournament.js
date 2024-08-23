@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import {
-	CreateTournamentLayout,
+	PageContainer,
 	TournamentForm
 } from "../styles/Tournament/CreateTournament.styled";
 import { BackButton } from "../styles/Tournament/Tournament.styled";
@@ -16,7 +16,7 @@ const CreateTournament = ({ setOptions }) => {
 	};
 
 	return (
-		<CreateTournamentLayout>
+		<PageContainer>
 			<BackButton onClick={() => setOptions('')}><i className="bi bi-arrow-left"/></BackButton>
 			<h1>Tournament Setup</h1>
 			<TournamentForm onSubmit={handleSubmit}>
@@ -54,7 +54,7 @@ const CreateTournament = ({ setOptions }) => {
 				</TournamentForm.Group>
 				<button type="submit">CREATE</button>
 			</TournamentForm>
-		</CreateTournamentLayout>
+		</PageContainer>
 	);
 };
 

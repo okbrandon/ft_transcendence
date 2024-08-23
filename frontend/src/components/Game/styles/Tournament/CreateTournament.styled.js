@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Form from "react-bootstrap/Form";
 
-export const CreateTournamentLayout = styled.div`
+export const PageContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: center;

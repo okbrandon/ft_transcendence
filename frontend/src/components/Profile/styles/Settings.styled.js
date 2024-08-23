@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Form from 'react-bootstrap/Form';
 
-export const SettingsLayout = styled.div`
+export const SectionContainer = styled.div`
 	position: absolute;
 	top: 0;
 	width: 100%;

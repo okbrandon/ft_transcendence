@@ -6,13 +6,13 @@ import Password from "./Password";
 import Bio from "./Bio";
 import Picture from "./Picture";
 import Banner from "./Banner";
-import { SettingsContainer, SettingsItemContainer, SettingsLayout } from "../styles/Settings.styled";
+import { SettingsContainer, SettingsItemContainer, SectionContainer } from "../styles/Settings.styled";
 
 const Settings = ({ user, setUser, setShowSettings }) => {
 	const [showDropdown, setShowDropdown] = useState(null);
 
 	return (
-		<SettingsLayout>
+		<SectionContainer>
 			<SettingsContainer>
 				<i className="bi bi-arrow-left" onClick={() => setShowSettings(false)}/>
 				<h2>SETTINGS</h2>
@@ -55,7 +55,7 @@ const Settings = ({ user, setUser, setShowSettings }) => {
 					/>
 				</SettingsItemContainer>
 			</SettingsContainer>
-		</SettingsLayout>
+		</SectionContainer>
 	);
 };
 

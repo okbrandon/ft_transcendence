@@ -11,7 +11,7 @@ export const LineStatsContainer = styled.div`
 	color: #000;
 `;
 
-export const WinrateLayout = styled.div`
+export const SectionContainer = styled.div`
 	grid-column: 2 / 4;
 	grid-row: 2;
 	background: rgba(5,5,5,0.8);

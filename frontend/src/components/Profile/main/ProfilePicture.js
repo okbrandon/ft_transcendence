@@ -1,10 +1,10 @@
 import React from 'react';
-import { ProfileImage, ProfilePictureContainer, ProfilePictureLayout } from '../styles/main/ProfilePicture.styled';
+import { ProfileImage, ProfilePictureContainer, SectionContainer } from '../styles/main/ProfilePicture.styled';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 
 const ProfilePicture = ({ user }) => {
 	return (
-		<ProfilePictureLayout>
+		<SectionContainer>
 			<ProfilePictureContainer>
 				<ProfileImage
 					src={user.avatarID !== 'default' && user.avatarID ? user.avatarID : '/images/anonymous.png'}
@@ -26,7 +26,7 @@ const ProfilePicture = ({ user }) => {
 			</ProfilePictureContainer>
 			<h2>{ user.displayName ? user.displayName : '' }</h2>
 			<h3>{user.username}</h3>
-		</ProfilePictureLayout>
+		</SectionContainer>
 	);
 };
 

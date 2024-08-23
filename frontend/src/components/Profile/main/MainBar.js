@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import ProfilePicture from './ProfilePicture';
 import MainStats from './MainStats';
-import { MainBarContainer, MainBarLayout } from '../styles/main/MainBar.styled';
+import { MainBarContainer, SectionContainer } from '../styles/main/MainBar.styled';
 import { AuthContext } from '../../../context/AuthContext';
 import 'react-circular-progressbar/dist/styles.css';
 
@@ -9,7 +9,7 @@ const MainBar = ({ user, matchArray, setShowSettings }) => {
 	const { username } = useContext(AuthContext);
 
 	return (
-		<MainBarLayout>
+		<SectionContainer>
 			<MainBarContainer>
 				<MainStats matchArray={matchArray}/>
 				<ProfilePicture user={user}/>
@@ -21,7 +21,7 @@ const MainBar = ({ user, matchArray, setShowSettings }) => {
 					)
 				}
 			</MainBarContainer>
-		</MainBarLayout>
+		</SectionContainer>
 	);
 };
 

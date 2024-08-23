@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const MainBarLayout = styled.div`
+export const SectionContainer = styled.div`
 	grid-column: 1 / 4;
 	display: flex;
 	justify-content: space-around;
