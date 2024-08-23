@@ -20,6 +20,7 @@ import PlayMenu from '../components/Game/PlayMenu';
 import Store from '../components/Store/Store';
 import Tournament from '../components/Game/Tournament/Tournament';
 import JoinTournament from '../components/Game/Tournament/JoinTournament';
+import Match from '../components/Game/Match';
 
 const PrivateRoutes = () => {
 	const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
@@ -47,6 +48,7 @@ const Router = createBrowserRouter(createRoutesFromElements(
 				<Route path="playmenu" element={ <PlayMenu/> }/>
 				<Route path="tournament" element={ <Tournament/> }/>
 				<Route path="tournament-room" element={ <JoinTournament/> }/> {/* ⚒️ testing... */}
+				<Route path="vs-ai" element={ <Match/> }/>
 			</Route>
 		</Route>
 		<Route element={ <PrivateRoutes/>}>

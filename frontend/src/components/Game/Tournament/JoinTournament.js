@@ -27,7 +27,7 @@ const JoinTournament = () => {
 	return (
 		<PageContainer>
 			<JoinTournamentContainer>
-				<BackButton onClick={() => navigate('/tournament')}>
+				<BackButton onClick={() => navigate(-1)}>
 					<i className="bi bi-arrow-left"/>
 				</BackButton>
 				<h1>Tournament</h1>
