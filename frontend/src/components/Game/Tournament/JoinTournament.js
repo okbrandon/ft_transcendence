@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import Spinner from "react-bootstrap/Spinner";
 import {
 	ButtonContainer,
 	InviteButton,
@@ -10,9 +11,8 @@ import {
 	PlayerList,
 	StartTournamentButton,
 	WaitingMessage,
-} from "../../../styles/Game/Tournament/JoinTournament.styled";
-import Spinner from "react-bootstrap/Spinner";
-import { BackButton } from "../../../styles/Game/Tournament/Tournament.styled";
+} from "../styles/Tournament/JoinTournament.styled";
+import { BackButton } from "../styles/Tournament/Tournament.styled";
 
 const players = ["Player 1", "Player 2", "Player 3", "Player 4", "Player 5", "Player 6", "Player 7"];
 

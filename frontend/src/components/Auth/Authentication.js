@@ -1,5 +1,5 @@
 import React from 'react';
-import { AuthenticationContainer } from '../../styles/Authentication.styled';
+import { AuthenticationContainer } from './styles/Authentication.styled';
 import Login from './Login';
 import SignUp from './SignUp';
 

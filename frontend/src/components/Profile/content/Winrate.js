@@ -1,6 +1,6 @@
 import React from "react";
-import { WinrateCard, WinrateContainer, WinrateLayout } from "../../../styles/Profile/Stats.styled";
-import { CardTitle } from "../../../styles/Profile/Profile.styled";
+import { WinrateCard, WinrateContainer, WinrateLayout } from "../styles/Stats.styled";
+import { CardTitle } from "../styles/Profile.styled";
 import DonutStats from "../stats/DonutStats";
 
 const Winrate = ({ matchArray }) => {

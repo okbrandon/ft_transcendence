@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { SettingsContainer, SettingsItemContainer, SettingsLayout } from "../../../styles/Profile/Settings.styled";
 import Username from "./Username";
 import DisplayName from "./DisplayName";
 import Email from "./Email";
@@ -7,6 +6,7 @@ import Password from "./Password";
 import Bio from "./Bio";
 import Picture from "./Picture";
 import Banner from "./Banner";
+import { SettingsContainer, SettingsItemContainer, SettingsLayout } from "../styles/Settings.styled";
 
 const Settings = ({ user, setUser, setShowSettings }) => {
 	const [showDropdown, setShowDropdown] = useState(null);

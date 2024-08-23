@@ -1,5 +1,5 @@
 import React from 'react';
-import { ProfileImage, ProfilePictureContainer, ProfilePictureLayout } from '../../../styles/Profile/main/ProfilePicture.styled';
+import { ProfileImage, ProfilePictureContainer, ProfilePictureLayout } from '../styles/main/ProfilePicture.styled';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 
 const ProfilePicture = ({ user }) => {

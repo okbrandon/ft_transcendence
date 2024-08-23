@@ -1,7 +1,7 @@
 import React from "react";
-import { getNumberOfMatchesPerMonth } from "../scripts/match";
-import { LineStatsContainer } from "../../../styles/Profile/Stats.styled";
 import ReactApexChart from "react-apexcharts";
+import { getNumberOfMatchesPerMonth } from "../scripts/match";
+import { LineStatsContainer } from "../styles/Stats.styled";
 
 const LineStats = ({ matchArray }) => {
 	const series = [{

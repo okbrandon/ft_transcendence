@@ -1,6 +1,10 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { OptionButton, OptionDescription, TournamentOptionsContainer } from "../../../styles/Game/Tournament/Tournament.styled";
+import {
+	OptionButton,
+	OptionDescription,
+	TournamentOptionsContainer
+} from "../styles/Tournament/Tournament.styled";
 
 const OptionsTournament = ({ setOptions }) => {
 	const navigate = useNavigate();

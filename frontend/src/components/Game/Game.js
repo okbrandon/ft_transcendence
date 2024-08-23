@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import GameContainer, { GameSeparator } from '../../styles/Game/GameContainer.styled';
-import PongBall from '../../styles/Game/PongBall.styled';
-import PongPaddle from '../../styles/Game/PongPaddle.styled';
-import BackButton from '../../styles/shared/button/BackButton.styled';
+import GameContainer, { GameSeparator } from './styles/GameContainer.styled';
+import PongBall from './styles/PongBall.styled';
+import PongPaddle from './styles/PongPaddle.styled';
 
 const Game = () => {
 	/* ball pos x: 485 y: 285 and paddles from top: 247 */
@@ -65,7 +64,6 @@ const Game = () => {
 
 	return (
 		<>
-			<BackButton to='/home/game' hovercolor='#fff'><i className='bi bi-arrow-left' style={{'fontSize': '35px'}}></i></BackButton>
 			<GameContainer>
 				<PongPaddle $side="left" $leftPaddleTop={leftPaddleTop}/>
 				<PongPaddle $side="right" $rightPaddleTop={rightPaddleTop}/>

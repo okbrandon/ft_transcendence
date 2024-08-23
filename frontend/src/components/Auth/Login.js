@@ -3,8 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import Image from 'react-bootstrap/Image';
 import Button from 'react-bootstrap/Button';
 import { ApiLogin } from '../../api/auth';
-import FortyTwoButton from '../../styles/shared/button/FortyTwoButton.styled';
-import { AuthenticationContainer, FormContainer } from '../../styles/Auth/Authentication.styled';
+import { AuthenticationContainer, FormContainer, FortyTwoButton } from './styles/Authentication.styled';
 import { AuthContext } from '../../context/AuthContext';
 
 const Login = () => {

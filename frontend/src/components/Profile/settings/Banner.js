@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
-import { SettingsDropdown, SettingsForm, SettingsItem } from "../../../styles/Profile/Settings.styled";
 import { motion } from "framer-motion";
 import Button from "react-bootstrap/Button";
+import { SettingsDropdown, SettingsForm, SettingsItem } from "../styles/Settings.styled";
 import API from "../../../api/api";
 
 const Banner = ({ showDropdown, setUser, setShowDropdown }) => {

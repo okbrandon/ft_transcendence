@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { MatchHistoryContainer, MatchCardTable } from "../../../styles/Profile/content/MatchHistory.styled";
-import { CardTitle } from "../../../styles/Profile/Profile.styled";
+import { MatchHistoryContainer, MatchCardTable } from "../styles/content/MatchHistory.styled";
+import { CardTitle } from "../styles/Profile.styled";
 import { getDuration, getDate } from "../scripts/match";
 
 const variants = {

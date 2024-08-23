@@ -7,8 +7,8 @@ import {
 	TournamentList,
 	TournamentCard,
 	JoinButton,
-} from "../../../styles/Game/Tournament/AvailableTournaments.styled";
-import { BackButton } from "../../../styles/Game/Tournament/Tournament.styled";
+} from "../styles/Tournament/AvailableTournaments.styled";
+import { BackButton } from "../styles/Tournament/Tournament.styled";
 
 const initialTournaments = [
 	{ id: 1, name: "Summer Cup", players: "5/8" },

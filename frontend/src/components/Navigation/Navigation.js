@@ -1,14 +1,14 @@
 import React, { useContext } from 'react';
 import ProfileDropdown from './ProfileDropdown';
+import SearchBar from './SearchBar';
 import { TitleLink } from '../../styles/shared/Title.styled';
 import {
 	NavContainer,
 	NavItemsContainer,
 	StyledNavLink,
-} from '../../styles/Home/Navigation.styled';
-import ConnectButton from '../../styles/shared/button/ConnectButton.styled';
+	ConnectButton
+} from './styles/Navigation.styled';
 import { AuthContext } from '../../context/AuthContext';
-import SearchBar from './SearchBar';
 
 const NavBar = () => {
 	const { isLoggedIn } = useContext(AuthContext);

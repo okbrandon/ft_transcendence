@@ -1,7 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { BannerPaddle, BannerPaddlesContainer, BannerSection } from "../../styles/Home/Banner.styled";
-import PongButton from "../../styles/shared/button/PongButton.styled";
+import {
+	BannerPaddle,
+	BannerPaddlesContainer,
+	BannerSection,
+	PlayButton,
+} from "./styles/Banner.styled";
 
 const Banner = () => {
 	const navigate = useNavigate();
@@ -52,9 +56,9 @@ const Banner = () => {
 					/>
 				</BannerPaddlesContainer>
 				<h1>GET READY TO SERVE!</h1>
-				<PongButton variant="light" onClick={() => navigate("/solo-vs-ai")}>
+				<PlayButton variant="light" onClick={() => navigate("/solo-vs-ai")}>
 					PLAY NOW
-				</PongButton>
+				</PlayButton>
 			</BannerSection>
 		</>
 	);

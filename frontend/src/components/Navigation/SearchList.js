@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { ProfileListContainer } from "../../styles/Home/Navigation.styled";
+import React from "react";
+import { ProfileListContainer } from "./styles/Navigation.styled";
 import Image from 'react-bootstrap/Image';
 
 const SearchList = ({ input, results }) => {

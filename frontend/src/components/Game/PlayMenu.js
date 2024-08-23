@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { PlayMenuCard, PlayMenuContainer } from "../../styles/Game/PlayMenu.styled";
+import { PlayMenuCard, PlayMenuContainer } from "./styles/PlayMenu.styled";
 
 const PlayMenu = () => {
 	const navigate = useNavigate();

@@ -6,7 +6,7 @@ import {
 	PongBallBackground,
 	FeaturesContainer,
 	FeatureItem,
-} from "../../styles/Home/Presentation.styled";
+} from "./styles/Presentation.styled";
 
 const slideInLeft = {
 	hidden: { left: '-20rem', opacity: 0 },

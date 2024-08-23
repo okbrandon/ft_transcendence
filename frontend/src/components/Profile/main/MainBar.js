@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
-import { MainBarContainer, MainBarLayout } from '../../../styles/Profile/main/MainBar.styled';
-import 'react-circular-progressbar/dist/styles.css';
 import ProfilePicture from './ProfilePicture';
 import MainStats from './MainStats';
+import { MainBarContainer, MainBarLayout } from '../styles/main/MainBar.styled';
 import { AuthContext } from '../../../context/AuthContext';
+import 'react-circular-progressbar/dist/styles.css';
 
 const MainBar = ({ user, matchArray, setShowSettings }) => {
 	const { username } = useContext(AuthContext);

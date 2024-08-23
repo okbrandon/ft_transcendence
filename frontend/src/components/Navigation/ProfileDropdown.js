@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Dropdown from 'react-bootstrap/Dropdown';
-import ProfileDropdownButton from '../../styles/shared/button/ProfileDropdownButton.styled';
+import { ProfileDropdownButton } from './styles/Navigation.styled';
 import { AuthContext } from '../../context/AuthContext';
 
 const ProfileDropdown = () => {

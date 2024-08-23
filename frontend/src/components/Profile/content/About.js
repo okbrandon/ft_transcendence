@@ -1,7 +1,7 @@
 import React from "react";
-import { AboutContainer, ActivityContainer, BalanceContainer } from "../../../styles/Profile/content/About.styled";
-import { CardTitle } from "../../../styles/Profile/Profile.styled";
 import LineStats from "../stats/LineStats";
+import { AboutContainer, ActivityContainer, BalanceContainer } from "../styles/content/About.styled";
+import { CardTitle } from "../styles/Profile.styled";
 
 const About = ({ user, matchArray }) => {
 	return (

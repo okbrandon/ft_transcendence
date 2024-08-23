@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Spinner from "react-bootstrap/Spinner";
 import {
 	ButtonsContainer,
 	PageContainer,
 	PlayersContainer,
 	VsAiContainer
-} from "../../styles/Game/Match.styled";
-import Spinner from "react-bootstrap/Spinner";
+} from "./styles/Match.styled";
 
 const Match = ({ roomId }) => {
 	const navigate = useNavigate();

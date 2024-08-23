@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { ProfileContainer, UserContainer, UserProfileBanner } from '../../styles/Profile/Profile.styled';
+import { useParams } from 'react-router-dom';
 import MainBar from './main/MainBar';
-import Loader from '../../styles/shared/Loader.styled';
-import ProfileProvider, { ProfileContext } from '../../context/ProfileContext';
 import About from './content/About';
 import MatchHistory from './content/MatchHistory';
 import Winrate from './content/Winrate';
-import { useParams } from 'react-router-dom';
 import Settings from './settings/Settings';
+import { ProfileContainer, UserContainer, UserProfileBanner } from './styles/Profile.styled';
+import Loader from '../../styles/shared/Loader.styled';
+import ProfileProvider, { ProfileContext } from '../../context/ProfileContext';
 
 const matchArray = [
 	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Brandon"}, scores: {playerA: 9, playerB: 10}, startedAt: "2021-09-01T12:28:01Z", finishedAt: "2021-09-01T12:30:38Z"},

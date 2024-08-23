@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import FormControl from 'react-bootstrap/FormControl';
-import { SearchBarContainer } from '../../styles/Home/Navigation.styled';
 import SearchList from './SearchList';
+import { SearchBarContainer } from './styles/Navigation.styled';
 
 const SearchBar = () => {
 	const [input, setInput] = useState('');

@@ -1,5 +1,5 @@
 import React from "react";
-import { StoreContainer } from "../../styles/Store/Store.styled";
+import { StoreContainer } from "./styles/Store.styled";
 
 const Store = () => {
 	return (

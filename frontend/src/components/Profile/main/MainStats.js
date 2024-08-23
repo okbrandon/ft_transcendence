@@ -1,5 +1,5 @@
 import React from 'react';
-import { MainStatsItem, MainStatsContainer } from "../../../styles/Profile/main/MainBar.styled";
+import { MainStatsItem, MainStatsContainer } from "../styles/main/MainBar.styled";
 import { calculateTotalWins, calculateWinDefeatRatio } from '../scripts/match';
 
 const MainStats = ({ matchArray }) => {

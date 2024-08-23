@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import {
 	CreateTournamentLayout,
 	TournamentForm
-} from "../../../styles/Game/Tournament/CreateTournament.styled";
-import { BackButton } from "../../../styles/Game/Tournament/Tournament.styled";
+} from "../styles/Tournament/CreateTournament.styled";
+import { BackButton } from "../styles/Tournament/Tournament.styled";
 
 const CreateTournament = ({ setOptions }) => {
 	const [maxPlayers, setMaxPlayers] = useState(4);
