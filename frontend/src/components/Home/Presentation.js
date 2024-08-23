@@ -9,14 +9,14 @@ import {
 } from "../../styles/Home/Presentation.styled";
 
 const slideInLeft = {
-	hidden: { left: '-300px', opacity: 0 },
-	visible: { left: '-50px', opacity: 1, transition: { duration: 1 } },
-	exit: { left: '-300px', opacity: 0 },
+	hidden: { left: '-20rem', opacity: 0 },
+	visible: { left: '-3rem', opacity: 1, transition: { duration: 1 } },
+	exit: { left: '-20rem', opacity: 0 },
 };
 
 const slideInRight = {
 	hidden: { right: 0, opacity: 0 },
-	visible: { right: '300px', opacity: 1, transition: { duration: 1 } },
+	visible: { right: '18rem', opacity: 1, transition: { duration: 1 } },
 	exit: { right: 0, opacity: 0 },
 };
 

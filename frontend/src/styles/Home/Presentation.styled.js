@@ -110,8 +110,7 @@ const floatPaddleAnimation = keyframes`
 
 export const PongPaddleBackground = styled(motion.div)`
 	position: absolute;
-	top: 270px;
-	left: -50px;
+	top: 22rem;
 	width: 800px;
 	height: 150px;
 	background: linear-gradient(0deg, rgba(255,255,255,1) 0%, rgba(120,120,120,1) 100%);
@@ -136,8 +135,7 @@ const floatBallAnimation = keyframes`
 
 export const PongBallBackground = styled(motion.div)`
 	position: absolute;
-	bottom: 150px;
-	right: 300px;
+	bottom: 25rem;
 	width: 180px;
 	height: 180px;
 	background: linear-gradient(120deg, rgba(255,255,255,1) 0%, rgba(120,120,120,1) 100%);
