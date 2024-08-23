@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 export const PageContainer = styled.div`
 	display: flex;
@@ -14,7 +14,6 @@ export const JoinTournamentContainer = styled.div`
 	flex-direction: column;
 	align-items: center;
 	width: 100%;
-	height: 50vh;
 	max-width: 700px;
 	margin: auto;
 	padding: 2rem;
@@ -87,6 +86,13 @@ export const KickButton = styled.button`
 	}
 `;
 
+export const ButtonContainer = styled.div`
+	display: flex;
+	justify-content: center;
+	gap: 1rem;
+	width: 100%;
+`;
+
 export const InviteButton = styled.button`
 	background: radial-gradient(circle, #555, #444);
 	color: #fff;
@@ -102,6 +108,25 @@ export const InviteButton = styled.button`
 	&:hover {
 		background: radial-gradient(circle, #666, #555);
 		box-shadow: 0px 10px 25px rgba(255, 255, 255, 0.3);
+	}
+`;
+
+export const StartTournamentButton = styled.button`
+	background: linear-gradient(145deg, #00ff88, #00cc77);
+	color: #ffffff;
+	border: none;
+	border-radius: 30px;
+	padding: 1rem 2.5rem;
+	margin-bottom: 2rem;
+	font-size: 1.2rem;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	box-shadow: 0px 6px 20px rgba(0, 255, 136, 0.3), 0px 0px 30px rgba(0, 255, 136, 0.2), inset 0px 0px 10px rgba(0, 0, 0, 0.2);
+	z-index: 1;
+	
+	&:hover {
+		background: linear-gradient(145deg, #00ff99, #00dd88);
+		box-shadow: 0px 10px 30px rgba(0, 255, 136, 0.4), 0px 0px 40px rgba(0, 255, 136, 0.3), inset 0px 0px 10px rgba(0, 0, 0, 0.3);
 	}
 `;
 

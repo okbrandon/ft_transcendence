@@ -1,12 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import {
+	ButtonContainer,
 	InviteButton,
 	JoinTournamentContainer,
 	KickButton,
 	PageContainer,
 	PlayerCard,
 	PlayerList,
+	StartTournamentButton,
 	WaitingMessage,
 } from "../../../styles/Game/Tournament/JoinTournament.styled";
 import Spinner from "react-bootstrap/Spinner";
@@ -38,7 +40,10 @@ const JoinTournament = () => {
 						</PlayerCard>
 					))}
 				</PlayerList>
-				<InviteButton>Invite Players</InviteButton>
+				<ButtonContainer>
+					<InviteButton>Invite Players</InviteButton>
+					<StartTournamentButton>Start</StartTournamentButton>
+				</ButtonContainer>
 				<WaitingMessage>
 					{isStartDisabled ? (
 						<>
