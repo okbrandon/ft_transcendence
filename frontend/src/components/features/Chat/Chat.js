@@ -18,7 +18,7 @@ const OverlayContainer = styled.div`
 `;
 
 const ChatOverlayContainer = styled.aside`
-	height: 0;
+	height: ${({ isMinimized }) => (isMinimized ? '40px' : 'auto')}; // Adjust height as needed
 	pointer-events: auto;
 	overflow: visible;
 	display: flex;
@@ -27,22 +27,77 @@ const ChatOverlayContainer = styled.aside`
 	align-items: flex-end;
 	flex: 1;
 	position: relative;
+	transition: height 0.3s ease;
 `;
 
 const ChatListBubble = styled.div`
 	display: flex;
 	flex-direction: column;
-	height: calc(100vh - 100px);
+	margin-right: 3%;
+	height: ${({ isMinimized }) => (isMinimized ? '40px' : 'calc(100vh - 100px)')};
 	flex: 0 0 288px;
 	width: 288px;
 	min-width: 0;
 	background-color: #fff;
+	transition: height 0.3s ease;
+`;
+
+const ChatHeaderStyled = styled.div`
+	padding: 10px;
+	background-color: #000;
+	border: 1px solid #ddd;
+	font-weight: bold;
+	color: #fff;
+	position: relative;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+`;
+
+const Arrow = styled.div`
+	width: 1.25rem;
+	height: 1.25rem;
+	display: inline-block;
+	position: relative;
+	margin: 0 1rem;
+	cursor: pointer;
+
+	span {
+		top: 0.5rem;
+		position: absolute;
+		width: 0.75rem;
+		height: 0.1rem;
+		background-color: #efefef;
+		display: inline-block;
+		transition: all 0.2s ease;
+
+		&:first-of-type {
+			left: 0;
+			transform: rotate(45deg);
+		}
+
+		&:last-of-type {
+			right: 0;
+			transform: rotate(-45deg);
+		}
+	}
+
+	&.active span {
+		&:first-of-type {
+			transform: rotate(-45deg);
+		}
+
+		&:last-of-type {
+			transform: rotate(45deg);
+		}
+	}
 `;
 
 const Chat = () => {
 	const [openChats, setOpenChats] = useState([]);
 	const [selectedChat, setSelectedChat] = useState(null);
 	const [isMinimized, setIsMinimized] = useState(false);
+	const [isOverlayMinimized, setIsOverlayMinimized] = useState(false);
 	const [messages, setMessages] = useState({
 		'Alice': { sender: 'Alice', text: 'Hello!' },
 		'Bob': { sender: 'Bob', text: 'Hi there!' },
@@ -70,15 +125,31 @@ const Chat = () => {
 		setIsMinimized(!isMinimized);
 	}
 
+	const handleToggleOverlayMinimize = () => {
+		setIsOverlayMinimized(!isOverlayMinimized);
+	}
+
 	return (
 		<OverlayContainer>
-			<ChatOverlayContainer>
-				<ChatListBubble>
-					<ChatHeader/>
-					<SearchFriends onOpenChat={openChat} />
-					{Object.keys(messages).map(friend => (
-						<MessagePreview key={friend} messages={[messages[friend]]} onClick={() => handleSelectChat(friend)} />
-					))}
+			<ChatOverlayContainer isMinimized={isOverlayMinimized}>
+				<ChatListBubble isMinimized={isOverlayMinimized}>
+					<ChatHeaderStyled>
+						Chat
+						<div>
+							<Arrow className={isOverlayMinimized ? 'active' : ''} onClick={handleToggleOverlayMinimize}>
+								<span></span>
+								<span></span>
+							</Arrow>
+						</div>
+					</ChatHeaderStyled>
+					{!isOverlayMinimized && (
+						<>
+							<SearchFriends onOpenChat={openChat} />
+							{Object.keys(messages).map(friend => (
+								<MessagePreview key={friend} messages={[messages[friend]]} onClick={() => handleSelectChat(friend)} />
+							))}
+						</>
+					)}
 				</ChatListBubble>
 				{selectedChat && (
 					<ChatWindow
