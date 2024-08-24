@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { ChatHeader } from './ChatHeader.js';
 import { SearchFriends } from './SearchFriends.js';
 import { MessagePreview } from './MessagePreview.js';
 import { ChatWindow } from './ChatWindow.js';
@@ -18,7 +17,7 @@ const OverlayContainer = styled.div`
 `;
 
 const ChatOverlayContainer = styled.aside`
-	height: ${({ isMinimized }) => (isMinimized ? '40px' : 'auto')}; // Adjust height as needed
+	height: ${({ isMinimized }) => (isMinimized ? '40px' : 'auto')};
 	pointer-events: auto;
 	overflow: visible;
 	display: flex;
@@ -39,6 +38,7 @@ const ChatListBubble = styled.div`
 	width: 288px;
 	min-width: 0;
 	background-color: #fff;
+	border: 1px solid #ddd;
 	transition: height 0.3s ease;
 `;
 
@@ -134,7 +134,7 @@ const Chat = () => {
 			<ChatOverlayContainer isMinimized={isOverlayMinimized}>
 				<ChatListBubble isMinimized={isOverlayMinimized}>
 					<ChatHeaderStyled>
-						Chat
+						Messaging
 						<div>
 							<Arrow className={isOverlayMinimized ? 'active' : ''} onClick={handleToggleOverlayMinimize}>
 								<span></span>
