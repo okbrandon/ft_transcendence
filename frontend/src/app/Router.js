@@ -17,7 +17,7 @@ import { ProfileParent } from '../components/Profile/Profile';
 import Verify from '../components/Auth/Verify';
 import Callback from '../components/Auth/Callback';
 import PlayMenu from '../components/Game/PlayMenu';
-import Store from '../components/Store/Store';
+import Shop from '../components/Shop/Shop';
 import Tournament from '../components/Game/Tournament/Tournament';
 import JoinTournament from '../components/Game/Tournament/JoinTournament';
 import Match from '../components/Game/Match';
@@ -44,7 +44,7 @@ const Router = createBrowserRouter(createRoutesFromElements(
 			<Route path="signup" element={ <SignUp/> }/>
 			<Route element={ <PrivateRoutes/> }>
 				<Route path="profile/:username" element={ <ProfileParent/> }/>
-				<Route path="store" element={ <Store/> }/>
+				<Route path="shop" element={ <Shop/> }/>
 				<Route path="playmenu" element={ <PlayMenu/> }/>
 				<Route path="tournament" element={ <Tournament/> }/>
 				<Route path="tournament-room" element={ <JoinTournament/> }/> {/* ⚒️ testing... */}

@@ -22,7 +22,6 @@ const ProfileDropdown = () => {
 			</Dropdown.Toggle>
 			<Dropdown.Menu>
 				<Dropdown.Item onClick={() => { navigate(`/profile/${username}`) }}>Profile</Dropdown.Item>
-				<Dropdown.Item>Edit</Dropdown.Item>
 				<Dropdown.Divider/>
 				<Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
 			</Dropdown.Menu>
