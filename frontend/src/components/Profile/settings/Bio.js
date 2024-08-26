@@ -18,7 +18,7 @@ const Bio = ({ showDropdown, setUser, setShowDropdown, bio }) => {
 				console.log('Bio updated to ', bioInput);
 				setUser(prev => ({ ...prev, bio: bioInput }));
 			})
-			.catch(console.error);
+			.catch((err) => console.error(err));
 	};
 
 	return (

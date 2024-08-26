@@ -24,7 +24,7 @@ const DisplayName = ({ showDropdown, setUser, setShowDropdown, displayName }) =>
 					console.log('Display name updated to ', displayNameInput);
 					setUser(prev => ({...prev, displayName: displayNameInput}));
 				})
-				.catch(console.error);
+				.catch((err) => console.error(err));
 		}
 	};
 

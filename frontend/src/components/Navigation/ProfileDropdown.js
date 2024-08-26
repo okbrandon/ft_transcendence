@@ -6,7 +6,7 @@ import { AuthContext } from '../../context/AuthContext';
 
 const ProfileDropdown = () => {
 	const navigate = useNavigate();
-	const { setIsLoggedIn, username } = useContext(AuthContext);
+	const { setIsLoggedIn, user } = useContext(AuthContext);
 
 	const handleLogout = () => {
 		setIsLoggedIn(false);
@@ -21,7 +21,7 @@ const ProfileDropdown = () => {
 				PROFILE
 			</Dropdown.Toggle>
 			<Dropdown.Menu>
-				<Dropdown.Item onClick={() => { navigate(`/profile/${username}`) }}>Profile</Dropdown.Item>
+				<Dropdown.Item onClick={() => { navigate(`/profile/${user.username}`) }}>Profile</Dropdown.Item>
 				<Dropdown.Divider/>
 				<Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
 			</Dropdown.Menu>

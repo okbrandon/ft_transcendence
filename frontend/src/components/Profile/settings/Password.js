@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Button from "react-bootstrap/Button";
 import { SettingsDropdown, SettingsForm, SettingsItem } from "../styles/Settings.styled";
+import API from "../../../api/api";
 
 const Password = ({ showDropdown, setShowDropdown}) => {
 	const [passwordInput, setPasswordInput] = useState('');
@@ -21,6 +22,11 @@ const Password = ({ showDropdown, setShowDropdown}) => {
 			setError('Passwords do not match');
 		} else {
 			setError('');
+            API.patch('/users/@me/profile', { password: passwordInput })
+                .then(() => {
+                    console.log('Password updated');
+                })
+                .catch((err) => console.error(err));
 		}
 	}
 

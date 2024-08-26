@@ -24,7 +24,7 @@ const Picture = ({ showDropdown, setUser, setShowDropdown }) => {
 				console.log('Profile picture updated');
 				setUser(prev => ({...prev, avatarID: URL.createObjectURL(file)}));
 			})
-			.catch(console.error);
+			.catch((err) => console.error(err));
 	};
 
 	return (

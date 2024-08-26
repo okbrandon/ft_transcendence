@@ -26,7 +26,7 @@ const Email = ({ showDropdown, setUser, setShowDropdown }) => {
 					console.log('Email updated to ', emailInput);
 					setUser(prev => ({...prev, email: emailInput}));
 				})
-				.catch(console.error);
+				.catch((err) => console.error(err));
 		}
 	};
 

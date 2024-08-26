@@ -16,7 +16,7 @@ export const CoinsDisplay = styled.div`
 
 export const SkinsGrid = styled.div`
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	grid-template-columns: repeat(4, minmax(200px, 1fr));
 	gap: 2rem;
 `;
 
@@ -38,10 +38,6 @@ export const SkinImage = styled.img`
 	width: 100%;
 	border-radius: 10px;
 	margin-bottom: 1rem;
-`;
-
-export const SkinDetails = styled.div`
-	font-family: "Press Start 2P", sans-serif;
 `;
 
 export const SkinName = styled.h3`
