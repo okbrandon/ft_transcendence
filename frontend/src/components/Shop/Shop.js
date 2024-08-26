@@ -7,7 +7,8 @@ import {
 	SkinImage,
 	SkinPrice,
 	BuyButton,
-	SkinName
+	SkinName,
+    Header
 } from "./styles/Shop.styled";
 import { AuthContext } from "../../context/AuthContext";
 import API from "../../api/api";
@@ -38,7 +39,10 @@ const Shop = () => {
 
 	return (
 		<ShopContainer>
-			<CoinsDisplay>Coins: {user.money} 🪙</CoinsDisplay>
+            <Header>
+                <h1>Shop</h1>
+			    <CoinsDisplay>Coins: {user.money} 🪙</CoinsDisplay>
+            </Header>
 			<SkinsGrid>
 				{skins.map((skin) => (
 					<SkinCard key={skin.id}>

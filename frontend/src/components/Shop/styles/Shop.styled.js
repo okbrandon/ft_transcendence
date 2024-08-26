@@ -9,9 +9,19 @@ export const ShopContainer = styled.div`
 	margin-top: 80px;
 `;
 
+export const Header = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    h1 {
+        font-family: 'Orbitron', sans-serif;
+    }
+`;
+
 export const CoinsDisplay = styled.div`
 	font-size: 1.5rem;
-	margin-bottom: 2rem;
 `;
 
 export const SkinsGrid = styled.div`

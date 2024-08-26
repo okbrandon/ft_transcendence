@@ -13,12 +13,10 @@ export const Header = styled.div`
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 2rem;
-	width: 80%;
 	margin: 0 auto;
 
 	h1 {
 		font-family: "Orbitron", sans-serif;
-		font-size: 2rem;
 	}
 `;
 
@@ -42,7 +40,6 @@ export const FriendsList = styled.div`
 	display: grid;
 	grid-template-columns: repeat(1, minmax(250px, 1fr));
 	gap: 1.5rem;
-	width: 80%;
 	margin: 5rem auto;
 `;
 
