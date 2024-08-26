@@ -4,7 +4,7 @@ import Button from "react-bootstrap/Button";
 import { SettingsDropdown, SettingsForm, SettingsItem } from "../styles/Settings.styled";
 import API from "../../../api/api";
 
-const Picture = ({ showDropdown, setUser, setShowDropdown }) => {
+const Picture = ({ showDropdown, setProfileUser, setShowDropdown }) => {
 	const fileInputRef = useRef(null);
 
 	const handleDropdown = () => {
@@ -22,7 +22,7 @@ const Picture = ({ showDropdown, setUser, setShowDropdown }) => {
 		API.patch('/users/@me/profile', { avatarID: URL.createObjectURL(file) })
 			.then(() => {
 				console.log('Profile picture updated');
-				setUser(prev => ({...prev, avatarID: URL.createObjectURL(file)}));
+				setProfileUser(prev => ({...prev, avatarID: URL.createObjectURL(file)}));
 			})
 			.catch((err) => console.error(err));
 	};

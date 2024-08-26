@@ -4,7 +4,7 @@ import Button from "react-bootstrap/Button";
 import { SettingsDropdown, SettingsForm, SettingsItem } from "../styles/Settings.styled";
 import API from "../../../api/api";
 
-const Bio = ({ showDropdown, setUser, setShowDropdown, bio }) => {
+const Bio = ({ showDropdown, setProfileUser, setShowDropdown, bio }) => {
 	const [bioInput, setBioInput] = useState('');
 
 	const handleDropdown = () => {
@@ -16,7 +16,7 @@ const Bio = ({ showDropdown, setUser, setShowDropdown, bio }) => {
 		API.patch('/users/@me/profile', { bio: bioInput })
 			.then(() => {
 				console.log('Bio updated to ', bioInput);
-				setUser(prev => ({ ...prev, bio: bioInput }));
+				setProfileUser(prev => ({ ...prev, bio: bioInput }));
 			})
 			.catch((err) => console.error(err));
 	};

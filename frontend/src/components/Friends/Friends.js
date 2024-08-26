@@ -38,6 +38,7 @@ const Friends = () => {
 			<Header>
 				<h1>Friends</h1>
 				<SearchInput
+                    id="friends-search"
 					type="text"
 					placeholder="Search Friends"
 					value={searchTerm}
@@ -48,7 +49,7 @@ const Friends = () => {
 				{filteredFriends.map((friend) => (
 					<FriendCard key={friend.id}>
 						<FriendInfo>
-							<FriendStatus status={friend.status} />
+							<FriendStatus $status={friend.status} />
 							<FriendName>{friend.name}</FriendName>
 						</FriendInfo>
 						<Actions>

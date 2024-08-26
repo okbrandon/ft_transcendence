@@ -5,16 +5,16 @@ import { MainBarContainer, SectionContainer } from '../styles/main/MainBar.style
 import { AuthContext } from '../../../context/AuthContext';
 import 'react-circular-progressbar/dist/styles.css';
 
-const MainBar = ({ user, matchArray, setShowSettings }) => {
-	const { username } = useContext(AuthContext);
+const MainBar = ({ profileUser, matchArray, setShowSettings }) => {
+	const { user } = useContext(AuthContext);
 
 	return (
 		<SectionContainer>
 			<MainBarContainer>
 				<MainStats matchArray={matchArray}/>
-				<ProfilePicture user={user}/>
+				<ProfilePicture profileUser={profileUser}/>
 				{
-					username === user.username ? (
+					user.username === profileUser.username ? (
 						<i className="bi bi-gear-fill" onClick={() => setShowSettings(true)}/>
 					) : (
 						<i className="bi bi-person-fill-add"/>

@@ -4,7 +4,7 @@ import Button from "react-bootstrap/Button";
 import { SettingsDropdown, SettingsForm, SettingsItem } from "../styles/Settings.styled";
 import API from "../../../api/api";
 
-const Email = ({ showDropdown, setUser, setShowDropdown }) => {
+const Email = ({ showDropdown, setProfileUser, setShowDropdown }) => {
 	const [emailInput, setEmailInput] = useState('');
 	const [error, setError] = useState('');
 
@@ -24,7 +24,7 @@ const Email = ({ showDropdown, setUser, setShowDropdown }) => {
 			API.patch('/users/@me/profile', { email: emailInput })
 				.then(() => {
 					console.log('Email updated to ', emailInput);
-					setUser(prev => ({...prev, email: emailInput}));
+					setProfileUser(prev => ({...prev, email: emailInput}));
 				})
 				.catch((err) => console.error(err));
 		}

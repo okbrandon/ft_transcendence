@@ -8,7 +8,7 @@ import Picture from "./Picture";
 import Banner from "./Banner";
 import { SettingsContainer, SettingsItemContainer, SectionContainer } from "../styles/Settings.styled";
 
-const Settings = ({ user, setUser, setShowSettings }) => {
+const Settings = ({ profileUser, setProfileUser, setShowSettings }) => {
 	const [showDropdown, setShowDropdown] = useState(null);
 
 	return (
@@ -20,19 +20,19 @@ const Settings = ({ user, setUser, setShowSettings }) => {
 					<Username
 						showDropdown={showDropdown}
 						setShowDropdown={setShowDropdown}
-						username={user.username}
+						username={profileUser.username}
 					/>
 					<DisplayName
 						showDropdown={showDropdown}
-						setUser={setUser}
+						setProfileUser={setProfileUser}
 						setShowDropdown={setShowDropdown}
-						displayName={user.displayName}
+						displayName={profileUser.displayName}
 					/>
 					<Email
 						showDropdown={showDropdown}
-						setUser={setUser}
+						setProfileUser={setProfileUser}
 						setShowDropdown={setShowDropdown}
-						bio={user.bio}
+						bio={profileUser.bio}
 					/>
 					<Password
 						showDropdown={showDropdown}
@@ -40,17 +40,17 @@ const Settings = ({ user, setUser, setShowSettings }) => {
 					/>
 					<Bio
 						showDropdown={showDropdown}
-						setUser={setUser}
+						setProfileUser={setProfileUser}
 						setShowDropdown={setShowDropdown}
 					/>
 					<Picture
 						showDropdown={showDropdown}
-						setUser={setUser}
+						setProfileUser={setProfileUser}
 						setShowDropdown={setShowDropdown}
 					/>
 					<Banner
 						showDropdown={showDropdown}
-						setUser={setUser}
+						setProfileUser={setProfileUser}
 						setShowDropdown={setShowDropdown}
 					/>
 				</SettingsItemContainer>

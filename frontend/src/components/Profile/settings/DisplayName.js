@@ -4,7 +4,7 @@ import Button from "react-bootstrap/Button";
 import { SettingsDropdown, SettingsForm, SettingsItem } from "../styles/Settings.styled";
 import API from "../../../api/api";
 
-const DisplayName = ({ showDropdown, setUser, setShowDropdown, displayName }) => {
+const DisplayName = ({ showDropdown, setProfileUser, setShowDropdown, displayName }) => {
 	const [displayNameInput, setDisplayNameInput] = useState('');
 	const [error, setError] = useState('');
 
@@ -22,7 +22,7 @@ const DisplayName = ({ showDropdown, setUser, setShowDropdown, displayName }) =>
 			API.patch('/users/@me/profile', { displayName: displayNameInput })
 				.then(() => {
 					console.log('Display name updated to ', displayNameInput);
-					setUser(prev => ({...prev, displayName: displayNameInput}));
+					setProfileUser(prev => ({...prev, displayName: displayNameInput}));
 				})
 				.catch((err) => console.error(err));
 		}

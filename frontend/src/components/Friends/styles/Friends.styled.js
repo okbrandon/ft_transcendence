@@ -67,7 +67,7 @@ export const FriendInfo = styled.div`
 export const FriendStatus = styled.span`
 	width: 12px;
 	height: 12px;
-	background: ${({ status }) => (status === "online" ? "#00ff88" : "#ff5555")};
+	background: ${({ $status }) => $status === "online" ? "#00ff88" : "#ff5555"};
 	border-radius: 50%;
 	margin-right: 10px;
 `;

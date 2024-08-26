@@ -6,7 +6,7 @@ export const ProfileContext = createContext();
 
 const ProfileProvider = ({ children, username }) => {
 	const [loading, setLoading] = useState(true);
-	const [user, setUser] = useState(null);
+	const [profileUser, setProfileUser] = useState(null);
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -14,7 +14,7 @@ const ProfileProvider = ({ children, username }) => {
 		const timeoutId = setTimeout(() => {
 			GetUserByUsername(username)
 				.then((response) => {
-					setUser(response.data);
+					setProfileUser(response.data);
 					setLoading(false);
 				})
 				.catch((error) => {
@@ -27,7 +27,7 @@ const ProfileProvider = ({ children, username }) => {
 	}, [navigate, username]);
 
 	return (
-		<ProfileContext.Provider value={{ user, setUser, loading }}>
+		<ProfileContext.Provider value={{ profileUser, setProfileUser, loading }}>
 			{children}
 		</ProfileContext.Provider>
 	);

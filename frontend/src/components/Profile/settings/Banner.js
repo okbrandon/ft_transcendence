@@ -4,7 +4,7 @@ import Button from "react-bootstrap/Button";
 import { SettingsDropdown, SettingsForm, SettingsItem } from "../styles/Settings.styled";
 import API from "../../../api/api";
 
-const Banner = ({ showDropdown, setUser, setShowDropdown }) => {
+const Banner = ({ showDropdown, setProfileUser, setShowDropdown }) => {
 	const bannerInputRef = useRef(null);
 	const handleDropdown = () => {
 		setShowDropdown(prev => prev === 'banner' ? null : 'banner');
@@ -21,7 +21,7 @@ const Banner = ({ showDropdown, setUser, setShowDropdown }) => {
 		API.patch('/users/@me/profile', { bannerID: URL.createObjectURL(file) })
 			.then(() => {
 				console.log('Banner updated');
-				setUser(prev => ({...prev, bannerID: URL.createObjectURL(file)}));
+				setProfileUser(prev => ({...prev, bannerID: URL.createObjectURL(file)}));
 			})
 			.catch((error) => console.error(error));
 	};

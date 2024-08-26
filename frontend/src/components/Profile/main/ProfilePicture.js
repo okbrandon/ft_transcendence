@@ -2,12 +2,12 @@ import React from 'react';
 import { ProfileImage, ProfilePictureContainer, SectionContainer } from '../styles/main/ProfilePicture.styled';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 
-const ProfilePicture = ({ user }) => {
+const ProfilePicture = ({ profileUser }) => {
 	return (
 		<SectionContainer>
 			<ProfilePictureContainer>
 				<ProfileImage
-					src={user.avatarID !== 'default' && user.avatarID ? user.avatarID : '/images/anonymous.png'}
+					src={profileUser.avatarID !== 'default' && profileUser.avatarID ? profileUser.avatarID : '/images/anonymous.png'}
 					alt='profile picture'
 					roundedCircle
 				/>
@@ -24,8 +24,8 @@ const ProfilePicture = ({ user }) => {
 				</div>
 				<p>0</p>
 			</ProfilePictureContainer>
-			<h2>{ user.displayName ? user.displayName : '' }</h2>
-			<h3>{user.username}</h3>
+			<h2>{ profileUser.displayName ? profileUser.displayName : '' }</h2>
+			<h3>{profileUser.username}</h3>
 		</SectionContainer>
 	);
 };
