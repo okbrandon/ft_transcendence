@@ -21,7 +21,7 @@ const NavBar = () => {
 						<NavItemsContainer $gap='100px'>
 							<TitleLink to="/">PONG</TitleLink>
 							<NavItemsContainer $gap='100px'>
-								<StyledNavLink>FRIENDS</StyledNavLink>
+								<StyledNavLink to="friends">FRIENDS</StyledNavLink>
 								<StyledNavLink to="/">LEADERBOARD</StyledNavLink>
 								<StyledNavLink to="shop">SHOP</StyledNavLink>
 								<StyledNavLink to="playmenu">PLAY</StyledNavLink>
