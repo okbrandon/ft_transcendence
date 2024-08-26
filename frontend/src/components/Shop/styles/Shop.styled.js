@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const ShopContainer = styled.div`
 	padding: 2rem;
-	background: #111;
+	background: linear-gradient(135deg, #000 0%, #111 100%);
 	color: #fff;
 	min-height: 100vh;
 	text-align: center;

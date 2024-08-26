@@ -9,7 +9,6 @@ export const PlayMenuContainer = styled.div`
 	width: 100%;
 	padding: 2rem;
 	background: linear-gradient(135deg, #000 0%, #111 100%);
-	background-size: cover;
 `;
 
 export const PlayMenuCard = styled.div`
@@ -32,7 +31,7 @@ export const PlayMenuCard = styled.div`
 		box-shadow: 0 12px 24px rgba(255, 255, 255, 0.3);
 		cursor: pointer;
 	}
-	
+
 	h1 {
 		text-transform: uppercase;
 		letter-spacing: 8px;
