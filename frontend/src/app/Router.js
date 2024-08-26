@@ -22,6 +22,7 @@ import Tournament from '../components/Game/Tournament/Tournament';
 import JoinTournament from '../components/Game/Tournament/JoinTournament';
 import Match from '../components/Game/Match';
 import Friends from '../components/Friends/Friends';
+import PageNotFound from '../components/PageNotFound/PageNotFound';
 
 const PrivateRoutes = () => {
 	const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
@@ -56,7 +57,7 @@ const Router = createBrowserRouter(createRoutesFromElements(
 		<Route element={ <PrivateRoutes/>}>
 			<Route path="solo-vs-ai" element={ <Game/> }/>
 		</Route>
-		<Route path="*" element={ <Navigate to="/"/> }/>
+		<Route path="*" element={ <PageNotFound/> }/>
 	</>
 ));
 
