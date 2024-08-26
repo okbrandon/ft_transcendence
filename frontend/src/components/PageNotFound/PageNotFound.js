@@ -1,5 +1,5 @@
 import React from "react";
-import { BrokenText, Message, PageContainer, PongContainer, ReturnButton } from "./styles/PageNotFound.styled";
+import { Message, PageContainer, PongContainer, ReturnButton } from "./styles/PageNotFound.styled";
 
 const PageNotFound = () => {
 	return (
