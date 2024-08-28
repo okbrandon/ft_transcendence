@@ -2,15 +2,26 @@ import React, { useState } from 'react';
 import FormControl from 'react-bootstrap/FormControl';
 import SearchList from './SearchList';
 import { SearchBarContainer } from './styles/Navigation.styled';
+import { GetUsers } from '../../api/user';
 
 const SearchBar = () => {
 	const [input, setInput] = useState('');
 	const [results, setResults] = useState(null);
 
 	const handleInput = (event) => {
-		setInput(event.target.value);
-		// setResults(GetUsers(input));
-		console.log(results);
+		const newInput = event.target.value;
+		setInput(newInput);
+		if (newInput) {
+			GetUsers(newInput)
+				.then((users) => {
+					setResults(users.data)
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		} else {
+			setResults(null);
+		}
 	}
 
 	return (
@@ -25,8 +36,9 @@ const SearchBar = () => {
 				className="mr-sm-2"
 				value={input}
 				onChange={handleInput}
+				autoComplete='off'
 			/>
-			{input && <SearchList input={input} results={results}/>}
+			{results && <SearchList results={results} setInput={setInput} setResults={setResults}/>}
 		</SearchBarContainer>
 	);
 };

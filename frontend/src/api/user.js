@@ -12,7 +12,7 @@ export const GetUserByUsername = async (username) => {
 
 export const GetUsers = async (input) => {
 	console.log('Getting users via search bar...');
-	return await API.get(`users/search?content=${encodeURIComponent(input)}`);
+	return await API.get(`users/search?content=${input}`);
 }
 
 export const GetImage = async (file) => {

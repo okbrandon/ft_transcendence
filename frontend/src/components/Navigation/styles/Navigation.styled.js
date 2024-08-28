@@ -87,14 +87,6 @@ export const SearchBarContainer = styled(Form)`
 	}
 `;
 
-export const ProfileListContainer = styled.div`
-	position: absolute;
-	bottom: -50px;
-	width: 100%;
-	background-color: rgba(0,0,0,0.9);
-	z-index: 1000;
-`;
-
 export const ConnectButton = styled(NavLink)`
 	position: relative;
 	overflow: hidden;
@@ -153,11 +145,12 @@ export const ProfileDropdownButton = styled(Dropdown)`
 		font-weight: 500;
 		z-index: 500;
 		text-decoration: none;
-		transition: text-shadow 0.3s ease;
+		transition: text-shadow 0.3s ease, transform 0.3s ease;
 
 		&:hover {
 			color: #fff;
 			text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 25px rgba(255, 255, 255, 0.6);
+			transform: scale(1.05);
 		}
 
 		&:active {
@@ -176,10 +169,11 @@ export const ProfileDropdownButton = styled(Dropdown)`
 		padding: 10px;
 		border-radius: 10px;
 		box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+		transition: all 0.3s ease;
 	}
 
 	& .dropdown-divider {
-		border-top: 1px solid rgba(255,255,255,0.3);
+		border-top: 1px solid rgba(255, 255, 255, 0.3);
 	}
 
 	& .dropdown-item {
@@ -190,7 +184,7 @@ export const ProfileDropdownButton = styled(Dropdown)`
 		--bs-dropdown-link-active-bg: rgba(255, 255, 255, 0.2);
 		padding: 8px 15px;
 		border-radius: 5px;
-		transition: background-color 0.3s ease;
+		transition: background-color 0.3s ease, transform 0.2s ease;
 
 		&:hover {
 			background-color: rgba(255, 255, 255, 0.1);
