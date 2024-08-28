@@ -39,8 +39,12 @@ jobs:
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
+  trigger-rollout:
+    needs: build-and-push-images
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
     - name: Trigger rollout
-      if: github.ref == 'refs/heads/main'
       run: |
         curl -X POST https://trans.propelapp.dev/rollout \
         -H "Authorization: Bearer ${{ secrets.PROPEL_ROLLOUT_TOKEN }}"
