@@ -38,3 +38,9 @@ jobs:
         tags: rg.fr-par.scw.cloud/evansh/${{ matrix.service }}:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
+
+    - name: Trigger rollout
+      if: github.ref == 'refs/heads/main'
+      run: |
+        curl -X POST https://trans.propelapp.dev/rollout \
+        -H "Authorization: Bearer ${{ secrets.PROPEL_ROLLOUT_TOKEN }}"
