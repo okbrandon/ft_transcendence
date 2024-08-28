@@ -75,8 +75,8 @@ class AuthRegister(APIView):
             raise ValidationError("Password must be at least 8 characters long.")
         if len(password.encode('utf-8')) > 72:
             raise ValidationError("Password cannot be longer than 72 bytes.")
-        if len(lang) != 2 or lang not in ['en', 'fr']:
-            raise ValidationError("Unsupported language. Supported languages are 'en' and 'fr'.")
+        if len(lang) != 2 or lang not in ['en', 'fr', 'es']:
+            raise ValidationError("Unsupported language. Supported languages are 'en', 'fr' or 'es'.")
 
         return {
             "username": username,
