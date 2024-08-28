@@ -101,7 +101,7 @@ export const ConnectButton = styled(NavLink)`
 	height: 50px;
 	padding: 10px 30px;
 	border-radius: 1.5rem;
-	background: #3d3a4e;
+	background: #1c1c1c;
 	background-size: 400%;
 	color: #fff;
 	border: none;
@@ -127,11 +127,7 @@ export const ConnectButton = styled(NavLink)`
 		width: 100%;
 		height: inherit;
 		border-radius: inherit;
-		background: linear-gradient(
-			80deg,
-			rgba(150,93,233,1) 10%,
-			rgba(99,88,238,1) 95%
-		);
+		background: linear-gradient(80deg, rgba(230, 230, 230, 0.8) 10%, rgba(200, 200, 200, 0.8) 95%);
 		transition: all 0.5s;
 		z-index: -1;
 	}
@@ -163,7 +159,7 @@ export const ProfileDropdownButton = styled(Dropdown)`
 			color: #fff;
 			text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 25px rgba(255, 255, 255, 0.6);
 		}
-			
+
 		&:active {
 			border: none;
 			background: none;
