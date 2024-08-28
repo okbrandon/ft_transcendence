@@ -1,4 +1,4 @@
-name: "Build Docker Images"
+name: "Build and Push Docker Images"
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - '*'
 
 jobs:
-  build-images:
+  build-and-push-images:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -22,11 +22,18 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
 
-    - name: Build ${{ matrix.service }} image
+    - name: Login to Scaleway Container Registry
+      uses: docker/login-action@v2
+      with:
+        registry: rg.fr-par.scw.cloud
+        username: ${{ secrets.SCW_ACCESS_KEY }}
+        password: ${{ secrets.SCW_SECRET_KEY }}
+
+    - name: Build and push ${{ matrix.service }} image
       uses: docker/build-push-action@v4
       with:
         context: ./${{ matrix.service }}
-        push: false
-        tags: ${{ matrix.service }}:latest
+        push: true
+        tags: rg.fr-par.scw.cloud/evansh/${{ matrix.service }}:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
