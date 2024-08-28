@@ -1,4 +1,5 @@
 import requests
+import os
 from django.conf import settings
 from django.shortcuts import redirect
 from django.http import JsonResponse
@@ -57,5 +58,5 @@ class OAuth42Callback(APIView):
         refresh = RefreshToken.for_user(user)
         access = str(refresh.access_token)
 
-        base_url = os.environ.get('BASE_URL', 'http://localhost')
+        base_url = os.getenv('BASE_URL')
         return redirect(f'{base_url}/callback?token={access}&refresh={str(refresh)}')

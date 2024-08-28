@@ -81,7 +81,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    os.getenv('BASE_URL', 'http://localhost'),
+    os.getenv('BASE_URL'),
 ]
 
 ROOT_URLCONF = 'backend.urls'
