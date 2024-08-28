@@ -40,7 +40,7 @@ const Shop = () => {
 	return (
 		<ShopContainer>
             <Header>
-                <h1>Shop</h1>
+                <h1>SHOP</h1>
 			    <CoinsDisplay>Coins: {user.money} 🪙</CoinsDisplay>
             </Header>
 			<SkinsGrid>

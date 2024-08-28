@@ -6,6 +6,40 @@ export const PageContainer = styled.div`
 	color: #fff;
 	min-height: 100vh;
 	margin-top: 80px;
+
+	ul {
+		margin-top: 2rem;
+	}
+
+	.nav-link {
+		color: #fff;
+		background-color: #222;
+		border-top: 1px solid #333;
+		border-left: 1px solid #333;
+		border-right: 1px solid #333;
+		border-bottom: none;
+		border-radius: 5px;
+		margin-right: 5px;
+		margin-bottom: 1px;
+		transition: all 0.3s ease;
+		font-family: "Orbitron", sans-serif;
+		font-size: 1rem;
+		padding: 0.5rem 1rem;
+		text-align: center;
+
+		&:hover {
+			background-color: #333;
+			color: #fff;
+			box-shadow: none;
+		}
+
+		&.active {
+			background-color: #101010;
+			border-color: #555;
+			color: #fff;
+			box-shadow: none;
+		}
+	}
 `;
 
 export const Header = styled.div`
@@ -36,72 +70,4 @@ export const SearchInput = styled.input`
 	}
 `;
 
-export const FriendsList = styled.div`
-	display: grid;
-	grid-template-columns: repeat(1, minmax(250px, 1fr));
-	gap: 1.5rem;
-	margin: 5rem auto;
-`;
 
-export const FriendCard = styled.div`
-	background: #1a1a1a;
-	padding: 1.5rem;
-	border-radius: 15px;
-	box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.5);
-	transition: all 0.3s ease;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-
-	&:hover {
-		transform: translateY(-5px);
-		box-shadow: 0px 8px 30px rgba(255, 255, 255, 0.3), 0px 0px 20px rgba(255, 255, 255, 0.5);
-	}
-`;
-
-export const FriendInfo = styled.div`
-	display: flex;
-	align-items: center;
-`;
-
-export const FriendStatus = styled.span`
-	width: 12px;
-	height: 12px;
-	background: ${({ $status }) => $status === "online" ? "#00ff88" : "#ff5555"};
-	border-radius: 50%;
-	margin-right: 10px;
-`;
-
-export const FriendName = styled.h3`
-	font-size: 1.3rem;
-	font-family: "Roboto", sans-serif;
-	padding: 0.5rem 1rem;
-`;
-
-export const Actions = styled.div`
-	display: flex;
-	gap: 0.8rem;
-`;
-
-export const ActionButton = styled.button`
-	background: #ffffff;
-	color: #101010;
-	padding: 0.6rem 1rem;
-	border-radius: 8px;
-	border: none;
-	cursor: pointer;
-	font-size: 0.9rem;
-
-	&:hover {
-		background: #f0f0f0;
-	}
-`;
-
-export const RemoveButton = styled(ActionButton)`
-	background: #ff5555;
-	color: #fff;
-
-	&:hover {
-		background: #ff3333;
-	}
-`;

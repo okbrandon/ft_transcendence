@@ -19,7 +19,7 @@ export const UserProfileBanner = styled.div`
 	height: 300px;
 	background-repeat: no-repeat;
 	${props => props.$path ? `background-image: url(${props.$path});` : 'background-color: #111;'}
-	background-size: auto;
+	background-size: cover;
 	background-position: center;
 `;
 
