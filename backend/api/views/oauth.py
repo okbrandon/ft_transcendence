@@ -57,4 +57,5 @@ class OAuth42Callback(APIView):
         refresh = RefreshToken.for_user(user)
         access = str(refresh.access_token)
 
-        return redirect(f'http://localhost/callback?token={access}&refresh={str(refresh)}')
+        base_url = os.environ.get('BASE_URL', 'http://localhost')
+        return redirect(f'{base_url}/callback?token={access}&refresh={str(refresh)}')

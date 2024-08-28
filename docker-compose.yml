@@ -1,62 +1,4 @@
 services:
-  # MAJOR: Infrastructure setup with ELK
-  # elasticsearch:
-  #   image: bitnami/elasticsearch:latest
-  #   environment:
-  #     - ELASTICSEARCH_HEAP_SIZE=1024m
-  #   volumes:
-  #     - elasticsearch_data:/bitnami/elasticsearch/data
-  #   ports:
-  #     - "9200:9200"
-  #   networks:
-  #     - transcendence
-
-  # logstash:
-  #   image: bitnami/logstash:latest
-  #   environment:
-  #     - LOGSTASH_ELASTICSEARCH_URL=elasticsearch
-  #     - LOGSTASH_ELASTICSEARCH_PORT_NUMBER=9200
-  #   volumes:
-  #     - ./.config/logstash/config.conf:/opt/bitnami/logstash/pipeline/logstash.conf
-  #     - logstash_data:/bitmani
-  #   ports:
-  #     - "5500:5500"
-  #     - "12201:12201/udp"
-  #   depends_on:
-  #     - elasticsearch
-  #   networks:
-  #     - transcendence
-
-  # kibana:
-  #   image: bitnami/kibana:latest
-  #   environment:
-  #     - KIBANA_ELASTICSEARCH_URL=elasticsearch
-  #     - KIBANA_ELASTICSEARCH_PORT_NUMBER=9200
-  #   volumes:
-  #     - kibana_data:/bitnami/kibana
-  #   ports:
-  #     - "5601:5601"
-  #   depends_on:
-  #     - elasticsearch
-  #   networks:
-  #     - transcendence
-
-  # prometheus:
-  #   image: prom/prometheus
-  #   volumes:
-  #     - ./.config/prometheus/config.yml:/etc/prometheus/prometheus.yml
-  #   ports:
-  #     - "9090:9090"
-  #   networks:
-  #     - transcendence
-
-  # grafana:
-  #   image: grafana/grafana
-  #   ports:
-  #     - "3000:3000"
-  #   networks:
-  #     - transcendence
-
   traefik:
     image: traefik:v2.5
     restart: always
@@ -70,11 +12,6 @@ services:
       - transcendence
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:80"]
-    #   interval: 15s
-    #   timeout: 10s
-    #   retries: 3
 
   postgres:
     image: postgres
@@ -84,12 +21,6 @@ services:
       - ./data/postgres:/var/lib/postgresql/data
     networks:
       - transcendence
-    # healthcheck:
-    #   test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
-    #   interval: 15s
-    #   timeout: 5s
-    #   retries: 5
-    #   start_period: 10s
 
   frontend:
     build: ./frontend
@@ -101,19 +32,6 @@ services:
       - "traefik.http.services.frontend.loadbalancer.server.port=3000"
     networks:
       - transcendence
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://localhost:"
-        tag: "frontend"
-    # depends_on:
-    #   backend:
-    #     condition: service_healthy
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:3000"]
-    #   interval: 15s
-    #   timeout: 10s
-    #   retries: 3
 
   backend:
     build: ./backend
@@ -127,19 +45,6 @@ services:
       - transcendence
     volumes:
       - ./data/exports:/exports
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://localhost:12201"
-        tag: "frontend"
-    # depends_on:
-    #   postgres:
-    #     condition: service_healthy
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-    #   interval: 15s
-    #   timeout: 10s
-    #   retries: 3
 
   gameserver:
     build: ./gameserver-v2
@@ -153,14 +58,6 @@ services:
       - 8080:8080
     networks:
       - transcendence
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://localhost:12201"
-        tag: "frontend"
-    # depends_on:
-    #   backend:
-    #     condition: service_healthy
 
   harvester:
     build: ./harvester
@@ -170,20 +67,7 @@ services:
       - ./data/exports:/exports
     networks:
       - transcendence
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://localhost:12201"
-        tag: "frontend"
-    # depends_on:
-    #   postgres:
-    #     condition: service_healthy
 
 networks:
   transcendence:
     driver: bridge
-
-volumes:
-  elasticsearch_data:
-  logstash_data:
-  kibana_data:
