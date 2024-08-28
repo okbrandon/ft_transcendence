@@ -5,6 +5,7 @@ export const RequestsListContainer = styled.div`
 	grid-template-columns: repeat(4, minmax(250px, 1fr));
 	gap: 1.5rem;
     position: relative;
+    margin-top: 2rem;
 `;
 
 export const RequestCard = styled.div`

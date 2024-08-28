@@ -4,7 +4,7 @@ export const FriendsListContainer = styled.div`
 	display: grid;
 	grid-template-columns: repeat(1, minmax(250px, 1fr));
 	gap: 1.5rem;
-	margin: 2rem auto;
+	margin-top: 2rem;
 `;
 
 export const FriendCard = styled.div`
