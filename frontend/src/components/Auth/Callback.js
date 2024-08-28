@@ -12,7 +12,7 @@ const Callback = () => {
 		if (token && refresh) {
 			localStorage.setItem('token', token);
 			localStorage.setItem('refresh', refresh);
-			window.location.href = '/home';
+			window.location.href = '/';
 		} else {
 			console.error('Token or refresh token not found in URL parameters');
 		}

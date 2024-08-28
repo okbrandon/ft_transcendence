@@ -1,8 +1,9 @@
 # TODO
 ## today
-- Settings (add language settings and harvest thing)
-- [] 42 auth
-- [] see Leader for Auth pages
+- [ ] Search Bar
+- [ ] Settings (add language settings and harvest thing and delete user button)
+- [ ] harvest done
+- [ ] see Leader for Auth pages
 
 ## secondary
 - [ ] settings -> language
