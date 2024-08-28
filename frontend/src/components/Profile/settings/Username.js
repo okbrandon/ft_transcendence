@@ -21,7 +21,10 @@ const Username = ({ showDropdown, setShowDropdown, username }) => {
 		} else {
 			setError('');
 			API.patch('/users/@me/profile', { username: usernameInput })
-				.then(() => console.log('Username cannot be updated shame on you Leader'))
+				.then(() => {
+                    console.log('Username updated to ', usernameInput);
+                    setUsernameInput(prev => ({...prev, username: usernameInput}));
+                })
 				.catch((err) => console.error(err));
 		}
 	};
