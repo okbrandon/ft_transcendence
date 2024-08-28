@@ -1,18 +1,12 @@
 # TODO
 ## today
-- [] navbar (profile button logout)
-- [] add colors
+- Settings (add language settings and harvest thing)
 - [] 42 auth
-- [] authentication pages
-- [x] profile page background
-
-## priority
-- [x] profile
-- [x] login
-- [ ] friends
+- [] see Leader for Auth pages
 
 ## secondary
-- [x] match history
-- [ ] inscription/register
 - [ ] settings -> language
 - [ ] /harvest pour recuperer les donnees (c'est chaud laisse tomber)
+
+## A la fin
+- [] fake captcha
