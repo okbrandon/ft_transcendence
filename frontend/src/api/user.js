@@ -14,3 +14,12 @@ export const GetUsers = async (input) => {
 	console.log('Getting users via search bar...');
 	return await API.get(`users/search?content=${encodeURIComponent(input)}`);
 }
+
+export const GetImage = async (file) => {
+    return new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.onloadend = () => resolve(reader.result);
+		reader.onerror = (error) => reject(error);
+		reader.readAsDataURL(file);
+	});
+}

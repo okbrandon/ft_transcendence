@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import Button from "react-bootstrap/Button";
 import { SettingsDropdown, SettingsForm, SettingsItem } from "../styles/Settings.styled";
 import API from "../../../api/api";
+import { GetImage } from "../../../api/user";
 
 const Picture = ({ showDropdown, setProfileUser, setShowDropdown }) => {
 	const fileInputRef = useRef(null);
@@ -19,12 +20,17 @@ const Picture = ({ showDropdown, setProfileUser, setShowDropdown }) => {
 			return;
 		}
 
-		API.patch('/users/@me/profile', { avatarID: URL.createObjectURL(file) })
-			.then(() => {
-				console.log('Profile picture updated');
-				setProfileUser(prev => ({...prev, avatarID: URL.createObjectURL(file)}));
-			})
-			.catch((err) => console.error(err));
+		GetImage(file).then((base64) => {
+			API.patch('/users/@me/profile', { avatarID: base64 })
+				.then(() => {
+					console.log('Profile picture updated');
+					setProfileUser(prev => ({...prev, avatarID: base64}));
+				})
+				.catch((err) => console.error(err));
+		}).catch((error) => {
+			console.error(error);
+		});
+
 	};
 
 	return (
