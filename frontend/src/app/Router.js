@@ -52,6 +52,7 @@ const Router = createBrowserRouter(createRoutesFromElements(
 				<Route path="tournament" element={ <Tournament/> }/>
 				<Route path="tournament-room" element={ <JoinTournament/> }/> {/* ⚒️ testing... */}
 				<Route path="vs-ai" element={ <Match/> }/>
+                <Route path="vs-player" element={ <Match/> }/>
 			</Route>
 		</Route>
 		<Route element={ <PrivateRoutes/>}>

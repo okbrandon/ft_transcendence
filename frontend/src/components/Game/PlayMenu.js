@@ -13,7 +13,7 @@ const PlayMenu = () => {
 			<PlayMenuCard onClick={() => navigate('/tournament')}>
 				<h1>Tournament</h1>
 			</PlayMenuCard>
-			<PlayMenuCard>
+			<PlayMenuCard onClick={() => navigate('/vs-player')}>
 				<h1>1 v 1</h1>
 			</PlayMenuCard>
 		</PlayMenuContainer>
