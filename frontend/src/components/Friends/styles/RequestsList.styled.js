@@ -2,8 +2,9 @@ import styled from "styled-components";
 
 export const RequestsListContainer = styled.div`
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	grid-template-columns: repeat(4, minmax(250px, 1fr));
 	gap: 1.5rem;
+    position: relative;
 `;
 
 export const RequestCard = styled.div`
@@ -78,6 +79,8 @@ export const DeclineButton = styled.button`
 `;
 
 export const NoRequests = styled.div`
+    position: absolute;
+    width: 100%;
 	font-size: 1.2rem;
 	color: #cccccc;
 	text-align: center;
