@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [frontend, backend, gameserver-v2, harvester]
+        service: [frontend, backend, gameserver, harvester]
 
     steps:
     - name: Checkout code
@@ -35,7 +35,7 @@ jobs:
       with:
         context: ./${{ matrix.service }}
         push: ${{ github.ref == 'refs/heads/main' }}
-        tags: rg.fr-par.scw.cloud/evansh/${{ matrix.service }}:latest
+        tags: rg.fr-par.scw.cloud/evansh/${{ if eq(matrix.service, 'gameserver') }}gameserver-v2${{ else }}${{ matrix.service }}${{ end }}:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
 

@@ -11,7 +11,7 @@ services:
     networks:
       - transcendence
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - ./config/traefik:/etc/traefik
 
   postgres:
     image: postgres

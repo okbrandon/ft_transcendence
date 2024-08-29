@@ -25,7 +25,7 @@ var (
 func main() {
 	rand.Seed(time.Now().UnixNano())
 
-	http.Handle("/ws", corsMiddleware(http.HandlerFunc(handleWebSocket)))
+	http.Handle("/game", corsMiddleware(http.HandlerFunc(handleWebSocket)))
 	http.Handle("/create-tournament", corsMiddleware(http.HandlerFunc(handleCreateTournament)))
 
 	internal.Logger.Info("Starting server on :8080")
