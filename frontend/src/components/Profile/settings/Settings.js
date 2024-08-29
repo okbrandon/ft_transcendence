@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import Button from "react-bootstrap/Button";
 import Username from "./Username";
 import DisplayName from "./DisplayName";
 import Email from "./Email";
@@ -6,55 +7,31 @@ import Password from "./Password";
 import Bio from "./Bio";
 import Picture from "./Picture";
 import Banner from "./Banner";
-import { SettingsContainer, SettingsItemContainer, SectionContainer } from "../styles/Settings.styled";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import { SettingsForm, SettingsItemContainer, SectionContainer, ButtonContainer } from "../styles/Settings.styled";
 
 const Settings = ({ profileUser, setProfileUser, setShowSettings }) => {
-	const [showDropdown, setShowDropdown] = useState(null);
-
 	return (
 		<SectionContainer>
-			<SettingsContainer>
+			<SettingsForm>
 				<i className="bi bi-arrow-left" onClick={() => setShowSettings(false)}/>
 				<h2>SETTINGS</h2>
 				<SettingsItemContainer>
-					<Username
-						showDropdown={showDropdown}
-						setShowDropdown={setShowDropdown}
-						username={profileUser.username}
-					/>
-					<DisplayName
-						showDropdown={showDropdown}
-						setProfileUser={setProfileUser}
-						setShowDropdown={setShowDropdown}
-						displayName={profileUser.displayName}
-					/>
-					<Email
-						showDropdown={showDropdown}
-						setProfileUser={setProfileUser}
-						setShowDropdown={setShowDropdown}
-						bio={profileUser.bio}
-					/>
-					<Password
-						showDropdown={showDropdown}
-						setShowDropdown={setShowDropdown}
-					/>
-					<Bio
-						showDropdown={showDropdown}
-						setProfileUser={setProfileUser}
-						setShowDropdown={setShowDropdown}
-					/>
-					<Picture
-						showDropdown={showDropdown}
-						setProfileUser={setProfileUser}
-						setShowDropdown={setShowDropdown}
-					/>
-					<Banner
-						showDropdown={showDropdown}
-						setProfileUser={setProfileUser}
-						setShowDropdown={setShowDropdown}
-					/>
+					<Row>
+						<Col><Username username={profileUser.username}/></Col>
+						<Col><DisplayName setProfileUser={setProfileUser} displayName={profileUser.displayName}/></Col>
+					</Row>
+					<Email setProfileUser={setProfileUser} bio={profileUser.bio}/>
+					<Password/>
+					<Bio setProfileUser={setProfileUser}/>
+					<Picture setProfileUser={setProfileUser}/>
+					<Banner setProfileUser={setProfileUser}/>
 				</SettingsItemContainer>
-			</SettingsContainer>
+				<ButtonContainer>
+					<Button variant="success" type="submit">Save</Button>
+				</ButtonContainer>
+			</SettingsForm>
 		</SectionContainer>
 	);
 };

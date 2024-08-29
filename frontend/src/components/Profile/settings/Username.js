@@ -1,17 +1,10 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";
-import Button from "react-bootstrap/Button";
-import { SettingsDropdown, SettingsForm, SettingsItem } from "../styles/Settings.styled";
+import { ErrorMessage, SettingsForm, SettingsItem } from "../styles/Settings.styled";
 import API from "../../../api/api";
 
-const Username = ({ showDropdown, setShowDropdown, username }) => {
+const Username = ({ username }) => {
 	const [usernameInput, setUsernameInput] = useState('');
 	const [error, setError] = useState('');
-
-	const handleDropdown = () => {
-		setShowDropdown(prev => prev === 'username' ? null : 'username');
-		setError('');
-	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -22,44 +15,27 @@ const Username = ({ showDropdown, setShowDropdown, username }) => {
 			setError('');
 			API.patch('/users/@me/profile', { username: usernameInput })
 				.then(() => {
-                    console.log('Username updated to ', usernameInput);
-                    setUsernameInput(prev => ({...prev, username: usernameInput}));
-                })
+					console.log('Username updated to ', usernameInput);
+					setUsernameInput(prev => ({...prev, username: usernameInput}));
+				})
 				.catch((err) => console.error(err));
 		}
 	};
 
 	return (
-		<SettingsItem $expanded={showDropdown === 'username' ? 1 : 0}>
-			<SettingsDropdown
-				onClick={handleDropdown}
-				$expanded={showDropdown === 'username'}
-			>
-				<h2>username</h2>
-			</SettingsDropdown>
-			{showDropdown === 'username' && (
-				<motion.div
-					initial={{ opacity: 0, y: -10}}
-					animate={{ opacity: 1, y: 0}}
-					transition={{ duration: 0.3}}
-				>
-					<SettingsForm onSubmit={handleSubmit}>
-						<SettingsForm.Group className="mb-3">
-							<SettingsForm.Label htmlFor="username"><i className="bi bi-person-fill"/></SettingsForm.Label>
-							<SettingsForm.Control
-								id="username"
-								type="text"
-								placeholder={username}
-								value={usernameInput}
-								onChange={(e) => setUsernameInput(e.target.value)}
-								style={{borderColor: error ? 'red' : 'inherit'}}
-							/>
-						</SettingsForm.Group>
-						{error && <p style={{color: 'red'}}>{error}</p>}
-						<Button variant="primary" type="submit">Update</Button>
-					</SettingsForm>
-				</motion.div>
-			)}
+		<SettingsItem $width="350px">
+            <SettingsForm.Group className="mb-3">
+                <SettingsForm.Label htmlFor="username"><i className="bi bi-person-fill"/></SettingsForm.Label>
+                <SettingsForm.Control
+                    id="username"
+                    type="text"
+                    placeholder={username}
+                    value={usernameInput}
+                    onChange={(e) => setUsernameInput(e.target.value)}
+                    style={{borderColor: error ? 'red' : 'inherit'}}
+                />
+            </SettingsForm.Group>
+            {error && <ErrorMessage>{error}</ErrorMessage>}
 		</SettingsItem>
 	);
 };

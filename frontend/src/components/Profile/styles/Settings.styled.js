@@ -3,21 +3,23 @@ import Form from 'react-bootstrap/Form';
 
 export const SectionContainer = styled.div`
 	position: absolute;
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
 	top: 0;
 	width: 100%;
 	height: 100%;
 	backdrop-filter: blur(20px);
 `;
 
-export const SettingsContainer = styled.div`
-	position: absolute;
-	top: 50vh;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	border-radius: 50px;
+export const SettingsForm = styled(Form)`
+	margin-top: 15vh;
+	border-radius: 10px;
 	background: rgba(0,0,0,0.8);
 	width: 50rem;
-	height: 800px;
+	height: 70vh;
+	position: relative;
+	border: 1px solid white;
 
 	& > h2 {
 		height: 100px;
@@ -32,65 +34,18 @@ export const SettingsContainer = styled.div`
 		border-radius: 50px 50px 0 0;
 		background: #000;
 	}
-	
+
 	& > i {
 		position: absolute;
 		font-size: 2rem;
 		top: 25px;
 		left: 35px;
 		cursor: pointer;
-		
+
 		&:hover {
 			color: rgba(255,255,255,0.8);
 		}
 	}
-`;
-
-export const SettingsItemContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-	border-radius: 0 0 50px 50px;
-	position: relative;
-	height: 700px;
-`;
-
-export const SettingsItem = styled.div`
-	width: 100%;
-	flex-grow: ${props => (props.$expanded ? 2 : 1)};
-	flex-basis: max-content;
-	transition: flex-grow 0.3s ease;
-	overflow: hidden;
-`;
-
-export const SettingsDropdown = styled.div`
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 100%;
-	height: ${props => props.$expanded ? '100px' : '100%'};
-	cursor: pointer;
-	user-select: none;
-	border-bottom: 1px solid rgba(255,255,255,0.1);
-
-	&:hover {
-		background: rgb(10,10,10);
-	}
-
-	& > h2 {
-		font-family: 'Inter', serif;
-		font-size: 1.5rem;
-		font-weight: 600;
-		color: rgba(255,255,255,0.8);
-		letter-spacing: 2px;
-	}
-`;
-
-export const SettingsForm = styled(Form)`
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	padding-top: 50px;
 
 	& .mb-3 {
 		display: flex;
@@ -142,5 +97,33 @@ export const SettingsForm = styled(Form)`
 	& .row {
 		margin: 10px;
 	}
+`;
 
+export const SettingsItemContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	overflow-y: auto;
+`;
+
+export const SettingsItem = styled.div`
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 10px;
+	width: ${props => props.$width || '100%'};
+`;
+
+export const ErrorMessage = styled.p`
+	color: red;
+`;
+
+export const ButtonContainer = styled.div`
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	padding: 10px;
+	position: sticky;
+	bottom: 0;
+	border: 1px solid white;
 `;

@@ -1,17 +1,10 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";
-import Button from "react-bootstrap/Button";
-import { SettingsDropdown, SettingsForm, SettingsItem } from "../styles/Settings.styled";
+import { ErrorMessage, SettingsForm, SettingsItem } from "../styles/Settings.styled";
 import API from "../../../api/api";
 
-const Email = ({ showDropdown, setProfileUser, setShowDropdown }) => {
+const Email = ({ setProfileUser }) => {
 	const [emailInput, setEmailInput] = useState('');
 	const [error, setError] = useState('');
-
-	const handleDropdown = () => {
-		setShowDropdown(prev => prev === 'email' ? null : 'email');
-		setError('');
-	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -31,36 +24,19 @@ const Email = ({ showDropdown, setProfileUser, setShowDropdown }) => {
 	};
 
 	return (
-		<SettingsItem $expanded={showDropdown === 'email' ? 1 : 0}>
-			<SettingsDropdown
-				onClick={handleDropdown}
-				$expanded={showDropdown === 'email'}
-			>
-				<h2>email</h2>
-			</SettingsDropdown>
-			{showDropdown === 'email' && (
-				<motion.div
-					initial={{ opacity: 0, y: -10}}
-					animate={{ opacity: 1, y: 0}}
-					transition={{ duration: 0.3}}
-				>
-					<SettingsForm onSubmit={handleSubmit}>
-						<SettingsForm.Group className="mb-3">
-							<SettingsForm.Label htmlFor="email"><i className="bi bi-envelope-at-fill"/></SettingsForm.Label>
-							<SettingsForm.Control
-								id="email"
-								type="text"
-								placeholder="email@address.com"
-								value={emailInput}
-								onChange={(e) => setEmailInput(e.target.value)}
-								style={{borderColor: error ? 'red' : 'inherit'}}
-							/>
-						</SettingsForm.Group>
-						{error && <p style={{color: 'red'}}>{error}</p>}
-						<Button variant="primary" type="submit">Update</Button>
-					</SettingsForm>
-				</motion.div>
-			)}
+		<SettingsItem>
+			<SettingsForm.Group className="mb-3">
+				<SettingsForm.Label htmlFor="email"><i className="bi bi-envelope-at-fill"/></SettingsForm.Label>
+				<SettingsForm.Control
+					id="email"
+					type="text"
+					placeholder="email@address.com"
+					value={emailInput}
+					onChange={(e) => setEmailInput(e.target.value)}
+					style={{borderColor: error ? 'red' : 'inherit'}}
+				/>
+			</SettingsForm.Group>
+			{error && <ErrorMessage>{error}</ErrorMessage>}
 		</SettingsItem>
 	);
 };
