@@ -24,7 +24,7 @@ class UserProfileMe(APIView):
     def patch(self, request, *args, **kwargs):
         me = request.user
         data = request.data
-        allowed_fields = ['displayName', 'email', 'mfaToken', 'lang', 'avatarID', 'password', 'phone_number', 'bannerID', 'bio']
+        allowed_fields = ['displayName', 'email', 'mfaToken', 'lang', 'avatarID', 'bannerID', 'password', 'phone_number', 'bannerID', 'bio']
         updated_fields = {}
 
         for field in allowed_fields:
