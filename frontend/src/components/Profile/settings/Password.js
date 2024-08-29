@@ -1,47 +1,28 @@
-import React, { useState } from "react";
+import React from "react";
 import { ErrorMessage, SettingsForm, SettingsItem } from "../styles/Settings.styled";
-import API from "../../../api/api";
 
-const Password = () => {
-	const [passwordInput, setPasswordInput] = useState('');
-	const [cfPasswordInput, setCfPasswordInput] = useState('');
-	const [error, setError] = useState('');
-
-	const handleSubmit = (event) => {
-		event.preventDefault();
-		if (!passwordInput || !cfPasswordInput) {
-			setError('Password cannot be empty');
-		} else if (passwordInput !== cfPasswordInput) {
-			setError('Passwords do not match');
-		} else {
-			setError('');
-			API.patch('/users/@me/profile', { password: passwordInput })
-				.then(() => {
-					console.log('Password updated');
-				})
-				.catch((err) => console.error(err));
-		}
-	}
-
+const Password = ({ password, confirmPassword, handleChange, error}) => {
 	return (
 		<SettingsItem>
 			<SettingsForm.Group className="mb-3">
 				<SettingsForm.Label htmlFor="password"><i className="bi bi-lock-fill"/></SettingsForm.Label>
 				<SettingsForm.Control
 					id="password"
-					value={passwordInput}
-					onChange={(e) => setPasswordInput(e.target.value)}
+					name="password"
+					value={password}
+					onChange={handleChange}
 					type="password"
 					placeholder="New password"
 					style={{borderColor: error ? 'red' : 'inherit'}}
 				/>
 			</SettingsForm.Group>
 			<SettingsForm.Group className="mb-3">
-				<SettingsForm.Label htmlFor="cfpassword"><i className="bi bi-lock-fill"/></SettingsForm.Label>
+				<SettingsForm.Label htmlFor="confirmPassword"><i className="bi bi-lock-fill"/></SettingsForm.Label>
 				<SettingsForm.Control
-					id="cfpassword"
-					value={cfPasswordInput}
-					onChange={(e) => setCfPasswordInput(e.target.value)}
+					id="confirmPassword"
+					name="confirmPassword"
+					value={confirmPassword}
+					onChange={handleChange}
 					type="password"
 					placeholder="Confirm password"
 					style={{borderColor: error ? 'red' : 'inherit'}}

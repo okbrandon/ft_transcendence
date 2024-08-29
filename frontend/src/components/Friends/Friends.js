@@ -18,6 +18,7 @@ const friends = [
 	{ id: 6, name: "Sarah", status: "offline" },
 	{ id: 7, name: "John", status: "online" },
 	{ id: 8, name: "Jane", status: "online" },
+	{ id: 9, name: "Mathieu", status: "online" },
 ];
 
 const Friends = () => {
