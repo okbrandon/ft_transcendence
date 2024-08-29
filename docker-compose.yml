@@ -47,7 +47,7 @@ services:
       - ./data/exports:/exports
 
   gameserver:
-    build: ./gameserver-v2
+    build: ./gameserver
     restart: always
     env_file: .env
     labels:
