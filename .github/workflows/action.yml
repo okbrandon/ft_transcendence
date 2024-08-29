@@ -35,7 +35,7 @@ jobs:
       with:
         context: ./${{ matrix.service }}
         push: ${{ github.ref == 'refs/heads/main' }}
-        tags: rg.fr-par.scw.cloud/evansh/${{ if eq(matrix.service, 'gameserver') }}gameserver-v2${{ else }}${{ matrix.service }}${{ end }}:latest
+        tags: rg.fr-par.scw.cloud/evansh/${{ matrix.service }}:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
