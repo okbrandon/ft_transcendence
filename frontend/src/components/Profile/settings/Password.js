@@ -1,10 +1,11 @@
 import React from "react";
 import { ErrorMessage, SettingsForm, SettingsItem } from "../styles/Settings.styled";
 
-const Password = ({ password, confirmPassword, handleChange, error}) => {
+const Password = ({ password, handleChange, error}) => {
 	return (
-		<SettingsItem>
+		<SettingsItem $width="350px">
 			<SettingsForm.Group className="mb-3">
+				<h3>Password</h3>
 				<SettingsForm.Label htmlFor="password"><i className="bi bi-lock-fill"/></SettingsForm.Label>
 				<SettingsForm.Control
 					id="password"
@@ -16,19 +17,6 @@ const Password = ({ password, confirmPassword, handleChange, error}) => {
 					style={{borderColor: error ? 'red' : 'inherit'}}
 				/>
 			</SettingsForm.Group>
-			<SettingsForm.Group className="mb-3">
-				<SettingsForm.Label htmlFor="confirmPassword"><i className="bi bi-lock-fill"/></SettingsForm.Label>
-				<SettingsForm.Control
-					id="confirmPassword"
-					name="confirmPassword"
-					value={confirmPassword}
-					onChange={handleChange}
-					type="password"
-					placeholder="Confirm password"
-					style={{borderColor: error ? 'red' : 'inherit'}}
-				/> {/* have to check the password rules */}
-			</SettingsForm.Group>
-			{error && <ErrorMessage>Passwords do not match</ErrorMessage>}
 		</SettingsItem>
 	);
 };

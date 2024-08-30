@@ -48,6 +48,18 @@ const Profile = () => {
 	const [showSettings, setShowSettings] = useState(false);
 	const { loading, profileUser, setProfileUser } = useContext(ProfileContext);
 
+	useEffect(() => {
+		if (showSettings) {
+			document.body.style.overflow = 'hidden';
+		} else {
+			document.body.style.overflow = '';
+		}
+
+		return () => {
+			document.body.style.overflow = '';
+		};
+	}, [showSettings]);
+
 	console.log(profileUser);
 
 	return (

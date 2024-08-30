@@ -2,24 +2,38 @@ import styled from "styled-components";
 import Form from 'react-bootstrap/Form';
 
 export const SectionContainer = styled.div`
-	position: absolute;
+	position: fixed;
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
-	align-items: flex-start;
+	align-items: center;
 	top: 0;
 	width: 100%;
-	height: 100%;
+	height: 100vh;
 	backdrop-filter: blur(20px);
 `;
 
+
+export const SettingsItemContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	padding: 10px;
+	overflow-y: auto;
+`;
+
 export const SettingsForm = styled(Form)`
-	margin-top: 15vh;
-	border-radius: 10px;
-	background: rgba(0,0,0,0.8);
+	margin-top: 50px;
 	width: 50rem;
 	height: 70vh;
 	position: relative;
+	display: flex;
+	flex-direction: column;
 	border: 1px solid white;
+	border-bottom: none;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	background: rgba(0,0,0,0.8);
 
 	& > h2 {
 		height: 100px;
@@ -63,6 +77,14 @@ export const SettingsForm = styled(Form)`
 			font-size: 0.8rem;
 			color: rgba(255,255,255,0.2);
 		}
+
+		& > h3 {
+			position: absolute;
+			top: -18px;
+			left: 50px;
+			font-family: 'Inter', serif;
+			font-size: 0.8rem;
+		}
 	}
 
 	& .form-label {
@@ -97,20 +119,19 @@ export const SettingsForm = styled(Form)`
 	& .row {
 		margin: 10px;
 	}
-`;
 
-export const SettingsItemContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-	position: relative;
-	overflow-y: auto;
+	& > ${SettingsItemContainer} {
+		flex-grow: 1;
+		overflow-y: auto;
+	}
 `;
 
 export const SettingsItem = styled.div`
 	display: flex;
+	flex-direction: center;
 	justify-content: center;
 	align-items: center;
-	padding: 10px;
+	margin: 20px 0;
 	width: ${props => props.$width || '100%'};
 `;
 
@@ -122,8 +143,17 @@ export const ButtonContainer = styled.div`
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
+	width: 50rem;
 	padding: 10px;
-	position: sticky;
-	bottom: 0;
 	border: 1px solid white;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	background: #000;
+`;
+
+export const Separator = styled.div`
+	margin: 20px 0;
+	width: 100%;
+	height: 1px;
+	border-top: 1px solid rgba(255,255,255,0.2);
 `;

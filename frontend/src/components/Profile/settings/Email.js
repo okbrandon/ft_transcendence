@@ -5,6 +5,7 @@ const Email = ({ email, handleChange, error }) => {
 	return (
 		<SettingsItem>
 			<SettingsForm.Group className="mb-3">
+				<h3>Email</h3>
 				<SettingsForm.Label htmlFor="email"><i className="bi bi-envelope-at-fill"/></SettingsForm.Label>
 				<SettingsForm.Control
 					id="email"

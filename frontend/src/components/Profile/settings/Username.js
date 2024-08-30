@@ -5,6 +5,7 @@ const Username = ({ username, handleChange, error }) => {
 	return (
 		<SettingsItem $width="350px">
 			<SettingsForm.Group className="mb-3">
+				<h3>Username</h3>
 				<SettingsForm.Label htmlFor="username"><i className="bi bi-person-fill"/></SettingsForm.Label>
 				<SettingsForm.Control
 					id="username"
