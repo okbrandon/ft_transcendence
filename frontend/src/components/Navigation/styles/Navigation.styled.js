@@ -153,6 +153,10 @@ export const ProfileDropdownButton = styled(Dropdown)`
 			transform: scale(1.05);
 		}
 
+		&:focus {
+			outline: none;
+		}
+
 		&:active {
 			border: none;
 			background: none;
