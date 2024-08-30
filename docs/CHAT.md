@@ -10,13 +10,15 @@ Example of server notification:
 
 ```json
 {
-	"type": "conversation_update"
+	"type": "conversation_update",
+	"senderUsername": "Prune",
+	"messagePreview": "Meow meow this is my long messag..."
 }
 ```
 
 ## Requesting conversations
 
-At authentication, the user asks the server for its conversations via `GET /chat/conversations`.
+When needed, the user can ask the server for its conversations via `GET /chat/conversations`.
 
 The `GET /chat/conversations` endpoint returns a list of conversations the user is part of. Each conversation contains the messages exchanged between the participants.
 
@@ -27,15 +29,15 @@ Example of server reply:
 	{
 		"id": "546a31fd-fb13-4b8f-8cbb-b3ac59c7d52c",
 		"type": "private_message",
-		"participantUserIDs": [ 1718350562393, 1718350562394 ],
+		"participantUserIDs": [ "user_MTcyNTAyODYzODMxNTUyNzI" "user_xBzKjLwNqRaVoXmTsYeFpZgU" ],
 		"userData": {
-			"1718350562393": {
-				"id": 1718350562393,
+			"user_MTcyNTAyODYzODMxNTUyNzI": {
+				"id": "user_MTcyNTAyODYzODMxNTUyNzI",
 				"username": "Brandon",
 				"displayName": "Brandon"
 			},
-			"1718350562394": {
-				"id": 1718350562394,
+			"user_xBzKjLwNqRaVoXmTsYeFpZgU": {
+				"id": "user_xBzKjLwNqRaVoXmTsYeFpZgU",
 				"username": "Prune",
 				"displayName": "Prune"
 			},
@@ -44,13 +46,13 @@ Example of server reply:
 			{
 				"id": "e546875a-0822-4fb8-af6f-3b3c8da9e089",
 				"content": "Bro I'm Brandon ok who r u",
-				"senderUserID": 1718350562393,
+				"senderUserID": "user_MTcyNTAyODYzODMxNTUyNzI",
 				"createdAt": "2024-08-29T09:08:37.475Z"
 			},
 			{
 				"id": "01328fb7-cd8c-48e7-9c29-1b0e0d79030f",
 				"content": "Meow meow stupid",
-				"senderUserID": 1718350562394,
+				"senderUserID": "user_xBzKjLwNqRaVoXmTsYeFpZgU",
 				"createdAt": "2024-08-29T09:08:49.907Z"
 			}
 		]
@@ -58,15 +60,15 @@ Example of server reply:
 	{
 		"id": "8eb83551-dd47-4f8f-b91b-ff54a9a63258",
 		"type": "private_message",
-		"participantUserIDs": [ 1718350562393, 1718350562395 ],
+		"participantUserIDs": [ "user_MTcyNTAyODYzODMxNTUyNzI", "user_mPtYlRoHnKcVxQwJdFgZsAeUr" ],
 		"userData": {
-			"1718350562393": {
-				"id": 1718350562393,
+			"user_MTcyNTAyODYzODMxNTUyNzI": {
+				"id": "user_MTcyNTAyODYzODMxNTUyNzI",
 				"username": "Brandon",
 				"displayName": "Brandon"
 			},
-			"1718350562395": {
-				"id": 1718350562395,
+			"user_mPtYlRoHnKcVxQwJdFgZsAeUr": {
+				"id": "user_mPtYlRoHnKcVxQwJdFgZsAeUr",
 				"username": "Bozo",
 				"displayName": "Bozo"
 			},
@@ -75,13 +77,13 @@ Example of server reply:
 			{
 				"id": "34bc7ca7-a02e-438b-9d75-fbe82ecb4a87",
 				"content": "Hello I am Bozo",
-				"senderUserID": 1718350562395,
+				"senderUserID": "user_mPtYlRoHnKcVxQwJdFgZsAeUr",
 				"createdAt": "2024-08-29T09:08:57.641Z"
 			},
 			{
 				"id": "48a55e63-e59d-4dac-9c96-7a1d3ee828a5",
 				"content": "Hi I am Brandon",
-				"senderUserID": 1718350562393,
+				"senderUserID": "user_MTcyNTAyODYzODMxNTUyNzI",
 				"createdAt": "2024-08-29T09:09:07.557Z"
 			}
 		]
@@ -91,16 +93,16 @@ Example of server reply:
 
 ## Sending a message
 
-To send a message, the user sends a POST request to `/chat/conversations/:conversation_id/messages` with the following JSON body:
+When sending a message, the user sends a JSON object to the Websocket connection previously established at the authentication. The JSON object must contain the following fields:
 
 ```json
 {
-	"id": "546a31fd-fb13-4b8f-8cbb-b3ac59c7d52c",
-	"senderUserID": 1718350562393,
-	"username": "Brandon",
-	"displayName": "Brandon",
+	"type": "send_message",
+	"conversationID": "546a31fd-fb13-4b8f-8cbb-b3ac59c7d52c",
 	"content": "Hello, how are you?"
 }
 ```
 
-Where the `id` is the conversation ID, `senderUserID` is the ID of the user sending the message, `username` is the username of the user sending the message, `displayName` is the display name of the user sending the message, and `content` is the message content.
+Where the `conversationID` is the conversation ID where the message is sent and `content` is the message content.
+
+Once received, the server will add the message to the conversation messages and send a Websocket notification to the participants of the conversation to tell them that they need to request the conversations again.
