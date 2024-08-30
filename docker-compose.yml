@@ -22,16 +22,16 @@ services:
     networks:
       - transcendence
 
-  frontend:
-    build: ./frontend
-    restart: always
-    env_file: .env
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
-      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
-    networks:
-      - transcendence
+  #frontend:
+  #  build: ./frontend
+  #  restart: always
+  #  env_file: .env
+  #  labels:
+  #    - "traefik.enable=true"
+  #    - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
+  #    - "traefik.http.services.frontend.loadbalancer.server.port=3000"
+  #  networks:
+  #    - transcendence
 
   backend:
     build: ./backend
@@ -41,6 +41,9 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.backend.rule=PathPrefix(`/api`)"
       - "traefik.http.services.backend.loadbalancer.server.port=8000"
+    ports:
+      - 8000:8000
+      - 8001:8001
     networks:
       - transcendence
     volumes:
@@ -59,14 +62,14 @@ services:
     networks:
       - transcendence
 
-  harvester:
-    build: ./harvester
-    restart: always
-    env_file: .env
-    volumes:
-      - ./data/exports:/exports
-    networks:
-      - transcendence
+  #harvester:
+  #  build: ./harvester
+  #  restart: always
+  #  env_file: .env
+  #  volumes:
+  #    - ./data/exports:/exports
+  #  networks:
+  #    - transcendence
 
 networks:
   transcendence:
