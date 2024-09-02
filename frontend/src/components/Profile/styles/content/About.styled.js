@@ -6,7 +6,6 @@ export const AboutContainer = styled.div`
 	background: rgba(5,5,5,0.8);
 	margin-top: 50px;
 	border-radius: 30px;
-	height: 730px;
 	border: 1px solid rgba(255,255,255,0.1);
 	box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1), 0 0 10px rgba(255, 255, 255, 0.2);
 
