@@ -1,6 +1,7 @@
 import re
 import base64
 import pyotp
+import os
 
 from rest_framework import status
 from rest_framework.views import APIView
@@ -54,7 +55,7 @@ class AuthRegister(APIView):
         verification_link = f"{os.environ.get('BASE_URL')}/verify?code={base64.urlsafe_b64encode(f'{user.userID}.{verification_code}'.encode()).decode()}"
         send_verification_email([data['email']], verification_link)
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_201_CREATED)
 
     def validate_request_data(self, data):
         required_fields = {'username', 'email', 'password', 'lang'}
@@ -103,6 +104,9 @@ class AuthLogin(APIView):
 
         if user is None:
             return Response({"error": "Invalid credentials or OTP."}, status=status.HTTP_401_UNAUTHORIZED)
+
+        if not user.flags & (1 << 0):
+            return Response({"error": "Email not verified. Please verify your email before logging in."}, status=status.HTTP_403_FORBIDDEN)
 
         refresh = RefreshToken.for_user(user)
         access = str(refresh.access_token)

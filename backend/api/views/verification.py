@@ -10,6 +10,7 @@ from django.utils import timezone
 
 from ..models import User, VerificationCode
 from ..serializers import VerificationCodeSerializer
+from ..util import send_welcome_email
 
 @permission_classes([AllowAny])
 class VerifyEmail(APIView):
@@ -35,4 +36,5 @@ class VerifyEmail(APIView):
 
         verification_code.delete()
 
+        send_welcome_email(user.email)
         return Response({"message": "Email verified successfully."}, status=status.HTTP_200_OK)
