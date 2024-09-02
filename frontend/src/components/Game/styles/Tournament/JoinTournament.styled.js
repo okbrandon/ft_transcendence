@@ -1,4 +1,4 @@
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 
 export const PageContainer = styled.div`
 	display: flex;
@@ -31,7 +31,7 @@ export const JoinTournamentContainer = styled.div`
 	h1 {
 		font-family: "Orbitron", sans-serif;
 		font-size: 2.5rem;
-		margin-bottom: 2rem;
+		margin-bottom: 2rem;k
 	}
 
 	h2 {
