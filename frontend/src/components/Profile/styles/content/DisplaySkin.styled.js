@@ -3,12 +3,12 @@ import styled, { keyframes } from "styled-components";
 export const DisplaySkinContainer = styled.div`
 	grid-column: 1;
 	grid-row: 4 / 6;
-	margin: 30px 0 0 0;
+	margin-top: 30px;
 	background: rgba(5,5,5,0.8);
 	border-radius: 30px;
 	height: 300px;
 	border: 1px solid rgba(255,255,255,0.1);
-	box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1), 0 0 10px rgba(255, 255, 255, 0.2);
+	box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1), 0 0 15px rgba(164, 69, 178, 0.3);
 	position: relative;
 	width: 100%;
 `;

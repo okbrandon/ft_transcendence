@@ -9,11 +9,16 @@ export const ProfileContainer = styled.div`
 	width: 100%;
 	min-height: 100vh;
 	border: 1px solid transparent;
-	background-color: #000;
-	background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
-		radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-	background-position: 0 0, 25px 25px;
-	background-size: 50px 50px;
+	background-color: #000000;
+
+	/* Subtle dark radial gradients */
+	background-image: radial-gradient(circle at 20% 20%, rgba(75, 0, 130, 0.15), transparent 50%),
+					  radial-gradient(circle at 80% 30%, rgba(59, 130, 246, 0.1), transparent 50%),
+					  radial-gradient(circle at 50% 80%, rgba(164, 69, 178, 0.1), transparent 50%),
+					  linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, transparent 100%);
+
+	background-size: cover;
+	background-position: center;
 `;
 
 export const UserProfileBanner = styled.div`
