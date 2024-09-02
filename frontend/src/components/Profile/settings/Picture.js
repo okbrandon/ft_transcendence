@@ -1,43 +1,43 @@
-import React, { useRef } from "react";
-import { SettingsForm, SettingsItem } from "../styles/Settings.styled";
-import API from "../../../api/api";
+import React, { useState, useRef } from "react";
+import { Preview, SettingsForm, SettingsItem } from "../styles/Settings.styled";
 import { GetImage } from "../../../api/user";
 
-const Picture = ({ setProfileUser }) => {
+const Picture = ({ handleChange }) => {
 	const fileInputRef = useRef(null);
+	const [preview, setPreview] = useState(null);
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
+	const handleFileChange = () => {
 		const file = fileInputRef.current.files[0];
 		if (!file) {
-			console.log('No file selected');
 			return;
 		}
 
-		GetImage(file).then((base64) => {
-			API.patch('/users/@me/profile', { avatarID: base64 })
-				.then(() => {
-					console.log('Profile picture updated');
-					setProfileUser(prev => ({...prev, avatarID: base64}));
-				})
-				.catch((err) => console.error(err));
-		}).catch((error) => {
-			console.error(error);
-		});
-
+		GetImage(file)
+			.then((base64) => {
+				handleChange({ target: { name: 'avatarID', value: base64 } });
+				setPreview(base64);
+			})
+			.catch((err) => {
+				console.error(err);
+			});
 	};
 
 	return (
-		<SettingsItem>
-			<SettingsForm.Group className="mb-3">
-				<SettingsForm.Label htmlFor="picture"><i className="bi bi-image-fill"/></SettingsForm.Label>
-				<SettingsForm.Control
-					type="file"
-					id="picture"
-					ref={fileInputRef}
-				/>
-			</SettingsForm.Group>
-		</SettingsItem>
+		<>
+			<SettingsItem>
+				<SettingsForm.Group className="mb-3">
+					<h3>Profile Picture</h3>
+					<SettingsForm.Label htmlFor="picture"><i className="bi bi-image-fill"/></SettingsForm.Label>
+					<SettingsForm.Control
+						id="picture"
+						type="file"
+						ref={fileInputRef}
+						onChange={handleFileChange}
+					/>
+				</SettingsForm.Group>
+			</SettingsItem>
+			{preview && <Preview src={preview} alt="Picture Preview" isProfile={true}/>}
+		</>
 	);
 }
 

@@ -15,20 +15,15 @@ import {
 	SettingsItemContainer,
 	SectionContainer,
 	ButtonContainer,
-	Separator
+	Separator,
+	Header
 } from "../styles/Settings.styled";
 import API from "../../../api/api";
 
 const Settings = ({ profileUser, setProfileUser, setShowSettings }) => {
-	const [formData, setFormData] = useState({
-		username: profileUser.username,
-		displayName: profileUser.displayName,
-		email: profileUser.email,
-		bio: profileUser.bio,
-		password: '',
-		confirmPassword: '',
-	});
+	const [formData, setFormData] = useState({});
 	const [errors, setErrors] = useState({});
+	const [successMessage, setSuccessMessage] = useState('');
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -41,20 +36,19 @@ const Settings = ({ profileUser, setProfileUser, setShowSettings }) => {
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		setErrors({});
+		setSuccessMessage('Saved successfully');
 
-		if (formData.password !== formData.confirmPassword) {
-			setErrors(prev => ({...prev, password: 'Passwords do not match'}));
+		if (!formData) {
+			setShowSettings(false);
+			return;
+		} else if (formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword) {
+			setErrors(prev => ({ ...prev, password: 'Passwords do not match' }));
 			return;
 		}
 
-		// API call to update user
 		API.patch('/users/@me/profile', formData)
 			.then(() => {
-				setProfileUser(prev => ({
-					...profileUser,
-					...formData,
-				}));
-				console.log('Profile updated');
+				setProfileUser(prev => ({ ...prev,...formData }));
 			})
 			.catch((err) => console.error(err));
 	};
@@ -62,8 +56,10 @@ const Settings = ({ profileUser, setProfileUser, setShowSettings }) => {
 	return (
 		<SectionContainer>
 			<SettingsForm onSubmit={handleSubmit}>
-				<i className="bi bi-arrow-left" onClick={() => setShowSettings(false)}/>
-				<h2>SETTINGS</h2>
+				<Header>
+					<i className="bi bi-arrow-left" onClick={() => setShowSettings(false)}/>
+					<h2>SETTINGS</h2>
+				</Header>
 				<SettingsItemContainer>
 					<Row>
 						<Col><Username username={profileUser.username} handleChange={handleChange} error={errors.username}/></Col>
@@ -76,13 +72,15 @@ const Settings = ({ profileUser, setProfileUser, setShowSettings }) => {
 					</Row>
 					<Separator/>
 					<Bio bio={formData.bio} handleChange={handleChange}/>
-					<Picture setProfileUser={setProfileUser}/>
-					<Banner setProfileUser={setProfileUser}/>
+					<Picture handleChange={handleChange}/>
+					<Banner handleChange={handleChange}/>
+					<Separator/>
 				</SettingsItemContainer>
+				<ButtonContainer>
+					{successMessage && <p>{successMessage}</p>}
+					<Button variant="success" type="submit">Save</Button>
+				</ButtonContainer>
 			</SettingsForm>
-			<ButtonContainer>
-				<Button variant="success" type="submit">Save</Button>
-			</ButtonContainer>
 		</SectionContainer>
 	);
 };

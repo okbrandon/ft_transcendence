@@ -12,7 +12,6 @@ const Email = ({ email, handleChange, error }) => {
 					name="email"
 					type="text"
 					placeholder={email ? email : 'Email'}
-					value={email}
 					onChange={handleChange}
 					style={{borderColor: error ? 'red' : 'inherit'}}
 				/>

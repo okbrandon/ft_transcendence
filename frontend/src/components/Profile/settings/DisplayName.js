@@ -12,7 +12,6 @@ const DisplayName = ({ displayName, handleChange, error }) => {
 					name="displayName"
 					type="text"
 					placeholder={displayName ? displayName : 'Display name'}
-					value={displayName}
 					onChange={handleChange}
 					style={{borderColor: error ? 'red' : 'inherit'}}
 				/>

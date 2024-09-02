@@ -14,7 +14,6 @@ const Bio = ({ bio, handleChange }) => {
 					rows={3}
 					maxLength={160}
 					placeholder={bio ? bio : 'Bio'}
-					value={bio}
 					onChange={handleChange}
 					style={{resize: 'none'}}
 				/>

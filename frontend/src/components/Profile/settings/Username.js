@@ -12,7 +12,6 @@ const Username = ({ username, handleChange, error }) => {
 					name="username"
 					type="text"
 					placeholder={username ? username : "Display Name"}
-					value={username}
 					onChange={handleChange}
 					style={{borderColor: error ? 'red' : 'inherit'}}
 				/>

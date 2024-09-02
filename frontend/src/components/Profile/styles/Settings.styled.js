@@ -22,6 +22,37 @@ export const SettingsItemContainer = styled.div`
 	overflow-y: auto;
 `;
 
+export const Header = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 150px;
+	border-bottom: 1px solid rgba(255,255,255,0.1);
+	border-radius: 50px 50px 0 0;
+	background: #000;
+
+	h2 {
+		justify-self: center;
+		font-family: 'Orbitron', serif;
+		font-size: 2rem;
+		font-weight: 600;
+		text-align: center;
+	}
+
+	i {
+		position: absolute;
+		font-size: 2rem;
+		cursor: pointer;
+		left: 0;
+		margin-left: 20px;
+
+		&:hover {
+			color: rgba(255,255,255,0.8);
+		}
+	}
+`;
+
 export const SettingsForm = styled(Form)`
 	margin-top: 50px;
 	width: 50rem;
@@ -29,43 +60,18 @@ export const SettingsForm = styled(Form)`
 	position: relative;
 	display: flex;
 	flex-direction: column;
-	border: 1px solid white;
+	justify-content: center;
+	align-items: center;
+	border: 1px solid rgba(255,255,255,0.1);
 	border-bottom: none;
-	border-top-left-radius: 10px;
-	border-top-right-radius: 10px;
+	border-radius: 10px;
 	background: rgba(0,0,0,0.8);
-
-	& > h2 {
-		height: 100px;
-		padding-top: 30px;
-		margin: 0 auto;
-		font-family: 'Orbitron', serif;
-		font-size: 2rem;
-		font-weight: 600;
-		text-align: center;
-		width: 100%;
-		border-bottom: 1px solid rgba(255,255,255,1);
-		border-radius: 50px 50px 0 0;
-		background: #000;
-	}
-
-	& > i {
-		position: absolute;
-		font-size: 2rem;
-		top: 25px;
-		left: 35px;
-		cursor: pointer;
-
-		&:hover {
-			color: rgba(255,255,255,0.8);
-		}
-	}
 
 	& .mb-3 {
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		gap: 20px;
+		gap: 10px;
 		width: 400px;
 		position: relative;
 
@@ -141,14 +147,22 @@ export const ErrorMessage = styled.p`
 
 export const ButtonContainer = styled.div`
 	display: flex;
-	justify-content: flex-end;
+	justify-content: center;
 	align-items: center;
-	width: 50rem;
+	position: relative;
+	height: 100px;
+	width: 100%;
 	padding: 10px;
-	border: 1px solid white;
+	border-top: 1px solid rgba(255,255,255,0.1);
+	border-bottom: 1px solid rgba(255,255,255,0.1);
 	border-bottom-left-radius: 10px;
 	border-bottom-right-radius: 10px;
 	background: #000;
+
+	button {
+		position: absolute;
+		right: 20px;
+	}
 `;
 
 export const Separator = styled.div`
@@ -156,4 +170,12 @@ export const Separator = styled.div`
 	width: 100%;
 	height: 1px;
 	border-top: 1px solid rgba(255,255,255,0.2);
+`;
+
+export const Preview = styled.img`
+	height: ${({ isProfile }) => isProfile ? '100px' : '200px'};
+	width: ${({ isProfile }) => isProfile ? '100px' : '70%'};
+	${({ isProfile }) => isProfile && 'border-radius: 50%'};
+	margin: 0 auto;
+	object-fit: cover;
 `;
