@@ -10,6 +10,7 @@ const ProfileProvider = ({ children, username }) => {
 	const navigate = useNavigate();
 
 	useEffect(() => {
+		setLoading(true);
 		console.log('🪧 ProfileProvider: Getting user...');
 		const timeoutId = setTimeout(() => {
 			GetUserByUsername(username)
@@ -19,9 +20,9 @@ const ProfileProvider = ({ children, username }) => {
 				})
 				.catch((error) => {
 					console.error(error);
-					navigate('/login'); // maybe 404 page
+					navigate('/*'); // maybe 404 page
 				});
-		}, 2000);
+		}, 1500);
 
 		return () => clearTimeout(timeoutId);
 	}, [navigate, username]);
