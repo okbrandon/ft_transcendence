@@ -29,7 +29,7 @@ export const Header = styled.div`
 	width: 100%;
 	height: 150px;
 	border-bottom: 1px solid rgba(255,255,255,0.1);
-	border-radius: 50px 50px 0 0;
+	border-radius: 10px 10px 0 0;
 	background: #000;
 
 	h2 {
