@@ -92,6 +92,13 @@ class AuthLogin(APIView):
         password = request.data.get('password')
         otp = request.data.get('otp', None)
 
+        try:
+            user = User.objects.get(username=username)
+            if user.oauthAccountID is not None:
+                return Response({"error": "This is an OAuth account. Please login with your identity provider."}, status=status.HTTP_400_BAD_REQUEST)
+        except User.DoesNotExist:
+            pass
+
         user = AuthBackend.AuthBackend().authenticate(request, username=username, password=password, otp=otp)
 
         if user is None:

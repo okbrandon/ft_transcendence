@@ -45,12 +45,14 @@ class OAuth42Callback(APIView):
             return JsonResponse({"error": "Failed to retrieve user information"}, status=status.HTTP_400_BAD_REQUEST)
 
         user_info = user_info_response.json()
-        user, created = User.objects.get_or_create(username=user_info['login'], defaults={
+        user, created = User.objects.get_or_create(oauthAccountID=user_info['id'], defaults={
+            'username': user_info['login'],
             'userID': generate_id('user'),
-            'email': user_info.get('email', ''),
+            'email': user_info['email'],
             'displayName': user_info['usual_full_name'],
             'avatarID': user_info['image']['link'] if 'image' in user_info else None,
-            'lang': 'en'
+            'lang': 'en',
+            'oauthAccountID': user_info['id']
         })
 
         login(request, user)

@@ -42,6 +42,7 @@ class User(AbstractUser):
     avatarID = models.TextField(null=True)  # Store base64 encoded image as text
     bannerID = models.TextField(null=True)
     bio = models.TextField(null=True, max_length=280)
+    oauthAccountID = models.TextField(null=True, max_length=64)
     # passwords should be limited to 72 **bytes** because of a bcrypt limitation
     phone_number = models.CharField(max_length=15, null=True, blank=True)
     password = models.CharField(max_length = 128)

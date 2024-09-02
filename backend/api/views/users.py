@@ -22,33 +22,36 @@ class UserProfileMe(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request, *args, **kwargs):
-        me = request.user
-        data = request.data
-        allowed_fields = ['displayName', 'email', 'mfaToken', 'lang', 'avatarID', 'bannerID', 'password', 'phone_number', 'bannerID', 'bio']
-        updated_fields = {}
+        try:
+            me = request.user
+            data = request.data
+            allowed_fields = ['displayName', 'email', 'mfaToken', 'lang', 'avatarID', 'bannerID', 'password', 'phone_number', 'bio', 'username']
+            updated_fields = {}
 
-        for field in allowed_fields:
-            if field in data:
-                updated_fields[field] = data[field]
+            for field in allowed_fields:
+                if field in data:
+                    updated_fields[field] = data[field]
 
-        if 'password' in updated_fields:
-            updated_fields['password'] = make_password(updated_fields['password'])
+            if 'password' in updated_fields:
+                updated_fields['password'] = make_password(updated_fields['password'])
 
-        if 'avatarID' in updated_fields:
-            avatar_data = updated_fields['avatarID']
-            if len(avatar_data) > 1 * 1024 * 1024:  # Check if the base64 string is larger than 1MB
-                return Response({"error": "Avatar image size exceeds 2MB limit"}, status=status.HTTP_400_BAD_REQUEST)
-            updated_fields['avatarID'] = avatar_data
+            if 'avatarID' in updated_fields:
+                avatar_data = updated_fields['avatarID']
+                if len(avatar_data) > 1 * 1024 * 1024:  # Check if the base64 string is larger than 1MB
+                    return Response({"error": "Avatar image size exceeds 2MB limit"}, status=status.HTTP_400_BAD_REQUEST)
+                updated_fields['avatarID'] = avatar_data
 
-        if 'phone_number' in updated_fields:
-            send_otp_via_sms(updated_fields['phone_number'])
+            if 'phone_number' in updated_fields:
+                send_otp_via_sms(updated_fields['phone_number'])
 
-        for field, value in updated_fields.items():
-            setattr(me, field, value)
+            for field, value in updated_fields.items():
+                setattr(me, field, value)
 
-        me.save()
-        serializer = UserSerializer(me)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            me.save()
+            serializer = UserSerializer(me)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": f"An error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 class UserProfile(APIView):
     def get_object(self, identifier):
