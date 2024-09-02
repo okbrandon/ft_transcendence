@@ -15,18 +15,18 @@ export const PresentationSection = styled.section`
 
 	background-color: #0e0e0e;
 	background-image: linear-gradient(
-		-90deg,
-		transparent calc(5em - 1px),
-		rgba(255, 255, 255, 0.1) calc(5em - 1px + 2px),
-		rgba(255, 255, 255, 0.1) 5em
+		to bottom,
+		rgba(14, 14, 14, 1) 0%,
+		rgba(14, 14, 14, 0.8) 20%,
+		rgba(18, 18, 18, 0.6) 40%,
+		rgba(26, 26, 26, 0.4) 60%,
+		rgba(0, 0, 0, 0.2) 80%,
+		rgba(0, 0, 0, 0) 100%
 	),
-	linear-gradient(
-		0deg,
-		transparent calc(5em - 1px),
-		rgba(255, 255, 255, 0.1) calc(5em - 1px + 2px),
-		rgba(255, 255, 255, 0.1) 5em
-	);
-	background-size: 5em 5em;
+	radial-gradient(circle, rgba(164, 69, 178, 0.2), transparent 70%),
+	radial-gradient(circle, rgba(59, 130, 246, 0.2), transparent 70%);
+	background-size: 800px 800px;
+	background-position: center;
 `;
 
 export const PresentationDiv = styled.div`
@@ -36,25 +36,42 @@ export const PresentationDiv = styled.div`
 	justify-content: center;
 	align-items: center;
 	max-width: 900px;
+	padding: 20px;  /* Added padding */
 	line-height: 1.8;
 	letter-spacing: 1px;
 	text-align: center;
 
 	& > h1 {
 		color: #fff;
-		font-family: 'VT323', monospace;
-		font-size: 80px;
-		margin-bottom: 30px;
-		text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+		font-size: 60px;
+		text-transform: uppercase;
+		text-align: center;
+		letter-spacing: 8px;
+		font-family: 'Orbitron', sans-serif;
+		margin-bottom: 20px;
+
+		/* Subtle gradient with darker tones */
+		background: linear-gradient(135deg, #6a0dad, #a445b2);
+		background-clip: text;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+
+		/* Even more subtle shadow */
+		text-shadow:
+			0 0 4px rgba(164, 69, 178, 0.4),
+			0 0 8px rgba(128, 0, 128, 0.3);
 	}
+
 
 	& > p {
 		font-size: 20px;
-		color: rgba(255, 255, 255, 0.85);
+		color: rgba(255, 255, 255, 0.95);
 		font-family: 'Inter', sans-serif;
 		margin-bottom: 40px;
 		max-width: 700px;
 		line-height: 1.6;
+		word-spacing: 2px;
+		letter-spacing: 2px;
 	}
 `;
 
@@ -67,29 +84,31 @@ export const FeaturesContainer = styled.div`
 `;
 
 export const FeatureItem = styled.div`
-	background-color: #121212;
+	background-color: #1a1a1a;
 	padding: 20px;
 	border-radius: 10px;
-	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+	box-shadow: 0 4px 15px rgba(164, 69, 178, 0.5), 0 0 15px rgba(59, 130, 246, 0.5);
 	transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-	border: 1px solid rgba(255, 255, 255, 0.1);
+	border: 1px solid rgba(164, 69, 178, 0.3);
 
 	&:hover {
 		transform: scale(1.05);
-		box-shadow: 0 6px 15px rgba(255, 255, 255, 0.4);
-		border: 1px solid rgba(255, 255, 255, 0.1);
+		box-shadow: 0 6px 20px rgba(212, 24, 114, 0.6), 0 0 20px rgba(59, 130, 246, 0.6);
+		border: 1px solid rgba(164, 69, 178, 0.4);
+		background-color: #181818;
 	}
 
 	h3 {
 		font-family: 'Orbitron', sans-serif;
-		font-size: 22px;
-		color: #ffffff;
-		margin-bottom: 20px;
+		font-size: 24px;
+		color: #fff;
+		margin-bottom: 10px;
+		text-shadow: 0 0 5px rgba(164, 69, 178, 0.7);
 	}
 
 	p {
 		font-family: 'Inter', sans-serif;
-		font-size: 16px;
+		font-size: 18px;
 		color: rgba(255, 255, 255, 0.8);
 		line-height: 1.6;
 		user-select: none;
@@ -110,15 +129,16 @@ const floatPaddleAnimation = keyframes`
 
 export const PongPaddleBackground = styled(motion.div)`
 	position: absolute;
-	top: 22rem;
-	width: 800px;
-	height: 150px;
-	background: linear-gradient(0deg, rgba(255,255,255,1) 0%, rgba(120,120,120,1) 100%);
+	top: 18rem;
+	width: 600px;
+	height: 120px;
+	background: linear-gradient(0deg, rgba(255,255,255,0.7) 0%, rgba(120,120,120,0.5) 100%);
 	border-radius: 400px;
 	transform: rotate(-50deg);
 	animation: ${floatPaddleAnimation} 4s ease-in-out infinite;
 	overflow: hidden;
 	z-index: -1;
+	opacity: 0.6;
 `;
 
 const floatBallAnimation = keyframes`
@@ -135,12 +155,13 @@ const floatBallAnimation = keyframes`
 
 export const PongBallBackground = styled(motion.div)`
 	position: absolute;
-	bottom: 25rem;
-	width: 180px;
-	height: 180px;
-	background: linear-gradient(120deg, rgba(255,255,255,1) 0%, rgba(120,120,120,1) 100%);
+	bottom: 20rem;
+	width: 140px;
+	height: 140px;
+	background: linear-gradient(120deg, rgba(255,255,255,0.7) 0%, rgba(120,120,120,0.5) 100%);
 	border-radius: 50%;
 	animation: ${floatBallAnimation} 6s ease-in-out infinite;
 	overflow: hidden;
 	z-index: -1;
+	opacity: 0.6;
 `;

@@ -55,7 +55,7 @@ const Banner = () => {
 						$animationDuration={11}
 					/>
 				</BannerPaddlesContainer>
-				<h1>GET READY TO SERVE!</h1>
+				<h1>Wiggle your Paddle!</h1>
 				<PlayButton variant="light" onClick={() => navigate("/solo-vs-ai")}>
 					PLAY NOW
 				</PlayButton>
