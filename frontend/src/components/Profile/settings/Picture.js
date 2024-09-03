@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { Preview, SettingsForm, SettingsItem } from "../styles/Settings.styled";
+import { Preview, PreviewProfilePictureContainer, SettingsForm, SettingsItem } from "../styles/Settings.styled";
 import { GetImage } from "../../../api/user";
 
 const Picture = ({ handleChange }) => {
@@ -36,7 +36,11 @@ const Picture = ({ handleChange }) => {
 					/>
 				</SettingsForm.Group>
 			</SettingsItem>
-			{preview && <Preview src={preview} alt="Picture Preview" isProfile={true}/>}
+			{preview && (
+				<PreviewProfilePictureContainer>
+					<Preview src={preview} alt="Profile Picture Preview" $isProfile={true}/>
+				</PreviewProfilePictureContainer>
+			)}
 		</>
 	);
 }

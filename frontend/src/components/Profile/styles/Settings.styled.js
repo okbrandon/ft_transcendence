@@ -172,10 +172,21 @@ export const Separator = styled.div`
 	border-top: 1px solid rgba(255,255,255,0.2);
 `;
 
+export const PreviewProfilePictureContainer = styled.div`
+	width: 100px;
+	height: 100px;
+	margin: 0 auto 20px auto;
+`;
+
+export const PreviewBannerContainer = styled.div`
+	height: 200px;
+	width: 70%;
+	margin: 0 auto 20px auto;
+`;
+
 export const Preview = styled.img`
-	height: ${({ isProfile }) => isProfile ? '100px' : '200px'};
-	width: ${({ isProfile }) => isProfile ? '100px' : '70%'};
-	${({ isProfile }) => isProfile && 'border-radius: 50%'};
-	margin: 0 auto;
+	height: ${({ $isProfile }) => $isProfile ? '100px' : '200px'};
+	width: ${({ $isProfile }) => $isProfile ? '100px' : '100%'};
+	${({ $isProfile }) => $isProfile && 'border-radius: 50%'};
 	object-fit: cover;
 `;
