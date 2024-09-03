@@ -142,14 +142,12 @@ export const ProfileDropdownButton = styled(Dropdown)`
 		text-align: center;
 		font-size: 16px;
 		font-weight: 500;
-		z-index: 500;
 		text-decoration: none;
 		transition: text-shadow 0.3s ease, transform 0.3s ease;
 
 		&:hover {
 			color: #fff;
 			text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 25px rgba(255, 255, 255, 0.6);
-			transform: scale(1.05);
 		}
 
 		&:focus {
@@ -172,7 +170,6 @@ export const ProfileDropdownButton = styled(Dropdown)`
 		padding: 10px;
 		border-radius: 10px;
 		box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
-		transition: all 0.3s ease;
 	}
 
 	& .dropdown-divider {
