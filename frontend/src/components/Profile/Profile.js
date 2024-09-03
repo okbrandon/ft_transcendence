@@ -65,8 +65,7 @@ const Profile = () => {
 
 	return (
 		<ProfileContainer>
-			{
-				loading ? <Loader/> : (
+			{ loading ? <Loader/> : (
 					<>
 						<UserProfileBanner $path={profileUser.bannerID}/>
 						<UserContainer>
@@ -77,8 +76,7 @@ const Profile = () => {
 							<MatchHistory matchArray={matchArray}/>
 						</UserContainer>
 					</>
-				)
-			}
+			)}
 			{ showSettings && <Settings profileUser={profileUser} setProfileUser={setProfileUser} setShowSettings={setShowSettings}/> }
 		</ProfileContainer>
 	);

@@ -86,10 +86,10 @@ export const SettingsForm = styled(Form)`
 
 		& > h3 {
 			position: absolute;
-			top: -18px;
-			left: 50px;
+			top: -25px;
+			left: 40px;
 			font-family: 'Inter', serif;
-			font-size: 0.8rem;
+			font-size: 0.9rem;
 		}
 	}
 
