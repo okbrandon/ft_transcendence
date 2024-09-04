@@ -47,8 +47,6 @@ export const ProfileParent = () => {
 const Profile = () => {
 	const { loading, profileUser } = useContext(ProfileContext);
 
-	console.log(profileUser);
-
 	return (
 		<ProfileContainer>
 			{ loading ? <Loader/> : (
