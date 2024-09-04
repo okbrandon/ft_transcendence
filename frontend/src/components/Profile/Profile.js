@@ -4,7 +4,6 @@ import MainBar from './main/MainBar';
 import About from './content/About';
 import MatchHistory from './content/MatchHistory';
 import Winrate from './content/Winrate';
-import Settings from './settings/Settings';
 import { ProfileContainer, UserContainer, UserProfileBanner } from './styles/Profile.styled';
 import Loader from '../../styles/shared/Loader.styled';
 import ProfileProvider, { ProfileContext } from '../../context/ProfileContext';
@@ -46,20 +45,7 @@ export const ProfileParent = () => {
 };
 
 const Profile = () => {
-	const [showSettings, setShowSettings] = useState(false);
-	const { loading, profileUser, setProfileUser } = useContext(ProfileContext);
-
-	useEffect(() => {
-		if (showSettings) {
-			document.body.style.overflow = 'hidden';
-		} else {
-			document.body.style.overflow = '';
-		}
-
-		return () => {
-			document.body.style.overflow = '';
-		};
-	}, [showSettings]);
+	const { loading, profileUser } = useContext(ProfileContext);
 
 	console.log(profileUser);
 
@@ -69,7 +55,7 @@ const Profile = () => {
 					<>
 						<UserProfileBanner $path={profileUser.bannerID}/>
 						<UserContainer>
-							<MainBar profileUser={profileUser} matchArray={matchArray} setShowSettings={setShowSettings}/>
+							<MainBar profileUser={profileUser} matchArray={matchArray}/>
 							<About profileUser={profileUser} matchArray={matchArray}/>
 							<DisplaySkin profileUser={profileUser}/>
 							<Winrate matchArray={matchArray}/>
@@ -77,7 +63,6 @@ const Profile = () => {
 						</UserContainer>
 					</>
 			)}
-			{ showSettings && <Settings profileUser={profileUser} setProfileUser={setProfileUser} setShowSettings={setShowSettings}/> }
 		</ProfileContainer>
 	);
 };
