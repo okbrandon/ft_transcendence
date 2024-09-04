@@ -4,7 +4,8 @@ import Form from "react-bootstrap/Form";
 import Dropdown from "react-bootstrap/Dropdown";
 
 export const NavContainer = styled.nav`
-	/* border-bottom: 1px solid rgba(255, 255, 255, 0.1); */
+	border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+	backdrop-filter: blur(10px);
 	padding: 15px;
 	display: flex;
 	justify-content: space-between;
