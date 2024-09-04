@@ -24,7 +24,7 @@ export const MatchCardTable = styled.table`
 	width: 98%;
 
 	& thead {
-		background: #000;
+		background: rgb(10,10,10);
 		position: absolute;
 		top: 77px;
 		left: 0;
@@ -40,6 +40,21 @@ export const MatchCardTable = styled.table`
 		overflow-y: scroll;
 		width: 100%;
 		margin-top: 167px;
+		scrollbar-width: thin;
+		scrollbar-color: rgba(100, 100, 100, 0.5) rgba(30, 30, 30, 0.8); /* Dark scrollbar for consistency */
+	}
+
+	& tbody::-webkit-scrollbar {
+		width: 8px;
+	}
+
+	& tbody::-webkit-scrollbar-thumb {
+		background-color: rgba(100, 100, 100, 0.5); /* Darker scrollbar thumb */
+		border-radius: 10px;
+	}
+
+	& tbody::-webkit-scrollbar-track {
+		background: rgba(30, 30, 30, 0.8); /* Darker scrollbar track */
 	}
 
 	& tbody tr {
@@ -51,13 +66,14 @@ export const MatchCardTable = styled.table`
 	& td {
 		padding: 16px;
 		font-size: 18px;
+		color: rgba(255, 255, 255, 0.85); /* Light grey for better readability */
 	}
 
 	& tbody > tr:nth-child(even) {
-		background: linear-gradient(90deg, rgba(50,50,50,0.8) 0%, rgba(0,0,0,0.5) 100%);
+		background: linear-gradient(90deg, rgba(40, 40, 40, 0.8) 0%, rgba(20, 20, 20, 0.6) 100%); /* Softer black gradients for even rows */
 	}
 
 	& tbody > tr:nth-child(odd) {
-		background: linear-gradient(90deg, rgba(0,0,0,0.8) 0%, rgba(50,50,50,0.5) 100%);
+		background: linear-gradient(90deg, rgba(20, 20, 20, 0.8) 0%, rgba(40, 40, 40, 0.6) 100%); /* Softer black gradients for odd rows */
 	}
 `;

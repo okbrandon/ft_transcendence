@@ -129,16 +129,17 @@ const floatPaddleAnimation = keyframes`
 
 export const PongPaddleBackground = styled(motion.div)`
 	position: absolute;
-	top: 18rem;
-	width: 600px;
-	height: 120px;
-	background: linear-gradient(0deg, rgba(255,255,255,0.7) 0%, rgba(120,120,120,0.5) 100%);
+	top: 25rem;
+	width: 800px;
+	height: 150px; /* Increased height for taller paddle */
+	background: linear-gradient(0deg, rgba(255, 255, 255, 0.7) 0%, rgba(200, 200, 200, 0.4) 100%);
 	border-radius: 400px;
 	transform: rotate(-50deg);
 	animation: ${floatPaddleAnimation} 4s ease-in-out infinite;
 	overflow: hidden;
 	z-index: -1;
-	opacity: 0.6;
+	opacity: 0.8; /* Slightly increased opacity for more visibility */
+	box-shadow: 0 0 10px rgba(255, 255, 255, 0.1), 0 0 20px rgba(255, 255, 255, 0.05); /* Subtle glow */
 `;
 
 const floatBallAnimation = keyframes`
@@ -156,12 +157,13 @@ const floatBallAnimation = keyframes`
 export const PongBallBackground = styled(motion.div)`
 	position: absolute;
 	bottom: 20rem;
-	width: 140px;
-	height: 140px;
-	background: linear-gradient(120deg, rgba(255,255,255,0.7) 0%, rgba(120,120,120,0.5) 100%);
+	width: 160px;
+	height: 160px;
+	background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.7), rgba(200, 200, 200, 0.4));
 	border-radius: 50%;
 	animation: ${floatBallAnimation} 6s ease-in-out infinite;
 	overflow: hidden;
 	z-index: -1;
-	opacity: 0.6;
+	opacity: 0.8; /* Same opacity as paddle for consistency */
+	box-shadow: 0 0 15px rgba(255, 255, 255, 0.2), 0 0 10px rgba(255, 255, 255, 0.1); /* Subtle glow */
 `;

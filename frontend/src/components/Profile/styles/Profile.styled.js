@@ -9,8 +9,7 @@ export const ProfileContainer = styled.div`
 	width: 100%;
 	min-height: 100vh;
 	border: 1px solid transparent;
-	background-color: #000000;
-
+	background-color: #000;
 	background-image: radial-gradient(circle at 20% 20%, rgba(75, 0, 130, 0.15), transparent 50%),
 					  radial-gradient(circle at 80% 30%, rgba(59, 130, 246, 0.1), transparent 50%),
 					  radial-gradient(circle at 50% 80%, rgba(164, 69, 178, 0.1), transparent 50%),
@@ -45,10 +44,18 @@ export const CardTitle = styled.h2`
 	font-family: 'Orbitron', serif;
 	font-size: 30px;
 	font-weight: 600;
-	margin: 0 auto;
 	text-align: center;
 	width: 100%;
-	border-bottom: 1px solid rgba(255,255,255,0.5);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.5);
 	border-radius: 30px 30px 0 0;
-	background: #000;
+	background: linear-gradient(135deg, #a445b2, #d41872, #6a0dad);
+	background-clip: text;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	text-shadow: 0 0 10px rgba(164, 69, 178, 0.5), 0 0 15px rgba(128, 0, 128, 0.4);
+	transition: all 0.3s ease-in-out;
+
+	&:hover {
+		text-shadow: 0 0 15px rgba(164, 69, 178, 0.7), 0 0 20px rgba(128, 0, 128, 0.6);
+	}
 `;

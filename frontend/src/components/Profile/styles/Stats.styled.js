@@ -6,7 +6,7 @@ export const DonutStatsContainer = styled.div`
 `;
 
 export const LineStatsContainer = styled.div`
-	width: 430px;
+	width: 100%;
 	margin: 20px auto 0 auto;
 	color: #000;
 `;
