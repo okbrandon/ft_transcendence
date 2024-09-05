@@ -11,7 +11,7 @@ const LeaderboardContainer = styled.div`
 
 const UpperContainer = styled.div`
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	justify-content: center;
 	margin-top: 70px;
 `;
@@ -33,6 +33,10 @@ const LowerLeftStatsContainer = styled.div`
 
 const LowerRightContainer = styled.div`
 	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	margin-top: 5px;
 `;
 
 const StatItem = styled.div`
@@ -49,8 +53,17 @@ const PositionDisplay = ({ position }) => {
 
 const TopWinLossContainer = styled.div`
 	display: flex;
+	flex-direction: row;
 	align-items: center;
 	justify-content: center;
+`;
+
+const ButtonWrapper = styled.div`
+	margin-right: 7px;
+
+	&:last-child {
+		margin-right: 0;
+	}
 `;
 
 export const Leaderboard = () => {
@@ -66,7 +79,7 @@ export const Leaderboard = () => {
 					</LowerLeftStatsContainer>
 				</LowerRankingContainer>
 				<TopWinLossContainer>
-					<NavDropdown title="Top Win" id="nav-dropdown">
+					<NavDropdown title="Top Win" id="nav-dropdown" menuVariant='dark'>
 						<NavDropdown.Item eventKey="4.1">Top Win</NavDropdown.Item>
 						<NavDropdown.Item eventKey="4.2">Top Loss</NavDropdown.Item>
 						<NavDropdown.Item eventKey="4.3">Top Draw</NavDropdown.Item>
@@ -74,9 +87,15 @@ export const Leaderboard = () => {
 					</NavDropdown>
 				</TopWinLossContainer>
 				<LowerRightContainer>
-					<Button variant="secondary" size="sm">Daily</Button>
-					<Button variant="secondary" size="sm">Weekly</Button>
-					<Button variant="secondary" size="sm">Lifetime</Button>
+					<ButtonWrapper>
+						<Button variant="secondary" size="sm">Daily</Button>
+					</ButtonWrapper>
+					<ButtonWrapper>
+						<Button variant="secondary" size="sm">Weekly</Button>
+					</ButtonWrapper>
+					<ButtonWrapper>
+						<Button variant="secondary" size="sm">Lifetime</Button>
+					</ButtonWrapper>
 				</LowerRightContainer>
 			</UpperContainer>
 		</LeaderboardContainer>
