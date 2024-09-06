@@ -3,17 +3,19 @@ import styled from 'styled-components';
 import Button from 'react-bootstrap/Button';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 
-const LeaderboardContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-	padding: 20px;
-`;
-
-const UpperContainer = styled.div`
+const WrapContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	margin-top: 70px;
+	align-items: center;
+	margin: 70px 50px 30px 50px;
+`;
+
+/* Player's Ranking | Top Win/Loss | Time Button */
+const TopDetails = styled.div`
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
 `;
 
 const LowerRankingContainer = styled.div`
@@ -21,10 +23,9 @@ const LowerRankingContainer = styled.div`
 	flex-direction: column;
 `;
 
-const PlayerRankings = styled.div`
-	display: flex;
-	flex-direction: column;
-`;
+const RankingHeader = ({ rank }) => {
+	return <h3>Your Rank: {rank}</h3>;
+};
 
 const LowerLeftStatsContainer = styled.div`
 	display: flex;
@@ -34,9 +35,6 @@ const LowerLeftStatsContainer = styled.div`
 const LowerRightContainer = styled.div`
 	display: flex;
 	flex-direction: row;
-	align-items: center;
-	justify-content: center;
-	margin-top: 5px;
 `;
 
 const StatItem = styled.div`
@@ -51,15 +49,20 @@ const PositionDisplay = ({ position }) => {
 	return <StatItem>Your Position: {position}</StatItem>;
 };
 
-const TopWinLossContainer = styled.div`
+const NavBarContainer = styled.div`
 	display: flex;
 	flex-direction: row;
-	align-items: center;
 	justify-content: center;
+	margin-left: 10px;
+	
 `;
 
 const ButtonWrapper = styled.div`
+	display: block;
+	flex-direction: row;
+	justify-content: center;
 	margin-right: 7px;
+	margin-top: 50%;
 
 	&:last-child {
 		margin-right: 0;
@@ -69,23 +72,23 @@ const ButtonWrapper = styled.div`
 export const Leaderboard = () => {
 	return (
 		// Parent container
-		<LeaderboardContainer>
-			<UpperContainer>
+		<WrapContainer>
+			<TopDetails>
 				<LowerRankingContainer>
-					<PlayerRankings><h3>Player Rankings</h3></PlayerRankings>
+					<RankingHeader rank="1st"/>
 					<LowerLeftStatsContainer>
 						<ScoreDisplay score="29"/>
 						<PositionDisplay position="1st"/>
 					</LowerLeftStatsContainer>
 				</LowerRankingContainer>
-				<TopWinLossContainer>
+				<NavBarContainer>
 					<NavDropdown title="Top Win" id="nav-dropdown" menuVariant='dark'>
 						<NavDropdown.Item eventKey="4.1">Top Win</NavDropdown.Item>
 						<NavDropdown.Item eventKey="4.2">Top Loss</NavDropdown.Item>
 						<NavDropdown.Item eventKey="4.3">Top Draw</NavDropdown.Item>
 						<NavDropdown.Item eventKey="4.4">Top Win Rate</NavDropdown.Item>
 					</NavDropdown>
-				</TopWinLossContainer>
+				</NavBarContainer>
 				<LowerRightContainer>
 					<ButtonWrapper>
 						<Button variant="secondary" size="sm">Daily</Button>
@@ -97,8 +100,8 @@ export const Leaderboard = () => {
 						<Button variant="secondary" size="sm">Lifetime</Button>
 					</ButtonWrapper>
 				</LowerRightContainer>
-			</UpperContainer>
-		</LeaderboardContainer>
+			</TopDetails>
+		</WrapContainer>
 				// Child Ranking Container
 					// Player Rankings <div>
 					// Your score <div>
