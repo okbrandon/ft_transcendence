@@ -14,7 +14,6 @@ export const ProfileContainer = styled.div`
 					  radial-gradient(circle at 80% 30%, rgba(59, 130, 246, 0.1), transparent 50%),
 					  radial-gradient(circle at 50% 80%, rgba(164, 69, 178, 0.1), transparent 50%),
 					  linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, transparent 100%);
-
 	background-size: cover;
 	background-position: center;
 `;

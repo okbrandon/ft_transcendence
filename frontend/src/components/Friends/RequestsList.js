@@ -5,9 +5,11 @@ import {
 	DeclineButton,
 	MutualFriends,
 	NoRequests,
+	RequestAvatar,
 	RequestCard,
 	RequestInfo,
 	RequestName,
+	RequestProfile,
 	RequestsListContainer
 } from "./styles/RequestsList.styled";
 
@@ -36,7 +38,10 @@ const RequestsList = () => {
 				requests.map((request) => (
 					<RequestCard key={request.id}>
 						<RequestInfo>
-							<RequestName>{request.name}</RequestName>
+							<RequestProfile>
+								<RequestAvatar src="/images/anonymous.png" alt={`${request.name}'s avatar`}/>
+								<RequestName>{request.name}</RequestName>
+							</RequestProfile>
 							<MutualFriends>{request.mutualFriends} mutual friends</MutualFriends>
 						</RequestInfo>
 						<Actions>
