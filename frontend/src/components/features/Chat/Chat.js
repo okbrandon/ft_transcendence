@@ -17,7 +17,7 @@ const OverlayContainer = styled.div`
 `;
 
 const ChatOverlayContainer = styled.aside`
-	height: ${({ isMinimized }) => (isMinimized ? '40px' : 'auto')};
+	height: ${({ isMinimized }) => (isMinimized ? '45px' : 'auto')};
 	pointer-events: auto;
 	overflow: visible;
 	display: flex;
@@ -33,7 +33,7 @@ const ChatListBubble = styled.div`
 	display: flex;
 	flex-direction: column;
 	margin-right: 3%;
-	height: ${({ isMinimized }) => (isMinimized ? '40px' : 'calc(100vh - 100px)')};
+	height: ${({ isMinimized }) => (isMinimized ? '45px' : 'calc(100vh - 100px)')};
 	flex: 0 0 288px;
 	width: 288px;
 	min-width: 0;
@@ -52,6 +52,7 @@ const ChatHeaderStyled = styled.div`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	cursor: pointer;
 `;
 
 const Arrow = styled.div`
@@ -91,6 +92,12 @@ const Arrow = styled.div`
 			transform: rotate(45deg);
 		}
 	}
+`;
+
+const MinimizeArrowContainer = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
 `;
 
 const Chat = () => {
@@ -133,14 +140,14 @@ const Chat = () => {
 		<OverlayContainer>
 			<ChatOverlayContainer isMinimized={isOverlayMinimized}>
 				<ChatListBubble isMinimized={isOverlayMinimized}>
-					<ChatHeaderStyled>
+					<ChatHeaderStyled onClick={handleToggleOverlayMinimize}>
 						Messaging
-						<div>
+						<MinimizeArrowContainer>
 							<Arrow className={isOverlayMinimized ? 'active' : ''} onClick={handleToggleOverlayMinimize}>
 								<span></span>
 								<span></span>
 							</Arrow>
-						</div>
+						</MinimizeArrowContainer>
 					</ChatHeaderStyled>
 					{!isOverlayMinimized && (
 						<>
