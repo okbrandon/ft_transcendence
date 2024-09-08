@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import CloseButton from 'react-bootstrap/CloseButton';
+import { Arrow } from './Arrow.js';
 
 const ChatWindowContainer = styled.div`
 	flex: 1;
@@ -24,45 +25,7 @@ const ChatHeader = styled.div`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-`;
-
-const Arrow = styled.div`
-	width: 1.25rem;
-	height: 1.25rem;
-	display: inline-block;
-	position: relative;
-	margin: 0 1rem;
 	cursor: pointer;
-
-	span {
-		top: 0.5rem;
-		position: absolute;
-		width: 0.75rem;
-		height: 0.1rem;
-		background-color: #efefef;
-		display: inline-block;
-		transition: all 0.2s ease;
-
-		&:first-of-type {
-			left: 0;
-			transform: rotate(45deg);
-		}
-
-		&:last-of-type {
-			right: 0;
-			transform: rotate(-45deg);
-		}
-	}
-
-	&.active span {
-		&:first-of-type {
-			transform: rotate(-45deg);
-		}
-
-		&:last-of-type {
-			transform: rotate(45deg);
-		}
-	}
 `;
 
 const ChatMessages = styled.div`
@@ -89,25 +52,32 @@ const ChatInput = styled.input`
 	border-radius: 4px;
 `;
 
+const ActionButtonContainer = styled.div`
+	display: flex;
+	align-items: flex-start;
+	justify-content: center;
+`;
+
 export const ChatWindow = ({ friendname, messages, onClose, isMinimized, onToggleMinimize }) => {
 	const [isActive, setIsActive] = useState(false);
+	const [isArrowActive, setIsArrowActive] = useState(false);
 
 	const handleToggle = () => {
 		setIsActive(!isActive);
 		onToggleMinimize();
+		setIsArrowActive(!isArrowActive);
 	};
 
 	return (
 		<ChatWindowContainer isMinimized={isMinimized}>
-			<ChatHeader>
+			<ChatHeader onClick={handleToggle}>
 				{friendname}
-				<div>
-					<Arrow className={isActive ? 'active' : ''} onClick={handleToggle}>
-						<span></span>
-						<span></span>
-					</Arrow>
+				<ActionButtonContainer>
+					<Arrow
+						onClick={handleToggle}
+						ArrowAnimate={isArrowActive}/>
 					<CloseButton variant='white' onClick={onClose} />
-				</div>
+				</ActionButtonContainer>
 			</ChatHeader>
 			<ChatMessages isMinimized={isMinimized}>
 				<div>{messages.text}</div>

@@ -69,27 +69,27 @@ export const SearchFriends = ({ onOpenChat }) => { // onOpenChat is passed as a 
 	);
 
 	return (
-	<SearchFriendsContainer>
-	<SearchInput
-	type="text"
-	placeholder="Search for Friends..."
-	value={searchQuery}
-	onChange={(e) => setSearchQuery(e.target.value)}
-	/>
-	{/* Only show dropdown if there is a search query */}
-	{searchQuery && (
-	<Dropdown>
-	{filteredFriends.map((friend, index) => (
-	<FriendItem key={index}>
-	{friend}
-	{/* Chat button to open a chat window with the selected friend */}
-	<ChatButton onClick={() => onOpenChat(friend)}>
-	Chat
-	</ChatButton>
-	</FriendItem>
-	))}
-	</Dropdown>
-	)}
-	</SearchFriendsContainer>
-	);
+		<SearchFriendsContainer>
+			<SearchInput
+				type="text"
+				placeholder="Search for Friends..."
+				value={searchQuery}
+				onChange={(e) => setSearchQuery(e.target.value)}
+			/>
+			{/* Only show dropdown if there is a search query */}
+			{searchQuery && (
+				<Dropdown>
+					{filteredFriends.map((friend, index) => (
+						<FriendItem key={index}>
+							{friend}
+			{/* Chat button to open a chat window with the selected friend */}
+							<ChatButton onClick={() => onOpenChat(friend)}>
+								Chat
+							</ChatButton>
+						</FriendItem>
+					))}
+				</Dropdown>
+				)}
+			</SearchFriendsContainer>
+		);
 };

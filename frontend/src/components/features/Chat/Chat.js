@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { SearchFriends } from './SearchFriends.js';
 import { MessagePreview } from './MessagePreview.js';
 import { ChatWindow } from './ChatWindow.js';
+import { Arrow } from './Arrow.js';
 
 const OverlayContainer = styled.div`
 	width: 100%;
@@ -55,56 +56,12 @@ const ChatHeaderStyled = styled.div`
 	cursor: pointer;
 `;
 
-const Arrow = styled.div`
-	width: 1.25rem;
-	height: 1.25rem;
-	display: inline-block;
-	position: relative;
-	margin: 0 1rem;
-	cursor: pointer;
-
-	span {
-		top: 0.5rem;
-		position: absolute;
-		width: 0.75rem;
-		height: 0.1rem;
-		background-color: #efefef;
-		display: inline-block;
-		transition: all 0.2s ease;
-
-		&:first-of-type {
-			left: 0;
-			transform: rotate(45deg);
-		}
-
-		&:last-of-type {
-			right: 0;
-			transform: rotate(-45deg);
-		}
-	}
-
-	&.active span {
-		&:first-of-type {
-			transform: rotate(-45deg);
-		}
-
-		&:last-of-type {
-			transform: rotate(45deg);
-		}
-	}
-`;
-
-const MinimizeArrowContainer = styled.div`
-	display: flex;
-	align-items: center;
-	justify-content: center;
-`;
-
 const Chat = () => {
 	const [openChats, setOpenChats] = useState([]);
 	const [selectedChat, setSelectedChat] = useState(null);
 	const [isMinimized, setIsMinimized] = useState(false);
 	const [isOverlayMinimized, setIsOverlayMinimized] = useState(false);
+	const [isArrowActive, setIsArrowActive] = useState(false);
 	const [messages, setMessages] = useState({
 		'Alice': { sender: 'Alice', text: 'Hello!' },
 		'Bob': { sender: 'Bob', text: 'Hi there!' },
@@ -131,9 +88,10 @@ const Chat = () => {
 	const handleToggleMinimize = () => {
 		setIsMinimized(!isMinimized);
 	}
-
+	
 	const handleToggleOverlayMinimize = () => {
 		setIsOverlayMinimized(!isOverlayMinimized);
+		setIsArrowActive(!isArrowActive);
 	}
 
 	return (
@@ -142,12 +100,9 @@ const Chat = () => {
 				<ChatListBubble isMinimized={isOverlayMinimized}>
 					<ChatHeaderStyled onClick={handleToggleOverlayMinimize}>
 						Messaging
-						<MinimizeArrowContainer>
-							<Arrow className={isOverlayMinimized ? 'active' : ''} onClick={handleToggleOverlayMinimize}>
-								<span></span>
-								<span></span>
-							</Arrow>
-						</MinimizeArrowContainer>
+						<Arrow
+							onClick={handleToggleOverlayMinimize}
+							ArrowAnimate={isArrowActive} />
 					</ChatHeaderStyled>
 					{!isOverlayMinimized && (
 						<>
