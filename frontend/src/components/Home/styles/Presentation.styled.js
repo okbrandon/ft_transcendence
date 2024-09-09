@@ -31,6 +31,7 @@ export const PresentationContent = styled.div`
 	justify-content: center;
 	align-items: center;
 	max-width: 900px;
+	height: 600px;
 	margin-left: 50px;
 	padding: 20px;
 	line-height: 1.8;
@@ -67,45 +68,6 @@ export const PresentationContent = styled.div`
 		line-height: 1.6;
 		word-spacing: 2px;
 		letter-spacing: 2px;
-	}
-`;
-
-export const FeaturesContainer = styled.div`
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-	gap: 50px;
-	width: 100%;
-	max-width: 900px;
-`;
-
-export const FeatureItem = styled.div`
-	background-color: rgba(10, 10, 10, 0.6);
-	padding: 20px;
-	border-radius: 10px;
-	box-shadow: 0 4px 15px rgba(164, 69, 178, 0.5), 0 0 15px rgba(59, 130, 246, 0.5);
-	transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-	border: 1px solid rgba(164, 69, 178, 0.3);
-
-	&:hover {
-		transform: scale(1.05);
-		box-shadow: 0 6px 20px rgba(212, 24, 114, 0.6), 0 0 20px rgba(59, 130, 246, 0.6);
-		border: 1px solid rgba(164, 69, 178, 0.4);
-	}
-
-	h3 {
-		font-family: 'Orbitron', sans-serif;
-		font-size: 24px;
-		color: #fff;
-		margin-bottom: 10px;
-		text-shadow: 0 0 5px rgba(164, 69, 178, 0.7);
-	}
-
-	p {
-		font-family: 'Inter', sans-serif;
-		font-size: 18px;
-		color: rgba(255, 255, 255, 0.8);
-		line-height: 1.6;
-		user-select: none;
 	}
 `;
 

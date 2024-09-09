@@ -1,5 +1,12 @@
 import React from "react";
-import { CardsContainer, Cards, ContributorsContainer, Card, Title, Button, SubTitle } from "./styles/Contributors.styled";
+import {
+	CardsContainer,
+	Cards,
+	ContributorsContainer,
+	Card,
+	Title,
+	SubTitle
+} from "./styles/Contributors.styled";
 
 const contributors =[
 	{
