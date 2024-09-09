@@ -36,7 +36,7 @@ export const PresentationDiv = styled.div`
 	justify-content: center;
 	align-items: center;
 	max-width: 900px;
-	padding: 20px;  /* Added padding */
+	padding: 20px;
 	line-height: 1.8;
 	letter-spacing: 1px;
 	text-align: center;
@@ -50,13 +50,11 @@ export const PresentationDiv = styled.div`
 		font-family: 'Orbitron', sans-serif;
 		margin-bottom: 20px;
 
-		/* Subtle gradient with darker tones */
 		background: linear-gradient(135deg, #6a0dad, #a445b2);
 		background-clip: text;
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 
-		/* Even more subtle shadow */
 		text-shadow:
 			0 0 4px rgba(164, 69, 178, 0.4),
 			0 0 8px rgba(128, 0, 128, 0.3);
@@ -130,15 +128,15 @@ const floatPaddleAnimation = keyframes`
 export const PongPaddleBackground = styled(motion.div)`
 	position: absolute;
 	top: 25rem;
-	width: 800px;
-	height: 150px; /* Increased height for taller paddle */
+	width: 600px;
+	height: 120px;
 	background: linear-gradient(0deg, rgba(255, 255, 255, 0.7) 0%, rgba(200, 200, 200, 0.4) 100%);
 	border-radius: 400px;
 	transform: rotate(-50deg);
 	animation: ${floatPaddleAnimation} 4s ease-in-out infinite;
 	overflow: hidden;
 	z-index: -1;
-	opacity: 0.8; /* Slightly increased opacity for more visibility */
+	opacity: 0.8;
 	box-shadow: 0 0 10px rgba(255, 255, 255, 0.1), 0 0 20px rgba(255, 255, 255, 0.05); /* Subtle glow */
 `;
 
@@ -156,7 +154,7 @@ const floatBallAnimation = keyframes`
 
 export const PongBallBackground = styled(motion.div)`
 	position: absolute;
-	bottom: 20rem;
+	bottom: 25rem;
 	width: 160px;
 	height: 160px;
 	background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.7), rgba(200, 200, 200, 0.4));
@@ -164,6 +162,6 @@ export const PongBallBackground = styled(motion.div)`
 	animation: ${floatBallAnimation} 6s ease-in-out infinite;
 	overflow: hidden;
 	z-index: -1;
-	opacity: 0.8; /* Same opacity as paddle for consistency */
-	box-shadow: 0 0 15px rgba(255, 255, 255, 0.2), 0 0 10px rgba(255, 255, 255, 0.1); /* Subtle glow */
+	opacity: 0.8;
+	box-shadow: 0 0 15px rgba(255, 255, 255, 0.2), 0 0 10px rgba(255, 255, 255, 0.1);
 `;
