@@ -162,7 +162,8 @@ export const ProfileDropdownButton = styled(Dropdown)`
 	}
 
 	& .dropdown-menu {
-		background: #121212;
+		background: rgb(10, 10, 10);
+		backdrop-filter: blur(10px);
 		border: 1px solid rgba(255, 255, 255, 0.2);
 		--bs-dropdown-link-active-bg: rgba(200, 200, 200, 0.1);
 		font-size: 16px;
