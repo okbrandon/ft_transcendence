@@ -119,7 +119,7 @@ export const ConnectButton = styled(NavLink)`
 		width: 100%;
 		height: inherit;
 		border-radius: inherit;
-		background: linear-gradient(80deg, rgba(230, 230, 230, 0.8) 10%, rgba(200, 200, 200, 0.8) 95%);
+		background: linear-gradient(80deg, rgba(75, 0, 130, 0.8) 10%, rgba(59, 130, 246, 0.8) 95%);
 		transition: all 0.5s;
 		z-index: -1;
 	}
