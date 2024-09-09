@@ -10,23 +10,17 @@ export const PresentationSection = styled.section`
 	height: 100vh;
 	width: 100%;
 	z-index: 100;
-	padding: 40px 20px;
-	border-bottom: 1px solid #fff;
 
-	background-color: #0e0e0e;
-	background-image: linear-gradient(
-		to bottom,
-		rgba(14, 14, 14, 1) 0%,
-		rgba(14, 14, 14, 0.8) 20%,
-		rgba(18, 18, 18, 0.6) 40%,
-		rgba(26, 26, 26, 0.4) 60%,
-		rgba(0, 0, 0, 0.2) 80%,
-		rgba(0, 0, 0, 0) 100%
-	),
-	radial-gradient(circle, rgba(164, 69, 178, 0.2), transparent 70%),
-	radial-gradient(circle, rgba(59, 130, 246, 0.2), transparent 70%);
-	background-size: 800px 800px;
-	background-position: center;
+	background:
+		radial-gradient(circle, rgba(164, 69, 178, 0.4) 0%, rgba(0, 0, 0, 0) 35%),
+		linear-gradient(180deg,
+			transparent 0%,
+			rgba(0,0,0,0.4) 2%,
+			rgba(0,0,0,0.7) 5%,
+			rgba(0,0,0,1) 15%,
+			rgba(0,0,0,1) 60%,
+			rgba(0,0,0,0.5) 80%,
+			transparent 100%);
 `;
 
 export const PresentationDiv = styled.div`
@@ -56,8 +50,8 @@ export const PresentationDiv = styled.div`
 		-webkit-text-fill-color: transparent;
 
 		text-shadow:
-			0 0 4px rgba(164, 69, 178, 0.4),
-			0 0 8px rgba(128, 0, 128, 0.3);
+			0 0 4px rgba(164, 69, 178, 0.8),
+			0 0 8px rgba(128, 0, 128, 0.5);
 	}
 
 
@@ -82,7 +76,7 @@ export const FeaturesContainer = styled.div`
 `;
 
 export const FeatureItem = styled.div`
-	background-color: #1a1a1a;
+	background-color: rgba(30, 30, 50, 0.9);
 	padding: 20px;
 	border-radius: 10px;
 	box-shadow: 0 4px 15px rgba(164, 69, 178, 0.5), 0 0 15px rgba(59, 130, 246, 0.5);
@@ -93,7 +87,6 @@ export const FeatureItem = styled.div`
 		transform: scale(1.05);
 		box-shadow: 0 6px 20px rgba(212, 24, 114, 0.6), 0 0 20px rgba(59, 130, 246, 0.6);
 		border: 1px solid rgba(164, 69, 178, 0.4);
-		background-color: #181818;
 	}
 
 	h3 {
@@ -137,7 +130,7 @@ export const PongPaddleBackground = styled(motion.div)`
 	overflow: hidden;
 	z-index: -1;
 	opacity: 0.8;
-	box-shadow: 0 0 10px rgba(255, 255, 255, 0.1), 0 0 20px rgba(255, 255, 255, 0.05); /* Subtle glow */
+	box-shadow: 0 0 10px rgba(255, 255, 255, 0.1), 0 0 20px rgba(255, 255, 255, 0.05);
 `;
 
 const floatBallAnimation = keyframes`

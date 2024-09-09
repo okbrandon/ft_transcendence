@@ -9,13 +9,13 @@ export const BannerSection = styled.section`
 	align-items: center;
 	width: 100%;
 	z-index: 100;
-	min-height: 100vh;
-	background-image:
+	height: 100vh;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	background:
 		radial-gradient(circle at 10% 20%, rgba(128, 0, 128, 0.15), transparent 40%),
-		radial-gradient(circle at 80% 80%, rgba(75, 0, 130, 0.2), transparent 30%),
+		radial-gradient(circle at 80% 80%, rgba(75, 0, 130, 0.2) 0%, transparent 30%),
 		radial-gradient(circle at 50% 50%, rgba(50, 0, 70, 0.1), transparent 50%),
-		radial-gradient(circle at 100% 50%, rgba(30, 0, 40, 0.3), transparent 50%),
-		linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.9));
+		radial-gradient(circle at 100% 50%, rgba(30, 0, 40, 0.3), transparent 50%);
 
 	&::before {
 		content: "";
@@ -52,7 +52,7 @@ export const BannerSection = styled.section`
 const getRotationAnimation = (scale, direction) => keyframes`
 	100% {
 		transform: scale(${scale}) rotate(${direction}deg);
-		bottom: 110vh;
+		bottom: 130vh;
 	}
 `;
 
@@ -73,7 +73,7 @@ export const BannerPaddle = styled.div`
 export const BannerPaddlesContainer = styled.div`
 	position: absolute;
 	width: 100%;
-	height: 100%;
+	height: 120vh;
 	top: 0;
 	left: 0;
 	z-index: 1;
@@ -91,7 +91,7 @@ export const PlayButton = styled(Button)`
 	border-radius: 50px;
 	cursor: pointer;
 	text-transform: uppercase;
-	box-shadow: 0 4px 15px rgba(128, 0, 128, 0.5), 0 0 20px rgba(128, 0, 128, 0.7); /* Added neon purple glow */
+	box-shadow: 0 4px 15px rgba(128, 0, 128, 0.5), 0 0 20px rgba(128, 0, 128, 0.7);
 	transition: all 0.2s ease-in-out;
 	outline: none;
 	z-index: 500;
@@ -101,8 +101,8 @@ export const PlayButton = styled(Button)`
 
 	&:hover {
 		color: #ffffff;
-		background: linear-gradient(135deg, #2c003e, #4b0082); /* More pronounced purple on hover */
-		box-shadow: 0 6px 25px rgba(128, 0, 128, 0.7), 0 0 30px rgba(128, 0, 128, 0.9); /* Stronger purple glow */
+		background: linear-gradient(135deg, #2c003e, #4b0082);
+		box-shadow: 0 6px 25px rgba(128, 0, 128, 0.7), 0 0 30px rgba(128, 0, 128, 0.9);
 		transform: scale(1.1);
 	}
 
@@ -112,6 +112,5 @@ export const PlayButton = styled(Button)`
 		transform: scale(0.98);
 	}
 
-	/* Adding text shadow for extra emphasis */
 	text-shadow: 0 0 5px rgba(128, 0, 128, 0.8), 0 0 10px rgba(128, 0, 128, 0.6);
 `;
