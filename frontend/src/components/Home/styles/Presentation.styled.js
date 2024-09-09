@@ -4,15 +4,14 @@ import { motion } from "framer-motion";
 export const PresentationSection = styled.section`
 	display: flex;
 	position: relative;
-	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	gap: 50px;
 	height: 100vh;
 	width: 100%;
 	z-index: 100;
 
 	background:
-		radial-gradient(circle, rgba(164, 69, 178, 0.4) 0%, rgba(0, 0, 0, 0) 35%),
 		linear-gradient(180deg,
 			transparent 0%,
 			rgba(0,0,0,0.4) 2%,
@@ -21,28 +20,31 @@ export const PresentationSection = styled.section`
 			rgba(0,0,0,1) 60%,
 			rgba(0,0,0,0.5) 80%,
 			transparent 100%);
+	background-size: cover;
+	background-position: center;
 `;
 
-export const PresentationDiv = styled.div`
+export const PresentationContent = styled.div`
 	display: flex;
 	position: relative;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 	max-width: 900px;
+	margin-left: 50px;
 	padding: 20px;
 	line-height: 1.8;
 	letter-spacing: 1px;
 	text-align: center;
+	background: radial-gradient(circle, rgba(164, 69, 178, 0.4) 0%, transparent 50%);
 
 	& > h1 {
-		color: #fff;
 		font-size: 60px;
 		text-transform: uppercase;
 		text-align: center;
 		letter-spacing: 8px;
 		font-family: 'Orbitron', sans-serif;
-		margin-bottom: 20px;
+		margin-bottom: 50px;
 
 		background: linear-gradient(135deg, #6a0dad, #a445b2);
 		background-clip: text;
@@ -57,10 +59,11 @@ export const PresentationDiv = styled.div`
 
 	& > p {
 		font-size: 20px;
-		color: rgba(255, 255, 255, 0.95);
+		color: #fff;
 		font-family: 'Inter', sans-serif;
+		text-align: left;
+		padding: 0 20px;
 		margin-bottom: 40px;
-		max-width: 700px;
 		line-height: 1.6;
 		word-spacing: 2px;
 		letter-spacing: 2px;
@@ -69,14 +72,14 @@ export const PresentationDiv = styled.div`
 
 export const FeaturesContainer = styled.div`
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-	gap: 20px;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 50px;
 	width: 100%;
 	max-width: 900px;
 `;
 
 export const FeatureItem = styled.div`
-	background-color: rgba(30, 30, 50, 0.9);
+	background-color: rgba(10, 10, 10, 0.6);
 	padding: 20px;
 	border-radius: 10px;
 	box-shadow: 0 4px 15px rgba(164, 69, 178, 0.5), 0 0 15px rgba(59, 130, 246, 0.5);
@@ -106,26 +109,31 @@ export const FeatureItem = styled.div`
 	}
 `;
 
+export const PongElementsBackground = styled.div`
+	width: 40%;
+	height: 600px;
+	position: relative;
+`;
+
 const floatPaddleAnimation = keyframes`
 	0% {
-		transform: translateY(0px) rotate(-50deg);
+		transform: translateY(0px) rotate(-60deg);
 	}
 	50% {
-		transform: translateY(10px) rotate(-50deg);
+		transform: translateY(10px) rotate(-60deg);
 	}
 	100% {
-		transform: translateY(0px) rotate(-50deg);
+		transform: translateY(0px) rotate(-60deg);
 	}
 `;
 
 export const PongPaddleBackground = styled(motion.div)`
 	position: absolute;
-	top: 25rem;
+	top: 250px;
 	width: 600px;
 	height: 120px;
 	background: linear-gradient(0deg, rgba(255, 255, 255, 0.7) 0%, rgba(200, 200, 200, 0.4) 100%);
 	border-radius: 400px;
-	transform: rotate(-50deg);
 	animation: ${floatPaddleAnimation} 4s ease-in-out infinite;
 	overflow: hidden;
 	z-index: -1;
@@ -147,7 +155,7 @@ const floatBallAnimation = keyframes`
 
 export const PongBallBackground = styled(motion.div)`
 	position: absolute;
-	bottom: 25rem;
+	bottom: 100px;
 	width: 160px;
 	height: 160px;
 	background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.7), rgba(200, 200, 200, 0.4));
