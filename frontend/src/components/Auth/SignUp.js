@@ -14,14 +14,22 @@ const SignUp = () => {
 
 	const validateForm = () => {
 		let errorMessage = '';
-		const usernamePattern = /^[a-zA-Z-_]{3,20}$/;
 
-		if (!usernamePattern.test(username)) {
-			errorMessage = 'Username must be 3-20 characters long and can only contain letters, dashes, and underscores.';
-		} else if (!email.includes('@')) {
-			errorMessage = 'Please enter a valid email address.';
-		} else if (password.length < 6) {
-			errorMessage = 'Password must be at least 6 characters long.';
+		// else if (lang.length !== 2 || !['en', 'fr', 'es'].includes(lang)) {
+		// 	errorMessage = 'Unsupported language, must be either "en", "fr", or "es".';
+
+		if (username.length < 4) {
+			errorMessage = 'Username must be at least 4 characters long.';
+		} else if (username.length > 16) {
+			errorMessage = 'Username cannot be longer than 16 characters.';
+		} else if (email.length > 64) {
+			errorMessage = 'Email cannot be longer than 64 characters.';
+		} else if (!/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+			errorMessage = 'Invalid Email address, did not match the required format.';
+		} else if (password.length < 8) {
+			errorMessage = 'Password must be at least 8 characters long.';
+		} else if (new TextEncoder().encode(password).length > 72) {
+			errorMessage = 'Password cannot be longer than 72 bytes.';
 		} else if (password !== cfPassword) {
 			errorMessage = 'Passwords do not match.';
 		}
@@ -68,7 +76,7 @@ const SignUp = () => {
 						placeholder=" "
 						value={email}
 						onChange={(e) => setEmail(e.target.value)}
-						isInvalid={error && error.includes('email')}
+						isInvalid={error && error.includes('Email')}
 					/>
 					<span>E-MAIL</span>
 				</FormContainer.Group>
