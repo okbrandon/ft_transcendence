@@ -18,14 +18,20 @@ const SignUp = () => {
 		// else if (lang.length !== 2 || !['en', 'fr', 'es'].includes(lang)) {
 		// 	errorMessage = 'Unsupported language, must be either "en", "fr", or "es".';
 
-		if (username.length < 4) {
+		if (!username) {
+			errorMessage = 'Username is required.';
+		} else if (username.length < 4) {
 			errorMessage = 'Username must be at least 4 characters long.';
 		} else if (username.length > 16) {
 			errorMessage = 'Username cannot be longer than 16 characters.';
+		} else if (!email) {
+			errorMessage = 'Email is required.';
 		} else if (email.length > 64) {
 			errorMessage = 'Email cannot be longer than 64 characters.';
 		} else if (!/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
 			errorMessage = 'Invalid Email address, did not match the required format.';
+		} else if (!password) {
+			errorMessage = 'Password is required.';
 		} else if (password.length < 8) {
 			errorMessage = 'Password must be at least 8 characters long.';
 		} else if (new TextEncoder().encode(password).length > 72) {

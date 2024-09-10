@@ -1,5 +1,7 @@
 import React, { useState, useRef } from 'react';
 import {
+	BioContainer,
+	ErrorMessage,
 	Form,
 	FormInput,
 	SectionHeading,
@@ -22,6 +24,8 @@ const AccountPreferences = () => {
 	const [formData, setFormData] = useState({});
 	const [profileImage, setProfileImage] = useState(null);
 	const [bannerImage, setBannerImage] = useState(null);
+	const [bioByteLength, setBioByteLength] = useState(0);
+	const [error, setError] = useState('');
 	const profilePictureRef = useRef(null);
 	const bannerPictureRef = useRef(null);
 
@@ -57,21 +61,54 @@ const AccountPreferences = () => {
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
-		setFormData(data => ({
-			...data,
-			[name]: value,
-		}));
+
+		if (name === 'bio') {
+			const byteSize = new Blob([value]).size;
+			if (byteSize <= 280) {
+				setBioByteLength(byteSize);
+				setFormData(data => ({
+					...data,
+					[name]: value,
+				}));
+			} else {
+				alert('Maximum byte limit reached (280 bytes).');
+			}
+		} else {
+			setFormData(data => ({
+				...data,
+				[name]: value,
+			}));
+		}
+	};
+
+	const validateForm = () => {
+		let errorMessage = '';
+
+		if (formData.username && formData.username.length < 4) {
+			errorMessage = 'Username must be at least 4 characters long.';
+		} else if (formData.username && formData.username.length > 16) {
+			errorMessage = 'Username cannot be longer than 16 chracaters.';
+		} else if (formData.displayName && formData.displayName.length > 16) {
+			errorMessage = 'Display Name cannot be longer than 16 characters.';
+		}
+		return errorMessage;
 	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		API.patch('/users/@me/profile', formData)
-			.then(() => {
-				console.log('Account Preferences updated successfully with:', formData);
-			})
-			.catch((err) => {
-				console.error(err);
-			});
+		const errorMessage = validateForm();
+
+		if (errorMessage) {
+			setError(errorMessage);
+		} else {
+			API.patch('/users/@me/profile', formData)
+				.then(() => {
+					console.log('Account Preferences updated successfully with:', formData);
+				})
+				.catch((err) => {
+					console.error(err);
+				});
+		}
 	};
 
 	return (
@@ -84,19 +121,24 @@ const AccountPreferences = () => {
 				placeholder="Username"
 				onChange={handleChange}
 			/>
+			{error.includes("Username") && <ErrorMessage>{error}</ErrorMessage>}
 			<FormInput
 				type="text"
 				name="displayName"
 				placeholder="Display Name"
 				onChange={handleChange}
 			/>
-			<TextArea
-				name="bio"
-				placeholder="Tell us about yourself"
-				rows="4"
-				cols="50"
-				onChange={handleChange}
-			/>
+			{error.includes("Display Name") && <ErrorMessage>{error}</ErrorMessage>}
+			<BioContainer>
+				<TextArea
+					name="bio"
+					placeholder="Tell us about yourself"
+					rows="4"
+					cols="50"
+					onChange={handleChange}
+				/>
+				<p>{bioByteLength} / 280 bytes</p>
+			</BioContainer>
 			<SubSectionHeading>Profile Image & Background</SubSectionHeading>
 			<ImageUploadContainer>
 				<ImageUploadLabel htmlFor="profile-picture">Profile Picture:</ImageUploadLabel>

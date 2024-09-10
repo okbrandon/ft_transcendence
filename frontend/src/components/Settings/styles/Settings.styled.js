@@ -100,7 +100,6 @@ export const Form = styled.form`
 	gap: 2rem;
 `;
 
-// Heading styles for section titles in the content area
 export const SectionHeading = styled.h2`
 	font-family: 'Orbitron', sans-serif;
 	font-size: 2rem;
@@ -113,7 +112,6 @@ export const SectionHeading = styled.h2`
 	margin-bottom: 1rem;
 `;
 
-// Subsection heading for subtitles like "Profile Information" or "General Preferences"
 export const SubSectionHeading = styled.h3`
 	font-family: 'Inter', sans-serif;
 	font-size: 1.5rem;
@@ -123,7 +121,6 @@ export const SubSectionHeading = styled.h3`
 	margin-bottom: 1rem;
 `;
 
-// Form input styling
 export const FormInput = styled.input`
 	width: 100%;
 	padding: 1rem;
@@ -142,7 +139,18 @@ export const FormInput = styled.input`
 	}
 `;
 
-// Form button styles
+export const BioContainer = styled.div`
+	position: relative;
+
+	& > p {
+		position: absolute;
+		right: 15px;
+		bottom: 20px;
+		font-size: 0.8rem;
+		color: rgba(255, 255, 255, 0.5);
+	}
+`;
+
 export const SubmitButton = styled.button`
 	padding: 1rem 2rem;
 	border: none;
@@ -157,4 +165,10 @@ export const SubmitButton = styled.button`
 		background-color: rgba(164, 69, 178, 0.9);
 		box-shadow: 0 0 15px rgba(164, 69, 178, 0.7);
 	}
+`;
+
+export const ErrorMessage = styled.p`
+	font-size: 1rem;
+	font-weight: 600;
+	color: #ff0000 !important;
 `;
