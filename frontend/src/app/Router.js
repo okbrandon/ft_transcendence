@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom';
 import { isValidToken } from '../api/api';
 import Root from '../components/Root';
-import Login from '../components/Auth/Login';
+import SignIn from '../components/Auth/SignIn';
 import SignUp from '../components/Auth/SignUp';
 import Game from '../components/Game/Game';
 import Home from '../components/Home/Home';
@@ -41,7 +41,7 @@ const Router = createBrowserRouter(createRoutesFromElements(
 	<>
 		<Route path="/" element={ <Root/> }>
 			<Route index element={ <Home/> }/>
-			<Route path="login" element={ <Login/> }/>
+			<Route path="login" element={ <SignIn/> }/>
 			<Route path="callback" element={ <Callback/> }/>
 			<Route path="verify" element={ <Verify/> }/>
 			<Route path="signup" element={ <SignUp/> }/>
