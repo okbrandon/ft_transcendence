@@ -11,7 +11,7 @@ const ChatWindowContainer = styled.div`
 	position: relative !important;
 	margin-right: 1%;
 	max-width: 350px;
-	height: ${({ isMinimized }) => (isMinimized ? '45px' : '500px')};
+	height: ${({ $isMinimized }) => ($isMinimized ? '45px' : '500px')};
 	transition: height 0.3s ease;
 `;
 
@@ -33,7 +33,7 @@ const ChatMessages = styled.div`
 	padding: 10px;
 	overflow-y: auto;
 	color: #333;
-	display: ${({ isMinimized }) => (isMinimized ? 'none' : 'block')};
+	display: ${({ $isMinimized }) => ($isMinimized ? 'none' : 'block')};
 	transition: display 0.3s ease;
 `;
 
@@ -41,7 +41,7 @@ const ChatInputContainer = styled.div`
 	padding: 10px;
 	background-color: #fff;
 	border-top: 1px solid #ddd;
-	display: ${({ isMinimized }) => (isMinimized ? 'none' : 'block')};
+	display: ${({ $isMinimized }) => ($isMinimized ? 'none' : 'block')};
 	transition: display 0.3s ease;
 `;
 
@@ -58,7 +58,7 @@ const ActionButtonContainer = styled.div`
 	justify-content: center;
 `;
 
-export const ChatWindow = ({ friendname, messages, onClose, isMinimized, onToggleMinimize }) => {
+export const ChatWindow = ({ friendname, messages, onClose, $isMinimized, onToggleMinimize }) => {
 	const [isActive, setIsActive] = useState(true);
 	const [isArrowActive, setIsArrowActive] = useState(true);
 
@@ -69,7 +69,7 @@ export const ChatWindow = ({ friendname, messages, onClose, isMinimized, onToggl
 	};
 
 	return (
-		<ChatWindowContainer isMinimized={isMinimized}>
+		<ChatWindowContainer $isMinimized={$isMinimized}>
 			<ChatHeader onClick={handleToggle}>
 				{friendname}
 				<ActionButtonContainer>
@@ -79,10 +79,10 @@ export const ChatWindow = ({ friendname, messages, onClose, isMinimized, onToggl
 					<CloseButton variant='white' onClick={onClose} />
 				</ActionButtonContainer>
 			</ChatHeader>
-			<ChatMessages isMinimized={isMinimized}>
+			<ChatMessages $isMinimized={$isMinimized}>
 				<div>{messages.text}</div>
 			</ChatMessages>
-			<ChatInputContainer isMinimized={isMinimized}>
+			<ChatInputContainer $isMinimized={$isMinimized}>
 				<ChatInput placeholder="Type a message..." />
 			</ChatInputContainer>
 		</ChatWindowContainer>

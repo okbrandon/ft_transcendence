@@ -7,7 +7,7 @@ import { Arrow } from './Arrow.js';
 import ChatContainer from '../../styles/Chat/ChatContainer.styled';
 
 const ChatOverlayContainer = styled.aside`
-	height: ${({ isMinimized }) => (isMinimized ? '45px' : 'auto')};
+	height: ${({ $isMinimized }) => ($isMinimized ? '45px' : 'auto')};
 	pointer-events: auto;
 	overflow: visible;
 	display: flex;
@@ -23,7 +23,7 @@ const ChatListBubble = styled.div`
 	display: flex;
 	flex-direction: column;
 	margin-right: 3%;
-	height: ${({ isMinimized }) => (isMinimized ? '45px' : 'calc(100vh - 100px)')};
+	height: ${({ $isMinimized }) => ($isMinimized ? '45px' : 'calc(100vh - 100px)')};
 	flex: 0 0 288px;
 	width: 288px;
 	min-width: 0;
@@ -48,7 +48,7 @@ const ChatHeaderStyled = styled.div`
 const Chat = () => {
 	const [openChats, setOpenChats] = useState([]);
 	const [selectedChat, setSelectedChat] = useState(null);
-	const [isMinimized, setIsMinimized] = useState(false);
+	const [$isMinimized, setIsMinimized] = useState(false);
 	const [isOverlayMinimized, setIsOverlayMinimized] = useState(false);
 	const [isArrowActive, setIsArrowActive] = useState(false);
 	const [messages, setMessages] = useState({
@@ -75,9 +75,9 @@ const Chat = () => {
 	}
 
 	const handleToggleMinimize = () => {
-		setIsMinimized(!isMinimized);
+		setIsMinimized(!$isMinimized);
 	}
-	
+
 	const handleToggleOverlayMinimize = () => {
 		setIsOverlayMinimized(!isOverlayMinimized);
 		setIsArrowActive(!isArrowActive);
@@ -85,8 +85,8 @@ const Chat = () => {
 
 	return (
 		<ChatContainer>
-			<ChatOverlayContainer isMinimized={isOverlayMinimized}>
-				<ChatListBubble isMinimized={isOverlayMinimized}>
+			<ChatOverlayContainer $isMinimized={isOverlayMinimized}>
+				<ChatListBubble $isMinimized={isOverlayMinimized}>
 					<ChatHeaderStyled onClick={handleToggleOverlayMinimize}>
 						Messaging
 						<Arrow
@@ -107,7 +107,7 @@ const Chat = () => {
 						friendname={selectedChat}
 						messages={messages[selectedChat]}
 						onClose={handleCloseChat}
-						isMinimized={isMinimized}
+						$isMinimized={$isMinimized}
 						onToggleMinimize={handleToggleMinimize}
 					/>
 				)}

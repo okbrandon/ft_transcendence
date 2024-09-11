@@ -40,7 +40,7 @@ const FriendItem = styled.div`
 	color: black;
 	display: flex;
 	justify-content: space-between; /* Space out the friend name and button */
-	
+
 	&:hover {
 	background-color: #f0f0f0;
 	}
@@ -54,7 +54,7 @@ const ChatButton = styled.button`
 	border-radius: 4px;
 	padding: 5px 10px;
 	cursor: pointer;
-	
+
 	&:hover {
 	background-color: #0056b3;
 	}
@@ -64,13 +64,14 @@ export const SearchFriends = ({ onOpenChat }) => { // onOpenChat is passed as a 
 	const [searchQuery, setSearchQuery] = useState('');
 	const [friends, setFriends] = useState(['Alice', 'Bob', 'Brandonation', 'Evanescence', 'Hanministrateur', 'Kianatomy']);
 
-	const filteredFriends = friends.filter(friend => 
+	const filteredFriends = friends.filter(friend =>
 	friend.toLowerCase().includes(searchQuery.toLowerCase())
 	);
 
 	return (
 		<SearchFriendsContainer>
 			<SearchInput
+				id="search-input"
 				type="text"
 				placeholder="Search for Friends..."
 				value={searchQuery}

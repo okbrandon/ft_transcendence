@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import MinimizeArrow, { MinimizeArrowContainer } from '../../styles/Chat/MinimizeArrow.styled';
 
 export const Arrow = ({ ArrowAnimate }) => {

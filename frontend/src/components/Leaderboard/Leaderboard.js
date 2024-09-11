@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import Button from 'react-bootstrap/Button';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import { NavContainer } from '../../styles/Home/Navigation.styled';
 
 const WrapContainer = styled.div`
 	display: flex;
@@ -96,7 +95,7 @@ const TableLeaderboard = styled.table`
 		border-top: 1px solid #ddd;
 		padding: 8px;
 	}
-	
+
 	th {
 		background-color: grey;
 		color: white;
