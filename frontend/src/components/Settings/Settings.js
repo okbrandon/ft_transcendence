@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AccountPreferences from './AccountPreferences';
+import Security from './Security';
+import Visibility from './Visibility';
+import Privacy from './Privacy';
 import {
 	ContentArea,
 	PageContainer,
@@ -7,10 +11,6 @@ import {
 	SidebarBackButton,
 	SidebarButton,
 } from './styles/Settings.styled';
-import AccountPreferences from './AccountPreferences';
-import Security from './Security';
-import Visibility from './Visibility';
-import Privacy from './Privacy';
 
 const Settings = () => {
 	const [activeSection, setActiveSection] = useState("account");

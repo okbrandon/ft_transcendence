@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import {
 	BioContainer,
 	ErrorMessage,
@@ -19,11 +19,17 @@ import {
 } from './styles/Image.styled';
 import { GetImage } from '../../api/user';
 import API from '../../api/api';
+import { AuthContext } from '../../context/AuthContext';
 
 const AccountPreferences = () => {
-	const [formData, setFormData] = useState({});
-	const [profileImage, setProfileImage] = useState(null);
-	const [bannerImage, setBannerImage] = useState(null);
+	const { user } = useContext(AuthContext);
+	const [formData, setFormData] = useState({
+		username: user.username,
+		displayName: user.displayName,
+		bio: user.bio,
+	});
+	const [profileImage, setProfileImage] = useState(user.avatarID);
+	const [bannerImage, setBannerImage] = useState(user.bannerID);
 	const [bioByteLength, setBioByteLength] = useState(0);
 	const [error, setError] = useState('');
 	const profilePictureRef = useRef(null);
@@ -70,8 +76,6 @@ const AccountPreferences = () => {
 					...data,
 					[name]: value,
 				}));
-			} else {
-				alert('Maximum byte limit reached (280 bytes).');
 			}
 		} else {
 			setFormData(data => ({
@@ -119,6 +123,7 @@ const AccountPreferences = () => {
 				type="text"
 				name="username"
 				placeholder="Username"
+				value={formData.username}
 				onChange={handleChange}
 			/>
 			{error.includes("Username") && <ErrorMessage>{error}</ErrorMessage>}
@@ -126,6 +131,7 @@ const AccountPreferences = () => {
 				type="text"
 				name="displayName"
 				placeholder="Display Name"
+				value={formData.displayName}
 				onChange={handleChange}
 			/>
 			{error.includes("Display Name") && <ErrorMessage>{error}</ErrorMessage>}
@@ -133,6 +139,7 @@ const AccountPreferences = () => {
 				<TextArea
 					name="bio"
 					placeholder="Tell us about yourself"
+					value={formData.bio}
 					rows="4"
 					cols="50"
 					onChange={handleChange}

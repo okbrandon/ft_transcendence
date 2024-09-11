@@ -67,6 +67,6 @@ export const Teaser = styled.h3`
 	font-family: 'Orbitron', sans-serif;
 	font-size: 24px;
 	color: rgba(255,255,255,0.8);
-	margin-bottom: 50px;
+	margin-bottom: 150px;
 	text-align: center;
 `;

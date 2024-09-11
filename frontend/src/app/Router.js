@@ -46,7 +46,7 @@ const Router = createBrowserRouter(createRoutesFromElements(
 			<Route path="verify" element={ <Verify/> }/>
 			<Route path="signup" element={ <SignUp/> }/>
 			<Route element={ <PrivateRoutes/> }>
-                <Route path="friends" element={ <Friends/> }/>
+				<Route path="friends" element={ <Friends/> }/>
 				<Route path="profile/:username" element={ <ProfileParent/> }/>
 				<Route path="settings" element={ <Settings/> }/>
 				<Route path="shop" element={ <Shop/> }/>
@@ -54,7 +54,7 @@ const Router = createBrowserRouter(createRoutesFromElements(
 				<Route path="tournament" element={ <Tournament/> }/>
 				<Route path="tournament-room" element={ <JoinTournament/> }/> {/* ⚒️ testing... */}
 				<Route path="vs-ai" element={ <Match/> }/>
-                <Route path="vs-player" element={ <Match/> }/>
+				<Route path="vs-player" element={ <Match/> }/>
 			</Route>
 		</Route>
 		<Route element={ <PrivateRoutes/>}>
