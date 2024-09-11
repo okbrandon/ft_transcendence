@@ -16,6 +16,7 @@ import { AuthContext } from '../context/AuthContext';
 import { ProfileParent } from '../components/Profile/Profile';
 import Verify from '../components/Auth/Verify';
 import Callback from '../components/Auth/Callback';
+import Leaderboard from '../components/Leaderboard/Leaderboard';
 import PlayMenu from '../components/Game/PlayMenu';
 import Shop from '../components/Shop/Shop';
 import Tournament from '../components/Game/Tournament/Tournament';
@@ -53,6 +54,7 @@ const Router = createBrowserRouter(createRoutesFromElements(
 				<Route path="tournament-room" element={ <JoinTournament/> }/> {/* ⚒️ testing... */}
 				<Route path="vs-ai" element={ <Match/> }/>
                 <Route path="vs-player" element={ <Match/> }/>
+				<Route path="leaderboard" element={ <Leaderboard/> }/>
 			</Route>
 		</Route>
 		<Route element={ <PrivateRoutes/>}>

@@ -61,12 +61,11 @@ services:
     image: traefik:v2.5
     restart: always
     ports:
-      - "8888:8888"
+      - "8888:80"
     networks:
       - transcendence
     volumes:
-      - ./traefik/traefik.yml:/etc/traefik/traefik.yml
-      - ./traefik/traefik_dynamic.yml:/etc/traefik/traefik_dynamic.yml
+      - /run/user/101355/docker.sock:/var/run/docker.sock
     # healthcheck:
     #   test: ["CMD", "curl", "-f", "http://localhost:80"]
     #   interval: 15s
