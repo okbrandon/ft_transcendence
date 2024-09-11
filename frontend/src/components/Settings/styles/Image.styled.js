@@ -31,6 +31,7 @@ export const ImageUploadContainer = styled.div`
 	width: 100%;
 	background: rgba(0, 0, 0, 0.2);
 	transition: all 0.3s ease;
+	margin-bottom: 4rem;
 
 	&.dragover {
 		background: rgba(164, 69, 178, 0.2);

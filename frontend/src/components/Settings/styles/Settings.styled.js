@@ -97,7 +97,13 @@ export const Form = styled.form`
 	width: 100%;
 	display: flex;
 	flex-direction: column;
-	gap: 2rem;
+
+	& > label {
+		font-family: 'Inter', sans-serif;
+		font-size: 1rem;
+		color: rgba(255, 255, 255, 0.9);
+		margin-bottom: 0.5rem;
+	}
 `;
 
 export const SectionHeading = styled.h2`
@@ -109,7 +115,7 @@ export const SectionHeading = styled.h2`
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 	text-transform: uppercase;
-	margin-bottom: 1rem;
+	margin-bottom: 3rem;
 `;
 
 export const SubSectionHeading = styled.h3`
@@ -118,7 +124,7 @@ export const SubSectionHeading = styled.h3`
 	color: rgba(255, 255, 255, 0.9);
 	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 	padding-bottom: 0.5rem;
-	margin-bottom: 1rem;
+	margin-bottom: 3rem;
 `;
 
 export const FormInput = styled.input`
@@ -128,7 +134,7 @@ export const FormInput = styled.input`
 	border-radius: 5px;
 	background-color: #222;
 	color: #fff;
-	margin-bottom: 1.5rem;
+	margin-bottom: 3.5rem;
 	font-size: 1rem;
 	transition: all 0.3s ease;
 

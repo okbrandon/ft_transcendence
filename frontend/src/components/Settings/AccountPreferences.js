@@ -119,6 +119,7 @@ const AccountPreferences = () => {
 		<Form onSubmit={handleSubmit}>
 			<SectionHeading>Account Preferences</SectionHeading>
 			<SubSectionHeading>Profile Information</SubSectionHeading>
+			<label htmlFor="username">Username</label>
 			<FormInput
 				type="text"
 				name="username"
@@ -127,6 +128,7 @@ const AccountPreferences = () => {
 				onChange={handleChange}
 			/>
 			{error.includes("Username") && <ErrorMessage>{error}</ErrorMessage>}
+			<label htmlFor="displayName">Display Name</label>
 			<FormInput
 				type="text"
 				name="displayName"
@@ -135,6 +137,7 @@ const AccountPreferences = () => {
 				onChange={handleChange}
 			/>
 			{error.includes("Display Name") && <ErrorMessage>{error}</ErrorMessage>}
+			<label htmlFor="bio">Bio</label>
 			<BioContainer>
 				<TextArea
 					name="bio"
