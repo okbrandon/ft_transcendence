@@ -2,29 +2,76 @@ import styled from 'styled-components';
 
 export const PageContainer = styled.div`
 	padding: 2rem;
-	background: linear-gradient(135deg, #000 0%, #111 100%);
 	color: #fff;
 	min-height: 100vh;
-	margin-top: 80px;
+	background: radial-gradient(circle at 20% 20%, rgba(75, 0, 130, 0.2), transparent 50%),
+				radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.2), transparent 50%),
+				linear-gradient(135deg, #000000 0%, #111111 100%);
+	background-size: cover;
+	background-position: center;
+
+	ul {
+		margin-top: 2rem;
+	}
+
+	.nav-link {
+		background-color: rgba(0, 0, 0, 0.2);
+		color: #fff;
+		border: 1px solid #333;
+		border-radius: 5px;
+		margin-right: 5px;
+		margin-bottom: 1px;
+		transition: all 0.3s ease;
+		font-family: "Orbitron", sans-serif;
+		font-size: 1rem;
+		padding: 0.8rem 1rem;
+		text-align: center;
+		text-transform: uppercase;
+		letter-spacing: 1px;
+
+		&:hover {
+			background-color: rgba(255, 255, 255, 0.1);
+			color: #fff;
+			border: 1px solid #333;
+			box-shadow: 0 0 10px rgba(164, 69, 178, 0.3);
+		}
+
+		&.active {
+			background-color: rgba(164, 69, 178, 0.1);
+			color: #fff;
+			border: 1px solid #333;
+			box-shadow: 0 0 15px rgba(164, 69, 178, 0.7);
+		}
+	}
 `;
 
 export const Header = styled.div`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 2rem;
-	margin: 0 auto;
+	margin: 80px auto 3rem auto;
 
 	h1 {
 		font-family: "Orbitron", sans-serif;
+		font-size: 3rem;
+		letter-spacing: 4px;
+		color: #fff;
+		background: linear-gradient(135deg, #ff00ff, #00ffff);
+		background-clip: text;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		text-shadow:
+			0 0 10px rgba(255, 255, 255, 0.6),
+			0 0 15px rgba(128, 0, 128, 0.4),
+			0 0 20px rgba(75, 0, 130, 0.3);
 	}
 `;
 
 export const SearchInput = styled.input`
-	padding: 0.8rem 1rem;
+	padding: 0.8rem 1.2rem;
 	font-size: 1rem;
 	border-radius: 8px;
-	border: none;
+	border: 1px solid #444;
 	background: #222;
 	color: #fff;
 	outline: none;
@@ -32,76 +79,7 @@ export const SearchInput = styled.input`
 
 	&:focus {
 		background: #333;
-		box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.4);
-	}
-`;
-
-export const FriendsList = styled.div`
-	display: grid;
-	grid-template-columns: repeat(1, minmax(250px, 1fr));
-	gap: 1.5rem;
-	margin: 5rem auto;
-`;
-
-export const FriendCard = styled.div`
-	background: #1a1a1a;
-	padding: 1.5rem;
-	border-radius: 15px;
-	box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.5);
-	transition: all 0.3s ease;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-
-	&:hover {
-		transform: translateY(-5px);
-		box-shadow: 0px 8px 30px rgba(255, 255, 255, 0.3), 0px 0px 20px rgba(255, 255, 255, 0.5);
-	}
-`;
-
-export const FriendInfo = styled.div`
-	display: flex;
-	align-items: center;
-`;
-
-export const FriendStatus = styled.span`
-	width: 12px;
-	height: 12px;
-	background: ${({ $status }) => $status === "online" ? "#00ff88" : "#ff5555"};
-	border-radius: 50%;
-	margin-right: 10px;
-`;
-
-export const FriendName = styled.h3`
-	font-size: 1.3rem;
-	font-family: "Roboto", sans-serif;
-	padding: 0.5rem 1rem;
-`;
-
-export const Actions = styled.div`
-	display: flex;
-	gap: 0.8rem;
-`;
-
-export const ActionButton = styled.button`
-	background: #ffffff;
-	color: #101010;
-	padding: 0.6rem 1rem;
-	border-radius: 8px;
-	border: none;
-	cursor: pointer;
-	font-size: 0.9rem;
-
-	&:hover {
-		background: #f0f0f0;
-	}
-`;
-
-export const RemoveButton = styled(ActionButton)`
-	background: #ff5555;
-	color: #fff;
-
-	&:hover {
-		background: #ff3333;
+		box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+		border-color: rgba(164, 69, 178, 0.5);
 	}
 `;

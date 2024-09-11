@@ -1,6 +1,6 @@
 import React from 'react';
 import { AuthenticationContainer } from './styles/Authentication.styled';
-import Login from './Login';
+import SignIn from './SignIn';
 import SignUp from './SignUp';
 
 const Authentication = () => {
@@ -14,7 +14,7 @@ const Authentication = () => {
 		<AuthenticationContainer>
 			{
 				isSignIn ? (
-					<Login handleToggle={handleToggle}/>
+					<SignIn handleToggle={handleToggle}/>
 				) : (
 					<SignUp handleToggle={handleToggle}/>
 				)

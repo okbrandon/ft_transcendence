@@ -1,18 +1,34 @@
 # TODO
 ## today
-- [] navbar (profile button logout)
-- [] add colors
-- [] 42 auth
-- [] authentication pages
-- [x] profile page background
+- Settings: Add information directly
+- Settings: Add delete account button
+- Settings: 
+- Change colors of logout button
+- [ ] Settings:
+    - Account Preferences:
+        - Profile Information:
+            - Username
+            - DisplayName
+            - Verification
+        - General Preference:
+            - Language
+        - Account Management:
+            - Close account
+    - Sign in & security:
+        - Email
+        - Password
+        - 2FA
+    - Visibility:
+        - Blocked People
+    - Data Privacy:
+        - Harvest
 
-## priority
-- [x] profile
-- [x] login
-- [ ] friends
+## Secondary
+- 2FA aled
+- Popup friends
+- Sign up username case
+- shop with api aled
+- harvest data
 
-## secondary
-- [x] match history
-- [ ] inscription/register
-- [ ] settings -> language
-- [ ] /harvest pour recuperer les donnees (c'est chaud laisse tomber)
+## A la fin
+- [] fake captcha

@@ -4,8 +4,8 @@ import Form from "react-bootstrap/Form";
 import Dropdown from "react-bootstrap/Dropdown";
 
 export const NavContainer = styled.nav`
-	background: linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 100%);
-	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+	backdrop-filter: blur(10px);
 	padding: 15px;
 	display: flex;
 	justify-content: space-between;
@@ -87,21 +87,13 @@ export const SearchBarContainer = styled(Form)`
 	}
 `;
 
-export const ProfileListContainer = styled.div`
-	position: absolute;
-	bottom: -50px;
-	width: 100%;
-	background-color: rgba(0,0,0,0.9);
-	z-index: 1000;
-`;
-
 export const ConnectButton = styled(NavLink)`
 	position: relative;
 	overflow: hidden;
 	height: 50px;
 	padding: 10px 30px;
 	border-radius: 1.5rem;
-	background: #3d3a4e;
+	background: #1c1c1c;
 	background-size: 400%;
 	color: #fff;
 	border: none;
@@ -127,11 +119,7 @@ export const ConnectButton = styled(NavLink)`
 		width: 100%;
 		height: inherit;
 		border-radius: inherit;
-		background: linear-gradient(
-			80deg,
-			rgba(150,93,233,1) 10%,
-			rgba(99,88,238,1) 95%
-		);
+		background: linear-gradient(80deg, rgba(75, 0, 130, 0.8) 10%, rgba(59, 130, 246, 0.8) 95%);
 		transition: all 0.5s;
 		z-index: -1;
 	}
@@ -155,15 +143,18 @@ export const ProfileDropdownButton = styled(Dropdown)`
 		text-align: center;
 		font-size: 16px;
 		font-weight: 500;
-		z-index: 500;
 		text-decoration: none;
-		transition: text-shadow 0.3s ease;
+		transition: text-shadow 0.3s ease, transform 0.3s ease;
 
 		&:hover {
 			color: #fff;
 			text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 25px rgba(255, 255, 255, 0.6);
 		}
-			
+
+		&:focus {
+			outline: none;
+		}
+
 		&:active {
 			border: none;
 			background: none;
@@ -171,7 +162,8 @@ export const ProfileDropdownButton = styled(Dropdown)`
 	}
 
 	& .dropdown-menu {
-		background: #121212;
+		background: rgb(10, 10, 10);
+		backdrop-filter: blur(10px);
 		border: 1px solid rgba(255, 255, 255, 0.2);
 		--bs-dropdown-link-active-bg: rgba(200, 200, 200, 0.1);
 		font-size: 16px;
@@ -183,7 +175,7 @@ export const ProfileDropdownButton = styled(Dropdown)`
 	}
 
 	& .dropdown-divider {
-		border-top: 1px solid rgba(255,255,255,0.3);
+		border-top: 1px solid rgba(255, 255, 255, 0.3);
 	}
 
 	& .dropdown-item {
@@ -194,7 +186,7 @@ export const ProfileDropdownButton = styled(Dropdown)`
 		--bs-dropdown-link-active-bg: rgba(255, 255, 255, 0.2);
 		padding: 8px 15px;
 		border-radius: 5px;
-		transition: background-color 0.3s ease;
+		transition: background-color 0.3s ease, transform 0.2s ease;
 
 		&:hover {
 			background-color: rgba(255, 255, 255, 0.1);

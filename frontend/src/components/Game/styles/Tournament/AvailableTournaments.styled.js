@@ -7,6 +7,11 @@ export const AvailableTournamentsSection = styled.div`
 	justify-content: center;
 	width: 100%;
 	height: 100vh;
+	background: radial-gradient(circle at 20% 20%, rgba(75, 0, 130, 0.2), transparent 50%),
+				radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.2), transparent 50%),
+				linear-gradient(135deg, #000000 0%, #111111 100%);
+	background-size: cover;
+	background-position: center;
 `;
 
 export const AvailableTournamentsContainer = styled.div`

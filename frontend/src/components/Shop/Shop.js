@@ -8,7 +8,8 @@ import {
 	SkinPrice,
 	BuyButton,
 	SkinName,
-    Header
+    Header,
+	SubtitleSection,
 } from "./styles/Shop.styled";
 import { AuthContext } from "../../context/AuthContext";
 import API from "../../api/api";
@@ -37,12 +38,17 @@ const Shop = () => {
 		}
 	};
 
+	console.log(user);
+
 	return (
 		<ShopContainer>
-            <Header>
-                <h1>Shop</h1>
-			    <CoinsDisplay>Coins: {user.money} 🪙</CoinsDisplay>
-            </Header>
+			<Header>
+				<h1>SHOP</h1>
+				<CoinsDisplay>Coins: {user.money} 🪙</CoinsDisplay>
+			</Header>
+			<SubtitleSection>
+				<p>Paddle skins to personalize your game. Select one that suits your style!</p>
+			</SubtitleSection>
 			<SkinsGrid>
 				{skins.map((skin) => (
 					<SkinCard key={skin.id}>

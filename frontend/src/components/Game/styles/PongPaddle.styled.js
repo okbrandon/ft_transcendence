@@ -6,7 +6,9 @@ const PongPaddle = styled.div`
 	${({ $side, $leftPaddleTop, $rightPaddleTop }) => $side === 'left' ? `top: ${$leftPaddleTop}px;` : `top: ${$rightPaddleTop}px`};
 	width: 13px;
 	height: 100px;
-	background-color: white;
+	background: ${({ $skin }) => $skin ? `url(${$skin})` : '#fff'};
+	background-repeat: no-repeat;
+	background-size: cover;
 	border-radius: 5px;
 `;
 

@@ -60,17 +60,17 @@ services:
   traefik:
     image: traefik:v2.5
     restart: always
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
     ports:
       - "8888:80"
     networks:
       - transcendence
     volumes:
-      - /run/user/101355/docker.sock:/var/run/docker.sock
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:80"]
-    #   interval: 15s
-    #   timeout: 10s
-    #   retries: 3
+      - /run/user/101547/docker.sock:/var/run/docker.sock # have to change this section when you are at school
+      # - /var/run/docker.sock:/var/run/docker.sock
 
   postgres:
     image: postgres

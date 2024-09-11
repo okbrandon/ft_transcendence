@@ -1,19 +1,14 @@
 import React, { useState } from "react";
 import {
-	ActionButton,
-	Actions,
-	FriendCard,
-	FriendInfo,
-	FriendName,
-	FriendStatus,
-	FriendsList,
 	Header,
 	PageContainer,
-	RemoveButton,
-	SearchInput
+	SearchInput,
 } from "./styles/Friends.styled";
+import Tabs from "react-bootstrap/Tabs";
+import Tab from "react-bootstrap/Tab";
+import RequestsList from "./RequestsList";
+import FriendsList from "./FriendsList";
 
-// Sample Friends Data
 const friends = [
 	{ id: 1, name: "Brandon", status: "online" },
 	{ id: 2, name: "Evan", status: "offline" },
@@ -23,9 +18,9 @@ const friends = [
 	{ id: 6, name: "Sarah", status: "offline" },
 	{ id: 7, name: "John", status: "online" },
 	{ id: 8, name: "Jane", status: "online" },
+	{ id: 9, name: "Mathieu", status: "online" },
 ];
 
-// Main Friends Page Component
 const Friends = () => {
 	const [searchTerm, setSearchTerm] = useState("");
 
@@ -36,30 +31,26 @@ const Friends = () => {
 	return (
 		<PageContainer>
 			<Header>
-				<h1>Friends</h1>
+				<h1>FRIENDS</h1>
 				<SearchInput
-                    id="friends-search"
+					id="friends-search"
 					type="text"
 					placeholder="Search Friends"
 					value={searchTerm}
 					onChange={(e) => setSearchTerm(e.target.value)}
 				/>
 			</Header>
-			<FriendsList>
-				{filteredFriends.map((friend) => (
-					<FriendCard key={friend.id}>
-						<FriendInfo>
-							<FriendStatus $status={friend.status} />
-							<FriendName>{friend.name}</FriendName>
-						</FriendInfo>
-						<Actions>
-							<ActionButton>Invite</ActionButton>
-							<ActionButton>Chat</ActionButton>
-							<RemoveButton id="remove-button">Remove</RemoveButton>
-						</Actions>
-					</FriendCard>
-				))}
-			</FriendsList>
+			<Tabs
+				defaultActiveKey="friends"
+				className="mb-3"
+			>
+				<Tab eventKey="friends" title="Friends">
+					<FriendsList friends={filteredFriends}/>
+				</Tab>
+				<Tab eventKey="requests" title="Requests">
+					<RequestsList/>
+				</Tab>
+			</Tabs>
 		</PageContainer>
 	);
 };
