@@ -22,8 +22,8 @@ const LeftChildContainer = styled.div`
 	flex-direction: column;
 `;
 
-const RankingHeader = ({ rank }) => {
-	return <h3>Your Rank: {rank}</h3>;
+const RankingHeader = () => {
+	return <h3>PLayer Rankings</h3>;
 };
 
 const ScorePosContainer = styled.div`
@@ -104,12 +104,12 @@ const TableLeaderboard = styled.table`
 	}
 `;
 
-export const Leaderboard = () => {
+const Leaderboard = () => {
 	return (
 		<WrapContainer>
 			<TopDetails>
 				<LeftChildContainer>
-					<RankingHeader rank="1st"/>
+					<RankingHeader/>
 					<ScorePosContainer>
 						<ScoreDisplay score="18975"/>
 						<PositionDisplay position="1st"/>
@@ -159,3 +159,5 @@ export const Leaderboard = () => {
 		</WrapContainer>
 	);
 };
+
+export default Leaderboard;

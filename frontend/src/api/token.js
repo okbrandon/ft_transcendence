@@ -14,7 +14,7 @@ const refreshToken = async () => {
 		throw new Error("Refresh token expired");
 	}
 
-	const response = await axios.post("http://localhost/api/v1/auth/token/refresh", { refresh });
+	const response = await axios.post("http://localhost:8888/api/v1/auth/token/refresh", { refresh });
 	const newToken = response.data.access;
 
 	localStorage.setItem("token", newToken);

@@ -65,11 +65,11 @@ services:
       - "--providers.docker=true"
       - "--entrypoints.web.address=:80"
     ports:
-      - "80:80"
+      - "8888:80"
     networks:
       - transcendence
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /run/user/101355/docker.sock:/var/run/docker.sock
     # healthcheck:
     #   test: ["CMD", "curl", "-f", "http://localhost:80"]
     #   interval: 15s
@@ -91,21 +91,21 @@ services:
     #   retries: 5
     #   start_period: 10s
 
-  frontend:
-    build: ./frontend
-    restart: always
-    env_file: .env
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
-      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
-    networks:
-      - transcendence
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://localhost:"
-        tag: "frontend"
+  # frontend:
+  #   build: ./frontend
+  #   restart: always
+  #   env_file: .env
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
+  #     - "traefik.http.services.frontend.loadbalancer.server.port=3000"
+  #   networks:
+  #     - transcendence
+  #   logging:
+  #     driver: gelf
+  #     options:
+  #       gelf-address: "udp://localhost:"
+  #       tag: "frontend"
     # depends_on:
     #   backend:
     #     condition: service_healthy
@@ -141,40 +141,40 @@ services:
     #   timeout: 10s
     #   retries: 3
 
-  gameserver:
-    build: ./gameserver-v2
-    restart: always
-    env_file: .env
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.gameserver.rule=PathPrefix(`/ws`)"
-      - "traefik.http.services.gameserver.loadbalancer.server.port=8080"
-    ports:
-      - 8080:8080
-    networks:
-      - transcendence
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://localhost:12201"
-        tag: "frontend"
+  # gameserver:
+  #   build: ./gameserver-v2
+  #   restart: always
+  #   env_file: .env
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.gameserver.rule=PathPrefix(`/ws`)"
+  #     - "traefik.http.services.gameserver.loadbalancer.server.port=8080"
+  #   ports:
+  #     - 8080:8080
+  #   networks:
+  #     - transcendence
+  #   logging:
+  #     driver: gelf
+  #     options:
+  #       gelf-address: "udp://localhost:12201"
+  #       tag: "frontend"
     # depends_on:
     #   backend:
     #     condition: service_healthy
 
-  harvester:
-    build: ./harvester
-    restart: always
-    env_file: .env
-    volumes:
-      - ./data/exports:/exports
-    networks:
-      - transcendence
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://localhost:12201"
-        tag: "frontend"
+  # harvester:
+  #   build: ./harvester
+  #   restart: always
+  #   env_file: .env
+  #   volumes:
+  #     - ./data/exports:/exports
+  #   networks:
+  #     - transcendence
+  #   logging:
+  #     driver: gelf
+  #     options:
+  #       gelf-address: "udp://localhost:12201"
+  #       tag: "frontend"
     # depends_on:
     #   postgres:
     #     condition: service_healthy

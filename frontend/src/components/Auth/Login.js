@@ -23,7 +23,7 @@ const Login = () => {
 	};
 	const handleFortyTwo = (event) => {
 		event.preventDefault();
-		window.location.href = 'http://localhost/api/v1/auth/42/login';
+		window.location.href = 'http://localhost:8888/api/v1/auth/42/login';
 	};
 
 	return (
