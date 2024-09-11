@@ -11,7 +11,7 @@ const ChatWindowContainer = styled.div`
 	position: relative !important;
 	margin-right: 1%;
 	max-width: 350px;
-	height: ${({ isMinimized }) => (isMinimized ? '40px' : '500px')};
+	height: ${({ isMinimized }) => (isMinimized ? '45px' : '500px')};
 	transition: height 0.3s ease;
 `;
 
@@ -59,8 +59,8 @@ const ActionButtonContainer = styled.div`
 `;
 
 export const ChatWindow = ({ friendname, messages, onClose, isMinimized, onToggleMinimize }) => {
-	const [isActive, setIsActive] = useState(false);
-	const [isArrowActive, setIsArrowActive] = useState(false);
+	const [isActive, setIsActive] = useState(true);
+	const [isArrowActive, setIsArrowActive] = useState(true);
 
 	const handleToggle = () => {
 		setIsActive(!isActive);

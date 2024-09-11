@@ -4,18 +4,7 @@ import { SearchFriends } from './SearchFriends.js';
 import { MessagePreview } from './MessagePreview.js';
 import { ChatWindow } from './ChatWindow.js';
 import { Arrow } from './Arrow.js';
-
-const OverlayContainer = styled.div`
-	width: 100%;
-	position: fixed;
-	z-index: 9000;
-	bottom: 0;
-	left: 0;
-	pointer-events: none;
-	display: flex;
-	flex-wrap: nowrap;
-	justify-content: flex-start;
-`;
+import ChatContainer from '../../styles/Chat/ChatContainer.styled';
 
 const ChatOverlayContainer = styled.aside`
 	height: ${({ isMinimized }) => (isMinimized ? '45px' : 'auto')};
@@ -95,7 +84,7 @@ const Chat = () => {
 	}
 
 	return (
-		<OverlayContainer>
+		<ChatContainer>
 			<ChatOverlayContainer isMinimized={isOverlayMinimized}>
 				<ChatListBubble isMinimized={isOverlayMinimized}>
 					<ChatHeaderStyled onClick={handleToggleOverlayMinimize}>
@@ -123,7 +112,7 @@ const Chat = () => {
 					/>
 				)}
 			</ChatOverlayContainer>
-		</OverlayContainer>
+		</ChatContainer>
 	);
 };
 
