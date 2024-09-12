@@ -3,12 +3,15 @@ import urllib.parse
 import requests
 
 from channels.generic.websocket import AsyncWebsocketConsumer
+#from .models import Conversation, User, Relationship
+#from asgiref.sync import sync_to_async
+from django.db.models import Q
 
 logger = logging.getLogger(__name__)
 
-class User:
+class SocketUser:
 	def __init__(self, user_id, username):
-		self.user_id = id
+		self.user_id = user_id
 		self.username = username
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -31,6 +34,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			return
 
 		logger.info(f"User {user.username} connected")
+		#await self.ensure_conversations_exist(user)
 		await self.accept()
 
 	async def disconnect(self, close_code):
@@ -51,8 +55,31 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				raise Exception(f"Failed to get user info: {response.status_code} {response.reason}")
 
 			user_data = response.json()
-			user = User(user_id=user_data["userID"], username=user_data["username"])
+			user = SocketUser(user_id=user_data["userID"], username=user_data["username"])
 			return user
 		except Exception as err:
 			logger.error(f"An error occurred getting the user from token: {err}")
 			return None
+	
+	#@sync_to_async
+	#def ensure_conversations_exist(self, user):
+	#	friends = Relationship.objects.filter(
+	#		Q(userA=user.user_id, status=1) | Q(userB=user.user_id, status=1)
+	#	)
+		
+	#	for relationship in friends:
+	#		friend_id = relationship.userA if relationship.userA != user.user_id else relationship.userB
+	
+	#		try:
+	#			friend = User.objects.get(userID=friend_id)
+	#		except User.DoesNotExist:
+	#			continue
+	
+	#		existing_conversation = Conversation.objects.filter(
+	#			participants__in=[user, friend], type='private_message'
+	#		).exists()
+			
+	#		if not existing_conversation:
+	#			new_conversation = Conversation.objects.create(type='private_message')
+	#			new_conversation.participants.add(user, friend)
+	#			new_conversation.save()

@@ -88,13 +88,23 @@ class UserSettings(models.Model):
     def __str__(self):
         return self.userID
 
-class Message(models.Model):
-    messageID = models.CharField(max_length = 48)
-    content = models.CharField(max_length = 256)
-    authorID = models.CharField(max_length = 48)
+class Conversation(models.Model):
+    conversationID = models.CharField(primary_key=True, max_length=48, default=generate_id("conv"), editable=False)
+    type = models.CharField(max_length=50, default='private_message')  # Can be expanded for different types
+    participants = models.ManyToManyField(User, related_name='conversations')
 
     def __str__(self):
-        return self.messageID
+        return str(self.conversationID)
+
+class Message(models.Model):
+    messageID = models.CharField(primary_key=True, max_length=48, default=generate_id("msg"), editable=False)
+    conversation = models.ForeignKey(Conversation, null=True, related_name='messages', on_delete=models.CASCADE)
+    content = models.CharField(max_length=256)
+    sender = models.ForeignKey(User, null=True, related_name='sent_messages', on_delete=models.CASCADE)
+    createdAt = models.DateTimeField(null=True, auto_now_add=True)
+
+    def __str__(self):
+        return f"Message(messageID={self.messageID}, conversationID={self.conversation.conversationID})"
 
 class Relationship(models.Model):
     relationshipID = models.CharField(max_length = 48)
