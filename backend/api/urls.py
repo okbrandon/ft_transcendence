@@ -26,7 +26,7 @@ urlpatterns = [
     path('auth/totp/confirm', ConfirmTOTP.as_view()),
     path('auth/totp/delete', DeleteTOTP.as_view()),
 
-    path('users/@me/profile', UserProfileMe.as_view()), # GET, PATCH
+    path('users/@me/profile', UserProfileMe.as_view()), # GET, PATCH, DELETE
     path('users/<identifier>/profile', UserProfile.as_view()), # GET
     path('users/@me/matches', UserMatchesMe.as_view()), # GET
     path('users/<userID>/matches', UserMatches.as_view()), # GET
@@ -34,7 +34,6 @@ urlpatterns = [
     path('users/@me/exports', UserExports.as_view()), # GET
     path('users/@me/relationships', UserRelationshipsMe.as_view()), # GET, PUT
     path('users/@me/harvest', UserHarvestMe.as_view()), # POST, GET, DELETE
-    path('users/@me/delete', UserDeleteMe.as_view()), # POST, GET, DELETE
     path('users/search', UserSearch.as_view()), # GET
 
     path('store/items', StoreItemsList.as_view()), # GET

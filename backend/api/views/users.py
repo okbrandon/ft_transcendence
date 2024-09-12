@@ -1,5 +1,7 @@
 import pyotp
 import os
+import random
+import string
 
 from rest_framework import status
 from rest_framework.views import APIView
@@ -10,9 +12,9 @@ from django.contrib.auth.hashers import make_password
 from django.db import models
 from django.http import Http404, HttpResponse
 
-from ..log import log_to_discord
 from ..models import User, Match, Relationship, UserSettings
 from ..serializers import UserSerializer, UserSettingsSerializer, MatchSerializer, RelationshipSerializer
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from ..util import send_otp_via_sms
 
 class UserProfileMe(APIView):
@@ -52,6 +54,29 @@ class UserProfileMe(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": f"An error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def delete(self, request, *args, **kwargs):
+        me = request.user
+        new_username = ''.join(random.choices(string.ascii_lowercase + string.digits, k=16))
+
+        me.username = new_username
+        me.displayName = None
+        me.email = new_username + '@disabledaccount.com'
+        me.mfaToken = None
+        me.avatarID = None
+        me.bannerID = None
+        me.bio = 'This account has been permanently disabled.'
+        me.oauthAccountID = None
+        me.phone_number = None
+        me.money = 0
+        me.flags = 1<<2
+        me.save()
+
+        tokens = OutstandingToken.objects.filter(user=me)
+        for token in tokens:
+            _, _ = BlacklistedToken.objects.get_or_create(token=token)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
     
 class UserProfile(APIView):
     def get_object(self, identifier):
@@ -81,31 +106,6 @@ class UserMatches(APIView):
         serializer = MatchSerializer(matches, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-class UserDeleteMe(APIView):
-    def get(self, request, *args, **kwargs):
-        me = request.user
-        return Response({"scheduled_deletion": me.flags & (1 << 4) == (1 << 4)}, status=status.HTTP_200_OK)
-    
-    def delete(self, request, *args, **kwargs):
-        me = request.user
-
-        if me.flags & (1 << 4) != (1 << 4):
-            return Response({"error": "User is not scheduled for deletion"}, status=status.HTTP_400_BAD_REQUEST)
-
-        me.flags = me.flags & ~(1 << 4)
-        me.save()
-        
-        log_to_discord(f"User account {me.userID} has retracted their request for anonymization")
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-    def post(self, request, *args, **kwargs):
-        me = request.user
-        me.flags = me.flags | (1 << 4)
-        me.save()
-
-        log_to_discord(f"User account {me.userID} has been flagged for anonymization")
-        return Response(status=status.HTTP_204_NO_CONTENT)
-    
 class UserHarvestMe(APIView):
     def get(self, request, *args, **kwargs):
         me = request.user
@@ -120,7 +120,6 @@ class UserHarvestMe(APIView):
         me.flags = me.flags & ~(1 << 3)
         me.save()
         
-        log_to_discord(f"User account {me.userID} has retracted their data export request")
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def post(self, request, *args, **kwargs):
@@ -128,7 +127,6 @@ class UserHarvestMe(APIView):
         me.flags = me.flags | (1 << 3)
         me.save()
 
-        log_to_discord(f"User account {me.userID} has been flagged for data export")
         return Response(status=status.HTTP_204_NO_CONTENT)
     
 class UserSettingsMe(APIView):
@@ -157,9 +155,6 @@ class UserRelationshipsMe(APIView):
     def get(self, request, *args, **kwargs):
         me = request.user
         relationships = Relationship.objects.filter(userA=me.userID) | Relationship.objects.filter(userB=me.userID)
-
-        # Exclude blocked relationships where the user is the blocked user, for privacy reasons
-        relationships = relationships.exclude(status=2, userB=me.userID)
 
         serializer = RelationshipSerializer(relationships, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

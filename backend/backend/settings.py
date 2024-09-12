@@ -35,6 +35,9 @@ ALLOWED_HOSTS = [
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=28),
+    "BLACKLIST_AFTER_ROTATION": True,
+    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
+    "BLACKLIST_TOKEN_CHECKS": ["rest_framework_simplejwt.token_blacklist.models.BlacklistedToken"],
 }
 
 OAUTH2_CLIENT_ID = os.getenv("OAUTH2_CLIENT_ID")
@@ -54,6 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'api',
     'corsheaders',
 ]
