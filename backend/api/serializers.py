@@ -4,9 +4,9 @@ from .models import User, Match, Message, Token, Relationship, UserSettings, Sto
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["userID", "username", "displayName", "email", "lang", 
-                  "avatarID", "flags", "money", "mfaToken", "phone_number", "password", "bannerID", "bio", "oauthAccountID"]
-        read_only_fields = ["userID", "username", "lang", "flags", "money", "mfaToken", "oauthAccountID"]
+        fields = ["userID", "username", "displayName", "email", "mfaToken", "lang", 
+                  "avatarID", "bannerID", "bio", "oauthAccountID", "phone_number", "password", "flags", "money"]
+        read_only_fields = ["userID", "mfaToken", "oauthAccountID", "flags", "money"]
 
 class MatchSerializer(serializers.ModelSerializer):
     class Meta:

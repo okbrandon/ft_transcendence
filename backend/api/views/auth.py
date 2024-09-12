@@ -19,6 +19,7 @@ from ..models import User, VerificationCode
 from ..serializers import UserSerializer
 from ..util import generate_id, send_verification_email
 from ..backends import AuthBackend
+from ..validators import validate_username, validate_email, validate_password, validate_lang
 
 
 @permission_classes([AllowAny])
@@ -64,19 +65,13 @@ class AuthRegister(APIView):
 
         username, email, password, lang = data['username'], data['email'], data['password'], data['lang']
 
-        if len(username) < 4:
-            raise ValidationError("Username must be at least 4 characters long.")
-        if len(username) > 16:
-            raise ValidationError("Username cannot be longer than 16 characters.")
-        if len(email) > 64:
-            raise ValidationError("Email cannot be longer than 64 characters.")
-        if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
-            raise ValidationError("Invalid email address, did not match regex pattern.")
-        if len(password) < 8:
-            raise ValidationError("Password must be at least 8 characters long.")
-        if len(password.encode('utf-8')) > 72:
-            raise ValidationError("Password cannot be longer than 72 bytes.")
-        if len(lang) != 2 or lang not in ['en', 'fr', 'es']:
+        if not validate_username(username):
+            raise ValidationError("Invalid username. It must be 4-16 characters long and alphanumeric.")
+        if not validate_email(email):
+            raise ValidationError("Invalid email address.")
+        if not validate_password(password):
+            raise ValidationError("Invalid password. It must be at least 8 characters long, contain at least one lowercase letter, one uppercase letter, one digit, and one special character.")
+        if not validate_lang(lang):
             raise ValidationError("Unsupported language. Supported languages are 'en', 'fr' or 'es'.")
 
         return {
@@ -105,8 +100,13 @@ class AuthLogin(APIView):
         if user is None:
             return Response({"error": "Invalid credentials or OTP."}, status=status.HTTP_401_UNAUTHORIZED)
 
+        if user.flags & (1 << 2):
+            return Response({"error": "This account has been disabled."}, status=status.HTTP_403_FORBIDDEN)
+
         if not user.flags & (1 << 0):
             return Response({"error": "Email not verified. Please verify your email before logging in."}, status=status.HTTP_403_FORBIDDEN)
+
+        login(request, user)
 
         refresh = RefreshToken.for_user(user)
         access = str(refresh.access_token)
