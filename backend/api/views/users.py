@@ -138,7 +138,6 @@ class UserDeleteMe(APIView):
         me.flags = me.flags & ~(1 << 4)
         me.save()
 
-        log_to_discord(f"User account {me.userID} has retracted their request for anonymization")
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def post(self, request, *args, **kwargs):
@@ -146,7 +145,6 @@ class UserDeleteMe(APIView):
         me.flags = me.flags | (1 << 4)
         me.save()
 
-        log_to_discord(f"User account {me.userID} has been flagged for anonymization")
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -164,7 +162,6 @@ class UserHarvestMe(APIView):
         me.flags = me.flags & ~(1 << 3)
         me.save()
 
-        log_to_discord(f"User account {me.userID} has retracted their data export request")
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def post(self, request, *args, **kwargs):
