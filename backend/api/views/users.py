@@ -62,10 +62,6 @@ class UserProfileMe(APIView):
             for field, value in updated_fields.items():
                 setattr(me, field, value)
 
-        me.save()
-        serializer = UserSerializer(me)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
             me.save()
             serializer = UserSerializer(me)
             profile = get_safe_profile(serializer.data, me=True)
