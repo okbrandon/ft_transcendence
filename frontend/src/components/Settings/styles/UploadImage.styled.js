@@ -1,24 +1,5 @@
 import styled from 'styled-components';
 
-export const TextArea = styled.textarea`
-	width: 100%;
-	padding: 1rem;
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	border-radius: 5px;
-	background-color: #222;
-	color: #fff;
-	margin-bottom: 1.5rem;
-	font-size: 1rem;
-	transition: border-color 0.3s ease, box-shadow 0.3s ease;
-
-	&:focus {
-		outline: none;
-		border-color: rgba(164, 69, 178, 0.7);
-		box-shadow: 0 0 10px rgba(164, 69, 178, 0.5);
-	}
-`;
-
-
 export const ImageUploadContainer = styled.div`
 	display: flex;
 	flex-direction: column;

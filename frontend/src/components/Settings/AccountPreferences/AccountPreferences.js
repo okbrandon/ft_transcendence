@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import {
 	BioContainer,
 	ErrorMessage,
@@ -6,20 +6,13 @@ import {
 	FormInput,
 	SectionHeading,
 	SubSectionHeading,
-	SubmitButton
-} from './styles/Settings.styled';
-import {
-	ImagePreview,
-	ImagePreviewContainer,
-	ImageUploadContainer,
-	ImageUploadInput,
-	ImageUploadLabel,
-	RemoveButton,
-	TextArea
-} from './styles/Image.styled';
-import { GetImage } from '../../api/user';
-import API from '../../api/api';
-import { AuthContext } from '../../context/AuthContext';
+	SubmitButton,
+	TextArea,
+} from '../styles/Settings.styled';
+import UploadImage from './UploadImage';
+import API from '../../../api/api';
+import { AuthContext } from '../../../context/AuthContext';
+import DeleteAccount from './DeleteAccount';
 
 const AccountPreferences = () => {
 	const { user } = useContext(AuthContext);
@@ -28,42 +21,10 @@ const AccountPreferences = () => {
 		displayName: user.displayName,
 		bio: user.bio,
 	});
-	const [profileImage, setProfileImage] = useState(user.avatarID);
-	const [bannerImage, setBannerImage] = useState(user.bannerID);
+
 	const [bioByteLength, setBioByteLength] = useState(0);
 	const [error, setError] = useState('');
-	const profilePictureRef = useRef(null);
-	const bannerPictureRef = useRef(null);
 
-	const handleImageChange = (event, type, setImage) => {
-		const file = event.target.files[0];
-
-		if (!file) {
-			return;
-		}
-
-		GetImage(file)
-			.then((image) => {
-				handleChange({ target: { name: type, value: image } });
-				setImage(image);
-			})
-			.catch((err) => {
-				console.error(err);
-			});
-	};
-
-	const handleRemoveImage = (type, setImage, inputRef) => {
-		setImage(null);
-		setFormData(data => {
-			const updatedData = { ...data };
-			delete updatedData[type];
-			return updatedData;
-		});
-
-		if (inputRef.current) {
-			inputRef.current.value = '';
-		}
-	};
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -150,54 +111,11 @@ const AccountPreferences = () => {
 				<p>{bioByteLength} / 280 bytes</p>
 			</BioContainer>
 			<SubSectionHeading>Profile Image & Background</SubSectionHeading>
-			<ImageUploadContainer>
-				<ImageUploadLabel htmlFor="profile-picture">Profile Picture:</ImageUploadLabel>
-				<ImageUploadInput
-					type="file"
-					id="profile-picture"
-					accept="image/*"
-					onChange={(e) => handleImageChange(e, "avatarID", setProfileImage)}
-					ref={profilePictureRef}
-				/>
-				<ImagePreviewContainer className="profile-picture">
-					{profileImage ? (
-						<ImagePreview src={profileImage} alt="Profile Preview" />
-					) : (
-						"No profile image selected"
-					)}
-				</ImagePreviewContainer>
-				{profileImage && (
-					<RemoveButton onClick={() => handleRemoveImage("avatarID", setProfileImage, profilePictureRef)}>
-						Remove Image
-					</RemoveButton>
-				)}
-			</ImageUploadContainer>
-
-			<ImageUploadContainer>
-				<ImageUploadLabel htmlFor="background-image">Background Image:</ImageUploadLabel>
-				<ImageUploadInput
-					type="file"
-					id="background-image"
-					accept="image/*"
-					onChange={(e) => handleImageChange(e, "bannerID", setBannerImage)}
-					ref={bannerPictureRef}
-				/>
-				<ImagePreviewContainer className="banner-picture">
-					{bannerImage ? (
-						<ImagePreview src={bannerImage} alt="Background Preview" />
-					) : (
-						"No background image selected"
-					)}
-				</ImagePreviewContainer>
-				{bannerImage && (
-					<RemoveButton onClick={() => handleRemoveImage("bannerID", setBannerImage, bannerPictureRef)}>
-						Remove Image
-					</RemoveButton>
-				)}
-			</ImageUploadContainer>
+			<UploadImage user={user} setFormData={setFormData} handleChange={handleChange}/>
 			<SubSectionHeading>General Preferences</SubSectionHeading>
 			<FormInput type="text" placeholder="Language Preference" />
 			<SubSectionHeading>Account Management</SubSectionHeading>
+			<DeleteAccount/>
 			<SubmitButton type="submit">Save Changes</SubmitButton>
 		</Form>
 	);

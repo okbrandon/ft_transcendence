@@ -19,7 +19,8 @@ export const PageContainer = styled.div`
 
 export const SideBar = styled.div`
 	width: 25%;
-	background-color: #111;
+	background-color: rgba(20, 20, 20, 0.5);
+	border: 1px solid rgba(255, 255, 255, 0.1);
 	border-radius: 15px;
 	padding: 20px;
 	display: flex;
@@ -29,7 +30,7 @@ export const SideBar = styled.div`
 `;
 
 export const SidebarButton = styled.button`
-	background: #222;
+	background: rgba(20, 20, 20, 0.1);
 	border: 2px solid rgba(255, 255, 255, 0.1);
 	border-radius: 10px;
 	padding: 15px;
@@ -42,9 +43,9 @@ export const SidebarButton = styled.button`
 	font-family: 'Orbitron', sans-serif;
 
 	&:hover {
-		background-color: #333;
-		box-shadow: 0 0 10px rgba(164, 69, 178, 0.7), 0 0 10px rgba(59, 130, 246, 0.5);
-		border-color: rgba(164, 69, 178, 0.5);
+		background: rgba(50, 50, 50, 0.5);
+		box-shadow: 0 0 2px rgba(164, 69, 178, 0.7);
+		border-color: rgba(164, 69, 178, 0.2);
 	}
 
 	&.active {
@@ -54,8 +55,8 @@ export const SidebarButton = styled.button`
 `;
 
 export const SidebarBackButton = styled.button`
-	background: #1a1a1a;
-	border: 2px solid rgba(255, 255, 255, 0.2);
+	background: rgba(100, 100, 100, 0.1);
+	border: 2px solid rgba(255, 255, 255, 0.1);
 	color: #fff;
 	border-radius: 10px;
 	padding: 15px;
@@ -70,10 +71,9 @@ export const SidebarBackButton = styled.button`
 	margin-top: 20px;
 
 	&:hover {
-		background-color: #333;
-		box-shadow: 0 0 15px rgba(164, 69, 178, 0.8), 0 0 15px rgba(59, 130, 246, 0.6);
-		border-color: rgba(164, 69, 178, 0.8);
-		color: rgba(255, 255, 255, 1);
+		background: rgba(50, 50, 50, 0.5);
+		box-shadow: 0 0 2px rgba(164, 69, 178, 0.7);
+		border-color: rgba(164, 69, 178, 0.2);
 	}
 
 	&:active {
@@ -86,7 +86,8 @@ export const SidebarBackButton = styled.button`
 export const ContentArea = styled.div`
 	flex: 1;
 	padding: 30px;
-	background-color: #111;
+	background-color: rgba(20, 20, 20, 0.5);
+	border: 1px solid rgba(255, 255, 255, 0.1);
 	color: #fff;
 	border-radius: 10px;
 	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
@@ -132,7 +133,7 @@ export const FormInput = styled.input`
 	padding: 1rem;
 	border: 1px solid rgba(255, 255, 255, 0.1);
 	border-radius: 5px;
-	background-color: #222;
+	background-color: rgba(25, 25, 25, 0.5);
 	color: #fff;
 	margin-bottom: 3.5rem;
 	font-size: 1rem;
@@ -154,6 +155,24 @@ export const BioContainer = styled.div`
 		bottom: 20px;
 		font-size: 0.8rem;
 		color: rgba(255, 255, 255, 0.5);
+	}
+`;
+
+export const TextArea = styled.textarea`
+	width: 100%;
+	padding: 1rem;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 5px;
+	background-color: rgba(25, 25, 25, 0.5);
+	color: #fff;
+	margin-bottom: 1.5rem;
+	font-size: 1rem;
+	transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+	&:focus {
+		outline: none;
+		border-color: rgba(164, 69, 178, 0.7);
+		box-shadow: 0 0 10px rgba(164, 69, 178, 0.5);
 	}
 `;
 

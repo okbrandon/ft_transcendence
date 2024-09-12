@@ -94,6 +94,7 @@ const TableLeaderboard = styled.table`
 	th, td {
 		border-top: 1px solid #ddd;
 		padding: 8px;
+		text-align: center;
 	}
 
 	th {

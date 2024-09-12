@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AccountPreferences from './AccountPreferences';
+import AccountPreferences from './AccountPreferences/AccountPreferences';
 import Security from './Security';
 import Visibility from './Visibility';
 import Privacy from './Privacy';
