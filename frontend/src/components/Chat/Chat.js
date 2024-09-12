@@ -17,7 +17,7 @@ const Chat = () => {
 		'Brandonation': { sender: 'Brandonation', text: 'Good morning!' },
 		'Evanescence': { sender: 'Evanescence', text: 'How are you?' },
 		'Hanministrateur': { sender: 'Hanministrateur', text: 'Let\'s meet up.' },
-		'Kianatomy': { sender: 'Kianatomy', text: 'See you soon!' }
+		'Kianatomy': { sender: 'Kianatomy', text: 'See you soon!' },'Kianatom': { sender: 'Kianatomy', text: 'See you soon!' },'Kiaatomy': { sender: 'Kianatomy', text: 'See you soon!' },'Kianatomy': { sender: 'Kianatomy', text: 'See you soon!' },'Kianatomy': { sender: 'Kianatomy', text: 'See you soon!' },'Kianatomy': { sender: 'Kianaomy', text: 'See you soon!' },'Kianatomy': { sender: 'Kiantomy', text: 'See you soon!' },'Kiaatomy': { sender: 'Kianatomy', text: 'See you soon!' },'ianatomy': { sender: 'Kianatomy', text: 'See you soon!' }
 	});
 
 	const openChat = (friendname) => {

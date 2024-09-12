@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import CloseButton from 'react-bootstrap/CloseButton';
 import { Arrow } from './Arrow.js';
+import { ChatHeaderStyled } from './styles/ChatContainer.styled';
 
 const ChatWindowContainer = styled.div`
 	flex: 1;
@@ -14,20 +15,6 @@ const ChatWindowContainer = styled.div`
 	height: ${({ $isMinimized }) => ($isMinimized ? '45px' : '500px')};
 	transition: height 0.3s ease;
 	border: 1px solid #ddd;
-	border-radius: 10px 10px 0 0;
-`;
-
-const ChatHeader = styled.div`
-	padding: 10px;
-	background-color: #000;
-	border: 1px solid #ddd;
-	font-weight: bold;
-	color: #fff;
-	position: relative;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	cursor: pointer;
 	border-radius: 10px 10px 0 0;
 `;
 
@@ -73,7 +60,7 @@ export const ChatWindow = ({ friendname, messages, onClose, $isMinimized, onTogg
 
 	return (
 		<ChatWindowContainer $isMinimized={$isMinimized}>
-			<ChatHeader onClick={handleToggle}>
+			<ChatHeaderStyled onClick={handleToggle}>
 				{friendname}
 				<ActionButtonContainer>
 					<Arrow
@@ -81,7 +68,7 @@ export const ChatWindow = ({ friendname, messages, onClose, $isMinimized, onTogg
 						ArrowAnimate={isArrowActive}/>
 					<CloseButton variant='white' onClick={onClose} />
 				</ActionButtonContainer>
-			</ChatHeader>
+			</ChatHeaderStyled>
 			<ChatMessages $isMinimized={$isMinimized}>
 				<div>{messages.text}</div>
 			</ChatMessages>
