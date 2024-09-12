@@ -17,7 +17,7 @@ from django.utils import timezone
 
 from ..models import User, VerificationCode
 from ..serializers import UserSerializer
-from ..util import generate_id, send_verification_email
+from ..util import generate_id, send_verification_email, send_otp_via_email, send_otp_via_sms
 from ..backends import AuthBackend
 from ..validators import validate_username, validate_email, validate_password, validate_lang
 
@@ -92,6 +92,8 @@ class AuthLogin(APIView):
             user = User.objects.get(username=username)
             if user.oauthAccountID is not None:
                 return Response({"error": "This is an OAuth account. Please login with your identity provider."}, status=status.HTTP_400_BAD_REQUEST)
+            if user.mfaToken and not otp:
+                return Response({"error": "OTP is required for this account."}, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
             pass
 
@@ -121,31 +123,52 @@ class EnableTOTP(APIView):
         user = request.user
 
         if user.mfaToken:
-            return Response({"error": "TOTP is already enabled."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "MFA is already enabled."}, status=status.HTTP_400_BAD_REQUEST)
 
         user.mfaToken = pyotp.random_base32()
         user.save()
 
-        totp = pyotp.TOTP(user.mfaToken)
-        return Response({"message": "TOTP enabled successfully.", "token": user.mfaToken}, status=status.HTTP_200_OK)
+        return Response({"message": "MFA enabled successfully.", "token": user.mfaToken}, status=status.HTTP_200_OK)
 
-class ConfirmTOTP(APIView):
+class DeleteTOTP(APIView):
     def post(self, request, *args, **kwargs):
         user = request.user
         otp = request.data.get('otp')
+
+        if not user.mfaToken:
+            return Response({"error": "MFA is not enabled for this account."}, status=status.HTTP_400_BAD_REQUEST)
 
         if not otp:
             return Response({"error": "OTP is required."}, status=status.HTTP_400_BAD_REQUEST)
 
         totp = pyotp.TOTP(user.mfaToken)
-        if totp.verify(otp):
-            return Response({"message": "OTP confirmed successfully."}, status=status.HTTP_200_OK)
+        if totp.verify(otp, valid_window=6):
+            user.mfaToken = None
+            user.save()
+            return Response({"message": "MFA has been disabled."}, status=status.HTTP_200_OK)
         else:
             return Response({"error": "Invalid OTP."}, status=status.HTTP_400_BAD_REQUEST)
 
-class DeleteTOTP(APIView):
+class RequestTOTP(APIView):
     def post(self, request, *args, **kwargs):
         user = request.user
-        user.mfaToken = None
-        user.save()
-        return Response({"message": "MFA has been disabled."}, status=status.HTTP_200_OK)
+        platform = request.data.get('platform')
+
+        if not platform:
+            return Response({"error": "Platform is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if platform not in ['email', 'sms']:
+            return Response({"error": "Invalid platform. Choose 'email' or 'sms'."}, status=status.HTTP_400_BAD_REQUEST)
+
+        otp = pyotp.random_base32()
+
+        if platform == 'email':
+            send_otp_via_email(user.email)
+        elif platform == 'sms':
+            if not user.phone_number:
+                return Response({"error": "Phone number not set for this account."}, status=status.HTTP_400_BAD_REQUEST)
+            response, _ = send_otp_via_sms(user.phone_number)
+            if response.status_code != 202:
+                return Response({"error": "Failed to send OTP via SMS."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        return Response({"message": f"OTP sent via {platform}."}, status=status.HTTP_200_OK)

@@ -23,7 +23,7 @@ urlpatterns = [
     path('auth/login', AuthLogin.as_view()),
     path('auth/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
     path('auth/totp/enable', EnableTOTP.as_view()),
-    path('auth/totp/confirm', ConfirmTOTP.as_view()),
+    path('auth/totp/request', RequestTOTP.as_view()),
     path('auth/totp/delete', DeleteTOTP.as_view()),
 
     path('users/@me/profile', UserProfileMe.as_view()), # GET, PATCH, DELETE

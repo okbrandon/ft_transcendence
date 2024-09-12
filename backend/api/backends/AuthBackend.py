@@ -15,7 +15,7 @@ class AuthBackend(BaseBackend):
                     return None
                 if user.mfaToken and otp:
                     totp = pyotp.TOTP(user.mfaToken)
-                    if not totp.verify(otp):
+                    if not totp.verify(otp, valid_window=6):
                         return None
                 if check_password(password, user.password):
                     return user

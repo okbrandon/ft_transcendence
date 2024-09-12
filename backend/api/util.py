@@ -67,6 +67,26 @@ def send_otp_via_sms(to: str):
 
     return response, otp
 
+def send_otp_via_email(to: list, otp: str):
+    resend.api_key = os.getenv("RESEND_API_KEY")
+
+    formatted_otp = f"{otp[:3]} {otp[3:]}"
+
+    params: resend.Emails.SendParams = {
+        "from": "noreply@transcendence.evan.sh",
+        "to": to,
+        "subject": "Your One-Time Password (OTP)",
+        "html": f"""
+            <h1>Your One-Time Password (OTP)</h1>
+            <p>Your verification code is: <strong>{formatted_otp}</strong></p>
+            <p>Please use this code to verify your account.</p>
+            <p>If you didn't request this code, please change your account password.</p>
+        """,
+    }
+
+    email = resend.Emails.send(params)
+    return email
+
 def send_data_package_ready_email(to: list):
     resend.api_key = os.getenv("RESEND_API_KEY")
 
