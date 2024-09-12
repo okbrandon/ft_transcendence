@@ -4,6 +4,7 @@ import NavBar from '../Navigation/Navigation';
 import Footer from '../Footer/Footer';
 
 const Root = () => {
+	
 	return (
 		<>
 			<NavBar/>

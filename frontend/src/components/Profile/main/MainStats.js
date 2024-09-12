@@ -1,26 +1,26 @@
 import React from 'react';
-import { MainInfoItem, MainInfoContainer } from "../../../styles/Profile/main/MainBar.styled";
+import { MainStatsItem, MainStatsContainer } from "../styles/main/MainBar.styled";
 import { calculateTotalWins, calculateWinDefeatRatio } from '../scripts/match';
 
 const MainStats = ({ matchArray }) => {
 	return (
-		<MainInfoContainer>
-			<MainInfoItem>
-				<h2 className="title">RANKING</h2>
-				<h2 style={{textAlign: 'center'}}>-</h2>
-			</MainInfoItem>
-			<MainInfoItem style={{
+		<MainStatsContainer>
+			<MainStatsItem>
+				<h2>RANKING</h2>
+				<p>-</p>
+			</MainStatsItem>
+			<MainStatsItem style={{
 				borderRight: '1px solid #ccc',
 				borderLeft: '1px solid #ccc'
 			}}>
-				<h2 className="title">WINS</h2>
-				<h2 style={{textAlign: 'center'}}>{calculateTotalWins(matchArray)}</h2>
-			</MainInfoItem>
-			<MainInfoItem>
-				<h2 className="title">RATIO</h2>
-				<h2 style={{textAlign: 'center'}}>{calculateWinDefeatRatio(matchArray)}</h2>
-			</MainInfoItem>
-		</MainInfoContainer>
+				<h2>WINS</h2>
+				<p>{calculateTotalWins(matchArray)}</p>
+			</MainStatsItem>
+			<MainStatsItem>
+				<h2>RATIO</h2>
+				<p>{calculateWinDefeatRatio(matchArray)}</p>
+			</MainStatsItem>
+		</MainStatsContainer>
 	);
 };
 

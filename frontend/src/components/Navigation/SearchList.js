@@ -1,16 +1,31 @@
-import React, { useState, useEffect } from "react";
-import { ProfileListContainer } from "../../styles/Home/Navigation.styled";
-import Image from 'react-bootstrap/Image';
+import React from "react";
+import { SearchListContainer, SearchListItem, SearchListItemImage, SearchListItemText } from "./styles/SearchList.styled";
+import { useNavigate } from "react-router-dom";
 
-const SearchList = ({ input, results }) => {
+const SearchList = ({ results, setInput, setResults }) => {
+	const navigate = useNavigate();
+
+	const handleSelect = (username) => {
+		setInput('');
+		setResults(null);
+		navigate(`/profile/${username}`);
+	};
+
+	console.log(results);
+
 	return (
-		<ProfileListContainer>
-			{/* <p>{results.filter((element) => element.includes(input))}</p> */}
-			<div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-				<Image style={{width: '25px', height: '25px'}} src='./images/prune.jpg' alt='profile picture' roundedCircle/>
-				<p>{input}</p>
-			</div>
-		</ProfileListContainer>
+		<SearchListContainer>
+			{results.length ? results.map((profile, id) => (
+				<SearchListItem key={id} onClick={() => handleSelect(profile.username)}>
+					<SearchListItemImage src={profile.avatarID} alt='profile picture'/>
+					<SearchListItemText>{profile.displayName}</SearchListItemText>
+				</SearchListItem>
+			)) : (
+				<SearchListItem>
+					<SearchListItemText>No results found</SearchListItemText>
+				</SearchListItem>
+			)}
+		</SearchListContainer>
 	);
 };
 

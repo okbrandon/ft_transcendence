@@ -1,0 +1,6 @@
+### --- Chat Styled Component --- ###
+
+> Components
+
+DropupContainer:
+Container of our Messaging button.

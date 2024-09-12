@@ -61,6 +61,10 @@ class UserProfileMe(APIView):
             for field, value in updated_fields.items():
                 setattr(me, field, value)
 
+        me.save()
+        serializer = UserSerializer(me)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
             me.save()
             serializer = UserSerializer(me)
             profile = get_safe_profile(serializer.data, me=True)
@@ -91,7 +95,7 @@ class UserProfileMe(APIView):
             _, _ = BlacklistedToken.objects.get_or_create(token=token)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
 class UserProfile(APIView):
     def get_object(self, identifier):
         try:
@@ -107,9 +111,14 @@ class UserProfile(APIView):
             )
 
         serializer = UserSerializer(user)
+        data = serializer.data
+        if 'email' in data:
+            del data['email']
+        return Response(data, status=status.HTTP_200_OK)
+
         profile = get_safe_profile(serializer.data, me=False)
         return Response(profile, status=status.HTTP_200_OK)
-    
+
 class UserMatches(APIView):
     def get(self, request, userID, *args, **kwargs):
         user = User.objects.get(userID=userID)
@@ -117,12 +126,38 @@ class UserMatches(APIView):
         matches = [match for match in matches if match.playerA['id'] == user.userID or match.playerB['id'] == user.userID]
         serializer = MatchSerializer(matches, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
+class UserDeleteMe(APIView):
+    def get(self, request, *args, **kwargs):
+        me = request.user
+        return Response({"scheduled_deletion": me.flags & (1 << 4) == (1 << 4)}, status=status.HTTP_200_OK)
+
+    def delete(self, request, *args, **kwargs):
+        me = request.user
+
+        if me.flags & (1 << 4) != (1 << 4):
+            return Response({"error": "User is not scheduled for deletion"}, status=status.HTTP_400_BAD_REQUEST)
+
+        me.flags = me.flags & ~(1 << 4)
+        me.save()
+
+        log_to_discord(f"User account {me.userID} has retracted their request for anonymization")
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def post(self, request, *args, **kwargs):
+        me = request.user
+        me.flags = me.flags | (1 << 4)
+        me.save()
+
+        log_to_discord(f"User account {me.userID} has been flagged for anonymization")
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 class UserHarvestMe(APIView):
     def get(self, request, *args, **kwargs):
         me = request.user
         return Response({"scheduled_harvesting": me.flags & (1 << 3) == (1 << 3)}, status=status.HTTP_200_OK)
-    
+
     def delete(self, request, *args, **kwargs):
         me = request.user
 
@@ -131,7 +166,8 @@ class UserHarvestMe(APIView):
 
         me.flags = me.flags & ~(1 << 3)
         me.save()
-        
+
+        log_to_discord(f"User account {me.userID} has retracted their data export request")
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def post(self, request, *args, **kwargs):
@@ -140,14 +176,14 @@ class UserHarvestMe(APIView):
         me.save()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
 class UserSettingsMe(APIView):
     def get(self, request, *args, **kwargs):
         me = request.user
         settings = UserSettings.objects.get(user=me)
         serializer = UserSettingsSerializer(settings)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
     def patch(self, request, *args, **kwargs):
         me = request.user
         data = request.data
@@ -162,7 +198,7 @@ class UserSettingsMe(APIView):
         me.save()
         serializer = UserSettingsSerializer(me)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
 class UserRelationshipsMe(APIView):
     def get(self, request, *args, **kwargs):
         me = request.user
@@ -178,19 +214,19 @@ class UserRelationshipsMe(APIView):
 
         if not target_user_id or relationship_type is None:
             return Response({"error": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         try:
             target_user = User.objects.get(userID=target_user_id)
         except User.DoesNotExist:
             return Response({"error": "Target user does not exist"}, status=status.HTTP_404_NOT_FOUND)
-        
+
         # If either user is blocking the other, update or create a blocked relationship
         if relationship_type == 2:
             Relationship.objects.filter(userA=me.userID, userB=target_user_id).delete()
             Relationship.objects.filter(userA=target_user_id, userB=me.userID).delete()
             Relationship.objects.create(userA=me.userID, userB=target_user_id, status=2)
             return Response({"status": "User blocked"}, status=status.HTTP_200_OK)
-        
+
         # Check if there is an existing relationship from the target user
         existing_relationship = Relationship.objects.filter(userA=target_user_id, userB=me.userID).first()
         if existing_relationship and existing_relationship.status != 2:
@@ -200,7 +236,7 @@ class UserRelationshipsMe(APIView):
                 existing_relationship.status = 1
                 existing_relationship.save()
                 return Response({"status": "You are now friends"}, status=status.HTTP_200_OK)
-        
+
         # Check if there is an existing relationship initiated by the current user
         existing_relationship = Relationship.objects.filter(userA=me.userID, userB=target_user_id).first()
         if existing_relationship and existing_relationship.status != 2:
@@ -215,7 +251,7 @@ class UserRelationshipsMe(APIView):
         Relationship.objects.create(userA=me.userID, userB=target_user_id, status=relationship_type)
         message = "Friend request sent" if relationship_type == 0 else "You are now friends"
         return Response({"status": message}, status=status.HTTP_200_OK)
-    
+
 class UserMatchesMe(APIView):
     def get(self, request, *args, **kwargs):
         me = request.user

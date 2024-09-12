@@ -32,7 +32,7 @@ class AuthRegister(APIView):
 
         if User.objects.filter(username=data['username']).exists():
             return Response({"error": "Username is already taken"}, status=status.HTTP_409_CONFLICT)
-        
+
         if User.objects.filter(email=data['email']).exists():
             return Response({"error": "Email is already in use"}, status=status.HTTP_409_CONFLICT)
 
@@ -119,7 +119,7 @@ class AuthLogin(APIView):
 class EnableTOTP(APIView):
     def post(self, request, *args, **kwargs):
         user = request.user
-        
+
         if user.mfaToken:
             return Response({"error": "TOTP is already enabled."}, status=status.HTTP_400_BAD_REQUEST)
 

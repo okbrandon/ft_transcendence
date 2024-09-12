@@ -1,12 +1,12 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Dropdown from 'react-bootstrap/Dropdown';
-import ProfileDropdownButton from '../../styles/shared/button/ProfileDropdownButton.styled';
+import { ProfileDropdownButton } from './styles/Navigation.styled';
 import { AuthContext } from '../../context/AuthContext';
 
 const ProfileDropdown = () => {
 	const navigate = useNavigate();
-	const { setIsLoggedIn } = useContext(AuthContext);
+	const { setIsLoggedIn, user } = useContext(AuthContext);
 
 	const handleLogout = () => {
 		setIsLoggedIn(false);
@@ -21,8 +21,8 @@ const ProfileDropdown = () => {
 				PROFILE
 			</Dropdown.Toggle>
 			<Dropdown.Menu>
-				<Dropdown.Item onClick={() => { navigate('/profile') }}>Profile</Dropdown.Item>
-				<Dropdown.Item>Edit</Dropdown.Item>
+				<Dropdown.Item onClick={() => { navigate(`/profile/${user.username}`) }}>Profile</Dropdown.Item>
+				<Dropdown.Item onClick={() => { navigate('/settings') }}>Settings</Dropdown.Item>
 				<Dropdown.Divider/>
 				<Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
 			</Dropdown.Menu>

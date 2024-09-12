@@ -1,32 +1,34 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { GetUser } from '../api/user';
+import { GetUserByUsername } from '../api/user';
 import { useNavigate } from 'react-router-dom';
 
 export const ProfileContext = createContext();
 
-const ProfileProvider = ({ children }) => {
-	const [user, setUser] = useState(null);
+const ProfileProvider = ({ children, username }) => {
 	const [loading, setLoading] = useState(true);
+	const [profileUser, setProfileUser] = useState(null);
 	const navigate = useNavigate();
 
 	useEffect(() => {
+		setLoading(true);
+		console.log('🪧 ProfileProvider: Getting user...');
 		const timeoutId = setTimeout(() => {
-			GetUser()
+			GetUserByUsername(username)
 				.then((response) => {
-					setUser(response.data);
+					setProfileUser(response.data);
 					setLoading(false);
 				})
 				.catch((error) => {
 					console.error(error);
-					navigate('/login');
+					navigate('/*'); // maybe 404 page
 				});
-		}, 2000);
+		}, 1500);
 
 		return () => clearTimeout(timeoutId);
-	}, [navigate]);
+	}, [navigate, username]);
 
 	return (
-		<ProfileContext.Provider value={{ user, loading }}>
+		<ProfileContext.Provider value={{ profileUser, setProfileUser, loading }}>
 			{children}
 		</ProfileContext.Provider>
 	);

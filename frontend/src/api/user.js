@@ -1,11 +1,25 @@
 import API from './api';
 
 export const GetUser = async () => {
-	console.log('Getting user...');
+	console.log('Getting current user...');
 	return await API.get('users/@me/profile');
 };
 
-export const GetUsers = async () => {
-	console.log('Getting users...');
-	return await API.get('users');
+export const GetUserByUsername = async (username) => {
+	console.log('Getting user by username...');
+	return await API.get(`users/${username}/profile`);
+};
+
+export const GetUsers = async (input) => {
+	console.log('Getting users via search bar...');
+	return await API.get(`users/search?content=${input}`);
+}
+
+export const GetImage = async (file) => {
+    return new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.onloadend = () => resolve(reader.result);
+		reader.onerror = (error) => reject(error);
+		reader.readAsDataURL(file);
+	});
 }

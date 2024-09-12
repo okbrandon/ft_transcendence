@@ -1,6 +1,6 @@
 import React from "react";
 import ReactApexChart from "react-apexcharts";
-import { DonutStatsContainer } from "../../../styles/Profile/Stats.styled";
+import { DonutStatsContainer } from "../styles/Stats.styled";
 import { calculateTotalDefeats, calculateTotalWins } from "../scripts/match";
 
 const DonutStats = ({ matchArray }) => {

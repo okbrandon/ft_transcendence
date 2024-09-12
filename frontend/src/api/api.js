@@ -29,7 +29,7 @@ export const isRefreshExpired = () => {
 
 	if (refresh) {
 		const decodedRefresh = jwtDecode(refresh);
-	
+
 		if (decodedRefresh.exp < Date.now() / 1000) {
 			console.log('INFO: Refresh expired');
 			return true;
