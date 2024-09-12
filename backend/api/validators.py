@@ -4,12 +4,12 @@ import base64
 def validate_username(username):
     if username is None:
         return False
-    return 4 <= len(username) <= 16 and username.isalnum()
+    return 4 <= len(username) <= 16 and re.match(r'^[a-zA-Z0-9_]+$', username) is not None
 
 def validate_displayname(displayname):
     if displayname is None:
         return True
-    return 4 <= len(displayname) <= 16 and displayname.isalnum()
+    return 4 <= len(displayname) <= 16 and re.match(r'^[a-zA-Z0-9_]+$', displayname) is not None
 
 def validate_email(email):
     return len(email) <= 64 and re.match(r"[^@]+@[^@]+\.[^@]+", email) is not None
