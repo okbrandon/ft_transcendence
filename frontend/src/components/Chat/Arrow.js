@@ -1,5 +1,5 @@
 import React from 'react';
-import MinimizeArrow, { MinimizeArrowContainer } from '../../styles/Chat/MinimizeArrow.styled';
+import MinimizeArrow, { MinimizeArrowContainer } from './styles/MinimizeArrow.styled';
 
 export const Arrow = ({ ArrowAnimate }) => {
 	return (

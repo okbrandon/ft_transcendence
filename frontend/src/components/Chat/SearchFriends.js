@@ -81,12 +81,9 @@ export const SearchFriends = ({ onOpenChat }) => { // onOpenChat is passed as a 
 			{searchQuery && (
 				<Dropdown>
 					{filteredFriends.map((friend, index) => (
-						<FriendItem key={index}>
+						<FriendItem key={index} onClick={() => onOpenChat(friend)}>
 							{friend}
 			{/* Chat button to open a chat window with the selected friend */}
-							<ChatButton onClick={() => onOpenChat(friend)}>
-								Chat
-							</ChatButton>
 						</FriendItem>
 					))}
 				</Dropdown>

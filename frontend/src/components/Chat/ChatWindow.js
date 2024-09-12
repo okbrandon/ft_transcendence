@@ -10,9 +10,11 @@ const ChatWindowContainer = styled.div`
 	flex-direction: column;
 	position: relative !important;
 	margin-right: 1%;
-	max-width: 350px;
+	max-width: 320px;
 	height: ${({ $isMinimized }) => ($isMinimized ? '45px' : '500px')};
 	transition: height 0.3s ease;
+	border: 1px solid #ddd;
+	border-radius: 10px 10px 0 0;
 `;
 
 const ChatHeader = styled.div`
@@ -26,6 +28,7 @@ const ChatHeader = styled.div`
 	justify-content: space-between;
 	align-items: center;
 	cursor: pointer;
+	border-radius: 10px 10px 0 0;
 `;
 
 const ChatMessages = styled.div`
