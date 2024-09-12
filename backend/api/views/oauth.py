@@ -56,12 +56,12 @@ class OAuth42Callback(APIView):
             'flags': 1, # EMAIL_VERIFIED
         })
 
+        if created:
+            send_welcome_email(user.email)
+
         login(request, user)
 
         refresh = RefreshToken.for_user(user)
         access = str(refresh.access_token)
-
-        send_welcome_email(user.email)
-
         base_url = os.getenv('BASE_URL')
         return redirect(f'{base_url}/callback?token={access}&refresh={str(refresh)}')

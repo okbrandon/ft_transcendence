@@ -25,7 +25,7 @@ class UserProfileMe(APIView):
         data = serializer.data
 
         profile = get_safe_profile(data, me=True)
-        return Response(data, status=status.HTTP_200_OK)
+        return Response(profile, status=status.HTTP_200_OK)
 
     def patch(self, request, *args, **kwargs):
         try:

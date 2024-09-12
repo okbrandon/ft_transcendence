@@ -12,7 +12,7 @@ def generate_id(prefix: str) -> str:
     encoded_timestamp = base64.urlsafe_b64encode((timestamp + random_number).encode()).decode().rstrip("=")
     return f"{prefix}_{encoded_timestamp}"
 
-def send_welcome_email(to: list):
+def send_welcome_email(to: str):
     resend.api_key = os.getenv("RESEND_API_KEY")
 
     params: resend.Emails.SendParams = {
@@ -36,7 +36,7 @@ def send_welcome_email(to: list):
 
     email = resend.Emails.send(params)
 
-def send_verification_email(to: list, verification_link: str):
+def send_verification_email(to: str, verification_link: str):
     resend.api_key = os.getenv("RESEND_API_KEY")
 
     params: resend.Emails.SendParams = {
@@ -67,7 +67,7 @@ def send_otp_via_sms(to: str):
 
     return response, otp
 
-def send_otp_via_email(to: list, otp: str):
+def send_otp_via_email(to: str, otp: str):
     resend.api_key = os.getenv("RESEND_API_KEY")
 
     formatted_otp = f"{otp[:3]} {otp[3:]}"
@@ -87,7 +87,7 @@ def send_otp_via_email(to: list, otp: str):
     email = resend.Emails.send(params)
     return email
 
-def send_data_package_ready_email(to: list):
+def send_data_package_ready_email(to: str):
     resend.api_key = os.getenv("RESEND_API_KEY")
 
     params: resend.Emails.SendParams = {

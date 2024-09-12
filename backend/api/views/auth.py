@@ -39,9 +39,7 @@ class AuthRegister(APIView):
         user = User.objects.create(
             userID=generate_id('user'),
             username=data['username'],
-            displayName=data['username'],
             email=data['email'],
-            avatarID='default',
             password=make_password(data['password']),
             lang=data['lang'],
         )
@@ -54,7 +52,7 @@ class AuthRegister(APIView):
             expires_at=timezone.now() + timezone.timedelta(hours=1)  # Code expires in 1 hour
         )
         verification_link = f"{os.environ.get('BASE_URL')}/verify?code={base64.urlsafe_b64encode(f'{user.userID}.{verification_code}'.encode()).decode()}"
-        send_verification_email([data['email']], verification_link)
+        send_verification_email(data['email'], verification_link)
 
         return Response(status=status.HTTP_201_CREATED)
 
@@ -106,7 +104,22 @@ class AuthLogin(APIView):
             return Response({"error": "This account has been disabled."}, status=status.HTTP_403_FORBIDDEN)
 
         if not user.flags & (1 << 0):
-            return Response({"error": "Email not verified. Please verify your email before logging in."}, status=status.HTTP_403_FORBIDDEN)
+            # Check if verification code has expired
+            verification = VerificationCode.objects.filter(userID=user.userID).first()
+            if verification and verification.expires_at < timezone.now():
+                # Generate new verification code
+                new_verification_code = generate_id('code')
+                verification.code = new_verification_code
+                verification.expires_at = timezone.now() + timezone.timedelta(hours=1)
+                verification.save()
+
+                # Send new verification email
+                verification_link = f"{os.environ.get('BASE_URL')}/verify?code={base64.urlsafe_b64encode(f'{user.userID}.{new_verification_code}'.encode()).decode()}"
+                send_verification_email(user.email, verification_link)
+
+                return Response({"error": "Email not verified. A new verification email has been sent."}, status=status.HTTP_403_FORBIDDEN)
+            else:
+                return Response({"error": "Email not verified. Please verify your email before logging in."}, status=status.HTTP_403_FORBIDDEN)
 
         login(request, user)
 
@@ -149,10 +162,29 @@ class DeleteTOTP(APIView):
         else:
             return Response({"error": "Invalid OTP."}, status=status.HTTP_400_BAD_REQUEST)
 
+class PlatformAvailability(APIView):
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        available_platforms = ["app", "email"]
+
+        if not user.mfaToken:
+            return Response({"error": "MFA is not enabled for this account."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if user.phone_number:
+            available_platforms.append("sms")
+
+        return Response({
+            "available_platforms": available_platforms
+        }, status=status.HTTP_200_OK)
+
+
 class RequestTOTP(APIView):
     def post(self, request, *args, **kwargs):
         user = request.user
         platform = request.data.get('platform')
+
+        if not user.mfaToken:
+            return Response({"error": "MFA is not enabled for this account."}, status=status.HTTP_400_BAD_REQUEST)
 
         if not platform:
             return Response({"error": "Platform is required."}, status=status.HTTP_400_BAD_REQUEST)
@@ -160,14 +192,16 @@ class RequestTOTP(APIView):
         if platform not in ['email', 'sms']:
             return Response({"error": "Invalid platform. Choose 'email' or 'sms'."}, status=status.HTTP_400_BAD_REQUEST)
 
-        otp = pyotp.random_base32()
+
+        totp = pyotp.TOTP(user.mfaToken)
+        otp = totp.now()
 
         if platform == 'email':
-            send_otp_via_email(user.email)
+            send_otp_via_email(user.email, otp)
         elif platform == 'sms':
             if not user.phone_number:
                 return Response({"error": "Phone number not set for this account."}, status=status.HTTP_400_BAD_REQUEST)
-            response, _ = send_otp_via_sms(user.phone_number)
+            response, _ = send_otp_via_sms(user.phone_number, otp)
             if response.status_code != 202:
                 return Response({"error": "Failed to send OTP via SMS."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

@@ -13,7 +13,7 @@ const Verify = () => {
 			axios.post(`${window.location.origin}/api/v1/verify`, { code })
 				.then(response => {
 					console.log('Verification successful:', response.data);
-					window.location.href = '/home';
+					window.location.href = '/';
 				})
 				.catch(error => {
 					console.error('Verification failed:', error.response.data);
