@@ -11,6 +11,7 @@ from .views.internal import *
 from .views.oauth import *
 from .views.store import *
 from .views.verification import *
+from .views.conversations import *
 
 from django.http import JsonResponse
 
@@ -48,6 +49,8 @@ urlpatterns = [
 
     # path('tournaments/<tournamentID>', TournamentInfo.as_view()), # GET, DELETE, PATCH
     # path('tournaments', TournamentCreate.as_view()), # POST
+    
+	path('chat/conversations', ConversationListView.as_view()),
 
     path('__internal/check_user_exists/<userID>', CheckUserExists.as_view()), # GET
     path('__internal/create_match', CreateMatchHistory.as_view()), # POST

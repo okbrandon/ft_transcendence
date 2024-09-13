@@ -112,7 +112,7 @@ class Relationship(models.Model):
     userB = models.CharField(max_length = 48)
     # for evan from the future: I don't like it being called status, "type" would be better
     # but im too lazy to do db migrations
-    status = models.IntegerField # 0 = pending, 1 = accepted, 2 = blocked
+    status = models.IntegerField(default = 0) # 0 = pending, 1 = accepted, 2 = blocked
 
     def __str__(self):
         return self.relationshipID

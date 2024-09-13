@@ -6,7 +6,7 @@ import httpx
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import Conversation, User, Relationship
 from asgiref.sync import sync_to_async
-from django.db.models import Q
+from django.db.models import Q, Count
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +35,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			return
 
 		logger.info(f"User {user.username} connected")
-		#await self.ensure_conversations_exist(user)
+		await self.ensure_conversations_exist(user)
+		logger.info(f"User {user.username} conversations ensured")
 		await self.accept()
 
 	async def disconnect(self, close_code):
@@ -66,24 +67,32 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			return None
 	
 	@sync_to_async
-	def ensure_conversations_exist(self, user):
+	def ensure_conversations_exist(self, socketUser):
 		friends = Relationship.objects.filter(
-			Q(userA=user.user_id, status=1) | Q(userB=user.user_id, status=1)
+			Q(userA=socketUser.user_id) | Q(userB=socketUser.user_id)
 		)
-		
+		friends = friends.exclude(
+			Q(status=2) & (Q(userA=socketUser.user_id) | Q(userB=socketUser.user_id))
+		)
+
+		user = User.objects.get(userID=socketUser.user_id)
+
 		for relationship in friends:
-			friend_id = relationship.userA if relationship.userA != user.user_id else relationship.userB
+			friend_id = relationship.userA if relationship.userA != socketUser.user_id else relationship.userB
 	
 			try:
 				friend = User.objects.get(userID=friend_id)
 			except User.DoesNotExist:
 				continue
-	
+
 			existing_conversation = Conversation.objects.filter(
-				participants__in=[user, friend], type='private_message'
-			).exists()
+				participants__userID__in=[user.userID, friend_id],
+				conversationType='private_message'
+			).annotate(participant_count=Count('participants')).filter(participant_count=2).exists()
 			
 			if not existing_conversation:
-				new_conversation = Conversation.objects.create(type='private_message')
+				new_conversation = Conversation.objects.create(conversationType='private_message')
 				new_conversation.participants.add(user, friend)
 				new_conversation.save()
+
+				logger.info(f"Created conversation between {user.username} and {friend.username}")

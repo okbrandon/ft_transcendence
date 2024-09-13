@@ -16,7 +16,7 @@ class MatchSerializer(serializers.ModelSerializer):
 class RelationshipSerializer(serializers.ModelSerializer):
     class Meta:
         model = Relationship
-        fields = ["relationshipID", "userA", "userB", "status", "flags"]
+        fields = ["relationshipID", "userA", "userB", "status"]
 
 class StoreItemSerializer(serializers.ModelSerializer):
     class Meta:
@@ -64,4 +64,4 @@ class ConversationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Conversation
-        fields = ['conversationID', 'type', 'participants', 'messages']
+        fields = ['conversationID', 'conversationType', 'participants', 'messages']
