@@ -20,5 +20,7 @@ gunicorn
 resend
 pyotp
 plivo
-channels
 daphne
+channels
+Twisted[tls,http2]
+httpx

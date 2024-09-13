@@ -90,7 +90,7 @@ class UserSettings(models.Model):
 
 class Conversation(models.Model):
     conversationID = models.CharField(primary_key=True, max_length=48, default=generate_id("conv"), editable=False)
-    type = models.CharField(max_length=50, default='private_message')  # Can be expanded for different types
+    conversationType = models.CharField(max_length=50, default='private_message')  # Can be expanded for different types
     participants = models.ManyToManyField(User, related_name='conversations')
 
     def __str__(self):

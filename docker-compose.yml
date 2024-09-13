@@ -37,10 +37,10 @@ services:
     build: ./backend
     restart: always
     env_file: .env
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=PathPrefix(`/api`)"
-      - "traefik.http.services.backend.loadbalancer.server.port=8000"
+    #labels:
+    #  - "traefik.enable=true"
+    #  - "traefik.http.routers.backend.rule=PathPrefix(`/api`)"
+    #  - "traefik.http.services.backend.loadbalancer.server.port=8000"
     ports:
       - 8000:8000
       - 8001:8001

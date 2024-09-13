@@ -49,6 +49,7 @@ OAUTH2_TOKEN_URL = 'https://api.intra.42.fr/oauth/token'
 # Application definition
 
 INSTALLED_APPS = [
+	'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -60,8 +61,10 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'api',
     'corsheaders',
-	'channels',
+	#'channels',
 ]
+
+ASGI_APPLICATION = "backend.asgi.application"
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -198,6 +201,11 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'INFO',
             'propagate': False,
+        },
+		'channels': {
+            'handlers': ['console'],
+            'level': 'INFO',
+			'propagate': False,
         },
     },
 }
