@@ -201,8 +201,6 @@ class RequestTOTP(APIView):
         elif platform == 'sms':
             if not user.phone_number:
                 return Response({"error": "Phone number not set for this account."}, status=status.HTTP_400_BAD_REQUEST)
-            response, _ = send_otp_via_sms(user.phone_number, otp)
-            if response.status_code != 202:
-                return Response({"error": "Failed to send OTP via SMS."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            send_otp_via_sms(user.phone_number, otp)
 
         return Response({"message": f"OTP sent via {platform}."}, status=status.HTTP_200_OK)
