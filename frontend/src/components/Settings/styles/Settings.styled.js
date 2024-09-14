@@ -197,3 +197,7 @@ export const ErrorMessage = styled.p`
 	font-weight: 600;
 	color: #ff0000 !important;
 `;
+
+export const SuccessMessage = styled.p`
+	color: #00ff00;
+`;

@@ -13,7 +13,7 @@ import { checkSecurityRestrictions } from "../../scripts/restrictions";
 const Security = ({ user }) => {
 	const [formData, setFormData] = useState({
 		email: user.email,
-		phone_number: user.phone_number,
+		phone_number: user.phone_number || '',
 	});
 	const [password, setPassword] = useState('');
 	const [cfPassword, setCfPassword] = useState('');
