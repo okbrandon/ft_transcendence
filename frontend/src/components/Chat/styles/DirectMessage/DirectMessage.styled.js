@@ -44,4 +44,22 @@ export const ActionButtonContainer = styled.div`
 	justify-content: center;
 `;
 
+export const SenderBubble = styled.div`
+	background-color: #0084ff;
+	color: #fff;
+	border-radius: 10px;
+	padding: 10px;
+	margin: 5px;
+	max-width: 70%;
+`;
+
+export const ReceiverBubble = styled.div`
+	background-color: #f1f0f0;
+	color: #333;
+	border-radius: 10px;
+	padding: 10px;
+	margin: 5px;
+	max-width: 70%;
+`;
+
 export default DirectMessageContainer;
