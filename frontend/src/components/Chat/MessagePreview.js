@@ -9,6 +9,7 @@ const PreviewContainer = styled.div`
 	display: flex;
 	align-items: center;
 	cursor: pointer;
+	// overflow: scroll;
 `;
 
 const ProfilePicture = styled.img`

@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import magnifier from '../img/magnifier.svg';
-import { FormContainer } from '../../Auth/styles/Authentication.styled';
 
 const SearchFriendsContainer = styled.div`
 	display: flex;
@@ -9,7 +8,7 @@ const SearchFriendsContainer = styled.div`
 	position: relative; /* Ensures dropdown is positioned correctly */
 `;
 
-export const SearchInput = styled(FormContainer)`
+export const SearchInput = styled.input`
 	width: 100%;
 	padding: 2px 10px 2px 30px; /* Add padding-left to make space for the icon */
 	border: 1px solid #ccc;

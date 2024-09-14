@@ -4,6 +4,7 @@ import { MessagePreview } from './MessagePreview.js';
 import { ChatWindow } from './ChatWindow.js';
 import { Arrow } from './Arrow.js';
 import ChatContainer, { ChatHeaderStyled, ChatListFeatures } from './styles/ChatContainer.styled';
+import ScrollableComponent from './ScrollableComponent.js';
 
 const Chat = () => {
 	const [openChats, setOpenChats] = useState([]);
@@ -17,7 +18,24 @@ const Chat = () => {
 		'Brandonation': { sender: 'Brandonation', text: 'Good morning!' },
 		'Evanescence': { sender: 'Evanescence', text: 'How are you?' },
 		'Hanministrateur': { sender: 'Hanministrateur', text: 'Let\'s meet up.' },
-		'Kianatomy': { sender: 'Kianatomy', text: 'See you soon!' },'Kianatom': { sender: 'Kianatomy', text: 'See you soon!' },'Kiaatomy': { sender: 'Kianatomy', text: 'See you soon!' },'Kianatomy': { sender: 'Kianatomy', text: 'See you soon!' },'Kianatomy': { sender: 'Kianatomy', text: 'See you soon!' },'Kianatomy': { sender: 'Kianaomy', text: 'See you soon!' },'Kianatomy': { sender: 'Kiantomy', text: 'See you soon!' },'Kiaatomy': { sender: 'Kianatomy', text: 'See you soon!' },'ianatomy': { sender: 'Kianatomy', text: 'See you soon!' }
+		'Kianatomy': { sender: 'Kianatomy', text: 'I\'m busy.' },
+		'Robert': { sender: 'Robert', text: 'Cringe.' },
+		'John': { sender: 'John', text: 'I\'m tired.' },
+		'Jane': { sender: 'Jane', text: 'I\'m hungry.' },
+		'Alex': { sender: 'Alex', text: 'I\'m sleepy.' },
+		'Charlie': { sender: 'Charlie', text: 'I\'m bored.' },
+		'Daniel': { sender: 'Daniel', text: 'I\'m sick.' },
+		'Emily': { sender: 'Emily', text: 'I\'m sad.' },
+		'Frank': { sender: 'Frank', text: 'I\'m happy.' },
+		'Grace': { sender: 'Grace', text: 'I\'m excited.' },
+		'Henry': { sender: 'Henry', text: 'I\'m anxious.' },
+		'Ivy': { sender: 'Ivy', text: 'I\'m nervous.' },
+		'Jack': { sender: 'Jack', text: 'I\'m stressed.' },
+		'Kevin': { sender: 'Kevin', text: 'I\'m overwhelmed.' },
+		'Lucy': { sender: 'Lucy', text: 'I\'m frustrated.' },
+		'Mary': { sender: 'Mary', text: 'I\'m angry.' },
+		'Nathan': { sender: 'Nathan', text: 'I\'m confused.' },
+		'Oliver': { sender: 'Oliver', text: 'I\'m lost.' },
 	});
 
 	const openChat = (friendname) => {
@@ -61,9 +79,11 @@ const Chat = () => {
 				{!isOverlayMinimized && (
 					<>
 						<SearchFriends onOpenChat={handleSelectFriend} />
-						{Object.keys(messages).map(friend => (
-							<MessagePreview key={friend} messages={[messages[friend]]} onClick={() => handleSelectChat(friend)} />
-						))}
+						<ScrollableComponent>
+							{Object.keys(messages).map(friend => (
+								<MessagePreview key={friend} messages={[messages[friend]]} onClick={() => handleSelectChat(friend)} />
+							))}
+						</ScrollableComponent>
 					</>
 				)}
 			</ChatListFeatures>
