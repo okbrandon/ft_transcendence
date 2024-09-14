@@ -21,7 +21,6 @@ const AuthProvider = ({ children }) => {
 				.finally(() => {
 					setLoading(false);
 				});
-			setLoading(false);
 		} else {
 			setLoading(false);
 		}
