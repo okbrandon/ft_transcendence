@@ -25,70 +25,113 @@ The `GET /chat/conversations` endpoint returns a list of conversations the user 
 Example of server reply:
 
 ```json
-"conversations": [
-	{
-		"id": "546a31fd-fb13-4b8f-8cbb-b3ac59c7d52c",
-		"type": "private_message",
-		"participantUserIDs": [ "user_MTcyNTAyODYzODMxNTUyNzI" "user_xBzKjLwNqRaVoXmTsYeFpZgU" ],
-		"userData": {
-			"user_MTcyNTAyODYzODMxNTUyNzI": {
-				"id": "user_MTcyNTAyODYzODMxNTUyNzI",
-				"username": "Brandon",
-				"displayName": "Brandon"
-			},
-			"user_xBzKjLwNqRaVoXmTsYeFpZgU": {
-				"id": "user_xBzKjLwNqRaVoXmTsYeFpZgU",
-				"username": "Prune",
-				"displayName": "Prune"
-			},
-		},
-		"messages": [
-			{
-				"id": "e546875a-0822-4fb8-af6f-3b3c8da9e089",
-				"content": "Bro I'm Brandon ok who r u",
-				"senderUserID": "user_MTcyNTAyODYzODMxNTUyNzI",
-				"createdAt": "2024-08-29T09:08:37.475Z"
-			},
-			{
-				"id": "01328fb7-cd8c-48e7-9c29-1b0e0d79030f",
-				"content": "Meow meow stupid",
-				"senderUserID": "user_xBzKjLwNqRaVoXmTsYeFpZgU",
-				"createdAt": "2024-08-29T09:08:49.907Z"
-			}
-		]
-	},
-	{
-		"id": "8eb83551-dd47-4f8f-b91b-ff54a9a63258",
-		"type": "private_message",
-		"participantUserIDs": [ "user_MTcyNTAyODYzODMxNTUyNzI", "user_mPtYlRoHnKcVxQwJdFgZsAeUr" ],
-		"userData": {
-			"user_MTcyNTAyODYzODMxNTUyNzI": {
-				"id": "user_MTcyNTAyODYzODMxNTUyNzI",
-				"username": "Brandon",
-				"displayName": "Brandon"
-			},
-			"user_mPtYlRoHnKcVxQwJdFgZsAeUr": {
-				"id": "user_mPtYlRoHnKcVxQwJdFgZsAeUr",
-				"username": "Bozo",
-				"displayName": "Bozo"
-			},
-		},
-		"messages": [
-			{
-				"id": "34bc7ca7-a02e-438b-9d75-fbe82ecb4a87",
-				"content": "Hello I am Bozo",
-				"senderUserID": "user_mPtYlRoHnKcVxQwJdFgZsAeUr",
-				"createdAt": "2024-08-29T09:08:57.641Z"
-			},
-			{
-				"id": "48a55e63-e59d-4dac-9c96-7a1d3ee828a5",
-				"content": "Hi I am Brandon",
-				"senderUserID": "user_MTcyNTAyODYzODMxNTUyNzI",
-				"createdAt": "2024-08-29T09:09:07.557Z"
-			}
-		]
-	}
-]
+{
+    "conversations": [
+        {
+            "conversationID": "conv_MTcyNjMwMjg5NjQ2MDc3Mg",
+            "conversationType": "private_message",
+            "participants": [
+                {
+                    "userID": "user_MTcyNjMwMTc5NTA5MjQ1MjA",
+                    "username": "bsoubaig",
+                    "displayName": null,
+                    "lang": "fr",
+                    "avatarID": null,
+                    "bannerID": null,
+                    "bio": null,
+                    "flags": 1
+                },
+                {
+                    "userID": "user_MTcyNjMwMTkxMzk0Nzg5NTU",
+                    "username": "evmorvan",
+                    "displayName": null,
+                    "lang": "fr",
+                    "avatarID": null,
+                    "bannerID": null,
+                    "bio": null,
+                    "flags": 1
+                }
+            ],
+            "messages": [
+                {
+                    "messageID": "msg_MTcyNjMxOTU5OTk4MDg4MzI",
+                    "content": "Hello, how are you?",
+                    "sender": {
+                        "userID": "user_MTcyNjMwMTc5NTA5MjQ1MjA",
+                        "username": "bsoubaig",
+                        "displayName": null,
+                        "lang": "fr",
+                        "avatarID": null,
+                        "bannerID": null,
+                        "bio": null,
+                        "flags": 1
+                    },
+                    "createdAt": "2024-09-14T13:15:22.116212Z"
+                },
+                {
+                    "messageID": "msg_MTcyNjMxOTk2NDg4MjY2Mjc",
+                    "content": "YOU STINK BRO LMAOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO",
+                    "sender": {
+                        "userID": "user_MTcyNjMwMTc5NTA5MjQ1MjA",
+                        "username": "bsoubaig",
+                        "displayName": null,
+                        "lang": "fr",
+                        "avatarID": null,
+                        "bannerID": null,
+                        "bio": null,
+                        "flags": 1
+                    },
+                    "createdAt": "2024-09-14T13:20:05.103983Z"
+                },
+                {
+                    "messageID": "msg_MTcyNjMyMDQ0MTU1NTM4MDM",
+                    "content": "hello from evmorvan",
+                    "sender": {
+                        "userID": "user_MTcyNjMwMTkxMzk0Nzg5NTU",
+                        "username": "evmorvan",
+                        "displayName": null,
+                        "lang": "fr",
+                        "avatarID": null,
+                        "bannerID": null,
+                        "bio": null,
+                        "flags": 1
+                    },
+                    "createdAt": "2024-09-14T13:32:17.885645Z"
+                },
+                {
+                    "messageID": "msg_MTcyNjMyMTIzODM0ODYwNjk",
+                    "content": "hello from evmorvan",
+                    "sender": {
+                        "userID": "user_MTcyNjMwMTkxMzk0Nzg5NTU",
+                        "username": "evmorvan",
+                        "displayName": null,
+                        "lang": "fr",
+                        "avatarID": null,
+                        "bannerID": null,
+                        "bio": null,
+                        "flags": 1
+                    },
+                    "createdAt": "2024-09-14T13:40:53.990384Z"
+                },
+                {
+                    "messageID": "msg_MTcyNjMyMTUxNTE3MTMyNzI",
+                    "content": "bRO STOOP stinky poopy lol bro is ass dadoaoiaiodio",
+                    "sender": {
+                        "userID": "user_MTcyNjMwMTkxMzk0Nzg5NTU",
+                        "username": "evmorvan",
+                        "displayName": null,
+                        "lang": "fr",
+                        "avatarID": null,
+                        "bannerID": null,
+                        "bio": null,
+                        "flags": 1
+                    },
+                    "createdAt": "2024-09-14T13:45:34.226679Z"
+                }
+            ]
+        }
+    ]
+}
 ```
 
 ## Sending a message
