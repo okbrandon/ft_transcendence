@@ -49,7 +49,6 @@ const API = axios.create({
 API.interceptors.request.use(
 	async (config) => {
 		try {
-			console.log(window.location.origin);
 			const token = localStorage.getItem('token');
 			if (token && !isTokenExpired()) {
 				console.log('interceptor: Token is valid');

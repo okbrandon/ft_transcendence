@@ -39,7 +39,7 @@ const RequestsList = () => {
 					<RequestCard key={request.id}>
 						<RequestInfo>
 							<RequestProfile>
-								<RequestAvatar src="/images/anonymous.png" alt={`${request.name}'s avatar`}/>
+								<RequestAvatar src="/images/default-profile.png" alt={`${request.name}'s avatar`}/>
 								<RequestName>{request.name}</RequestName>
 							</RequestProfile>
 							<MutualFriends>{request.mutualFriends} mutual friends</MutualFriends>

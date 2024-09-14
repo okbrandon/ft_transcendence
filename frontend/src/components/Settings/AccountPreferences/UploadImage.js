@@ -10,11 +10,12 @@ import {
 import { GetImage } from '../../../api/user';
 
 const ImageSettings = ({ user, setFormData, handleChange }) => {
-	const [profileImage, setProfileImage] = useState(user.avatarID);
-	const [bannerImage, setBannerImage] = useState(user.bannerID);
+	const [profileImage, setProfileImage] = useState(user.avatarID === 'default' ? '/images/default-profile.png' : user.avatarID);
+	const [bannerImage, setBannerImage] = useState(user.bannerID || '/images/default-banner.png');
 	const profilePictureRef = useRef(null);
 	const bannerPictureRef = useRef(null);
 
+	console.log("bannerImage", bannerImage);
 	const handleImageChange = (event, type, setImage) => {
 		const file = event.target.files[0];
 

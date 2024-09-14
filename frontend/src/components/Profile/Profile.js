@@ -31,7 +31,7 @@ const matchArray = [
 ];
 
 export const ProfileParent = () => {
-	const { username } = `useParams`();
+	const { username } = useParams();
 
 	useEffect(() => {
 		window.scrollTo(0, 0);
@@ -57,18 +57,14 @@ const Profile = () => {
 
 	return (
 		<ProfileContainer>
-			{ loading ? <Loader/> : (
-					<>
-						<UserProfileBanner $path={profileUser.bannerID}/>
-						<UserContainer>
-							<MainBar profileUser={profileUser} matchArray={matchArray}/>
-							<About profileUser={profileUser} matchArray={matchArray}/>
-							<DisplaySkin profileUser={profileUser}/>
-							<Winrate matchArray={matchArray}/>
-							<MatchHistory matchArray={matchArray}/>
-						</UserContainer>
-					</>
-			)}
+			<UserProfileBanner $path={profileUser.bannerID || '/images/default-banner.png'}/>
+			<UserContainer>
+				<MainBar profileUser={profileUser} matchArray={matchArray}/>
+				<About profileUser={profileUser} matchArray={matchArray}/>
+				<DisplaySkin profileUser={profileUser}/>
+				<Winrate matchArray={matchArray}/>
+				<MatchHistory matchArray={matchArray}/>
+			</UserContainer>
 		</ProfileContainer>
 	);
 };
