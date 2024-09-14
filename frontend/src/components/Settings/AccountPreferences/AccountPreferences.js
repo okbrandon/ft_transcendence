@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import {
 	BioContainer,
 	ErrorMessage,
@@ -11,37 +11,33 @@ import {
 } from '../styles/Settings.styled';
 import UploadImage from './UploadImage';
 import API from '../../../api/api';
-import { AuthContext } from '../../../context/AuthContext';
 import DeleteAccount from './DeleteAccount';
 
-const AccountPreferences = () => {
-	const { user } = useContext(AuthContext);
+const AccountPreferences = ({ user }) => {
 	const [formData, setFormData] = useState({
 		username: user.username,
 		displayName: user.displayName,
 		bio: user.bio,
 	});
-
 	const [bioByteLength, setBioByteLength] = useState(0);
 	const [error, setError] = useState('');
 
-
 	const handleChange = (e) => {
-		const { name, value } = e.target;
+		const { id, value } = e.target;
 
-		if (name === 'bio') {
+		if (id === 'bio') {
 			const byteSize = new Blob([value]).size;
 			if (byteSize <= 280) {
 				setBioByteLength(byteSize);
 				setFormData(data => ({
 					...data,
-					[name]: value,
+					[id]: value,
 				}));
 			}
 		} else {
 			setFormData(data => ({
 				...data,
-				[name]: value,
+				[id]: value,
 			}));
 		}
 	};
@@ -83,16 +79,17 @@ const AccountPreferences = () => {
 			<label htmlFor="username">Username</label>
 			<FormInput
 				type="text"
-				name="username"
+				id="username"
 				placeholder="Username"
 				value={formData.username}
 				onChange={handleChange}
+				autoComplete='off'
 			/>
 			{error.includes("Username") && <ErrorMessage>{error}</ErrorMessage>}
 			<label htmlFor="displayName">Display Name</label>
 			<FormInput
 				type="text"
-				name="displayName"
+				id="displayName"
 				placeholder="Display Name"
 				value={formData.displayName}
 				onChange={handleChange}
@@ -101,9 +98,9 @@ const AccountPreferences = () => {
 			<label htmlFor="bio">Bio</label>
 			<BioContainer>
 				<TextArea
-					name="bio"
+					id="bio"
 					placeholder="Tell us about yourself"
-					value={formData.bio}
+					value={formData.bio || ''}
 					rows="4"
 					cols="50"
 					onChange={handleChange}
@@ -113,7 +110,11 @@ const AccountPreferences = () => {
 			<SubSectionHeading>Profile Image & Background</SubSectionHeading>
 			<UploadImage user={user} setFormData={setFormData} handleChange={handleChange}/>
 			<SubSectionHeading>General Preferences</SubSectionHeading>
-			<FormInput type="text" placeholder="Language Preference" />
+			<FormInput
+				type="text"
+				id="language"
+				placeholder="Language Preference"
+			/>
 			<SubSectionHeading>Account Management</SubSectionHeading>
 			<DeleteAccount/>
 			<SubmitButton type="submit">Save Changes</SubmitButton>

@@ -24,7 +24,7 @@ const ImageSettings = ({ user, setFormData, handleChange }) => {
 
 		GetImage(file)
 			.then((image) => {
-				handleChange({ target: { name: type, value: image } });
+				handleChange({ target: { id: type, value: image } });
 				setImage(image);
 			})
 			.catch((err) => {

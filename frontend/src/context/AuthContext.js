@@ -7,16 +7,29 @@ export const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
 	const [isLoggedIn, setIsLoggedIn] = useState(() => isValidToken());
 	const [user, setUser] = useState(null);
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		if (isLoggedIn) {
-			console.log('🪧 AuthProvider: Getting user...');
-			GetUser().then(res => setUser(res.data));
+			GetUser()
+				.then((res) => {
+					setUser(res.data);
+				})
+				.catch((err) => {
+					console.error('Error fetching user data:', err);
+				})
+				.finally(() => {
+					setLoading(false);
+				});
+			setLoading(false);
+		} else {
+			setLoading(false);
 		}
+
 	}, [isLoggedIn]);
 
 	return (
-		<AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, user }}>
+		<AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, user, loading }}>
 			{ children }
 		</AuthContext.Provider>
 	);

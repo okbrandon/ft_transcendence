@@ -31,7 +31,7 @@ const matchArray = [
 ];
 
 export const ProfileParent = () => {
-	const { username } = useParams();
+	const { username } = `useParams`();
 
 	useEffect(() => {
 		window.scrollTo(0, 0);
@@ -46,6 +46,14 @@ export const ProfileParent = () => {
 
 const Profile = () => {
 	const { loading, profileUser } = useContext(ProfileContext);
+
+	if (loading) {
+		return (
+			<ProfileContainer>
+				<Loader/>
+			</ProfileContainer>
+		);
+	};
 
 	return (
 		<ProfileContainer>

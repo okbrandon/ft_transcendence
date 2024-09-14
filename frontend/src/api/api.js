@@ -43,12 +43,13 @@ export const isRefreshExpired = () => {
 };
 
 const API = axios.create({
-	baseURL: `${window.location.origin}/api/v1/`,
+	baseURL: `http://localhost:8888/api/v1/`,
 });
 
 API.interceptors.request.use(
 	async (config) => {
 		try {
+			console.log(window.location.origin);
 			const token = localStorage.getItem('token');
 			if (token && !isTokenExpired()) {
 				console.log('interceptor: Token is valid');

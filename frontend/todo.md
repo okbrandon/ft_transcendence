@@ -1,8 +1,9 @@
 # TODO
 ## today
+- add a loader to every page in private routes
+- Sign up: email verification notification
+- Settings: modal that says "saved"
 - Settings: Add information directly
-- Settings: Add delete account button
-- Settings:
 - Change colors of logout button
 - harvesting:
     - get /users/@me/harvest

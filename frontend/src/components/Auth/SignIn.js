@@ -23,15 +23,15 @@ const SignIn = () => {
 					setIsLoggedIn(true);
 					navigate('/');
 				})
-				.catch((error) => {
-					setError('Invalid username or password. Please try again.');
+				.catch((err) => {
+					setError(err.response.data.error);
 					setIsLoggedIn(false);
 				});
 		}
 	};
 	const handleFortyTwo = (event) => {
 		event.preventDefault();
-		window.location.href = `${window.location.origin}/api/v1/auth/42/login`;
+		window.location.href = `http://localhost:8888/api/v1/auth/42/login`;
 	};
 
 	return (
@@ -48,6 +48,7 @@ const SignIn = () => {
 						value={username}
 						onChange={(e) => setUsername(e.target.value)}
 						isInvalid={error && error.includes('username')}
+						autoComplete='username'
 					/>
 					<span>USERNAME</span>
 				</FormContainer.Group>
@@ -59,6 +60,7 @@ const SignIn = () => {
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
 						isInvalid={error && error.includes('password')}
+						autoComplete='current-password'
 					/>
 					<span>PASSWORD</span>
 				</FormContainer.Group>

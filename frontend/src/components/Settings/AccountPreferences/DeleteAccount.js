@@ -8,14 +8,21 @@ import {
 	ModalContent,
 	ModalButton
 } from '../styles/DeleteAccount.styled';
+import API from '../../../api/api';
 
 const DeleteAccount = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const handleConfirmDelete = () => {
-		// Logic to handle account deletion
-		console.log('Account Deleted');
-		// Close the modal after confirming
+		API.delete('/users/@me/profile')
+			.then(() => {
+				localStorage.removeItem('token');
+				localStorage.removeItem('refresh');
+				console.log('Account Deleted');
+			})
+			.catch((err) => {
+				console.error(err);
+			});
 		setIsModalOpen(false);
 	};
 	return (

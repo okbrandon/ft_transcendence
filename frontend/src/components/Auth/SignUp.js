@@ -50,7 +50,8 @@ const SignUp = () => {
 			setError(errorMessage);
 		} else {
 			ApiSignup(username, email, password)
-				.then(() => {
+				.then((res) => {
+					console.log('res', res);
 					navigate('/login')
 				})
 				.catch((error) => {
@@ -72,6 +73,7 @@ const SignUp = () => {
 						value={username}
 						onChange={(e) => setUsername(e.target.value)}
 						isInvalid={error && error.includes('Username')}
+						autoComplete='username'
 					/>
 					<span>USERNAME</span>
 				</FormContainer.Group>
@@ -83,6 +85,7 @@ const SignUp = () => {
 						value={email}
 						onChange={(e) => setEmail(e.target.value)}
 						isInvalid={error && error.includes('Email')}
+						autoComplete='email'
 					/>
 					<span>E-MAIL</span>
 				</FormContainer.Group>
@@ -94,6 +97,7 @@ const SignUp = () => {
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
 						isInvalid={error && error.includes('Password')}
+						autoComplete='new-password'
 					/>
 					<span>PASSWORD</span>
 				</FormContainer.Group>
@@ -105,6 +109,7 @@ const SignUp = () => {
 						value={cfPassword}
 						onChange={(e) => setCfPassword(e.target.value)}
 						isInvalid={error && error.includes('Passwords')}
+						autoComplete='new-password'
 					/>
 					<span>CONFIRM</span>
 				</FormContainer.Group>
