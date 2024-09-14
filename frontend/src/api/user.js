@@ -16,7 +16,7 @@ export const GetUsers = async (input) => {
 }
 
 export const GetImage = async (file) => {
-    return new Promise((resolve, reject) => {
+	return new Promise((resolve, reject) => {
 		const reader = new FileReader();
 
 		reader.onloadend = () => {

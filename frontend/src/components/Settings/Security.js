@@ -8,10 +8,12 @@ import {
 	SubmitButton
 } from "./styles/Settings.styled";
 import API from "../../api/api";
+import { checkSecurityRestrictions } from "../../scripts/restrictions";
 
 const Security = ({ user }) => {
 	const [formData, setFormData] = useState({
 		email: user.email,
+		phone_number: user.phone_number,
 	});
 	const [password, setPassword] = useState('');
 	const [cfPassword, setCfPassword] = useState('');
@@ -26,25 +28,6 @@ const Security = ({ user }) => {
 		}));
 	};
 
-	const validateForm = () => {
-		let errorMessage = '';
-
-		if (formData.password && formData.password.length < 8) {
-			errorMessage = 'Password must be at least 8 characters long.';
-		} else if (formData.password && new TextEncoder().encode(formData.password).length > 72) {
-			errorMessage = 'Password cannot be longer than 72 bytes.';
-		} else if (formData.password && formData.password !== cfPassword) {
-			errorMessage = 'Passwords do not match.';
-		} else if (!formData.email) {
-			errorMessage = 'Email is required.';
-		} else if (formData.email.length > 64) {
-			errorMessage = 'Email cannot be longer than 64 characters.';
-		} else if (!/^[^@]+@[^@]+\.[^@]+$/.test(formData.email)) {
-			errorMessage = 'Invalid Email address, did not match the required format.';
-		}
-		return errorMessage;
-	};
-
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
@@ -53,9 +36,17 @@ const Security = ({ user }) => {
 				...data,
 				password,
 			}));
+		} else if (formData.password) {
+			setFormData(data => {
+				const newData = {
+					...data,
+				};
+				delete newData.password;
+				return newData;
+			})
 		}
 
-		const errorMessage = validateForm();
+		const errorMessage = checkSecurityRestrictions();
 
 		if (errorMessage) {
 			setError(errorMessage);
@@ -100,6 +91,15 @@ const Security = ({ user }) => {
 				value={formData.email}
 				onChange={handleChange}
 				autoComplete="email"
+			/>
+			<label htmlFor="phone">Phone number</label>
+			<FormInput
+				type="tel"
+				id="phone"
+				placeholder="Add Phone Number"
+				value={formData.phone_number}
+				onChange={handleChange}
+				autoComplete="tel"
 			/>
 			<SubSectionHeading>Two-Factor Authentication</SubSectionHeading>
 			{error && <ErrorMessage>{error}</ErrorMessage>}
