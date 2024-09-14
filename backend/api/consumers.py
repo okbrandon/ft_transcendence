@@ -2,13 +2,16 @@ import logging
 import urllib.parse
 import requests
 import httpx
+import json
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import Conversation, User, Relationship
+from .util import generate_id
 from asgiref.sync import sync_to_async
 from django.db.models import Q, Count
 
 logger = logging.getLogger(__name__)
+connected_users = {}
 
 class SocketUser:
 	def __init__(self, user_id, username):
@@ -34,16 +37,53 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			await self.close()
 			return
 
+		connected_users[self] = user
+
 		logger.info(f"User {user.username} connected")
 		await self.ensure_conversations_exist(user)
 		logger.info(f"User {user.username} conversations ensured")
 		await self.accept()
 
 	async def disconnect(self, close_code):
-		logger.info("Disconnected")
+		user = connected_users.get(self, None)
+
+		if user is not None:
+			logger.info(f"User {user.username} disconnected")
+			del connected_users[self]
 
 	async def receive(self, text_data):
-		pass
+		try:
+			json_data = json.loads(text_data)
+			message_type = json_data.get("type", None)
+
+			if not message_type:
+				raise Exception("Missing message type")
+			
+			match message_type:
+				case "send_message":
+					conversation_id = json_data.get("conversationID", None)
+					content = json_data.get("content", None)
+					user = connected_users.get(self, None)
+
+					if user is None:
+						raise Exception("Something went wrong when receiving the message")
+					if conversation_id is None:
+						raise Exception("Missing conversation ID")
+					if content is None:
+						raise Exception("Missing content")
+
+					logger.info(f"Received message from {user.username}: {json_data}")
+					await self.add_message_to_conversation(conversation_id, user, content)
+					await self.notify_new_message(conversation_id, user.username, content)
+
+				case _:
+					raise Exception(f"Invalid message type: {message_type}")
+		except Exception as err:
+			await self.send(json.dumps({
+				"type": "error",
+				"message": "Invalid JSON",
+				"more_info": str(err)
+			}))
 
 	async def get_user_from_token(self, token):
 		try:
@@ -65,7 +105,43 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		except Exception as err:
 			logger.error(f"An error occurred getting the user from token: {err}")
 			return None
+
+	async def notify_new_message(self, conversationID, senderUsername, message):
+		conversation = await sync_to_async(Conversation.objects.get)(conversationID=conversationID)
+
+		if not conversation:
+			raise Exception(f"Conversation {conversationID} not found")
+
+		participants = await sync_to_async(list)(conversation.participants.all())
+
+		for participant in participants:
+			connected_user = {consumer for consumer, user in connected_users.items() if user.user_id == participant.userID}
+
+			if connected_user:
+				await connected_user.pop().send(json.dumps({
+					"type": "conversation_update",
+					"senderUsername": senderUsername,
+					"messagePreview": message[:32] + "..." if len(message) > 32 else message
+				}))
 	
+	@sync_to_async
+	def add_message_to_conversation(self, conversation_id, socketUser, content):
+		conversation = Conversation.objects.get(conversationID=conversation_id)
+
+		if not conversation:
+			raise Exception(f"Conversation {conversation_id} not found")
+
+		try:
+			user = User.objects.get(userID=socketUser.user_id)
+		except User.DoesNotExist:
+			return
+
+		if user not in conversation.participants.all():
+			raise Exception(f"User {user.username} is not part of conversation {conversation_id}")
+
+		conversation.messages.create(messageID=generate_id("msg"), sender=user, content=content)
+		conversation.save()
+
 	@sync_to_async
 	def ensure_conversations_exist(self, socketUser):
 		friends = Relationship.objects.filter(
@@ -89,10 +165,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				participants__userID__in=[user.userID, friend_id],
 				conversationType='private_message'
 			).annotate(participant_count=Count('participants')).filter(participant_count=2).exists()
-			
+
 			if not existing_conversation:
-				new_conversation = Conversation.objects.create(conversationType='private_message')
+				new_conversation = Conversation.objects.create(conversationID=generate_id("conv"), conversationType='private_message')
 				new_conversation.participants.add(user, friend)
 				new_conversation.save()
-
-				logger.info(f"Created conversation between {user.username} and {friend.username}")

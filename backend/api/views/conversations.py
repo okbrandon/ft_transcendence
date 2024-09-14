@@ -17,7 +17,14 @@ class ConversationListView(APIView):
         safe_conversations = serializer.data
         
         for conversation in safe_conversations:
+            # Extract sensitive information from participants
             participants = conversation.get('participants', [])
             conversation['participants'] = get_safe_profile(participants, me=False, many=True)
+
+            # Extract sensitive information from messages
+            messages = conversation.get('messages', [])
+            for message in messages:
+                sender = message.get('sender', {})
+                message['sender'] = get_safe_profile(sender, me=False)
 
         return Response({'conversations': safe_conversations}, status=status.HTTP_200_OK)
