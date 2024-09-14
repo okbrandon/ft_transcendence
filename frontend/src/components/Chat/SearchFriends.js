@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import SearchFriendsContainer, { SearchInput, Dropdown, FriendItem } from './styles/SearchFriends.styled';
+import SearchFriendsContainer, { SearchInput, Dropdown, FriendItem } from './styles/Chat/SearchFriends.styled';
 
 export const SearchFriends = ({ onOpenChat }) => {
 	const [searchQuery, setSearchQuery] = useState('');

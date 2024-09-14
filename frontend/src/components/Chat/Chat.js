@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { SearchFriends } from './SearchFriends.js';
 import { MessagePreview } from './MessagePreview.js';
-import { ChatWindow } from './ChatWindow.js';
-import { Arrow } from './Arrow.js';
-import ChatContainer, { ChatHeaderStyled, ChatListFeatures } from './styles/ChatContainer.styled';
-import ScrollableComponent from './ScrollableComponent.js';
+import { DirectMessage } from './DirectMessage.js';
+import { Arrow } from './tools/Arrow.js';
+import ChatContainer, { ChatHeaderStyled, ChatListFeatures } from './styles/Chat/ChatContainer.styled.js';
+import ScrollableComponent from './tools/ScrollableComponent.js';
 
 const Chat = () => {
 	const [openChats, setOpenChats] = useState([]);
@@ -88,7 +88,7 @@ const Chat = () => {
 				)}
 			</ChatListFeatures>
 			{selectedChat && (
-				<ChatWindow
+				<DirectMessage
 					friendname={selectedChat}
 					messages={messages[selectedChat]}
 					onClose={handleCloseChat}

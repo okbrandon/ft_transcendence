@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import magnifier from '../img/magnifier.svg';
+import magnifier from '../../img/magnifier.svg';
 
 const SearchFriendsContainer = styled.div`
 	display: flex;
