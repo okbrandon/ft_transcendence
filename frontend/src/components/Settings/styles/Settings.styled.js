@@ -102,7 +102,7 @@ export const Form = styled.form`
 	& > label {
 		font-family: 'Inter', sans-serif;
 		font-size: 1rem;
-		color: rgba(255, 255, 255, 0.9);
+		color: rgba(255, 255, 255, 0.7);
 		margin-bottom: 0.5rem;
 	}
 `;

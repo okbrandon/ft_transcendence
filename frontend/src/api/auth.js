@@ -7,7 +7,7 @@ export const ApiLogin = async (username, password) => {
 	console.log('Login successful');
 };
 
-export const ApiSignup = async (username, email, password) => {
-	await axios.post(`http://localhost:8888/api/v1/auth/register`, { username, email, password, lang: 'fr' });
+export const ApiSignup = async (formData) => {
+	await axios.post(`http://localhost:8888/api/v1/auth/register`, { ...formData, lang: 'en' });
 	console.log('Signup successful');
 };

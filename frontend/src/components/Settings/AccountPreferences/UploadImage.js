@@ -9,13 +9,12 @@ import {
 } from '../styles/UploadImage.styled';
 import { GetImage } from '../../../api/user';
 
-const ImageSettings = ({ user, setFormData, handleChange }) => {
-	const [profileImage, setProfileImage] = useState(user.avatarID === 'default' ? '/images/default-profile.png' : user.avatarID);
-	const [bannerImage, setBannerImage] = useState(user.bannerID || '/images/default-banner.png');
+const ImageSettings = ({ user, setFormData, handleChange, setError }) => {
+	const [profileImage, setProfileImage] = useState(user.avatarID === 'default' ? '' : user.avatarID);
+	const [bannerImage, setBannerImage] = useState(user.bannerID || '');
 	const profilePictureRef = useRef(null);
 	const bannerPictureRef = useRef(null);
 
-	console.log("bannerImage", bannerImage);
 	const handleImageChange = (event, type, setImage) => {
 		const file = event.target.files[0];
 
@@ -29,7 +28,7 @@ const ImageSettings = ({ user, setFormData, handleChange }) => {
 				setImage(image);
 			})
 			.catch((err) => {
-				console.error(err);
+				setError(err);
 			});
 	};
 

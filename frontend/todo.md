@@ -14,7 +14,7 @@
     - toggle button
     - turn off -> ask for a code
     - turn on -> api => token -> transform to qrcode
-- [ ] Settings:
+- Settings:
     - Account Preferences:
         - Profile Information:
             - Username

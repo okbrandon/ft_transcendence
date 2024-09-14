@@ -62,7 +62,7 @@ const Settings = () => {
 
 			<ContentArea>
 				{activeSection === "account" && <AccountPreferences user={user}/>}
-				{activeSection === "security" && <Security/>}
+				{activeSection === "security" && <Security user={user}/>}
 				{activeSection === "visibility" && <Visibility/>}
 				{activeSection === "privacy" && <Privacy/>}
 			</ContentArea>

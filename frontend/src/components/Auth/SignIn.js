@@ -25,7 +25,6 @@ const SignIn = () => {
 				})
 				.catch((err) => {
 					setError(err.response.data.error);
-					setIsLoggedIn(false);
 				});
 		}
 	};

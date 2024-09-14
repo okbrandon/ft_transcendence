@@ -1,46 +1,60 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import {
 	ErrorMessage,
 	Form,
 	FormInput,
 	SectionHeading,
+	SubSectionHeading,
 	SubmitButton
 } from "./styles/Settings.styled";
 import API from "../../api/api";
-import { AuthContext } from "../../context/AuthContext";
 
-const Security = () => {
-	const { user } = useContext(AuthContext);
+const Security = ({ user }) => {
 	const [formData, setFormData] = useState({
-		password: user.password,
 		email: user.email,
 	});
+	const [password, setPassword] = useState('');
 	const [cfPassword, setCfPassword] = useState('');
 	const [error, setError] = useState('');
 
 	const handleChange = (e) => {
-		const { name, value } = e.target;
+		const { id, value } = e.target;
+
 		setFormData(data => ({
 			...data,
-			[name]: value,
+			[id]: value,
 		}));
 	};
 
 	const validateForm = () => {
 		let errorMessage = '';
 
-		if (formData.password.length < 8) {
+		if (formData.password && formData.password.length < 8) {
 			errorMessage = 'Password must be at least 8 characters long.';
-		} else if (new TextEncoder().encode(formData.password).length > 72) {
+		} else if (formData.password && new TextEncoder().encode(formData.password).length > 72) {
 			errorMessage = 'Password cannot be longer than 72 bytes.';
-		} else if (formData.password !== cfPassword) {
+		} else if (formData.password && formData.password !== cfPassword) {
 			errorMessage = 'Passwords do not match.';
+		} else if (!formData.email) {
+			errorMessage = 'Email is required.';
+		} else if (formData.email.length > 64) {
+			errorMessage = 'Email cannot be longer than 64 characters.';
+		} else if (!/^[^@]+@[^@]+\.[^@]+$/.test(formData.email)) {
+			errorMessage = 'Invalid Email address, did not match the required format.';
 		}
 		return errorMessage;
 	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
+
+		if (password) {
+			setFormData(data => ({
+				...data,
+				password,
+			}));
+		}
+
 		const errorMessage = validateForm();
 
 		if (errorMessage) {
@@ -48,10 +62,11 @@ const Security = () => {
 		} else {
 			API.patch('/users/@me/profile', formData)
 				.then(() => {
+					setError('');
 					console.log('Security updated successfully with:', formData);
 				})
 				.catch((err) => {
-					console.error(err);
+					setError(err);
 				});
 		}
 	}
@@ -59,28 +74,35 @@ const Security = () => {
 	return (
 		<Form onSubmit={handleSubmit}>
 			<SectionHeading>Security</SectionHeading>
+			<label htmlFor="password">Password</label>
 			<FormInput
 				type="password"
-				name="password"
+				id="password"
 				placeholder="Change Password"
-				onChange={handleChange}
+				value={password}
+				onChange={(e) => setPassword(e.target.value)}
+				autoComplete="off"
 			/>
-			{error.includes('password') && <ErrorMessage>{error}</ErrorMessage>}
+			<label htmlFor="cfPassword">Confirm Password</label>
 			<FormInput
 				type="password"
-				name="cfPassword"
+				id="cfPassword"
 				placeholder="Confirm New Password"
 				value={cfPassword}
 				onChange={(e) => setCfPassword(e.target.value)}
+				autoComplete="off"
 			/>
+			<label htmlFor="email">Email</label>
 			<FormInput
 				type="email"
-				name="email"
+				id="email"
 				placeholder="Change Email"
 				value={formData.email}
 				onChange={handleChange}
+				autoComplete="email"
 			/>
-			{error.includes('email') && <ErrorMessage>{error}</ErrorMessage>}
+			<SubSectionHeading>Two-Factor Authentication</SubSectionHeading>
+			{error && <ErrorMessage>{error}</ErrorMessage>}
 			<SubmitButton>Save Changes</SubmitButton>
 		</Form>
 	);

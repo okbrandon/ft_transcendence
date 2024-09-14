@@ -12,6 +12,7 @@ import {
 import UploadImage from './UploadImage';
 import API from '../../../api/api';
 import DeleteAccount from './DeleteAccount';
+import { checkAccountPreferencesRestrictions } from '../../../scripts/restrictions';
 
 const AccountPreferences = ({ user }) => {
 	const [formData, setFormData] = useState({
@@ -42,22 +43,9 @@ const AccountPreferences = ({ user }) => {
 		}
 	};
 
-	const validateForm = () => {
-		let errorMessage = '';
-
-		if (formData.username && formData.username.length < 4) {
-			errorMessage = 'Username must be at least 4 characters long.';
-		} else if (formData.username && formData.username.length > 16) {
-			errorMessage = 'Username cannot be longer than 16 chracaters.';
-		} else if (formData.displayName && formData.displayName.length > 16) {
-			errorMessage = 'Display Name cannot be longer than 16 characters.';
-		}
-		return errorMessage;
-	};
-
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		const errorMessage = validateForm();
+		const errorMessage = checkAccountPreferencesRestrictions(formData);
 
 		if (errorMessage) {
 			setError(errorMessage);
@@ -105,10 +93,10 @@ const AccountPreferences = ({ user }) => {
 					cols="50"
 					onChange={handleChange}
 				/>
-				<p>{bioByteLength} / 280 bytes</p>
+				<p>{bioByteLength} / 280</p>
 			</BioContainer>
 			<SubSectionHeading>Profile Image & Background</SubSectionHeading>
-			<UploadImage user={user} setFormData={setFormData} handleChange={handleChange}/>
+			<UploadImage user={user} setFormData={setFormData} handleChange={handleChange} setError={setError}/>
 			<SubSectionHeading>General Preferences</SubSectionHeading>
 			<FormInput
 				type="text"
