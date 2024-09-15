@@ -19,7 +19,7 @@ const FriendsList = ({ friends }) => {
 				<FriendCard key={friend.id}>
 					<FriendInfo>
 						<FriendStatus $status={friend.status} />
-						<FriendAvatar src="/images/anonymous.png" alt={`${friend.name}'s avatar`}/>
+						<FriendAvatar src="/images/default-profile.png" alt={`${friend.name}'s avatar`}/>
 						<FriendName>{friend.name}</FriendName>
 					</FriendInfo>
 					<Actions>

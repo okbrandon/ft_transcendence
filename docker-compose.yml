@@ -22,16 +22,16 @@ services:
     networks:
       - transcendence
 
-  frontend:
-    build: ./frontend
-    restart: always
-    env_file: .env
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
-      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
-    networks:
-      - transcendence
+  # frontend:
+  #   build: ./frontend
+  #   restart: always
+  #   env_file: .env
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
+  #     - "traefik.http.services.frontend.loadbalancer.server.port=3000"
+  #   networks:
+  #     - transcendence
 
   backend:
     build: ./backend
@@ -46,18 +46,18 @@ services:
     volumes:
       - ./data/exports:/exports
 
-  gameserver:
-    build: ./gameserver
-    restart: always
-    env_file: .env
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.gameserver.rule=PathPrefix(`/ws`)"
-      - "traefik.http.services.gameserver.loadbalancer.server.port=8080"
-    ports:
-      - 8080:8080
-    networks:
-      - transcendence
+  # gameserver:
+  #   build: ./gameserver
+  #   restart: always
+  #   env_file: .env
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.gameserver.rule=PathPrefix(`/ws`)"
+  #     - "traefik.http.services.gameserver.loadbalancer.server.port=8080"
+  #   ports:
+  #     - 8080:8080
+  #   networks:
+  #     - transcendence
 
   harvester:
     build: ./harvester

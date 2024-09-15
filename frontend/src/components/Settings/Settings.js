@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AccountPreferences from './AccountPreferences/AccountPreferences';
-import Security from './Security';
+import Security from './Security/Security';
 import Visibility from './Visibility';
 import Privacy from './Privacy';
 import {
@@ -11,10 +11,21 @@ import {
 	SidebarBackButton,
 	SidebarButton,
 } from './styles/Settings.styled';
+import { AuthContext } from '../../context/AuthContext';
+import Loader from '../../styles/shared/Loader.styled';
 
 const Settings = () => {
+	const { user, loading } = useContext(AuthContext);
 	const [activeSection, setActiveSection] = useState("account");
 	const navigate = useNavigate();
+
+	if (loading) {
+		return (
+			<PageContainer>
+				<Loader/>
+			</PageContainer>
+		);
+	};
 
 	return (
 		<PageContainer>
@@ -50,8 +61,8 @@ const Settings = () => {
 			</SideBar>
 
 			<ContentArea>
-				{activeSection === "account" && <AccountPreferences/>}
-				{activeSection === "security" && <Security/>}
+				{activeSection === "account" && <AccountPreferences user={user}/>}
+				{activeSection === "security" && <Security user={user}/>}
 				{activeSection === "visibility" && <Visibility/>}
 				{activeSection === "privacy" && <Privacy/>}
 			</ContentArea>

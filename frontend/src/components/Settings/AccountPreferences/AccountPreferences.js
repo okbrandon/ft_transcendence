@@ -1,77 +1,96 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import {
 	BioContainer,
 	ErrorMessage,
 	Form,
 	FormInput,
+	LanguageDropdown,
 	SectionHeading,
 	SubSectionHeading,
 	SubmitButton,
+	SuccessMessage,
 	TextArea,
 } from '../styles/Settings.styled';
 import UploadImage from './UploadImage';
 import API from '../../../api/api';
-import { AuthContext } from '../../../context/AuthContext';
 import DeleteAccount from './DeleteAccount';
+import { checkAccountPreferencesRestrictions } from '../../../scripts/restrictions';
+import { AuthContext } from '../../../context/AuthContext';
+import { GetUser } from '../../../api/user';
 
-const AccountPreferences = () => {
-	const { user } = useContext(AuthContext);
+const AccountPreferences = ({ user }) => {
+	const { setUser } = useContext(AuthContext);
 	const [formData, setFormData] = useState({
 		username: user.username,
 		displayName: user.displayName,
 		bio: user.bio,
+		lang: user.lang,
 	});
-
 	const [bioByteLength, setBioByteLength] = useState(0);
+	const [loading, setLoading] = useState(false);
+	const [success, setSuccess] = useState('');
 	const [error, setError] = useState('');
-
+	const [serverError, setServerError] = useState('');
 
 	const handleChange = (e) => {
-		const { name, value } = e.target;
+		const { id, value } = e.target;
 
-		if (name === 'bio') {
+		if (id === 'bio') {
 			const byteSize = new Blob([value]).size;
 			if (byteSize <= 280) {
 				setBioByteLength(byteSize);
 				setFormData(data => ({
 					...data,
-					[name]: value,
+					[id]: value,
 				}));
 			}
 		} else {
 			setFormData(data => ({
 				...data,
-				[name]: value,
+				[id]: value,
 			}));
 		}
 	};
 
-	const validateForm = () => {
-		let errorMessage = '';
-
-		if (formData.username && formData.username.length < 4) {
-			errorMessage = 'Username must be at least 4 characters long.';
-		} else if (formData.username && formData.username.length > 16) {
-			errorMessage = 'Username cannot be longer than 16 chracaters.';
-		} else if (formData.displayName && formData.displayName.length > 16) {
-			errorMessage = 'Display Name cannot be longer than 16 characters.';
-		}
-		return errorMessage;
-	};
-
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		const errorMessage = validateForm();
+		const errorMessage = checkAccountPreferencesRestrictions(formData);
+		const submissionData = { ...formData };
+
+		if (submissionData.displayName === '') {
+			submissionData.displayName = null;
+		}
 
 		if (errorMessage) {
 			setError(errorMessage);
+			setSuccess('');
+			setServerError('');
 		} else {
-			API.patch('/users/@me/profile', formData)
+			setLoading(true);
+			API.patch('/users/@me/profile', submissionData)
 				.then(() => {
-					console.log('Account Preferences updated successfully with:', formData);
+					setSuccess('Account Preferences updated successfully.');
+					setError('');
+					setServerError('');
+					console.log('Account Preferences updated successfully with:', submissionData);
+					GetUser()
+						.then((res) => {
+							setUser(res.data);
+							console.log('User data refetched and updated in context:', res.data);
+						})
+						.catch((err) => {
+							setServerError(err.response.data.error);
+							setSuccess('');
+							setError('');
+						});
 				})
 				.catch((err) => {
-					console.error(err);
+					setServerError(err.response.data.error);
+					setSuccess('');
+					setError('');
+				})
+				.finally(() => {
+					setLoading(false);
 				});
 		}
 	};
@@ -81,42 +100,56 @@ const AccountPreferences = () => {
 			<SectionHeading>Account Preferences</SectionHeading>
 			<SubSectionHeading>Profile Information</SubSectionHeading>
 			<label htmlFor="username">Username</label>
+			{error.includes("Username") && <ErrorMessage>{error}</ErrorMessage>}
 			<FormInput
 				type="text"
-				name="username"
+				id="username"
 				placeholder="Username"
 				value={formData.username}
 				onChange={handleChange}
+				autoComplete='off'
 			/>
-			{error.includes("Username") && <ErrorMessage>{error}</ErrorMessage>}
 			<label htmlFor="displayName">Display Name</label>
+			{error.includes("Display Name") && <ErrorMessage>{error}</ErrorMessage>}
 			<FormInput
 				type="text"
-				name="displayName"
+				id="displayName"
 				placeholder="Display Name"
 				value={formData.displayName}
 				onChange={handleChange}
 			/>
-			{error.includes("Display Name") && <ErrorMessage>{error}</ErrorMessage>}
 			<label htmlFor="bio">Bio</label>
 			<BioContainer>
 				<TextArea
-					name="bio"
+					id="bio"
 					placeholder="Tell us about yourself"
-					value={formData.bio}
+					value={formData.bio || ''}
 					rows="4"
 					cols="50"
 					onChange={handleChange}
 				/>
-				<p>{bioByteLength} / 280 bytes</p>
+				<p>{bioByteLength} / 280</p>
 			</BioContainer>
 			<SubSectionHeading>Profile Image & Background</SubSectionHeading>
 			<UploadImage user={user} setFormData={setFormData} handleChange={handleChange}/>
 			<SubSectionHeading>General Preferences</SubSectionHeading>
-			<FormInput type="text" placeholder="Language Preference" />
+			<label htmlFor="lang">Language</label>
+			<LanguageDropdown
+				id="lang"
+				value={formData.lang}
+				onChange={handleChange}
+			>
+				<option value="en">🇬🇧 English</option>
+				<option value="es">🇪🇸 Spanish</option>
+				<option value="fr">🇫🇷 French</option>
+			</LanguageDropdown>
 			<SubSectionHeading>Account Management</SubSectionHeading>
 			<DeleteAccount/>
-			<SubmitButton type="submit">Save Changes</SubmitButton>
+			{success && <SuccessMessage>{success}</SuccessMessage>}
+			{serverError && <ErrorMessage>{serverError}</ErrorMessage>}
+			<SubmitButton type="submit" disabled={loading}>
+				{loading ? 'Saving...' : 'Save Changes'}
+			</SubmitButton>
 		</Form>
 	);
 };
