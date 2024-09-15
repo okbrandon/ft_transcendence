@@ -31,7 +31,7 @@ class UserProfileMe(APIView):
         try:
             me = request.user
             data = request.data
-            allowed_fields = ['username', 'displayName', 'email', 'lang', 'avatarID', 'bannerID', 'phone_number', 'password']
+            allowed_fields = ['username', 'displayName', 'bio', 'email', 'lang', 'avatarID', 'bannerID', 'phone_number', 'password']
             updated_fields = {}
 
             for field in allowed_fields:
@@ -81,7 +81,7 @@ class UserProfileMe(APIView):
         me.bio = 'This account has been permanently disabled.'
         me.oauthAccountID = None
         me.phone_number = None
-        me.password = None
+        me.password = ""
         me.flags = 1<<2
         me.money = 0
         me.save()

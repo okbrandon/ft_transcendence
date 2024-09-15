@@ -27,7 +27,7 @@ const DeleteAccount = () => {
 	};
 	return (
 		<DeleteAccountContainer>
-			<DeleteAccountButton onClick={() => setIsModalOpen(true)}>Delete</DeleteAccountButton>
+			<DeleteAccountButton type="button" onClick={() => setIsModalOpen(true)}>Delete</DeleteAccountButton>
 			<DeleteAccountText>Delete your account</DeleteAccountText>
 
 			{isModalOpen && (

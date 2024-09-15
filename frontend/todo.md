@@ -33,6 +33,8 @@
     - Data Privacy:
         - Harvest
 - Profile: add block button
+- Tell Leader to fix the problem with setting the phone_number back to null
+- Ask for the code you receive when setting a number
 
 ## Secondary
 - 2FA aled

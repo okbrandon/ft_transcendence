@@ -83,7 +83,7 @@ export const checkSecurityRestrictions = (data, cfPassword) => {
 		return 'Email cannot be longer than 64 characters.';
 	} else if (!/^[^@]+@[^@]+\.[^@]+$/.test(data.email)) {
 		return 'Invalid Email address, did not match the required format.';
-	} else if (!/^\+[1-9]\d{1,14}$/.test(data.phone_number)) {
+	} else if (data.phone_number && !/^\+[1-9]\d{1,14}$/.test(data.phone_number)) {
 		return 'Phone number must be in E.164 format (e.g., +1234567890).';
 	}
 

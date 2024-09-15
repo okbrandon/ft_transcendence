@@ -4,9 +4,11 @@ import {
 	ErrorMessage,
 	Form,
 	FormInput,
+	LanguageDropdown,
 	SectionHeading,
 	SubSectionHeading,
 	SubmitButton,
+	SuccessMessage,
 	TextArea,
 } from '../styles/Settings.styled';
 import UploadImage from './UploadImage';
@@ -22,9 +24,13 @@ const AccountPreferences = ({ user }) => {
 		username: user.username,
 		displayName: user.displayName,
 		bio: user.bio,
+		lang: user.lang,
 	});
 	const [bioByteLength, setBioByteLength] = useState(0);
+	const [loading, setLoading] = useState(false);
+	const [success, setSuccess] = useState('');
 	const [error, setError] = useState('');
+	const [serverError, setServerError] = useState('');
 
 	const handleChange = (e) => {
 		const { id, value } = e.target;
@@ -49,25 +55,42 @@ const AccountPreferences = ({ user }) => {
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		const errorMessage = checkAccountPreferencesRestrictions(formData);
+		const submissionData = { ...formData };
+
+		if (submissionData.displayName === '') {
+			submissionData.displayName = null;
+		}
 
 		if (errorMessage) {
 			setError(errorMessage);
+			setSuccess('');
+			setServerError('');
 		} else {
-			API.patch('/users/@me/profile', formData)
+			setLoading(true);
+			API.patch('/users/@me/profile', submissionData)
 				.then(() => {
+					setSuccess('Account Preferences updated successfully.');
 					setError('');
-					console.log('Account Preferences updated successfully with:', formData);
+					setServerError('');
+					console.log('Account Preferences updated successfully with:', submissionData);
 					GetUser()
 						.then((res) => {
 							setUser(res.data);
 							console.log('User data refetched and updated in context:', res.data);
 						})
 						.catch((err) => {
-							console.error('Error fetching updated user data:', err);
+							setServerError(err.response.data.error);
+							setSuccess('');
+							setError('');
 						});
 				})
 				.catch((err) => {
-					console.error(err);
+					setServerError(err.response.data.error);
+					setSuccess('');
+					setError('');
+				})
+				.finally(() => {
+					setLoading(false);
 				});
 		}
 	};
@@ -77,6 +100,7 @@ const AccountPreferences = ({ user }) => {
 			<SectionHeading>Account Preferences</SectionHeading>
 			<SubSectionHeading>Profile Information</SubSectionHeading>
 			<label htmlFor="username">Username</label>
+			{error.includes("Username") && <ErrorMessage>{error}</ErrorMessage>}
 			<FormInput
 				type="text"
 				id="username"
@@ -85,8 +109,8 @@ const AccountPreferences = ({ user }) => {
 				onChange={handleChange}
 				autoComplete='off'
 			/>
-			{error.includes("Username") && <ErrorMessage>{error}</ErrorMessage>}
 			<label htmlFor="displayName">Display Name</label>
+			{error.includes("Display Name") && <ErrorMessage>{error}</ErrorMessage>}
 			<FormInput
 				type="text"
 				id="displayName"
@@ -94,7 +118,6 @@ const AccountPreferences = ({ user }) => {
 				value={formData.displayName}
 				onChange={handleChange}
 			/>
-			{error.includes("Display Name") && <ErrorMessage>{error}</ErrorMessage>}
 			<label htmlFor="bio">Bio</label>
 			<BioContainer>
 				<TextArea
@@ -108,16 +131,25 @@ const AccountPreferences = ({ user }) => {
 				<p>{bioByteLength} / 280</p>
 			</BioContainer>
 			<SubSectionHeading>Profile Image & Background</SubSectionHeading>
-			<UploadImage user={user} setFormData={setFormData} handleChange={handleChange} setError={setError}/>
+			<UploadImage user={user} setFormData={setFormData} handleChange={handleChange}/>
 			<SubSectionHeading>General Preferences</SubSectionHeading>
-			<FormInput
-				type="text"
-				id="language"
-				placeholder="Language Preference"
-			/>
+			<label htmlFor="lang">Language</label>
+			<LanguageDropdown
+				id="lang"
+				value={formData.lang}
+				onChange={handleChange}
+			>
+				<option value="en">🇬🇧 English</option>
+				<option value="es">🇪🇸 Spanish</option>
+				<option value="fr">🇫🇷 French</option>
+			</LanguageDropdown>
 			<SubSectionHeading>Account Management</SubSectionHeading>
 			<DeleteAccount/>
-			<SubmitButton type="submit">Save Changes</SubmitButton>
+			{success && <SuccessMessage>{success}</SuccessMessage>}
+			{serverError && <ErrorMessage>{serverError}</ErrorMessage>}
+			<SubmitButton type="submit" disabled={loading}>
+				{loading ? 'Saving...' : 'Save Changes'}
+			</SubmitButton>
 		</Form>
 	);
 };

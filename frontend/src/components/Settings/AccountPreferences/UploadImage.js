@@ -7,11 +7,13 @@ import {
 	ImageUploadLabel,
 	RemoveButton,
 } from '../styles/UploadImage.styled';
+import { ErrorMessage } from '../styles/Settings.styled';
 import { GetImage } from '../../../api/user';
 
-const ImageSettings = ({ user, setFormData, handleChange, setError }) => {
+const ImageSettings = ({ user, setFormData, handleChange }) => {
 	const [profileImage, setProfileImage] = useState(user.avatarID === 'default' ? '' : user.avatarID);
 	const [bannerImage, setBannerImage] = useState(user.bannerID || '');
+	const [error, setError] = useState('');
 	const profilePictureRef = useRef(null);
 	const bannerPictureRef = useRef(null);
 
@@ -24,6 +26,7 @@ const ImageSettings = ({ user, setFormData, handleChange, setError }) => {
 
 		GetImage(file)
 			.then((image) => {
+				setError('');
 				handleChange({ target: { id: type, value: image } });
 				setImage(image);
 			})
@@ -69,7 +72,6 @@ const ImageSettings = ({ user, setFormData, handleChange, setError }) => {
 						</RemoveButton>
 					)}
 				</ImageUploadContainer>
-
 				<ImageUploadContainer>
 					<ImageUploadLabel htmlFor="background-image">Background Image:</ImageUploadLabel>
 					<ImageUploadInput
@@ -92,6 +94,7 @@ const ImageSettings = ({ user, setFormData, handleChange, setError }) => {
 						</RemoveButton>
 					)}
 				</ImageUploadContainer>
+				{error && <ErrorMessage>{error}</ErrorMessage>}
 		</>
 	);
 };

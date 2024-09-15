@@ -5,7 +5,8 @@ import {
 	FormInput,
 	SectionHeading,
 	SubSectionHeading,
-	SubmitButton
+	SubmitButton,
+	SuccessMessage
 } from "./styles/Settings.styled";
 import API from "../../api/api";
 import { checkSecurityRestrictions } from "../../scripts/restrictions";
@@ -17,10 +18,13 @@ const Security = ({ user }) => {
 	const [formData, setFormData] = useState({
 		email: user.email,
 		phone_number: user.phone_number || '',
+		password: '',
 	});
-	const [password, setPassword] = useState('');
 	const [cfPassword, setCfPassword] = useState('');
+	const [loading, setLoading] = useState(false);
+	const [success, setSuccess] = useState('');
 	const [error, setError] = useState('');
+	const [serverError, setServerError] = useState('');
 
 	const handleChange = (e) => {
 		const { id, value } = e.target;
@@ -34,41 +38,44 @@ const Security = ({ user }) => {
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
-		if (password) {
-			setFormData(data => ({
-				...data,
-				password,
-			}));
-		} else if (formData.password) {
-			setFormData(data => {
-				const newData = {
-					...data,
-				};
-				delete newData.password;
-				return newData;
-			})
+		const submissionData = { ...formData };
+
+		if (!submissionData.password) {
+			delete submissionData.password;
 		}
 
-		const errorMessage = checkSecurityRestrictions();
+		const errorMessage = checkSecurityRestrictions(submissionData, cfPassword);
 
 		if (errorMessage) {
 			setError(errorMessage);
+			setSuccess('');
+			setServerError('');
 		} else {
-			API.patch('/users/@me/profile', formData)
+			setLoading(true);
+			API.patch('/users/@me/profile', submissionData)
 				.then(() => {
+					setSuccess('Security updated successfully');
 					setError('');
-					console.log('Security updated successfully with:', formData);
+					setServerError('');
+					console.log('Security updated successfully with:', submissionData);
 					GetUser()
 						.then((res) => {
 							setUser(res.data);
 							console.log('User data refetched and updated in context:', res.data);
 						})
 						.catch((err) => {
-							console.error('Error fetching updated user data:', err);
+							setServerError(err.response.data.error);
+							setSuccess('');
+							setError('');
 						});
 				})
 				.catch((err) => {
-					setError(err);
+					setServerError(err.response.data.error);
+					setSuccess('');
+					setError('');
+				})
+				.finally(() => {
+					setLoading(false);
 				});
 		}
 	}
@@ -77,15 +84,17 @@ const Security = ({ user }) => {
 		<Form onSubmit={handleSubmit}>
 			<SectionHeading>Security</SectionHeading>
 			<label htmlFor="password">Password</label>
+			{error.includes("Password") && <ErrorMessage>{error}</ErrorMessage>}
 			<FormInput
 				type="password"
 				id="password"
 				placeholder="Change Password"
-				value={password}
-				onChange={(e) => setPassword(e.target.value)}
+				value={formData.password}
+				onChange={handleChange}
 				autoComplete="off"
 			/>
 			<label htmlFor="cfPassword">Confirm Password</label>
+			{error.includes("Passwords") && <ErrorMessage>{error}</ErrorMessage>}
 			<FormInput
 				type="password"
 				id="cfPassword"
@@ -95,6 +104,7 @@ const Security = ({ user }) => {
 				autoComplete="off"
 			/>
 			<label htmlFor="email">Email</label>
+			{error.includes("Email") && <ErrorMessage>{error}</ErrorMessage>}
 			<FormInput
 				type="email"
 				id="email"
@@ -103,18 +113,22 @@ const Security = ({ user }) => {
 				onChange={handleChange}
 				autoComplete="email"
 			/>
-			<label htmlFor="phone">Phone number</label>
+			<label htmlFor="phone_number">Phone number</label>
+			{error.includes("Phone") && <ErrorMessage>{error}</ErrorMessage>}
 			<FormInput
 				type="tel"
-				id="phone"
+				id="phone_number"
 				placeholder="Add Phone Number"
 				value={formData.phone_number}
 				onChange={handleChange}
 				autoComplete="tel"
 			/>
 			<SubSectionHeading>Two-Factor Authentication</SubSectionHeading>
-			{error && <ErrorMessage>{error}</ErrorMessage>}
-			<SubmitButton>Save Changes</SubmitButton>
+			{success && <SuccessMessage>{success}</SuccessMessage>}
+			{serverError && <ErrorMessage>{serverError}</ErrorMessage>}
+			<SubmitButton type="submit" disabled={loading}>
+				{loading ? 'Saving...' : 'Save Changes'}
+			</SubmitButton>
 		</Form>
 	);
 };
