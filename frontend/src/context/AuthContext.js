@@ -24,11 +24,10 @@ const AuthProvider = ({ children }) => {
 		} else {
 			setLoading(false);
 		}
-
 	}, [isLoggedIn]);
 
 	return (
-		<AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, user, loading }}>
+		<AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, user, setUser, loading }}>
 			{ children }
 		</AuthContext.Provider>
 	);

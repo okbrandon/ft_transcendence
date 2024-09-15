@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
 	BioContainer,
 	ErrorMessage,
@@ -13,8 +13,11 @@ import UploadImage from './UploadImage';
 import API from '../../../api/api';
 import DeleteAccount from './DeleteAccount';
 import { checkAccountPreferencesRestrictions } from '../../../scripts/restrictions';
+import { AuthContext } from '../../../context/AuthContext';
+import { GetUser } from '../../../api/user';
 
 const AccountPreferences = ({ user }) => {
+	const { setUser } = useContext(AuthContext);
 	const [formData, setFormData] = useState({
 		username: user.username,
 		displayName: user.displayName,
@@ -52,7 +55,16 @@ const AccountPreferences = ({ user }) => {
 		} else {
 			API.patch('/users/@me/profile', formData)
 				.then(() => {
+					setError('');
 					console.log('Account Preferences updated successfully with:', formData);
+					GetUser()
+						.then((res) => {
+							setUser(res.data);
+							console.log('User data refetched and updated in context:', res.data);
+						})
+						.catch((err) => {
+							console.error('Error fetching updated user data:', err);
+						});
 				})
 				.catch((err) => {
 					console.error(err);

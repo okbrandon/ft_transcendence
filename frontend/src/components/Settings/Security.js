@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
 	ErrorMessage,
 	Form,
@@ -9,8 +9,11 @@ import {
 } from "./styles/Settings.styled";
 import API from "../../api/api";
 import { checkSecurityRestrictions } from "../../scripts/restrictions";
+import { AuthContext } from "../../context/AuthContext";
+import { GetUser } from "../../api/user";
 
 const Security = ({ user }) => {
+	const { setUser } = useContext(AuthContext);
 	const [formData, setFormData] = useState({
 		email: user.email,
 		phone_number: user.phone_number || '',
@@ -55,6 +58,14 @@ const Security = ({ user }) => {
 				.then(() => {
 					setError('');
 					console.log('Security updated successfully with:', formData);
+					GetUser()
+						.then((res) => {
+							setUser(res.data);
+							console.log('User data refetched and updated in context:', res.data);
+						})
+						.catch((err) => {
+							console.error('Error fetching updated user data:', err);
+						});
 				})
 				.catch((err) => {
 					setError(err);
