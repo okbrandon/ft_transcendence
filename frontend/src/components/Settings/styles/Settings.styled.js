@@ -116,7 +116,6 @@ export const SectionHeading = styled.h2`
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 	text-transform: uppercase;
-	margin-bottom: 3rem;
 `;
 
 export const SubSectionHeading = styled.h3`
@@ -126,6 +125,7 @@ export const SubSectionHeading = styled.h3`
 	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 	padding-bottom: 0.5rem;
 	margin-bottom: 3rem;
+	margin-top: 3rem;
 `;
 
 export const FormInput = styled.input`

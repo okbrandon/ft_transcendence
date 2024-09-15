@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AccountPreferences from './AccountPreferences/AccountPreferences';
-import Security from './Security';
+import Security from './Security/Security';
 import Visibility from './Visibility';
 import Privacy from './Privacy';
 import {

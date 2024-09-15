@@ -17,6 +17,7 @@
     "react-bootstrap": "^2.10.4",
     "react-circular-progressbar": "^2.1.0",
     "react-dom": "^18.3.1",
+    "react-qr-code": "^2.0.15",
     "react-router-dom": "^6.24.1",
     "react-scripts": "5.0.1",
     "styled-components": "^6.1.11",

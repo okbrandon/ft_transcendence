@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
 	DeleteAccountButton,
 	DeleteAccountContainer,
@@ -12,6 +13,7 @@ import API from '../../../api/api';
 
 const DeleteAccount = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const navigate = useNavigate();
 
 	const handleConfirmDelete = () => {
 		API.delete('/users/@me/profile')
@@ -19,6 +21,7 @@ const DeleteAccount = () => {
 				localStorage.removeItem('token');
 				localStorage.removeItem('refresh');
 				console.log('Account Deleted');
+				navigate('/login');
 			})
 			.catch((err) => {
 				console.error(err);
