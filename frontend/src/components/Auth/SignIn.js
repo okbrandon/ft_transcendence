@@ -5,6 +5,7 @@ import Button from 'react-bootstrap/Button';
 import { ApiLogin } from '../../api/auth';
 import { AuthenticationSection, ErrorMessage, FormContainer, FortyTwoButton } from './styles/Authentication.styled';
 import { AuthContext } from '../../context/AuthContext';
+import TwoFactorAuth from './TwoFactorAuth';
 
 const SignIn = () => {
 	const navigate = useNavigate();
@@ -12,6 +13,7 @@ const SignIn = () => {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState('');
+	const [isTwoFactorAuth, setIsTwoFactorAuth] = useState(false);
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
@@ -24,7 +26,13 @@ const SignIn = () => {
 					navigate('/');
 				})
 				.catch((err) => {
-					setError(err.response.data.error);
+					if (err.status === 400) {
+						setIsLoggedIn(true);
+						setIsTwoFactorAuth(true);
+					} else {
+						console.log(err);
+						setError(err.response.data.error);
+					}
 				});
 		}
 	};
@@ -34,40 +42,46 @@ const SignIn = () => {
 	};
 
 	return (
-		<AuthenticationSection>
-			<FormContainer onSubmit={handleSubmit}>
-				<h1>Sign In</h1>
-				<FortyTwoButton variant='light' onClick={handleFortyTwo}><Image src='/images/42_Logo.png' alt='42 Logo'/>SignIn with 42</FortyTwoButton>
-				<p>- Or -</p>
-				<FormContainer.Group className="mb-3">
-					<FormContainer.Control
-						id="username"
-						type="username"
-						placeholder=" "
-						value={username}
-						onChange={(e) => setUsername(e.target.value)}
-						isInvalid={error && error.includes('username')}
-						autoComplete='username'
-					/>
-					<span>USERNAME</span>
-				</FormContainer.Group>
-				<FormContainer.Group className="mb-3">
-					<FormContainer.Control
-						id="password"
-						type="password"
-						placeholder=" "
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-						isInvalid={error && error.includes('password')}
-						autoComplete='current-password'
-					/>
-					<span>PASSWORD</span>
-				</FormContainer.Group>
-				<p>Not Signed Up ? <Link to="/signup">Sign Up</Link></p>
-				{error && <ErrorMessage>{error}</ErrorMessage>}
-				<Button variant='light' type='submit'>Submit</Button>
-			</FormContainer>
-		</AuthenticationSection>
+		<>
+			{!isTwoFactorAuth ? (
+				<AuthenticationSection>
+					<FormContainer onSubmit={handleSubmit}>
+						<h1>Sign In</h1>
+						<FortyTwoButton variant='light' onClick={handleFortyTwo}><Image src='/images/42_Logo.png' alt='42 Logo'/>SignIn with 42</FortyTwoButton>
+						<p>- Or -</p>
+						<FormContainer.Group className="mb-3">
+							<FormContainer.Control
+								id="username"
+								type="username"
+								placeholder=" "
+								value={username}
+								onChange={(e) => setUsername(e.target.value)}
+								isInvalid={error && error.includes('username')}
+								autoComplete='username'
+							/>
+							<span>USERNAME</span>
+						</FormContainer.Group>
+						<FormContainer.Group className="mb-3">
+							<FormContainer.Control
+								id="password"
+								type="password"
+								placeholder=" "
+								value={password}
+								onChange={(e) => setPassword(e.target.value)}
+								isInvalid={error && error.includes('password')}
+								autoComplete='current-password'
+							/>
+							<span>PASSWORD</span>
+						</FormContainer.Group>
+						<p>Not Signed Up ? <Link to="/signup">Sign Up</Link></p>
+						{error && <ErrorMessage>{error}</ErrorMessage>}
+						<Button variant='light' type='submit'>Submit</Button>
+					</FormContainer>
+				</AuthenticationSection>
+			) : (
+				<TwoFactorAuth setIsTwoFactorAuth={setIsTwoFactorAuth}/>
+			)}
+		</>
 	);
 };
 
