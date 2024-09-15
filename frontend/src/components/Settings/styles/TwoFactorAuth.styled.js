@@ -85,48 +85,6 @@ export const TwoFAText = styled.p`
 	text-align: center;
 `;
 
-// Styled input field for the authentication code
-export const AuthCodeInput = styled.input`
-	padding: 0.75rem;
-	width: 100%;
-	border-radius: 5px;
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	background-color: rgba(25, 25, 25, 0.5);
-	color: #fff;
-	margin-bottom: 1.5rem;
-	font-size: 1rem;
-	transition: all 0.3s ease;
-
-	&:focus {
-		outline: none;
-		border-color: rgba(164, 69, 178, 0.7);
-		box-shadow: 0 0 10px rgba(164, 69, 178, 0.5);
-	}
-`;
-
-// Styled button for verifying the code
-export const VerifyButton = styled.button`
-	padding: 0.75rem 2rem;
-	border: none;
-	border-radius: 5px;
-	background-color: rgba(164, 69, 178, 0.7);
-	color: #fff;
-	font-size: 1rem;
-	cursor: pointer;
-	transition: all 0.3s ease;
-
-	&:hover {
-		background-color: rgba(164, 69, 178, 0.9);
-		box-shadow: 0 0 15px rgba(164, 69, 178, 0.7);
-	}
-
-	&:disabled {
-		background-color: rgba(164, 69, 178, 0.5);
-		cursor: not-allowed;
-		pointer-events: none;
-	}
-`;
-
 // QRCode container
 export const QRCodeWrapper = styled.div`
 	margin-bottom: 1.5rem;

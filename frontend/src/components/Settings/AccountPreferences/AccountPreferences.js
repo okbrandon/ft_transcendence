@@ -115,7 +115,7 @@ const AccountPreferences = ({ user }) => {
 				type="text"
 				id="displayName"
 				placeholder="Display Name"
-				value={formData.displayName}
+				value={formData.displayName || ''}
 				onChange={handleChange}
 			/>
 			<label htmlFor="bio">Bio</label>
