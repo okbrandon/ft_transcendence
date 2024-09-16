@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import defaultAvatar from './img/default-avatar.jpg';
+import ProfilePicture from './styles/global/ProfilePicture.styled';
 
 const PreviewContainer = styled.div`
 	padding: 10px;
@@ -9,13 +10,7 @@ const PreviewContainer = styled.div`
 	display: flex;
 	align-items: center;
 	cursor: pointer;
-`;
-
-const ProfilePicture = styled.img`
-	width: 40px;
-	height: 40px;
-	border-radius: 50%;
-	margin-right: 10px;
+	// overflow: scroll;
 `;
 
 const MessageContent = styled.div`

@@ -1,63 +1,41 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
 import { SearchFriends } from './SearchFriends.js';
 import { MessagePreview } from './MessagePreview.js';
-import { ChatWindow } from './ChatWindow.js';
-import { Arrow } from './Arrow.js';
-import ChatContainer from '../../styles/Chat/ChatContainer.styled';
-
-const ChatOverlayContainer = styled.aside`
-	height: ${({ $isMinimized }) => ($isMinimized ? '45px' : 'auto')};
-	pointer-events: auto;
-	overflow: visible;
-	display: flex;
-	flex-direction: row-reverse;
-	flex-wrap: nowrap;
-	align-items: flex-end;
-	flex: 1;
-	position: relative;
-	transition: height 0.3s ease;
-`;
-
-const ChatListBubble = styled.div`
-	display: flex;
-	flex-direction: column;
-	margin-right: 3%;
-	height: ${({ $isMinimized }) => ($isMinimized ? '45px' : 'calc(100vh - 100px)')};
-	flex: 0 0 288px;
-	width: 288px;
-	min-width: 0;
-	background-color: #fff;
-	border: 1px solid #ddd;
-	transition: height 0.3s ease;
-`;
-
-const ChatHeaderStyled = styled.div`
-	padding: 10px;
-	background-color: #000;
-	border: 1px solid #ddd;
-	font-weight: bold;
-	color: #fff;
-	position: relative;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	cursor: pointer;
-`;
+import { DirectMessage } from './DirectMessage.js';
+import { Arrow } from './tools/Arrow.js';
+import ChatContainer, { ChatHeaderStyled, ChatListFeatures } from './styles/Chat/ChatContainer.styled.js';
+import ScrollableComponent from './tools/ScrollableComponent.js';
 
 const Chat = () => {
 	const [openChats, setOpenChats] = useState([]);
 	const [selectedChat, setSelectedChat] = useState(null);
-	const [$isMinimized, setIsMinimized] = useState(false);
-	const [isOverlayMinimized, setIsOverlayMinimized] = useState(false);
-	const [isArrowActive, setIsArrowActive] = useState(false);
+	const [$isMinimized, setIsMinimized] = useState(true);
+	const [isOverlayMinimized, setIsOverlayMinimized] = useState(true);
+	const [isArrowActive, setIsArrowActive] = useState(true);
 	const [messages, setMessages] = useState({
 		'Alice': { sender: 'Alice', text: 'Hello!' },
 		'Bob': { sender: 'Bob', text: 'Hi there!' },
 		'Brandonation': { sender: 'Brandonation', text: 'Good morning!' },
 		'Evanescence': { sender: 'Evanescence', text: 'How are you?' },
 		'Hanministrateur': { sender: 'Hanministrateur', text: 'Let\'s meet up.' },
-		'Kianatomy': { sender: 'Kianatomy', text: 'See you soon!' }
+		'Kianatomy': { sender: 'Kianatomy', text: 'I\'m busy.' },
+		'Robert': { sender: 'Robert', text: 'Cringe.' },
+		'John': { sender: 'John', text: 'I\'m tired.' },
+		'Jane': { sender: 'Jane', text: 'I\'m hungry.' },
+		'Alex': { sender: 'Alex', text: 'I\'m sleepy.' },
+		'Charlie': { sender: 'Charlie', text: 'I\'m bored.' },
+		'Daniel': { sender: 'Daniel', text: 'I\'m sick.' },
+		'Emily': { sender: 'Emily', text: 'I\'m sad.' },
+		'Frank': { sender: 'Frank', text: 'I\'m happy.' },
+		'Grace': { sender: 'Grace', text: 'I\'m excited.' },
+		'Henry': { sender: 'Henry', text: 'I\'m anxious.' },
+		'Ivy': { sender: 'Ivy', text: 'I\'m nervous.' },
+		'Jack': { sender: 'Jack', text: 'I\'m stressed.' },
+		'Kevin': { sender: 'Kevin', text: 'I\'m overwhelmed.' },
+		'Lucy': { sender: 'Lucy', text: 'I\'m frustrated.' },
+		'Mary': { sender: 'Mary', text: 'I\'m angry.' },
+		'Nathan': { sender: 'Nathan', text: 'I\'m confused.' },
+		'Oliver': { sender: 'Oliver', text: 'I\'m lost.' },
 	});
 
 	const openChat = (friendname) => {
@@ -83,35 +61,41 @@ const Chat = () => {
 		setIsArrowActive(!isArrowActive);
 	}
 
+	const handleSelectFriend = (friendname) => {
+		openChat(friendname);
+		handleSelectChat(friendname);
+	};
+
 	return (
 		<ChatContainer>
-			<ChatOverlayContainer $isMinimized={isOverlayMinimized}>
-				<ChatListBubble $isMinimized={isOverlayMinimized}>
-					<ChatHeaderStyled onClick={handleToggleOverlayMinimize}>
-						Messaging
-						<Arrow
-							onClick={handleToggleOverlayMinimize}
-							ArrowAnimate={isArrowActive} />
-					</ChatHeaderStyled>
-					{!isOverlayMinimized && (
-						<>
-							<SearchFriends onOpenChat={openChat} />
+			<ChatListFeatures $isMinimized={isOverlayMinimized}>
+				<ChatHeaderStyled onClick={handleToggleOverlayMinimize}>
+					Messaging
+					<Arrow
+						onClick={handleToggleOverlayMinimize}
+						ArrowAnimate={isArrowActive}
+					/>
+				</ChatHeaderStyled>
+				{!isOverlayMinimized && (
+					<>
+						<SearchFriends onOpenChat={handleSelectFriend} />
+						<ScrollableComponent>
 							{Object.keys(messages).map(friend => (
 								<MessagePreview key={friend} messages={[messages[friend]]} onClick={() => handleSelectChat(friend)} />
 							))}
-						</>
-					)}
-				</ChatListBubble>
-				{selectedChat && (
-					<ChatWindow
-						friendname={selectedChat}
-						messages={messages[selectedChat]}
-						onClose={handleCloseChat}
-						$isMinimized={$isMinimized}
-						onToggleMinimize={handleToggleMinimize}
-					/>
+						</ScrollableComponent>
+					</>
 				)}
-			</ChatOverlayContainer>
+			</ChatListFeatures>
+			{selectedChat && (
+				<DirectMessage
+					friendname={selectedChat}
+					messages={messages[selectedChat]}
+					onClose={handleCloseChat}
+					$isMinimized={$isMinimized}
+					onToggleMinimize={handleToggleMinimize}
+				/>
+			)}
 		</ChatContainer>
 	);
 };
