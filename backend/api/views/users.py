@@ -50,7 +50,7 @@ class UserProfileMe(APIView):
                         return Response({"error": "Invalid phone number. Phone number must be in E.164 format (e.g., +1234567890)."}, status=status.HTTP_400_BAD_REQUEST)
                     elif field == 'password' and not validate_password(data[field]):
                         return Response({"error": "Invalid password. Password must be 8-72 characters long, contain at least one lowercase letter, one uppercase letter, one digit, and one special character."}, status=status.HTTP_400_BAD_REQUEST)
-
+                    
                     updated_fields[field] = data[field]
 
             if 'password' in updated_fields:
