@@ -91,7 +91,13 @@ class AuthLogin(APIView):
             if user.oauthAccountID is not None:
                 return Response({"error": "This is an OAuth account. Please login with your identity provider."}, status=status.HTTP_400_BAD_REQUEST)
             if user.mfaToken and not otp:
-                return Response({"error": "OTP is required for this account."}, status=status.HTTP_400_BAD_REQUEST)
+                available_platforms = ["app", "email"]
+                if user.phone_number:
+                    available_platforms.append("sms")
+                return Response({
+                    "error": "OTP is required for this account.",
+                    "available_platforms": available_platforms
+                }, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
             pass
 
@@ -204,3 +210,14 @@ class RequestTOTP(APIView):
             send_otp_via_sms(user.phone_number, otp)
 
         return Response({"message": f"OTP sent via {platform}."}, status=status.HTTP_200_OK)
+
+
+class CheckOTP(APIView):
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        has_otp = user.mfaToken is not None and user.mfaToken != ""
+        
+        return Response({
+            "has_otp": has_otp
+        }, status=status.HTTP_200_OK)
+
