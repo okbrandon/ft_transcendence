@@ -1,6 +1,5 @@
 # TODO
 ## today
-- add a loader to every page in private routes
 - Sign up: email verification notification
 - Settings: modal that says "saved"
 - Settings: Add information directly
