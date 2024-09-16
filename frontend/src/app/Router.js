@@ -43,8 +43,6 @@ const Router = createBrowserRouter(createRoutesFromElements(
 		<Route path="/" element={ <Root/> }>
 			<Route index element={ <Home/> }/>
 			<Route path="login" element={ <SignIn/> }/>
-			<Route path="callback" element={ <Callback/> }/>
-			<Route path="verify" element={ <Verify/> }/>
 			<Route path="signup" element={ <SignUp/> }/>
 			<Route element={ <PrivateRoutes/> }>
 				<Route path="friends" element={ <Friends/> }/>
@@ -63,6 +61,8 @@ const Router = createBrowserRouter(createRoutesFromElements(
 		<Route element={ <PrivateRoutes/>}>
 			<Route path="solo-vs-ai" element={ <Game/> }/>
 		</Route>
+		<Route path="callback" element={ <Callback/> }/>
+		<Route path="verify" element={ <Verify/> }/>
 		<Route path="*" element={ <PageNotFound/> }/>
 	</>
 ));
