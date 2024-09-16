@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import MainBar from './main/MainBar';
 import About from './content/About';
@@ -8,6 +8,7 @@ import { ProfileContainer, UserContainer, UserProfileBanner } from './styles/Pro
 import Loader from '../../styles/shared/Loader.styled';
 import ProfileProvider, { ProfileContext } from '../../context/ProfileContext';
 import DisplaySkin from './content/DisplaySkin';
+import { GetFriends } from '../../api/friends';
 
 const matchArray = [
 	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Brandon"}, scores: {playerA: 9, playerB: 10}, startedAt: "2021-09-01T12:28:01Z", finishedAt: "2021-09-01T12:30:38Z"},
@@ -46,6 +47,19 @@ export const ProfileParent = () => {
 
 const Profile = () => {
 	const { loading, profileUser } = useContext(ProfileContext);
+	const [relation, setRelation] = useState(null);
+
+	useEffect(() => {
+		GetFriends()
+			.then(res => {
+				console.log(res.data, profileUser);
+				setRelation(res.data.filter(rel => profileUser.userID === rel.userB));
+				console.log(relation);
+			})
+			.catch(err => {
+				console.error(err);
+			})
+	}, []);
 
 	if (loading) {
 		return (
@@ -56,16 +70,27 @@ const Profile = () => {
 	};
 
 	return (
-		<ProfileContainer>
-			<UserProfileBanner $path={profileUser.bannerID || '/images/default-banner.png'}/>
-			<UserContainer>
-				<MainBar profileUser={profileUser} matchArray={matchArray}/>
-				<About profileUser={profileUser} matchArray={matchArray}/>
-				<DisplaySkin profileUser={profileUser}/>
-				<Winrate matchArray={matchArray}/>
-				<MatchHistory matchArray={matchArray}/>
-			</UserContainer>
-		</ProfileContainer>
+		<>
+			{relation === null || relation.status !== 2 ? (
+				<ProfileContainer>
+					<UserProfileBanner $path={profileUser.bannerID || '/images/default-banner.png'}/>
+					<UserContainer>
+						<MainBar profileUser={profileUser} matchArray={matchArray} relation={relation}/>
+						<About profileUser={profileUser} matchArray={matchArray}/>
+						<DisplaySkin profileUser={profileUser}/>
+						<Winrate matchArray={matchArray}/>
+						<MatchHistory matchArray={matchArray}/>
+					</UserContainer>
+				</ProfileContainer>
+			) : (
+				<ProfileContainer>
+					<UserProfileBanner $path={'/images/default-banner.png'}/>
+					<UserContainer>
+						<MainBar profileUser={null} matchArray={null} relation={null}/>
+					</UserContainer>
+				</ProfileContainer>
+			)}
+		</>
 	);
 };
 

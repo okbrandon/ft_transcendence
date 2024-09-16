@@ -51,11 +51,6 @@ export const RequestName = styled.h3`
 	font-family: "Roboto", sans-serif;
 `;
 
-export const MutualFriends = styled.p`
-	font-size: 1rem;
-	color: #cccccc;
-`;
-
 export const Actions = styled.div`
 	display: flex;
 	gap: 0.8rem;
