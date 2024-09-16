@@ -6,12 +6,3 @@
 [x] Match history endpoint which returns 1v1 games, dates and relevant details
 [x] Authentication using the 42 API
 [x] Account deletion, data export and anonymization
-
-### Monitoring system
-
-[ ] Setup a micro-service which collects errors from other services
-[ ] grafana/prometheus
-
-### DevOps
-
-[] Setup RabbitMQ

@@ -1,7 +1,7 @@
 import React from "react";
 import ReactApexChart from "react-apexcharts";
+import { calculateTotalDefeats, calculateTotalWins } from "../../../scripts/match";
 import { DonutStatsContainer } from "../styles/Stats.styled";
-import { calculateTotalDefeats, calculateTotalWins } from "../scripts/match";
 
 const DonutStats = ({ matchArray }) => {
 	const series = [calculateTotalWins(matchArray), calculateTotalDefeats(matchArray)];

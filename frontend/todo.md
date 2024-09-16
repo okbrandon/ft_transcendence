@@ -1,8 +1,9 @@
 # TODO
 ## today
+- add a loader to every page in private routes
+- Sign up: email verification notification
+- Settings: modal that says "saved"
 - Settings: Add information directly
-- Settings: Add delete account button
-- Settings:
 - Change colors of logout button
 - harvesting:
     - get /users/@me/harvest
@@ -13,7 +14,7 @@
     - toggle button
     - turn off -> ask for a code
     - turn on -> api => token -> transform to qrcode
-- [ ] Settings:
+- Settings:
     - Account Preferences:
         - Profile Information:
             - Username
@@ -32,6 +33,8 @@
     - Data Privacy:
         - Harvest
 - Profile: add block button
+- Tell Leader to fix the problem with setting the phone_number back to null
+- Ask for the code you receive when setting a number
 
 ## Secondary
 - 2FA aled

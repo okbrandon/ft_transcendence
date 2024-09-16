@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
 	DeleteAccountButton,
 	DeleteAccountContainer,
@@ -8,19 +9,28 @@ import {
 	ModalContent,
 	ModalButton
 } from '../styles/DeleteAccount.styled';
+import API from '../../../api/api';
 
 const DeleteAccount = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const navigate = useNavigate();
 
 	const handleConfirmDelete = () => {
-		// Logic to handle account deletion
-		console.log('Account Deleted');
-		// Close the modal after confirming
+		API.delete('/users/@me/profile')
+			.then(() => {
+				localStorage.removeItem('token');
+				localStorage.removeItem('refresh');
+				console.log('Account Deleted');
+				navigate('/login');
+			})
+			.catch((err) => {
+				console.error(err);
+			});
 		setIsModalOpen(false);
 	};
 	return (
 		<DeleteAccountContainer>
-			<DeleteAccountButton onClick={() => setIsModalOpen(true)}>Delete</DeleteAccountButton>
+			<DeleteAccountButton type="button" onClick={() => setIsModalOpen(true)}>Delete</DeleteAccountButton>
 			<DeleteAccountText>Delete your account</DeleteAccountText>
 
 			{isModalOpen && (

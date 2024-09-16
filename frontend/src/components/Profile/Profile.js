@@ -47,20 +47,24 @@ export const ProfileParent = () => {
 const Profile = () => {
 	const { loading, profileUser } = useContext(ProfileContext);
 
+	if (loading) {
+		return (
+			<ProfileContainer>
+				<Loader/>
+			</ProfileContainer>
+		);
+	};
+
 	return (
 		<ProfileContainer>
-			{ loading ? <Loader/> : (
-					<>
-						<UserProfileBanner $path={profileUser.bannerID}/>
-						<UserContainer>
-							<MainBar profileUser={profileUser} matchArray={matchArray}/>
-							<About profileUser={profileUser} matchArray={matchArray}/>
-							<DisplaySkin profileUser={profileUser}/>
-							<Winrate matchArray={matchArray}/>
-							<MatchHistory matchArray={matchArray}/>
-						</UserContainer>
-					</>
-			)}
+			<UserProfileBanner $path={profileUser.bannerID || '/images/default-banner.png'}/>
+			<UserContainer>
+				<MainBar profileUser={profileUser} matchArray={matchArray}/>
+				<About profileUser={profileUser} matchArray={matchArray}/>
+				<DisplaySkin profileUser={profileUser}/>
+				<Winrate matchArray={matchArray}/>
+				<MatchHistory matchArray={matchArray}/>
+			</UserContainer>
 		</ProfileContainer>
 	);
 };

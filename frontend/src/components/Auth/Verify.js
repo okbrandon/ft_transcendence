@@ -10,7 +10,7 @@ const Verify = () => {
 		const code = params.get('code');
 
 		if (code) {
-			axios.post(`${window.location.origin}/api/v1/verify`, { code })
+			axios.post(`http://localhost:8888/api/v1/verify`, { code })
 				.then(response => {
 					console.log('Verification successful:', response.data);
 					window.location.href = '/';

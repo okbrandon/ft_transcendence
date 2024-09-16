@@ -43,7 +43,7 @@ export const isRefreshExpired = () => {
 };
 
 const API = axios.create({
-	baseURL: `${window.location.origin}/api/v1/`,
+	baseURL: `http://localhost:8888/api/v1/`,
 });
 
 API.interceptors.request.use(
