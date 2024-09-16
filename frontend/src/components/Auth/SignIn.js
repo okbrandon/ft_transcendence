@@ -28,7 +28,8 @@ const SignIn = () => {
 				.catch((err) => {
 					if (err.status === 400) {
 						setIsLoggedIn(true);
-						setIsTwoFactorAuth(true);
+						navigate('/');
+						// setIsTwoFactorAuth(true); WAITING FOR API
 					} else {
 						console.log(err);
 						setError(err.response.data.error);
