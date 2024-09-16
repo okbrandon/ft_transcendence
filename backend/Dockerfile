@@ -41,13 +41,10 @@ COPY . .
 
 #CMD ["sh", "-c", "python manage.py migrate && daphne -v2 -b 0.0.0.0 -p 8000 backend.asgi:application"]
 
-RUN apt-get update && apt-get install -y supervisor && apt-get install -y netcat
-RUN mkdir -p /etc/supervisor/conf.d/
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+RUN apt-get update && apt-get install -y netcat
 COPY start.sh /app/start.sh
 
 EXPOSE 8000
 
-# Start supervisord, which will manage both the Daphne server and any other processes
-#CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# Runs server with Daphne
 CMD ["sh", "/app/start.sh"]
