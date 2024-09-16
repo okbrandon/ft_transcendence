@@ -1,5 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { CallbackContainer, CallbackMessage, CallbackTitle } from './styles/Callback.styled';
+import Loader from '../../styles/shared/Loader.styled';
 
 const Callback = () => {
 	const location = useLocation();
@@ -14,15 +16,16 @@ const Callback = () => {
 			localStorage.setItem('refresh', refresh);
 			window.location.href = '/';
 		} else {
-			console.error('Token or refresh token not found in URL parameters');
+			window.location.href = '404';
 		}
 	}, [location]);
 
 	return (
-		<div>
-			<h1>Callback Page</h1>
-			<p>Processing your login...</p>
-		</div>
+		<CallbackContainer>
+			<CallbackTitle>Logging you in...</CallbackTitle>
+			<CallbackMessage>Please wait while we log you in.</CallbackMessage>
+			<Loader/>
+		</CallbackContainer>
 	);
 };
 
