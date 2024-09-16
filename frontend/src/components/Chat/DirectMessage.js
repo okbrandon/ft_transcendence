@@ -28,12 +28,12 @@ export const DirectMessage = ({ friendname, messages, onClose, $isMinimized, onT
 				</ActionButtonContainer>
 			</ChatHeaderStyled>
 			<ChatMessages $isMinimized={$isMinimized}> {/* Chat Messages */}
-				{API.get('messages')
+				{API.get('chat/conversations')
 					.then((response) => {
-						console.log(response.data);
+						console.log('(ChatMessages); Harvested data: ', response.data);
 					})
 					.catch((error) => {
-						console.log(error);
+						console.log('FAILED TO HARVEST: ', error);
 					})
 				}
 				<div>{messages.text}</div>
