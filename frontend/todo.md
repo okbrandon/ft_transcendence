@@ -1,9 +1,9 @@
 # TODO
 ## today
-- Change colors of logout button
+- 2FA
 - Friends: implement API
 - Friends: add popup
-- Profile: add block button
+- Profile: block button API
 - harvesting:
     - get /users/@me/harvest
     - get /users/@me/exports === 404 ? nothing : button -> get /users/@me/exports
@@ -11,11 +11,11 @@
     - if both true && 'wait some minutes...'
 
 ## Waiting leader
-- 2FA (waiting for leader)
 - Tell Leader to fix the problem with setting the phone_number back to null
 - Ask for the code you receive when setting a number
 
 ## Secondary
+- Change colors of logout button
 - shop with api aled
 - Sign up: email verification notification
 
