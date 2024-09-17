@@ -14,6 +14,7 @@ const SignIn = () => {
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState('');
 	const [isTwoFactorAuth, setIsTwoFactorAuth] = useState(false);
+	const [availablePlatforms, setAvailablePlatforms] = useState(null);
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
@@ -26,12 +27,10 @@ const SignIn = () => {
 					navigate('/');
 				})
 				.catch((err) => {
-					console.log('login error', err);
-					if (err.status === 400) {
+					if (err.status === 400 && err.response.data.error.includes('OTP')) {
+						setAvailablePlatforms(err.response.data.available_platforms);
 						setIsTwoFactorAuth(true); // WAITING FOR API
-						// navigate('/');
 					} else {
-						console.log(err);
 						setError(err.response.data.error);
 					}
 				});
@@ -80,7 +79,7 @@ const SignIn = () => {
 					</FormContainer>
 				</AuthenticationSection>
 			) : (
-				<TwoFactorAuth setIsTwoFactorAuth={setIsTwoFactorAuth}/>
+				<TwoFactorAuth username={username} password={password} setIsTwoFactorAuth={setIsTwoFactorAuth} availablePlatforms={availablePlatforms}/>
 			)}
 		</>
 	);
