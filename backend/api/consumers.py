@@ -170,3 +170,93 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				new_conversation = Conversation.objects.create(conversationID=generate_id("conv"), conversationType='private_message')
 				new_conversation.participants.add(user, friend)
 				new_conversation.save()
+
+class GameConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        self.user = self.scope["user"]
+        if not self.user.is_authenticated:
+            await self.close()
+        else:
+            await self.accept()
+            self.match = None
+            self.player = None
+
+    async def disconnect(self, close_code):
+        if self.match:
+            await self.leave_match()
+
+    async def receive(self, text_data):
+        data = json.loads(text_data)
+        action = data.get('action')
+
+        if action == 'join_queue':
+            await self.join_queue()
+        elif action == 'move':
+            await self.handle_move(data.get('direction'))
+
+    async def join_queue(self):
+        # create a new match if there's no ongoing match
+        if not self.match:
+            self.match = Match.objects.create(
+                matchID=generate_id('match'),
+                playerA=self.user,
+                scores={str(self.user.userID): 0}
+            )
+            self.player = 'A'
+            await self.channel_layer.group_add(
+                f'match_{self.match.matchID}',
+                self.channel_name
+            )
+            await self.send(json.dumps({
+                'action': 'match_found',
+                'matchID': self.match.matchID,
+                'player': self.player
+            }))
+        else:
+            await self.send(json.dumps({
+                'action': 'error',
+                'message': 'Already in a match'
+            }))
+
+    async def handle_move(self, direction):
+        if not self.match:
+            return
+
+        # Update paddle position
+        if self.player == 'A':
+            self.match.playerA_paddle = min(max(self.match.playerA_paddle + (10 if direction == 'down' else -10), 0), 500)
+        else:
+            self.match.playerB_paddle = min(max(self.match.playerB_paddle + (10 if direction == 'down' else -10), 0), 500)
+
+        self.match.save()
+
+        # Broadcast updated game state
+        await self.channel_layer.group_send(
+            f'match_{self.match.matchID}',
+            {
+                'type': 'game_update',
+                'game_state': self.get_game_state()
+            }
+        )
+
+    async def game_update(self, event):
+        await self.send(json.dumps(event['game_state']))
+
+    def get_game_state(self):
+        return {
+            'action': 'game_update',
+            'paddle1Y': self.match.playerA_paddle,
+            'paddle2Y': self.match.playerB_paddle,
+            'ballX': self.match.ball_x,
+            'ballY': self.match.ball_y,
+            'scores': self.match.scores
+        }
+
+    async def leave_match(self):
+        if self.match:
+            await self.channel_layer.group_discard(
+                f'match_{self.match.matchID}',
+                self.channel_name
+            )
+            self.match = None
+            self.player = None
