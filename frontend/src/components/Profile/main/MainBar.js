@@ -10,14 +10,12 @@ import API from '../../../api/api';
 const MainBar = ({ profileUser, matchArray, relation }) => {
 	const navigate = useNavigate();
 	const { user } = useContext(AuthContext);
-	const [disableAddFriend, setDisableAddFriend] = useState(relation.length === 1 ? true : false);
+	const [disableAddFriend, setDisableAddFriend] = useState(relation.length ? true : false);
 
-	console.log('here profileUser:', profileUser);
 	const handleAddFriend = () => {
-		console.log('Add friend');
 		API.put('users/@me/relationships', { user: profileUser.userID, type: 0 })
 			.then(res => {
-				console.log(res.data);
+				setDisableAddFriend(true);
 			})
 			.catch(err => {
 				console.log(err);

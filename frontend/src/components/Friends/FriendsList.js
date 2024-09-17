@@ -13,14 +13,16 @@ import {
 
 const FriendsList = ({ friends }) => {
 
+	// handle remove
+
 	return (
 		<FriendsListContainer>
-			{friends.map((friend) => (
-				<FriendCard key={friend.id}>
+			{friends.map((relation, key) => (
+				<FriendCard key={key}>
 					<FriendInfo>
-						<FriendStatus $status={friend.status} />
-						<FriendAvatar src="/images/default-profile.png" alt={`${friend.name}'s avatar`}/>
-						<FriendName>{friend.name}</FriendName>
+						<FriendStatus $status={true} />
+						<FriendAvatar src={relation.avatarID ? relation.avatarID : '/images/default-profile.png'} alt={`${relation.displayName}'s avatar`}/>
+						<FriendName>{relation.displayName}</FriendName>
 					</FriendInfo>
 					<Actions>
 						<ActionButton>Invite</ActionButton>

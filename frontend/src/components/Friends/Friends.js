@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	Header,
 	PageContainer,
@@ -8,35 +8,39 @@ import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import RequestsList from "./RequestsList";
 import FriendsList from "./FriendsList";
+import Loader from "../../styles/shared/Loader.styled";
 import { GetFriends, GetRequests } from "../../api/friends";
-import { AuthContext } from "../../context/AuthContext";
-import { GetUserByUsername } from "../../api/user";
-
-// const friends = [
-// 	{ id: 1, name: "Brandon", status: "online" },
-// 	{ id: 2, name: "Evan", status: "offline" },
-// 	{ id: 3, name: "Kian", status: "online" },
-// 	{ id: 4, name: "Alex", status: "offline" },
-// 	{ id: 5, name: "Jessica", status: "online" },
-// 	{ id: 6, name: "Sarah", status: "offline" },
-// 	{ id: 7, name: "John", status: "online" },
-// 	{ id: 8, name: "Jane", status: "online" },
-// 	{ id: 9, name: "Mathieu", status: "online" },
-// ];
 
 const Friends = () => {
-	const { user } = useContext(AuthContext);
 	const [searchTerm, setSearchTerm] = useState("");
-	const [friends, setFriends] = useState([]);
-	const [requests, setRequests] = useState([]);
+	const [friends, setFriends] = useState(null);
+	const [requests, setRequests] = useState(null);
+	const userID = localStorage.getItem('userID');
 
-	console.log(user);
 	useEffect(() => {
-		setFriends(GetFriends());
-		console.log(friends);
-		setRequests(GetRequests());
-		console.log(requests);
+		GetFriends(userID)
+			.then(res => {
+				setFriends(res);
+			})
+			.catch(err => {
+				console.log('Error fetching friends:', err);
+			});
+		GetRequests(userID)
+			.then(res => {
+				setRequests(res);
+			})
+			.catch(err => {
+				console.log('Error fetching requests:', err);
+			});
 	}, []);
+
+	if (!friends || !requests) {
+		return (
+			<PageContainer>
+				<Loader/>
+			</PageContainer>
+		);
+	} // Return the request without extra details if there's an error
 
 	// const filteredFriends = friends.filter(friend => friend.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
@@ -60,7 +64,7 @@ const Friends = () => {
 					<FriendsList friends={friends}/>
 				</Tab>
 				<Tab eventKey="requests" title="Requests">
-					<RequestsList requests={requests} setRequests={setRequests} userID={user.userID}/>
+					<RequestsList requests={requests} setRequests={setRequests} setFriends={setFriends}/>
 				</Tab>
 			</Tabs>
 		</PageContainer>

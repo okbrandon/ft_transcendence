@@ -53,7 +53,7 @@ const Profile = () => {
 		if (profileUser) {
 			GetRelationships()
 				.then(res => {
-					setRelation(res.data.filter(rel => profileUser.userID === rel.userB));
+					setRelation(res.data.filter(rel => profileUser.userID === rel.userB || profileUser.userID === rel.userA));
 				})
 				.catch(err => {
 					console.error(err);
@@ -71,7 +71,7 @@ const Profile = () => {
 
 	return (
 		<>
-			{relation === null || relation.status !== 2 ? (
+			{relation || relation[0].status !== 2 ? (
 				<ProfileContainer>
 					<UserProfileBanner $path={profileUser.bannerID || '/images/default-banner.png'}/>
 					<UserContainer>
