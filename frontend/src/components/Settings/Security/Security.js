@@ -28,8 +28,6 @@ const Security = ({ user }) => {
 	const [error, setError] = useState('');
 	const [serverError, setServerError] = useState('');
 
-	console.log('User data in Security:', user);
-
 	const handleChange = (e) => {
 		const { id, value } = e.target;
 
