@@ -13,7 +13,7 @@ import Game from '../components/Game/Game';
 import Home from '../components/Home/Home';
 import { useContext, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { ProfileParent } from '../components/Profile/Profile';
+import Profile from '../components/Profile/Profile';
 import Verify from '../components/Auth/Verify';
 import Callback from '../components/Auth/Callback';
 import Leaderboard from '../components/Leaderboard/Leaderboard';
@@ -52,7 +52,7 @@ const Router = createBrowserRouter(createRoutesFromElements(
 			<Route path="signup" element={ <SignUp/> }/>
 			<Route element={ <PrivateRoutes/> }>
 				<Route path="friends" element={ <Friends/> }/>
-				<Route path="profile/:username" element={ <ProfileParent/> }/>
+				<Route path="profile/:username" element={ <Profile/> }/>
 				<Route path="settings" element={ <Settings/> }/>
 				<Route path="shop" element={ <Shop/> }/>
 				<Route path="playmenu" element={ <PlayMenu/> }/>
