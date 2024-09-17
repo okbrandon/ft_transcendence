@@ -6,6 +6,8 @@ import { Arrow } from './tools/Arrow.js';
 import ChatContainer, { ChatHeaderStyled, ChatListFeatures } from './styles/Chat/ChatContainer.styled.js';
 import ScrollableComponent from './tools/ScrollableComponent.js';
 
+import API from '../../api/api';
+
 const Chat = () => {
 	const [openChats, setOpenChats] = useState([]);
 	const [selectedChat, setSelectedChat] = useState(null);
@@ -65,6 +67,15 @@ const Chat = () => {
 		openChat(friendname);
 		handleSelectChat(friendname);
 	};
+
+	API.get('chat/conversations')
+		.then((response) => {
+			console.log('(ChatMessages); Harvested data: ', response.data);
+		})
+		.catch((error) => {
+			console.log('FAILED TO HARVEST: ', error);
+		})
+
 
 	return (
 		<ChatContainer>
