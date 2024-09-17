@@ -26,10 +26,10 @@ const SignIn = () => {
 					navigate('/');
 				})
 				.catch((err) => {
+					console.log('login error', err);
 					if (err.status === 400) {
-						setIsLoggedIn(true);
-						navigate('/');
-						// setIsTwoFactorAuth(true); WAITING FOR API
+						setIsTwoFactorAuth(true); // WAITING FOR API
+						// navigate('/');
 					} else {
 						console.log(err);
 						setError(err.response.data.error);

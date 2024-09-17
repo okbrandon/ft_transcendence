@@ -7,7 +7,7 @@ import {
 	Input,
 	ErrorMessage
 } from "./styles/Authentication.styled";
-import API from "../../api/api";
+import axios from "axios";
 
 const TwoFactorAuth = ({ setIsTwoFactorAuth }) => {
 	const navigate = useNavigate();
@@ -16,15 +16,15 @@ const TwoFactorAuth = ({ setIsTwoFactorAuth }) => {
 	const [loading, setLoading] = useState(false);
 	const [platforms, setPlatforms] = useState([]);
 
-	useEffect(() => {
-		API.get("auth/totp/platform_availability")
-			.then((res) => {
-				console.log(res.data);
-			})
-			.catch((err) => {
-				setError(err);
-			});
-	}, []);
+	// useEffect(() => {
+	// 	axios.get("http://localhost:8888/api/v1/auth/totp/platform_availability")
+	// 		.then((res) => {
+	// 			console.log(res.data);
+	// 		})
+	// 		.catch((err) => {
+	// 			setError(err);
+	// 		});
+	// }, []);
 
 	// const handleSubmit = (e) => {
 	// 	e.preventDefault();

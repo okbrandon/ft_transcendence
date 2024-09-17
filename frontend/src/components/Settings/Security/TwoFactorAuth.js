@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	QRCodeWrapper,
 	Slider,
@@ -12,11 +12,22 @@ import QRCode from "react-qr-code";
 import API from "../../../api/api";
 import { ErrorMessage } from "../styles/Settings.styled";
 
-const TwoFactorAuth = ({ user, handleChange }) => {
-	const [is2FAEnabled, setIs2FAEnabled] = useState(user.mfaToken ? true : false);
+const TwoFactorAuth = ({ user }) => {
+	const [is2FAEnabled, setIs2FAEnabled] = useState(false);
 	const [qrCodeToken, setQrCodeToken] = useState(''); // Store the token to generate the QR code
 	const [showQRCode, setShowQRCode] = useState(user.mfaToken ? true : false); // Control when to show QR code
 	const [error, setError] = useState('');
+	console.log('TwoFactorAuth.js user:', user);
+
+	useEffect(() => {
+		API.get('auth/totp')
+			.then((res) => {
+				setIs2FAEnabled(res.data.has_otp);
+			})
+			.catch(err => {
+				console.error(err.response.data.error);
+			});
+	}, []);
 
 	// Handle enabling/disabling 2FA
 	const handleToggle = () => {
@@ -26,7 +37,7 @@ const TwoFactorAuth = ({ user, handleChange }) => {
 			if (enteredCode) {
 				API.post('auth/totp/delete', { code: enteredCode })
 					.then(() => {
-						handleChange({ target: { id: 'mfaToken', value: '' }});
+						console.log('2FA disabled successfully');
 						setShowQRCode(false);
 						setIs2FAEnabled(false);
 						setError('');
@@ -39,8 +50,8 @@ const TwoFactorAuth = ({ user, handleChange }) => {
 			// User wants to enable 2FA, request the QR code token from the backend
 			API.post('auth/totp/enable')
 				.then((res) => {
-					setQrCodeToken(res.data);
-					handleChange({ target: { id: 'mfaToken', value: res.data } });
+					console.log('2FA token:', res.data);
+					setQrCodeToken(res.data.token);
 					setShowQRCode(true);
 					setIs2FAEnabled(true);
 					setError('');
