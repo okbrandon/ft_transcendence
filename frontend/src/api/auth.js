@@ -1,7 +1,8 @@
 import axios from 'axios';
 
-export const ApiLogin = async (username, password) => {
-	const response = await axios.post(`http://localhost:8888/api/v1/auth/login`, { username, password });
+export const ApiLogin = async (username, password, otp) => {
+	const data = otp ? { username, password, otp } : { username, password };
+	const response = await axios.post(`http://localhost:8888/api/v1/auth/login`, data);
 	localStorage.setItem('token', response.data.access);
 	localStorage.setItem('refresh', response.data.refresh);
 	console.log('Login successful');
