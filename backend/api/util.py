@@ -112,14 +112,14 @@ def send_data_package_ready_email(to: str):
 def get_safe_profile(data: dict, me: bool, many: bool = False):
     if many:
         return [get_safe_profile(item, me, False) for item in data]
-    
+
     safe_data = data.copy()
     fields_to_remove = ['password', 'mfaToken', 'oauthAccountID']
-    
+
     if not me:
         fields_to_remove.extend(['email', 'phone_number', 'money'])
-    
+
     for field in fields_to_remove:
         safe_data.pop(field, None)
-    
+
     return safe_data
