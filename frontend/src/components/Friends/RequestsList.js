@@ -13,6 +13,7 @@ import {
 	RequestsListContainer
 } from "./styles/RequestsList.styled";
 import API from "../../api/api";
+import { GetUserByUsername } from "../../api/user";
 
 // const friendRequests = [
 // 	{ id: 1, name: "Chris", mutualFriends: 3 },
@@ -20,10 +21,9 @@ import API from "../../api/api";
 // 	{ id: 3, name: "Jordan", mutualFriends: 1 },
 // ];
 
-const RequestsList = ({ requests, setRequests }) => {
-	console.log('RequestsList:', requests);
+const RequestsList = ({ requests, setRequests, userID }) => {
 	const handleAccept = (id) => {
-		console.log('handleAccept:', id);
+		GetUserByUsername(id)
 		setRequests(requests.filter((request) => request.userB !== id));
 		API.put('users/@me/relationships', { user: id, type: 1 })
 			.then(res => {
@@ -31,7 +31,7 @@ const RequestsList = ({ requests, setRequests }) => {
 			})
 			.catch(err => {
 				console.log('handleAccept error:', err);
-			})
+			});
 	};
 
 	const handleDecline = (id) => {
@@ -50,10 +50,14 @@ const RequestsList = ({ requests, setRequests }) => {
 								<RequestName>{request.relationshipID}</RequestName>
 							</RequestProfile>
 						</RequestInfo>
-						<Actions>
-							<AcceptButton onClick={() => handleAccept(request.userB)}>Accept</AcceptButton>
-							<DeclineButton onClick={() => handleDecline(request.userB)}>Decline</DeclineButton>
-						</Actions>
+						{request.userA === userID ? (
+							<Actions>
+								<AcceptButton onClick={() => handleAccept(request.userB)}>Accept</AcceptButton>
+								<DeclineButton onClick={() => handleDecline(request.userB)}>Decline</DeclineButton>
+							</Actions>
+						) : (
+							<p>Request sent</p>
+						)}
 					</RequestCard>
 				))
 			) : (

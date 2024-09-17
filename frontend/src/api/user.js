@@ -5,9 +5,9 @@ export const GetUser = async () => {
 	return await API.get('users/@me/profile');
 };
 
-export const GetUserByUsername = async (username) => {
-	console.log('Getting user by username...');
-	return await API.get(`users/${username}/profile`);
+export const GetUserByUsername = async (id) => {
+	console.log('Getting user by id...');
+	return await API.get(`users/${id}/profile`);
 };
 
 export const GetUsers = async (input) => {

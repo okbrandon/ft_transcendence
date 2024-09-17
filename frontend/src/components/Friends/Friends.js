@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
 	Header,
 	PageContainer,
@@ -8,7 +8,9 @@ import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import RequestsList from "./RequestsList";
 import FriendsList from "./FriendsList";
-import { GetFriends } from "../../api/friends";
+import { GetFriends, GetRequests } from "../../api/friends";
+import { AuthContext } from "../../context/AuthContext";
+import { GetUserByUsername } from "../../api/user";
 
 // const friends = [
 // 	{ id: 1, name: "Brandon", status: "online" },
@@ -23,20 +25,17 @@ import { GetFriends } from "../../api/friends";
 // ];
 
 const Friends = () => {
+	const { user } = useContext(AuthContext);
 	const [searchTerm, setSearchTerm] = useState("");
 	const [friends, setFriends] = useState([]);
 	const [requests, setRequests] = useState([]);
 
+	console.log(user);
 	useEffect(() => {
-		GetFriends()
-			.then(res => {
-				console.log(res.data);
-				setFriends(res.data.filter(friend => friend.status === 1));
-				setRequests(res.data.filter(friend => friend.status === 0));
-			})
-			.catch(err => {
-				console.log(err);
-			});
+		setFriends(GetFriends());
+		console.log(friends);
+		setRequests(GetRequests());
+		console.log(requests);
 	}, []);
 
 	// const filteredFriends = friends.filter(friend => friend.name.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -61,7 +60,7 @@ const Friends = () => {
 					<FriendsList friends={friends}/>
 				</Tab>
 				<Tab eventKey="requests" title="Requests">
-					<RequestsList requests={requests} setRequests={setRequests}/>
+					<RequestsList requests={requests} setRequests={setRequests} userID={user.userID}/>
 				</Tab>
 			</Tabs>
 		</PageContainer>

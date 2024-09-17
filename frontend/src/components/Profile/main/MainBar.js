@@ -12,6 +12,7 @@ const MainBar = ({ profileUser, matchArray, relation }) => {
 	const { user } = useContext(AuthContext);
 	const [disableAddFriend, setDisableAddFriend] = useState(relation.length === 1 ? true : false);
 
+	console.log('here profileUser:', profileUser);
 	const handleAddFriend = () => {
 		console.log('Add friend');
 		API.put('users/@me/relationships', { user: profileUser.userID, type: 0 })

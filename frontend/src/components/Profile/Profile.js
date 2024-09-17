@@ -1,14 +1,14 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import MainBar from './main/MainBar';
 import About from './content/About';
 import MatchHistory from './content/MatchHistory';
 import Winrate from './content/Winrate';
 import { ProfileContainer, UserContainer, UserProfileBanner } from './styles/Profile.styled';
 import Loader from '../../styles/shared/Loader.styled';
-import ProfileProvider, { ProfileContext } from '../../context/ProfileContext';
 import DisplaySkin from './content/DisplaySkin';
-import { GetFriends } from '../../api/friends';
+import { GetRelationships } from '../../api/friends';
+import { GetUserByUsername } from '../../api/user';
 
 const matchArray = [
 	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Brandon"}, scores: {playerA: 9, playerB: 10}, startedAt: "2021-09-01T12:28:01Z", finishedAt: "2021-09-01T12:30:38Z"},
@@ -31,37 +31,37 @@ const matchArray = [
 	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Kian"}, scores: {playerA: 10, playerB: 9}, startedAt: "2021-09-01T12:38:48Z", finishedAt: "2021-09-01T12:40:51Z"},
 ];
 
-export const ProfileParent = () => {
-	const { username } = useParams();
-
-	useEffect(() => {
-		window.scrollTo(0, 0);
-	}, []);
-
-	return (
-		<ProfileProvider username={username}>
-			<Profile/>
-		</ProfileProvider>
-	);
-};
-
 const Profile = () => {
-	const { loading, profileUser } = useContext(ProfileContext);
+	const navigate = useNavigate();
+	const { username } = useParams();
+	const [profileUser, setProfileUser] = useState(null);
 	const [relation, setRelation] = useState(null);
 
 	useEffect(() => {
-		GetFriends()
+		window.scrollTo(0, 0);
+		GetUserByUsername(username)
 			.then(res => {
-				console.log(res.data, profileUser);
-				setRelation(res.data.filter(rel => profileUser.userID === rel.userB));
-				console.log(relation);
+				setProfileUser(res.data);
 			})
 			.catch(err => {
 				console.error(err);
+				navigate('/404');
 			})
-	}, []);
+		}, [username]);
 
-	if (loading) {
+	useEffect(() => {
+		if (profileUser) {
+			GetRelationships()
+				.then(res => {
+					setRelation(res.data.filter(rel => profileUser.userID === rel.userB));
+				})
+				.catch(err => {
+					console.error(err);
+				})
+		}
+	}, [profileUser]);
+
+	if (!profileUser || !relation) {
 		return (
 			<ProfileContainer>
 				<Loader/>
