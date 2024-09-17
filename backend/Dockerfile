@@ -37,6 +37,14 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
+#EXPOSE 8000
+
+#CMD ["sh", "-c", "python manage.py migrate && daphne -v2 -b 0.0.0.0 -p 8000 backend.asgi:application"]
+
+RUN apt-get update && apt-get install -y netcat
+COPY start.sh /app/start.sh
+
 EXPOSE 8000
 
-CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
+# Runs server with Daphne
+CMD ["sh", "/app/start.sh"]

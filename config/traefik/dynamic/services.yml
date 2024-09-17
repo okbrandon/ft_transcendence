@@ -6,6 +6,9 @@ http:
     backend:
       rule: "PathPrefix(`/api`)"
       service: backend
+    backend-websocket:
+      rule: "PathPrefix(`/ws`)"
+      service: backend-websocket
     gameserver:
       rule: "PathPrefix(`/game`)"
       service: gameserver
@@ -16,6 +19,10 @@ http:
         servers:
           - url: "http://frontend:3000"
     backend:
+      loadBalancer:
+        servers:
+          - url: "http://backend:8000"
+    backend-websocket:
       loadBalancer:
         servers:
           - url: "http://backend:8000"

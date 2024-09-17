@@ -11,6 +11,7 @@ from .views.internal import *
 from .views.oauth import *
 from .views.store import *
 from .views.verification import *
+from .views.conversations import *
 
 from django.http import JsonResponse
 
@@ -26,6 +27,7 @@ urlpatterns = [
     path('auth/totp/enable', EnableTOTP.as_view()),
     path('auth/totp/request', RequestTOTP.as_view()),
     path('auth/totp/delete', DeleteTOTP.as_view()),
+    path('auth/totp', CheckOTP.as_view()),
 
     path('users/@me/profile', UserProfileMe.as_view()), # GET, PATCH, DELETE
     path('users/<identifier>/profile', UserProfile.as_view()), # GET
@@ -48,6 +50,8 @@ urlpatterns = [
 
     # path('tournaments/<tournamentID>', TournamentInfo.as_view()), # GET, DELETE, PATCH
     # path('tournaments', TournamentCreate.as_view()), # POST
+    
+	path('chat/conversations', ConversationListView.as_view()),
 
     path('__internal/check_user_exists/<userID>', CheckUserExists.as_view()), # GET
     path('__internal/create_match', CreateMatchHistory.as_view()), # POST

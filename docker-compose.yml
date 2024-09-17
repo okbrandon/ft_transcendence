@@ -41,6 +41,10 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.backend.rule=PathPrefix(`/api`)"
       - "traefik.http.services.backend.loadbalancer.server.port=8000"
+      - "traefik.http.routers.backend-websocket.rule=PathPrefix(`/ws`)"
+      - "traefik.http.routers.backend-websocket.entrypoints=websecure"
+      - "traefik.http.routers.backend-websocket.service=backend-websocket"
+      - "traefik.http.services.backend-websocket.loadbalancer.server.port=8000"
     networks:
       - transcendence
     volumes:

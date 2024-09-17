@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Match, Message, Token, Relationship, UserSettings, StoreItem, Purchase, VerificationCode
+from .models import User, Match, Message, Conversation, Token, Relationship, UserSettings, StoreItem, Purchase, VerificationCode
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -16,7 +16,7 @@ class MatchSerializer(serializers.ModelSerializer):
 class RelationshipSerializer(serializers.ModelSerializer):
     class Meta:
         model = Relationship
-        fields = ["relationshipID", "userA", "userB", "status", "flags"]
+        fields = ["relationshipID", "userA", "userB", "status"]
 
 class StoreItemSerializer(serializers.ModelSerializer):
     class Meta:
@@ -50,3 +50,18 @@ class UserSettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserSettings
         fields = ["userID", "theme", "colorblind"]
+
+class MessageSerializer(serializers.ModelSerializer):
+    sender = UserSerializer()
+
+    class Meta:
+        model = Message
+        fields = ['messageID', 'content', 'sender', 'createdAt']
+
+class ConversationSerializer(serializers.ModelSerializer):
+    participants = UserSerializer(many=True)
+    messages = MessageSerializer(many=True)
+
+    class Meta:
+        model = Conversation
+        fields = ['conversationID', 'conversationType', 'participants', 'messages']
