@@ -13,7 +13,6 @@ import {
 	RequestsListContainer
 } from "./styles/RequestsList.styled";
 import API from "../../api/api";
-import { GetUserByUsername } from "../../api/user";
 
 // const friendRequests = [
 // 	{ id: 1, name: "Chris", mutualFriends: 3 },
@@ -21,13 +20,12 @@ import { GetUserByUsername } from "../../api/user";
 // 	{ id: 3, name: "Jordan", mutualFriends: 1 },
 // ];
 
-const RequestsList = ({ requests, setRequests, userID }) => {
-	const handleAccept = (id) => {
-		GetUserByUsername(id)
-		setRequests(requests.filter((request) => request.userB !== id));
-		API.put('users/@me/relationships', { user: id, type: 1 })
+const RequestsList = ({ requests, setRequests, setFriends }) => {
+	const handleAccept = (focusedRequest) => {
+		API.put('users/@me/relationships', { user: focusedRequest.userA, type: 1 })
 			.then(res => {
-				console.log('handleAccept:', res);
+				setFriends(prev => ([...prev, { ...focusedRequest, status: 1 }]));
+				setRequests(prev => prev.filter((request) => request.relationshipID !== focusedRequest.relationshipID));
 			})
 			.catch(err => {
 				console.log('handleAccept error:', err);
@@ -41,19 +39,19 @@ const RequestsList = ({ requests, setRequests, userID }) => {
 
 	return (
 		<RequestsListContainer>
-			{requests.length > 0 ? (
+			{requests ? (
 				requests.map((request, key) => (
 					<RequestCard key={key}>
 						<RequestInfo>
 							<RequestProfile>
-								<RequestAvatar src="/images/default-profile.png" alt={`${request.name}'s avatar`}/>
-								<RequestName>{request.relationshipID}</RequestName>
+								<RequestAvatar src={request.avatarID ? request.avatarID : '/images/default-profile.png'} alt={`${request.name}'s avatar`}/>
+								<RequestName>{request.displayName}</RequestName>
 							</RequestProfile>
 						</RequestInfo>
-						{request.userA === userID ? (
+						{request.userA !== localStorage.getItem('userID') ? (
 							<Actions>
-								<AcceptButton onClick={() => handleAccept(request.userB)}>Accept</AcceptButton>
-								<DeclineButton onClick={() => handleDecline(request.userB)}>Decline</DeclineButton>
+								<AcceptButton onClick={() => handleAccept(request)}>Accept</AcceptButton>
+								<DeclineButton onClick={() => handleDecline(request.relationshipID)}>Decline</DeclineButton>
 							</Actions>
 						) : (
 							<p>Request sent</p>
