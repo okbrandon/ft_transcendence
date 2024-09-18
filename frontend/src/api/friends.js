@@ -1,14 +1,15 @@
 import API from "./api";
+import { logger } from "./logger";
 import { GetUserByUsername } from "./user";
 
 export const GetRelationships = async () => {
-	console.log('Getting relationships...');
+	logger('Getting relationships...');
 
 	return await API.get('users/@me/relationships');
 };
 
 export const GetFriends = async ({ userID }) => {
-	console.log('Getting friends...');
+	logger('Getting friends...');
 
 	try {
 		const res = await API.get('users/@me/relationships');
@@ -17,16 +18,16 @@ export const GetFriends = async ({ userID }) => {
 				.filter(relation => relation.status === 1)
 				.map(async friend => {
 					try {
-						// Corrected this part to use 'friend' instead of 'request'
 						const userRes = await GetUserByUsername(friend.userA === userID ? friend.userB : friend.userA);
 						return {
 							...friend,
 							displayName: userRes.data.displayName ? userRes.data.displayName : userRes.data.username,
+							username: userRes.data.username,
 							avatarID: userRes.data.avatarID,
 						};
 					} catch (error) {
 						console.error("Error fetching friend details: ", error);
-						return friend; // Return the friend without extra details if there's an error
+						return friend;
 					}
 				})
 		);
@@ -38,7 +39,7 @@ export const GetFriends = async ({ userID }) => {
 };
 
 export const GetRequests = async () => {
-	console.log('Getting friend requests...');
+	logger('Getting requests...');
 	const userID = localStorage.getItem('userID');
 
 	try {
@@ -48,9 +49,7 @@ export const GetRequests = async () => {
 				.filter(relation => relation.status === 0)
 				.map(async request => {
 					try {
-						console.log(request.userA, userID, request.userB);
 						const userRes = await GetUserByUsername(request.userA === userID ? request.userB : request.userA);
-						console.log('userRes:', userRes);
 						return {
 							...request,
 							displayName: userRes.data.displayName ? userRes.data.displayName : userRes.data.username,

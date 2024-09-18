@@ -18,21 +18,22 @@ const Friends = () => {
 	const userID = localStorage.getItem('userID');
 
 	useEffect(() => {
-		GetFriends(userID)
-			.then(res => {
-				setFriends(res);
-			})
-			.catch(err => {
-				console.log('Error fetching friends:', err);
-			});
-		GetRequests(userID)
-			.then(res => {
-				setRequests(res);
-			})
-			.catch(err => {
-				console.log('Error fetching requests:', err);
-			});
-	}, []);
+		const fetchFriendsAndRequests = async () => {
+			try {
+				const [friendsResponse, requestsResponse] = await Promise.all([
+				GetFriends(userID),
+				GetRequests(userID),
+				]);
+
+				setFriends(friendsResponse);
+				setRequests(requestsResponse);
+			} catch (error) {
+				console.log("Error fetching friends or requests:", error);
+			}
+		};
+
+		fetchFriendsAndRequests();
+	  }, [userID]);
 
 	if (!friends || !requests) {
 		return (

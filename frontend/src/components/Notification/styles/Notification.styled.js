@@ -1,6 +1,5 @@
 import styled, { keyframes } from "styled-components";
 
-// Animation for the notification (slide in/out from the bottom)
 const slideIn = keyframes`
 	0% {
 		transform: translateY(100%);
@@ -43,7 +42,7 @@ export const NotificationContainer = styled.div`
 	font-family: 'Orbitron', sans-serif;
 	font-size: 16px;
 	border-radius: 10px;
-	border-left: 4px solid #6a0dad; /* Subtle purple accent */
+	border-left: 4px solid #6a0dad;
 	box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.6);
 	transition: all 0.3s ease;
 	animation: ${slideIn} 0.5s forwards;
