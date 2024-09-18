@@ -8,14 +8,16 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
+
 from django.contrib.auth.hashers import make_password
+from django.shortcuts import get_object_or_404
 from django.db import models
 from django.http import Http404, HttpResponse
 
 from ..models import User, Match, Relationship, UserSettings
 from ..serializers import UserSerializer, UserSettingsSerializer, MatchSerializer, RelationshipSerializer
-from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
-from ..util import send_otp_via_sms, send_data_package_ready_email, get_safe_profile
+from ..util import send_otp_via_sms, send_data_package_ready_email, get_safe_profile, generate_id
 from ..validators import *
 
 class UserProfileMe(APIView):
@@ -50,14 +52,21 @@ class UserProfileMe(APIView):
                         return Response({"error": "Invalid phone number. Phone number must be in E.164 format (e.g., +1234567890)."}, status=status.HTTP_400_BAD_REQUEST)
                     elif field == 'password' and not validate_password(data[field]):
                         return Response({"error": "Invalid password. Password must be 8-72 characters long, contain at least one lowercase letter, one uppercase letter, one digit, and one special character."}, status=status.HTTP_400_BAD_REQUEST)
-
+                    
                     updated_fields[field] = data[field]
 
             if 'password' in updated_fields:
+                if me.mfaToken:
+                    otp = data.get('otp')
+                    if not otp:
+                        return Response({"error": "OTP is required to change password when MFA is enabled."}, status=status.HTTP_400_BAD_REQUEST)
+                    totp = pyotp.TOTP(me.mfaToken)
+                    if not totp.verify(otp):
+                        return Response({"error": "Invalid OTP."}, status=status.HTTP_400_BAD_REQUEST)
                 updated_fields['password'] = make_password(updated_fields['password'])
 
-            # if 'phone_number' in updated_fields:
-            #     send_otp_via_sms(updated_fields['phone_number'])
+            if 'phone_number' in updated_fields:
+                send_otp_via_sms(updated_fields['phone_number'])
 
             for field, value in updated_fields.items():
                 setattr(me, field, value)
@@ -233,10 +242,10 @@ class UserRelationshipsMe(APIView):
         if existing_relationship:
             if existing_relationship.status == 2:
                 return Response({"error": "Cannot modify a blocked relationship"}, status=status.HTTP_400_BAD_REQUEST)
-
+            
             if relationship_type == 0:
                 return Response({"error": "Relationship already exists"}, status=status.HTTP_400_BAD_REQUEST)
-
+            
             if relationship_type == 1:
                 if existing_relationship.status == 0 and existing_relationship.userB == me.userID:
                     existing_relationship.status = 1
@@ -244,7 +253,7 @@ class UserRelationshipsMe(APIView):
                     return Response({"status": "Friend request accepted"}, status=status.HTTP_200_OK)
                 else:
                     return Response({"error": "Cannot directly set friendship status"}, status=status.HTTP_400_BAD_REQUEST)
-
+        
         if relationship_type == 0:
             Relationship.objects.create(
                 relationshipID=generate_id("rel"),
@@ -253,8 +262,21 @@ class UserRelationshipsMe(APIView):
                 status=0
             )
             return Response({"status": "Friend request sent"}, status=status.HTTP_200_OK)
-
+        
         return Response({"error": "Invalid operation"}, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, relationshipID, *args, **kwargs):
+        me = request.user
+
+        # Find the relationship by ID
+        relationship = get_object_or_404(
+            Relationship, 
+            relationshipID=relationshipID
+        )
+
+        relationship.delete()
+
+        return Response({"status": "Relationship deleted"}, status=status.HTTP_200_OK)
 
 class UserMatchesMe(APIView):
     def get(self, request, *args, **kwargs):
