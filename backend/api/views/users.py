@@ -56,6 +56,13 @@ class UserProfileMe(APIView):
                     updated_fields[field] = data[field]
 
             if 'password' in updated_fields:
+                if me.mfaToken:
+                    otp = data.get('otp')
+                    if not otp:
+                        return Response({"error": "OTP is required to change password when MFA is enabled."}, status=status.HTTP_400_BAD_REQUEST)
+                    totp = pyotp.TOTP(me.mfaToken)
+                    if not totp.verify(otp):
+                        return Response({"error": "Invalid OTP."}, status=status.HTTP_400_BAD_REQUEST)
                 updated_fields['password'] = make_password(updated_fields['password'])
 
             if 'phone_number' in updated_fields:

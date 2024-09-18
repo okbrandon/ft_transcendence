@@ -14,6 +14,7 @@ from django.contrib.auth import login, authenticate
 from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import make_password
 from django.utils import timezone
+from django.contrib.auth.hashers import check_password
 
 from ..models import User, VerificationCode
 from ..serializers import UserSerializer
@@ -92,6 +93,8 @@ class AuthLogin(APIView):
 
         try:
             user = User.objects.get(username=username)
+            if not check_password(password, user.password):
+                return Response({"error": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED)
             if user.oauthAccountID is not None:
                 return Response({"error": "This is an OAuth account. Please login with your identity provider."}, status=status.HTTP_400_BAD_REQUEST)
             if user.mfaToken and not otp:
@@ -198,8 +201,8 @@ class RequestTOTP(APIView):
         if request.user.is_authenticated:
             user = request.user
         elif username and password:
-            user = authenticate(username=username, password=password)
-            if not user:
+            user = User.objects.get(username=username)
+            if not check_password(password, user.password):
                 return Response({"error": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED)
         else:
             return Response({"error": "Authentication required."}, status=status.HTTP_401_UNAUTHORIZED)
@@ -233,4 +236,3 @@ class CheckOTP(APIView):
         return Response({
             "has_otp": has_otp
         }, status=status.HTTP_200_OK)
-
