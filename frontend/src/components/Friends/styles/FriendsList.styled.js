@@ -26,6 +26,7 @@ export const FriendCard = styled.div`
 export const FriendInfo = styled.div`
 	display: flex;
 	align-items: center;
+	cursor: pointer;
 `;
 
 export const FriendAvatar = styled.img`
