@@ -4,6 +4,7 @@ import threading
 import os
 
 from django.apps import AppConfig
+
 from core.backends.server import harvest_users
 
 logging.basicConfig(level=logging.DEBUG)

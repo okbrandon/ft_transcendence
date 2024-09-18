@@ -8,14 +8,16 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
+
 from django.contrib.auth.hashers import make_password
+from django.shortcuts import get_object_or_404
 from django.db import models
 from django.http import Http404, HttpResponse
 
 from ..models import User, Match, Relationship, UserSettings
 from ..serializers import UserSerializer, UserSettingsSerializer, MatchSerializer, RelationshipSerializer
-from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
-from ..util import send_otp_via_sms, send_data_package_ready_email, get_safe_profile
+from ..util import send_otp_via_sms, send_data_package_ready_email, get_safe_profile, generate_id
 from ..validators import *
 
 class UserProfileMe(APIView):
@@ -255,6 +257,19 @@ class UserRelationshipsMe(APIView):
             return Response({"status": "Friend request sent"}, status=status.HTTP_200_OK)
         
         return Response({"error": "Invalid operation"}, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, relationshipID, *args, **kwargs):
+        me = request.user
+
+        # Find the relationship by ID
+        relationship = get_object_or_404(
+            Relationship, 
+            relationshipID=relationshipID
+        )
+
+        relationship.delete()
+
+        return Response({"status": "Relationship deleted"}, status=status.HTTP_200_OK)
 
 class UserMatchesMe(APIView):
     def get(self, request, *args, **kwargs):

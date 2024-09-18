@@ -1,4 +1,3 @@
-from django.urls import path
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView
@@ -14,6 +13,7 @@ from .views.verification import *
 from .views.conversations import *
 
 from django.http import JsonResponse
+from django.urls import path
 
 class HealthCheck(APIView):
     def get(self, request, *args, **kwargs):
@@ -36,6 +36,7 @@ urlpatterns = [
     path('users/@me/settings', UserSettingsMe.as_view()), # GET, PATCH
     path('users/@me/exports', UserExports.as_view()), # GET
     path('users/@me/relationships', UserRelationshipsMe.as_view()), # GET, PUT
+    path('users/@me/relationships/<str:relationshipID>', UserRelationshipsMe.as_view()),
     path('users/@me/harvest', UserHarvestMe.as_view()), # POST, GET, DELETE
     path('users/search', UserSearch.as_view()), # GET
 
