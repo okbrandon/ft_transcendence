@@ -1,4 +1,4 @@
-# ft_transcendence
+# ft_transcendence - Wiggle your paddle!
 
 ### Documentation
 [API Docs](/docs/API.md)\
