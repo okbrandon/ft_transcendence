@@ -5,10 +5,11 @@ import httpx
 import json
 
 from channels.generic.websocket import AsyncWebsocketConsumer
-from .models import Conversation, User, Relationship
-from .util import generate_id
 from asgiref.sync import sync_to_async
 from django.db.models import Q, Count
+
+from .models import Conversation, User, Relationship
+from .util import generate_id
 
 logger = logging.getLogger(__name__)
 connected_users = {}
@@ -87,7 +88,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 	async def get_user_from_token(self, token):
 		try:
-			url = "http://localhost:8000/api/v1/users/@me/profile"
+			url = "http://backend/api/v1/users/@me/profile"
 			headers = {
 				"Authorization": f"Bearer {token}"
 			}

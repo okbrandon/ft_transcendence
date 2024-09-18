@@ -204,8 +204,6 @@ class RequestTOTP(APIView):
             user = User.objects.get(username=username)
             if not check_password(password, user.password):
                 return Response({"error": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED)
-            if not user:
-                return Response({"error": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED)
         else:
             return Response({"error": "Authentication required."}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -234,7 +232,7 @@ class CheckOTP(APIView):
     def get(self, request, *args, **kwargs):
         user = request.user
         has_otp = user.mfaToken is not None and user.mfaToken != ""
-
+        
         return Response({
             "has_otp": has_otp
         }, status=status.HTTP_200_OK)

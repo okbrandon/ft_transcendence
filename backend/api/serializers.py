@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from .models import User, Match, Message, Conversation, Token, Relationship, UserSettings, StoreItem, Purchase, VerificationCode
 
 class UserSerializer(serializers.ModelSerializer):
