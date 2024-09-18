@@ -232,7 +232,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         # Broadcast updated game state
         await self.channel_layer.group_send(
-            f'match_{self.match.matchID}',
+            self.match.matchID,
             {
                 'type': 'game_update',
                 'game_state': self.get_game_state()
@@ -255,7 +255,7 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def leave_match(self):
         if self.match:
             await self.channel_layer.group_discard(
-                f'match_{self.match.matchID}',
+                self.match.matchID,
                 self.channel_name
             )
             self.match = None
