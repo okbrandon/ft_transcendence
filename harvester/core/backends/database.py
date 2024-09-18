@@ -88,7 +88,10 @@ def get_user_data(user_id: str, table_columns: dict):
 		logging.debug(f"Executing query for user data: {query} with userID {user_id}")
 
 		try:
-			cursor.execute(query, (user_id,))
+			if ',' in column:
+				cursor.execute(query, (user_id, user_id))
+			else:
+				cursor.execute(query, (user_id,))
 			rows = cursor.fetchall()
 		except Exception as err:
 			logging.error(f"Query execution failed: {err}")

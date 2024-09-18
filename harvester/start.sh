@@ -6,8 +6,8 @@ while ! nc -z postgres 5432; do
 done
 
 # Run the migrations
-python manage.py makemigrations
-python manage.py migrate
+python3 manage.py makemigrations
+python3 manage.py migrate
 
 # Start the server
-python manage.py runserver
+python3 manage.py runserver
