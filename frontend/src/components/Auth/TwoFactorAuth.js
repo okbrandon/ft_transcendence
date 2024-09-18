@@ -43,7 +43,7 @@ const TwoFactorAuth = ({ username, password, setIsTwoFactorAuth, availablePlatfo
 			.catch((err) => {
 				console.error(err);
 				setError(err.response.data.error);
-			})
+			});
 	  };
 
 	return (

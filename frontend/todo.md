@@ -1,7 +1,7 @@
 # TODO
 ## today
+- Sign up: email verification notification
 - 2FA
-- Friends: implement API
 - Friends: add popup
 - Profile: block button API
 - harvesting:
@@ -17,7 +17,6 @@
 ## Secondary
 - Change colors of logout button
 - shop with api aled
-- Sign up: email verification notification
 
 ## A la fin
 - fake captcha
