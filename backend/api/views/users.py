@@ -56,8 +56,8 @@ class UserProfileMe(APIView):
             if 'password' in updated_fields:
                 updated_fields['password'] = make_password(updated_fields['password'])
 
-            if 'phone_number' in updated_fields:
-                send_otp_via_sms(updated_fields['phone_number'])
+            # if 'phone_number' in updated_fields:
+            #     send_otp_via_sms(updated_fields['phone_number'])
 
             for field, value in updated_fields.items():
                 setattr(me, field, value)
