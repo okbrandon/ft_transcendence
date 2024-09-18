@@ -69,6 +69,8 @@ export const checkSecurityRestrictions = (data, cfPassword) => {
 
 	if (data.password && (new TextEncoder().encode(data.password).length < 8 || new TextEncoder().encode(data.password).length > 72)) {
 		return 'Password must be 8-72 characters long.';
+	} else if (data.password && !data.otp) {
+		return 'OTP is required to change password when MFA is enabled.';
 	} else if (data.password && !/[a-z]/.test(data.password)) {
 		return 'Password must contain at least one lowercase letter.';
 	} else if (data.password && !/[A-Z]/.test(data.password)) {

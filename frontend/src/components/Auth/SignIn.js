@@ -60,9 +60,9 @@ const SignIn = () => {
 	}, [fromSignUp]);
 
 	return (
-		<>
+		<AuthenticationSection>
 			{!isTwoFactorAuth ? (
-				<AuthenticationSection>
+				<>
 					<FormContainer onSubmit={handleSubmit}>
 						<h1>Sign In</h1>
 						<FortyTwoButton variant='light' onClick={handleFortyTwo}>
@@ -99,7 +99,7 @@ const SignIn = () => {
 						<Button variant='light' type='submit'>Submit</Button>
 					</FormContainer>
 					<Notification ref={notificationRef}/>
-				</AuthenticationSection>
+				</>
 			) : (
 				<TwoFactorAuth
 					username={username}
@@ -108,7 +108,7 @@ const SignIn = () => {
 					availablePlatforms={availablePlatforms}
 				/>
 			)}
-		</>
+		</AuthenticationSection>
 	);
 };
 
