@@ -1,8 +1,7 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ApiLogin } from "../../api/auth";
 import axios from "axios";
-import API from "../../api/api";
+import { ApiLogin } from "../../api/auth";
 import logger from "../../api/logger";
 import { AuthContext } from "../../context/AuthContext";
 import {
@@ -14,25 +13,12 @@ import {
 } from "./styles/Authentication.styled";
 import { AvailablePlatformsContainer, PlatformButton } from "./styles/TwoFactorAuth.styled";
 
-const TwoFactorAuth = ({ username, password, setIsTwoFactorAuth }) => {
+const TwoFactorAuth = ({ username, password, setIsTwoFactorAuth, availablePlatforms }) => {
 	const navigate = useNavigate();
 	const { setIsLoggedIn } = useContext(AuthContext);
 	const [authCode, setAuthCode] = useState("");
 	const [loading, setLoading] = useState(!authCode);
-	const [availablePlatforms, setAvailablePlatforms] = useState(null);
 	const [error, setError] = useState("");
-
-	useEffect(() => {
-		axios.get("http://localhost:8888/api/v1/auth/totp/platform_availability")
-			.then(res => {
-				logger(res.data);
-				// setAvailablePlatforms(res.data.platforms);
-			})
-			.catch(err => {
-				logger(err);
-				setError(err);
-			})
-	}, []);
 
 	const handleChange = (e) => {
 		setAuthCode(e.target.value);
@@ -40,7 +26,14 @@ const TwoFactorAuth = ({ username, password, setIsTwoFactorAuth }) => {
 	};
 
 	const handlePlatform = (platform) => {
-
+		axios.post('http://localhost:8888/api/v1/auth/totp/request', { username, password, platform })
+			.then(() => {
+				logger('2FA: Request sent');
+			})
+			.catch(err => {
+				logger('2FA: Request failed');
+				console.error(err.response.data.error);
+			});
 	};
 
 	const handleSubmit = (e) => {
@@ -54,8 +47,8 @@ const TwoFactorAuth = ({ username, password, setIsTwoFactorAuth }) => {
 				navigate("/");
 			})
 			.catch((err) => {
-				console.error(err);
-				setError(err);
+				console.log('PLSPLDPSLPLFDPSPAFLDSP:',err);
+				setError(err.response.data.error);
 			});
 	  };
 
@@ -70,19 +63,20 @@ const TwoFactorAuth = ({ username, password, setIsTwoFactorAuth }) => {
 					placeholder="Enter 6-digit authentication code"
 					value={authCode}
 					onChange={handleChange}
+					pattern="[0-9]{6}"
 				/>
 
 				{error && <ErrorMessage>{error}</ErrorMessage>}
 
 				<AvailablePlatformsContainer>
-					{availablePlatforms ? availablePlatforms.map((platform) => (
+					{availablePlatforms ? availablePlatforms.filter(platform => platform !== 'app').map((platform) => (
 						<PlatformButton
 							key={platform}
 							type="button"
-							onClick={handlePlatform(platform)}
+							onClick={() => handlePlatform(platform)}
 						>
-							{platform === "app" && <i className="bi bi-phone-fill"/>}
 							{platform === "email" && <i className="bi bi-envelope-fill"/>}
+							{platform === "sms" && <i className="bi bi-chat-left-text-fill"/>}
 						</PlatformButton>
 					)) : (
 						<p>No Available Platforms...</p>
