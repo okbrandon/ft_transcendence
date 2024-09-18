@@ -21,14 +21,14 @@ const Friends = () => {
 		const fetchFriendsAndRequests = async () => {
 			try {
 				const [friendsResponse, requestsResponse] = await Promise.all([
-				GetFriends(userID),
-				GetRequests(userID),
+					GetFriends(userID),
+					GetRequests(userID),
 				]);
 
 				setFriends(friendsResponse);
 				setRequests(requestsResponse);
-			} catch (error) {
-				console.log("Error fetching friends or requests:", error);
+			} catch (err) {
+				console.error(err.response.data.error);
 			}
 		};
 
@@ -41,9 +41,9 @@ const Friends = () => {
 				<Loader/>
 			</PageContainer>
 		);
-	} // Return the request without extra details if there's an error
+	}
 
-	// const filteredFriends = friends.filter(friend => friend.name.toLowerCase().includes(searchTerm.toLowerCase()));
+	const filteredFriends = friends.filter(friend => friend.displayName.toLowerCase().includes(searchTerm.toLowerCase()));
 
 	return (
 		<PageContainer>
@@ -62,7 +62,7 @@ const Friends = () => {
 				className="mb-3"
 			>
 				<Tab eventKey="friends" title="Friends">
-					<FriendsList friends={friends}/>
+					<FriendsList friends={filteredFriends}/>
 				</Tab>
 				<Tab eventKey="requests" title="Requests">
 					<RequestsList requests={requests} setRequests={setRequests} setFriends={setFriends}/>

@@ -35,7 +35,6 @@ const SignUp = () => {
 					navigate('/login/send-email-notification');
 				})
 				.catch((error) => {
-					console.log(error.response.data.error);
 					setError(error.response.data.error);
 				});
 		}

@@ -13,10 +13,11 @@ import {
 } from '../styles/Settings.styled';
 import UploadImage from './UploadImage';
 import API from '../../../api/api';
+import { GetUser } from '../../../api/user';
+import logger from '../../../api/logger';
 import DeleteAccount from './DeleteAccount';
 import { checkAccountPreferencesRestrictions } from '../../../scripts/restrictions';
 import { AuthContext } from '../../../context/AuthContext';
-import { GetUser } from '../../../api/user';
 
 const AccountPreferences = ({ user }) => {
 	const { setUser } = useContext(AuthContext);
@@ -72,11 +73,11 @@ const AccountPreferences = ({ user }) => {
 					setSuccess('Account Preferences updated successfully.');
 					setError('');
 					setServerError('');
-					console.log('Account Preferences updated successfully with:', submissionData);
+					logger('Account Preferences updated successfully with:', submissionData);
 					GetUser()
 						.then((res) => {
 							setUser(res.data);
-							console.log('User data refetched and updated in context:', res.data);
+							logger('User data refetched and updated in context:', res.data);
 						})
 						.catch((err) => {
 							setServerError(err.response.data.error);

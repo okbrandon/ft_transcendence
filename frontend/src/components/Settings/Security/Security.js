@@ -9,6 +9,7 @@ import {
 	SuccessMessage
 } from "../styles/Settings.styled";
 import API from "../../../api/api";
+import logger from "../../../api/logger";
 import { checkSecurityRestrictions } from "../../../scripts/restrictions";
 import { AuthContext } from "../../../context/AuthContext";
 import { GetUser } from "../../../api/user";
@@ -62,11 +63,11 @@ const Security = ({ user }) => {
 					setSuccess('Security updated successfully');
 					setError('');
 					setServerError('');
-					console.log('Security updated successfully with:', submissionData);
+					logger('Security updated successfully with:', submissionData);
 					GetUser()
 						.then((res) => {
 							setUser(res.data);
-							console.log('User data refetched and updated in context:', res.data);
+							logger('User data refetched and updated in context:', res.data);
 						})
 						.catch((err) => {
 							setServerError(err.response.data.error);

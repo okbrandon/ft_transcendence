@@ -1,5 +1,5 @@
 import API from "./api";
-import { logger } from "./logger";
+import logger from "./logger";
 import { GetUserByUsername } from "./user";
 
 export const GetRelationships = async () => {

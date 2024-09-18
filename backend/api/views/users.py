@@ -50,7 +50,7 @@ class UserProfileMe(APIView):
                         return Response({"error": "Invalid phone number. Phone number must be in E.164 format (e.g., +1234567890)."}, status=status.HTTP_400_BAD_REQUEST)
                     elif field == 'password' and not validate_password(data[field]):
                         return Response({"error": "Invalid password. Password must be 8-72 characters long, contain at least one lowercase letter, one uppercase letter, one digit, and one special character."}, status=status.HTTP_400_BAD_REQUEST)
-                    
+
                     updated_fields[field] = data[field]
 
             if 'password' in updated_fields:
@@ -233,10 +233,10 @@ class UserRelationshipsMe(APIView):
         if existing_relationship:
             if existing_relationship.status == 2:
                 return Response({"error": "Cannot modify a blocked relationship"}, status=status.HTTP_400_BAD_REQUEST)
-            
+
             if relationship_type == 0:
                 return Response({"error": "Relationship already exists"}, status=status.HTTP_400_BAD_REQUEST)
-            
+
             if relationship_type == 1:
                 if existing_relationship.status == 0 and existing_relationship.userB == me.userID:
                     existing_relationship.status = 1
@@ -244,7 +244,7 @@ class UserRelationshipsMe(APIView):
                     return Response({"status": "Friend request accepted"}, status=status.HTTP_200_OK)
                 else:
                     return Response({"error": "Cannot directly set friendship status"}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         if relationship_type == 0:
             Relationship.objects.create(
                 relationshipID=generate_id("rel"),
@@ -253,7 +253,7 @@ class UserRelationshipsMe(APIView):
                 status=0
             )
             return Response({"status": "Friend request sent"}, status=status.HTTP_200_OK)
-        
+
         return Response({"error": "Invalid operation"}, status=status.HTTP_400_BAD_REQUEST)
 
 class UserMatchesMe(APIView):

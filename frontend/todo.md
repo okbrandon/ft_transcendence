@@ -1,6 +1,5 @@
 # TODO
 ## today
-- Sign up: email verification notification
 - 2FA
 - Friends: add popup
 - Profile: block button API

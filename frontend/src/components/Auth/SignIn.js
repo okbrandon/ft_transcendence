@@ -22,7 +22,6 @@ const SignIn = () => {
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState('');
 	const [isTwoFactorAuth, setIsTwoFactorAuth] = useState(false);
-	const [availablePlatforms, setAvailablePlatforms] = useState(null);
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
@@ -36,7 +35,6 @@ const SignIn = () => {
 				})
 				.catch((err) => {
 					if (err.status === 400 && err.response.data.error.includes('OTP')) {
-						setAvailablePlatforms(err.response.data.available_platforms);
 						setIsTwoFactorAuth(true); // WAITING FOR API
 					} else {
 						setError(err.response.data.error);
@@ -51,7 +49,6 @@ const SignIn = () => {
 	};
 
 	useEffect(() => {
-		console.log(fromSignUp);
 		if (fromSignUp && notificationRef.current) {
 			notificationRef.current.addNotification(
 				'success',
@@ -106,7 +103,6 @@ const SignIn = () => {
 					username={username}
 					password={password}
 					setIsTwoFactorAuth={setIsTwoFactorAuth}
-					availablePlatforms={availablePlatforms}
 				/>
 			)}
 		</>
