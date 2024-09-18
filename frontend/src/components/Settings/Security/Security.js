@@ -14,6 +14,7 @@ import { checkSecurityRestrictions } from "../../../scripts/restrictions";
 import { AuthContext } from "../../../context/AuthContext";
 import { GetUser } from "../../../api/user";
 import TwoFactorAuth from "./TwoFactorAuth";
+import TwoFactorAuthPassword from "../TwoFactorAuthPassword";
 
 const Security = ({ user }) => {
 	const { setUser } = useContext(AuthContext);
@@ -21,11 +22,11 @@ const Security = ({ user }) => {
 		email: user.email,
 		phone_number: user.phone_number || '',
 		password: '',
-		mfaToken: user.mfaToken || '',
 	});
 	const [cfPassword, setCfPassword] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [success, setSuccess] = useState('');
+	const [showTwoFactorAuth, setShowTwoFactorAuth] = useState(false);
 	const [error, setError] = useState('');
 	const [serverError, setServerError] = useState('');
 
@@ -38,6 +39,38 @@ const Security = ({ user }) => {
 		}));
 	};
 
+	const handleTwoFactorAuthSubmit = (otp) => {
+		const submissionData = { ...formData, otp };
+
+		setLoading(true);
+		API.patch('/users/@me/profile', submissionData)
+			.then(() => {
+				setSuccess('Security updated successfully');
+				setError('');
+				setServerError('');
+				logger('Security updated successfully with:', submissionData);
+				GetUser()
+					.then(res => {
+						setUser(res.data);
+						logger('User data refetched and updated in context:', res.data);
+					})
+					.catch(err => {
+						setServerError(err.response.data.error);
+						setSuccess('');
+						setError('');
+					})
+			})
+			.catch(err => {
+				setServerError(err.response.data.error);
+				setSuccess('');
+				setError('');
+			})
+			.finally(() => {
+				setLoading(false);
+				setShowTwoFactorAuth(false);
+			});
+	}
+
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
@@ -45,9 +78,6 @@ const Security = ({ user }) => {
 
 		if (!submissionData.password) {
 			delete submissionData.password;
-		}
-		if (!submissionData.mfaToken) {
-			delete submissionData.mfaToken;
 		}
 
 		const errorMessage = checkSecurityRestrictions(submissionData, cfPassword);
@@ -57,32 +87,36 @@ const Security = ({ user }) => {
 			setSuccess('');
 			setServerError('');
 		} else {
-			setLoading(true);
-			API.patch('/users/@me/profile', submissionData)
-				.then(() => {
-					setSuccess('Security updated successfully');
-					setError('');
-					setServerError('');
-					logger('Security updated successfully with:', submissionData);
-					GetUser()
-						.then((res) => {
-							setUser(res.data);
-							logger('User data refetched and updated in context:', res.data);
-						})
-						.catch((err) => {
-							setServerError(err.response.data.error);
-							setSuccess('');
-							setError('');
-						});
-				})
-				.catch((err) => {
-					setServerError(err.response.data.error);
-					setSuccess('');
-					setError('');
-				})
-				.finally(() => {
-					setLoading(false);
-				});
+			if (formData.password) {
+				setShowTwoFactorAuth(true);
+			} else {
+				setLoading(true);
+				API.patch('/users/@me/profile', submissionData)
+					.then(() => {
+						setSuccess('Security updated successfully');
+						setError('');
+						setServerError('');
+						logger('Security updated successfully with:', submissionData);
+						GetUser()
+							.then((res) => {
+								setUser(res.data);
+								logger('User data refetched and updated in context:', res.data);
+							})
+							.catch((err) => {
+								setServerError(err.response.data.error);
+								setSuccess('');
+								setError('');
+							});
+					})
+					.catch((err) => {
+						setServerError(err.response.data.error);
+						setSuccess('');
+						setError('');
+					})
+					.finally(() => {
+						setLoading(false);
+					});
+			}
 		}
 	}
 
@@ -140,6 +174,12 @@ const Security = ({ user }) => {
 			</Form>
 			<SubSectionHeading>Two-Factor Authentication</SubSectionHeading>
 			<TwoFactorAuth user={user} handleChange={handleChange}/>
+			{showTwoFactorAuth && (
+				<TwoFactorAuthPassword
+					onSubmit={handleSubmit}
+					setShowTwoFactorAuth={setShowTwoFactorAuth}
+				/>
+			)}
 		</>
 	);
 };

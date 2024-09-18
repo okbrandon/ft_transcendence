@@ -32,7 +32,7 @@ const TwoFactorAuth = ({ user }) => {
 		if (is2FAEnabled) {
 			const enteredCode = window.prompt('Please enter your current 2FA code to disable it:');
 			if (enteredCode) {
-				API.post('auth/totp/delete', { code: enteredCode })
+				API.post('auth/totp/delete', { otp: enteredCode })
 					.then(() => {
 						setShowQRCode(false);
 						setIs2FAEnabled(false);
@@ -51,7 +51,7 @@ const TwoFactorAuth = ({ user }) => {
 					setError('');
 				})
 				.catch((err) => {
-					setError('Failed to enable 2FA. Please try again.');
+					setError(err.response.data.error);
 				});
 		}
 	};
