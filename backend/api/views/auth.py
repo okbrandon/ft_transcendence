@@ -10,7 +10,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.decorators import permission_classes
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import make_password
 from django.utils import timezone
@@ -36,23 +36,27 @@ class AuthRegister(APIView):
         if User.objects.filter(email=data['email']).exists():
             return Response({"error": "Email is already in use"}, status=status.HTTP_409_CONFLICT)
 
+        skip_email_verification = os.environ.get('SKIP_EMAIL_VERIFICATION', '').lower() == 'true'
+
         user = User.objects.create(
             userID=generate_id('user'),
             username=data['username'],
             email=data['email'],
             password=make_password(data['password']),
             lang=data['lang'],
+            flags=1 if skip_email_verification else 0  # Set EMAIL_VERIFIED flag if skipping verification
         )
         serializer = UserSerializer(user)
 
-        verification_code = generate_id('code')
-        VerificationCode.objects.create(
-            userID=user.userID,
-            code=verification_code,
-            expires_at=timezone.now() + timezone.timedelta(hours=1)  # Code expires in 1 hour
-        )
-        verification_link = f"{os.environ.get('BASE_URL')}/verify?code={base64.urlsafe_b64encode(f'{user.userID}.{verification_code}'.encode()).decode()}"
-        send_verification_email(data['email'], verification_link)
+        if not skip_email_verification:
+            verification_code = generate_id('code')
+            VerificationCode.objects.create(
+                userID=user.userID,
+                code=verification_code,
+                expires_at=timezone.now() + timezone.timedelta(hours=1)  # Code expires in 1 hour
+            )
+            verification_link = f"{os.environ.get('BASE_URL')}/verify?code={base64.urlsafe_b64encode(f'{user.userID}.{verification_code}'.encode()).decode()}"
+            send_verification_email(data['email'], verification_link)
 
         return Response(status=status.HTTP_201_CREATED)
 
@@ -183,11 +187,22 @@ class PlatformAvailability(APIView):
             "available_platforms": available_platforms
         }, status=status.HTTP_200_OK)
 
-
 class RequestTOTP(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request, *args, **kwargs):
-        user = request.user
+        username = request.data.get('username')
+        password = request.data.get('password')
         platform = request.data.get('platform')
+
+        if request.user.is_authenticated:
+            user = request.user
+        elif username and password:
+            user = authenticate(username=username, password=password)
+            if not user:
+                return Response({"error": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED)
+        else:
+            return Response({"error": "Authentication required."}, status=status.HTTP_401_UNAUTHORIZED)
 
         if not user.mfaToken:
             return Response({"error": "MFA is not enabled for this account."}, status=status.HTTP_400_BAD_REQUEST)
@@ -197,7 +212,6 @@ class RequestTOTP(APIView):
 
         if platform not in ['email', 'sms']:
             return Response({"error": "Invalid platform. Choose 'email' or 'sms'."}, status=status.HTTP_400_BAD_REQUEST)
-
 
         totp = pyotp.TOTP(user.mfaToken)
         otp = totp.now()
@@ -210,7 +224,6 @@ class RequestTOTP(APIView):
             send_otp_via_sms(user.phone_number, otp)
 
         return Response({"message": f"OTP sent via {platform}."}, status=status.HTTP_200_OK)
-
 
 class CheckOTP(APIView):
     def get(self, request, *args, **kwargs):
