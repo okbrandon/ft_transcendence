@@ -1,44 +1,30 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { SearchFriends } from './SearchFriends.js';
 import { MessagePreview } from './MessagePreview.js';
 import { DirectMessage } from './DirectMessage.js';
 import { Arrow } from './tools/Arrow.js';
 import ChatContainer, { ChatHeaderStyled, ChatListFeatures } from './styles/Chat/ChatContainer.styled.js';
 import ScrollableComponent from './tools/ScrollableComponent.js';
-
-import API from '../../api/api';
+import { ChatContext } from '../../context/ChatContext.js';
 
 const Chat = () => {
+	const { conversations } = useContext(ChatContext);
+
+	console.log('Chat; conversations: ', conversations);
+	// log conversation id
+	console.log('Chat: conversationID: ', conversations.map(conversation => conversation.conversationID));
+	console.log('Chat: lastMessage: ', conversations.map(conversation => conversation.messages[conversation.messages.length - 1]));
+
+	// store in var number of conversationID user has
+	const total = conversations.length;
+
+	console.log('Chat: total: ', total);
+
 	const [openChats, setOpenChats] = useState([]);
 	const [selectedChat, setSelectedChat] = useState(null);
 	const [$isMinimized, setIsMinimized] = useState(true);
 	const [isOverlayMinimized, setIsOverlayMinimized] = useState(true);
 	const [isArrowActive, setIsArrowActive] = useState(true);
-	const [messages, setMessages] = useState({
-		'Alice': { sender: 'Alice', text: 'Hello!' },
-		'Bob': { sender: 'Bob', text: 'Hi there!' },
-		'Brandonation': { sender: 'Brandonation', text: 'Good morning!' },
-		'Evanescence': { sender: 'Evanescence', text: 'How are you?' },
-		'Hanministrateur': { sender: 'Hanministrateur', text: 'Let\'s meet up.' },
-		'Kianatomy': { sender: 'Kianatomy', text: 'I\'m busy.' },
-		'Robert': { sender: 'Robert', text: 'Cringe.' },
-		'John': { sender: 'John', text: 'I\'m tired.' },
-		'Jane': { sender: 'Jane', text: 'I\'m hungry.' },
-		'Alex': { sender: 'Alex', text: 'I\'m sleepy.' },
-		'Charlie': { sender: 'Charlie', text: 'I\'m bored.' },
-		'Daniel': { sender: 'Daniel', text: 'I\'m sick.' },
-		'Emily': { sender: 'Emily', text: 'I\'m sad.' },
-		'Frank': { sender: 'Frank', text: 'I\'m happy.' },
-		'Grace': { sender: 'Grace', text: 'I\'m excited.' },
-		'Henry': { sender: 'Henry', text: 'I\'m anxious.' },
-		'Ivy': { sender: 'Ivy', text: 'I\'m nervous.' },
-		'Jack': { sender: 'Jack', text: 'I\'m stressed.' },
-		'Kevin': { sender: 'Kevin', text: 'I\'m overwhelmed.' },
-		'Lucy': { sender: 'Lucy', text: 'I\'m frustrated.' },
-		'Mary': { sender: 'Mary', text: 'I\'m angry.' },
-		'Nathan': { sender: 'Nathan', text: 'I\'m confused.' },
-		'Oliver': { sender: 'Oliver', text: 'I\'m lost.' },
-	});
 
 	const openChat = (friendname) => {
 		if (!openChats.includes(friendname)) {
@@ -46,8 +32,8 @@ const Chat = () => {
 		}
 	};
 
-	const handleSelectChat = (friendname) => {
-		setSelectedChat(friendname);
+	const handleSelectChat = (username) => {
+		setSelectedChat(username);
 	}
 
 	const handleCloseChat = () => {
@@ -68,15 +54,6 @@ const Chat = () => {
 		handleSelectChat(friendname);
 	};
 
-	API.get('chat/conversations')
-		.then((response) => {
-			console.log('(ChatMessages); Harvested data: ', response.data);
-		})
-		.catch((error) => {
-			console.log('FAILED TO HARVEST: ', error);
-		})
-
-
 	return (
 		<ChatContainer>
 			<ChatListFeatures $isMinimized={isOverlayMinimized}>
@@ -91,17 +68,16 @@ const Chat = () => {
 					<>
 						<SearchFriends onOpenChat={handleSelectFriend} />
 						<ScrollableComponent>
-							{Object.keys(messages).map(friend => (
-								<MessagePreview key={friend} messages={[messages[friend]]} onClick={() => handleSelectChat(friend)} />
-							))}
+							{/* Handle click event for opening the correct window for dm */}
+							<MessagePreview conversationsData={conversations} onSelectChat={handleSelectChat} />
 						</ScrollableComponent>
 					</>
 				)}
 			</ChatListFeatures>
 			{selectedChat && (
 				<DirectMessage
-					friendname={selectedChat}
-					messages={messages[selectedChat]}
+					selectedChatID={selectedChat}
+					conversationsData={conversations}
 					onClose={handleCloseChat}
 					$isMinimized={$isMinimized}
 					onToggleMinimize={handleToggleMinimize}

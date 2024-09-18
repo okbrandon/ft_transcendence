@@ -25,7 +25,6 @@ import Match from '../components/Game/Match';
 import Friends from '../components/Friends/Friends';
 import PageNotFound from '../components/PageNotFound/PageNotFound';
 import Settings from '../components/Settings/Settings';
-import Chat from '../components/Chat/Chat';
 
 const PrivateRoutes = () => {
 	const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
@@ -35,12 +34,7 @@ const PrivateRoutes = () => {
 	}, [setIsLoggedIn]);
 
 	return (
-		isLoggedIn ? (
-			<>
-				<Chat/>
-				<Outlet/>
-			</>
-		) : <Navigate to="/login"/>
+		isLoggedIn ? <Outlet/> : <Navigate to="/login"/>
 	);
 };
 

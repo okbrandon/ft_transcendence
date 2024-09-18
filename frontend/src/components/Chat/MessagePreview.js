@@ -10,7 +10,6 @@ const PreviewContainer = styled.div`
 	display: flex;
 	align-items: center;
 	cursor: pointer;
-	// overflow: scroll;
 `;
 
 const MessageContent = styled.div`
@@ -23,25 +22,63 @@ const Sender = styled.strong`
 `;
 
 const MessageText = styled.span`
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	opacity: 0.5;
 `;
 
-export const MessagePreview = ({ messages, onClick }) => {
-	const lastMessage = messages.length > 0 ? messages[messages.length - 1] : null;
+// export const MessagePreview = ({})
+
+export const MessagePreview = ({ conversationsData, onSelectChat }) => {
+	// console.log('MessagePreview: conversationData ', conversationsData);
+
+
+	// console.log('MessagePreview: lastMessages ', lastMessages);
+	// console.log('Messages with only content:', lastMessages.map(message => message.content));
+	// console.log('Messages with only username:', lastMessages.map(sender => sender.sender.username));
+
+	// Extract the last message from each conversation
+	const lastMessages = conversationsData.map(conversation =>
+	{
+		// Ensure the conversation has messages
+		const lastMessage = conversation.messages.length > 0
+			? conversation.messages[conversation.messages.length - 1]
+			: null;
+		return lastMessage;
+	});
 
 	return (
-	<PreviewContainer onClick={onClick}>
-			{lastMessage ? (
-				<>
-					<ProfilePicture src={defaultAvatar} alt={`${lastMessage.sender}'s profile`} />
+		<>
+			{lastMessages.map((object, index) => (
+				console.log('USERNAME: ', object.sender.username),
+				<PreviewContainer key={index} onClick={() => onSelectChat(object.sender.username)}>
+					<ProfilePicture src={defaultAvatar} alt={`${lastMessages.sender}'s profile`} />
 					<MessageContent>
-						<Sender>{lastMessage.sender}</Sender>
-						<MessageText>{lastMessage.text}</MessageText>
+						<Sender>{object.sender.username}</Sender>
+						<MessageText>{object.content}</MessageText>
 					</MessageContent>
-				</>
-			) : (
-				<div>No messages to display</div>
-			)}
-		</PreviewContainer>
+				</PreviewContainer>
+			))}
+
+
+			{/* <PreviewContainer>
+
+
+				{lastMessages ? (
+					<>
+						<ProfilePicture src={defaultAvatar} alt={`${lastMessages.sender}'s profile`} />
+						<MessageContent>
+							<Sender>{lastMessages.sender}</Sender>
+							<MessageText>{lastMessages.text}</MessageText>
+						</MessageContent>
+					</>
+				) : (
+					<div>No messages to display</div>
+				)}
+			</PreviewContainer> */}
+		</>
 	);
 };

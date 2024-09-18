@@ -1,22 +1,23 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import NavBar from '../Navigation/Navigation';
 import Footer from '../Footer/Footer';
-import { isValidToken } from '../../api/api';
-import useWebSocket from 'react-use-websocket';
-
-const WS_URL = 'ws://localhost:8888/ws/chat/?token=';
+import { AuthContext } from '../../context/AuthContext';
+import Chat from '../Chat/Chat';
+import ChatProvider from '../../context/ChatContext';
 
 const Root = () => {
-	useWebSocket(WS_URL + localStorage.getItem('token'), {
-		onOpen: () => console.log(`WebSocket connection opened:`),
-		onMessage: (message) => console.log(`WebSocket message received:`, message),
-	});
+	const { isLoggedIn } = useContext(AuthContext);
 	return (
 		<>
 			<NavBar/>
 			<main>
 				<Outlet/>
+				{ isLoggedIn && (
+					<ChatProvider>
+						<Chat/>
+					</ChatProvider>
+				) }
 			</main>
 			<Footer/>
 		</>
