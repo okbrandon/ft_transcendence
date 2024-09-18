@@ -32,7 +32,7 @@ const SignUp = () => {
 		} else {
 			ApiSignup(formData)
 				.then(() => {
-					navigate('/login')
+					navigate('/login/send-email-notification');
 				})
 				.catch((error) => {
 					console.log(error.response.data.error);

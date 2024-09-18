@@ -1,14 +1,22 @@
-import React, { useContext, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { useNavigate, Link, useParams } from 'react-router-dom';
 import Image from 'react-bootstrap/Image';
 import Button from 'react-bootstrap/Button';
 import { ApiLogin } from '../../api/auth';
-import { AuthenticationSection, ErrorMessage, FormContainer, FortyTwoButton } from './styles/Authentication.styled';
+import {
+	AuthenticationSection,
+	ErrorMessage,
+	FormContainer,
+	FortyTwoButton
+} from './styles/Authentication.styled';
 import { AuthContext } from '../../context/AuthContext';
 import TwoFactorAuth from './TwoFactorAuth';
+import Notification from '../Notification/Notification';
 
 const SignIn = () => {
 	const navigate = useNavigate();
+	const { fromSignUp } = useParams();
+	const notificationRef = useRef(null);
 	const { setIsLoggedIn } = useContext(AuthContext);
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
@@ -36,10 +44,21 @@ const SignIn = () => {
 				});
 		}
 	};
+
 	const handleFortyTwo = (event) => {
 		event.preventDefault();
 		window.location.href = `http://localhost:8888/api/v1/auth/42/login`;
 	};
+
+	useEffect(() => {
+		console.log(fromSignUp);
+		if (fromSignUp && notificationRef.current) {
+			notificationRef.current.addNotification(
+				'success',
+				'Please check your email to verify your account.'
+			);
+		}
+	}, [fromSignUp]);
 
 	return (
 		<>
@@ -47,7 +66,10 @@ const SignIn = () => {
 				<AuthenticationSection>
 					<FormContainer onSubmit={handleSubmit}>
 						<h1>Sign In</h1>
-						<FortyTwoButton variant='light' onClick={handleFortyTwo}><Image src='/images/42_Logo.png' alt='42 Logo'/>SignIn with 42</FortyTwoButton>
+						<FortyTwoButton variant='light' onClick={handleFortyTwo}>
+							<Image src='/images/42_Logo.png' alt='42 Logo'/>
+							SignIn with 42
+						</FortyTwoButton>
 						<p>- Or -</p>
 						<FormContainer.Group className="mb-3">
 							<FormContainer.Control
@@ -77,9 +99,15 @@ const SignIn = () => {
 						{error && <ErrorMessage>{error}</ErrorMessage>}
 						<Button variant='light' type='submit'>Submit</Button>
 					</FormContainer>
+					<Notification ref={notificationRef}/>
 				</AuthenticationSection>
 			) : (
-				<TwoFactorAuth username={username} password={password} setIsTwoFactorAuth={setIsTwoFactorAuth} availablePlatforms={availablePlatforms}/>
+				<TwoFactorAuth
+					username={username}
+					password={password}
+					setIsTwoFactorAuth={setIsTwoFactorAuth}
+					availablePlatforms={availablePlatforms}
+				/>
 			)}
 		</>
 	);
