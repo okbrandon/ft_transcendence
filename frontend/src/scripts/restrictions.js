@@ -1,6 +1,8 @@
+import logger from '../api/logger';
+
 export const checkSignUpRestrictions = (data, cfPassword) => {
 	if (!data) {
-		console.log('checkRestrictions: No data');
+		logger('checkRestrictions: No data');
 		return '';
 	}
 
@@ -40,7 +42,7 @@ export const checkSignUpRestrictions = (data, cfPassword) => {
 
 export const checkAccountPreferencesRestrictions = (data) => {
 	if (!data) {
-		console.log('checkRestrictions: No data');
+		logger('checkRestrictions: No data');
 		return '';
 	}
 
@@ -61,7 +63,7 @@ export const checkAccountPreferencesRestrictions = (data) => {
 
 export const checkSecurityRestrictions = (data, cfPassword) => {
 	if (!data) {
-		console.log('checkRestrictions: No data');
+		logger('checkRestrictions: No data');
 		return '';
 	}
 

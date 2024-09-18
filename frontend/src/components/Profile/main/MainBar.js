@@ -14,11 +14,11 @@ const MainBar = ({ profileUser, matchArray, relation }) => {
 
 	const handleAddFriend = () => {
 		API.put('users/@me/relationships', { user: profileUser.userID, type: 0 })
-			.then(res => {
+			.then(() => {
 				setDisableAddFriend(true);
 			})
 			.catch(err => {
-				console.log(err);
+				console.error(err.response.data.error);
 			});
 	};
 

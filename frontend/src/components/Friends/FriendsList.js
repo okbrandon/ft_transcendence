@@ -15,17 +15,19 @@ import {
 const FriendsList = ({ friends }) => {
 	const navigate = useNavigate();
 
-	const handleProfileClick = (username) => {
-		console.log('pass');
+	const handleProfile = (username) => {
 		navigate(`/profile/${username}`)
 	};
-	// handle remove
+
+	const handleRemove = (relation) => {
+		// handleRemove logic here
+	};
 
 	return (
 		<FriendsListContainer>
 			{friends.map((relation, key) => (
 				<FriendCard key={key}>
-					<FriendInfo onClick={() => handleProfileClick(relation.username)}>
+					<FriendInfo onClick={() => handleProfile(relation.username)}>
 						<FriendStatus $status={true} />
 						<FriendAvatar src={relation.avatarID ? relation.avatarID : '/images/default-profile.png'} alt={`${relation.displayName}'s avatar`}/>
 						<FriendName>{relation.displayName}</FriendName>
@@ -33,7 +35,7 @@ const FriendsList = ({ friends }) => {
 					<Actions>
 						<ActionButton>Invite</ActionButton>
 						<ActionButton>Message</ActionButton>
-						<RemoveButton id="remove-button">Remove</RemoveButton>
+						<RemoveButton type="button" onClick={() => handleRemove(relation)}>Remove</RemoveButton>
 					</Actions>
 				</FriendCard>
 			))}

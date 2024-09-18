@@ -17,8 +17,7 @@ const Verify = () => {
 
 		if (code) {
 			axios.post(`http://localhost:8888/api/v1/verify`, { code })
-				.then(response => {
-					console.log('Verification successful:', response.data);
+				.then(() => {
 					window.location.href = '/login';
 				})
 				.catch(() => {

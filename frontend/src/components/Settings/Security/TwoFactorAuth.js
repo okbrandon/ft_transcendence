@@ -17,7 +17,6 @@ const TwoFactorAuth = ({ user }) => {
 	const [qrCodeToken, setQrCodeToken] = useState(''); // Store the token to generate the QR code
 	const [showQRCode, setShowQRCode] = useState(user.mfaToken ? true : false); // Control when to show QR code
 	const [error, setError] = useState('');
-	console.log('TwoFactorAuth.js user:', user);
 
 	useEffect(() => {
 		API.get('auth/totp')
@@ -25,19 +24,16 @@ const TwoFactorAuth = ({ user }) => {
 				setIs2FAEnabled(res.data.has_otp);
 			})
 			.catch(err => {
-				console.error(err.response.data.error);
+				console.error(err);
 			});
 	}, []);
 
-	// Handle enabling/disabling 2FA
 	const handleToggle = () => {
 		if (is2FAEnabled) {
-			// User wants to disable 2FA, ask for the current 2FA code
 			const enteredCode = window.prompt('Please enter your current 2FA code to disable it:');
 			if (enteredCode) {
 				API.post('auth/totp/delete', { code: enteredCode })
 					.then(() => {
-						console.log('2FA disabled successfully');
 						setShowQRCode(false);
 						setIs2FAEnabled(false);
 						setError('');
@@ -47,10 +43,8 @@ const TwoFactorAuth = ({ user }) => {
 					});
 			}
 		} else {
-			// User wants to enable 2FA, request the QR code token from the backend
 			API.post('auth/totp/enable')
 				.then((res) => {
-					console.log('2FA token:', res.data);
 					setQrCodeToken(res.data.token);
 					setShowQRCode(true);
 					setIs2FAEnabled(true);

@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import {
 	AcceptButton,
 	Actions,
 	DeclineButton,
-	MutualFriends,
 	NoRequests,
 	RequestAvatar,
 	RequestCard,
@@ -28,7 +27,7 @@ const RequestsList = ({ requests, setRequests, setFriends }) => {
 				setRequests(prev => prev.filter((request) => request.relationshipID !== focusedRequest.relationshipID));
 			})
 			.catch(err => {
-				console.log('handleAccept error:', err);
+				console.error(err.response.data.error);
 			});
 	};
 

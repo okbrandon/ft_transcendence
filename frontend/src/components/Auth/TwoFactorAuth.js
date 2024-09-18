@@ -1,5 +1,10 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ApiLogin } from "../../api/auth";
+import axios from "axios";
+import API from "../../api/api";
+import logger from "../../api/logger";
+import { AuthContext } from "../../context/AuthContext";
 import {
 	AuthenticationSection,
 	AuthButton,
@@ -8,17 +13,26 @@ import {
 	ErrorMessage
 } from "./styles/Authentication.styled";
 import { AvailablePlatformsContainer, PlatformButton } from "./styles/TwoFactorAuth.styled";
-import { ApiLogin } from "../../api/auth";
-import { AuthContext } from "../../context/AuthContext";
 
-const TwoFactorAuth = ({ username, password, setIsTwoFactorAuth, availablePlatforms }) => {
+const TwoFactorAuth = ({ username, password, setIsTwoFactorAuth }) => {
 	const navigate = useNavigate();
 	const { setIsLoggedIn } = useContext(AuthContext);
 	const [authCode, setAuthCode] = useState("");
-	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(!authCode);
+	const [availablePlatforms, setAvailablePlatforms] = useState(null);
+	const [error, setError] = useState("");
 
-	console.log(availablePlatforms);
+	useEffect(() => {
+		axios.get("http://localhost:8888/api/v1/auth/totp/platform_availability")
+			.then(res => {
+				logger(res.data);
+				// setAvailablePlatforms(res.data.platforms);
+			})
+			.catch(err => {
+				logger(err);
+				setError(err);
+			})
+	}, []);
 
 	const handleChange = (e) => {
 		setAuthCode(e.target.value);
@@ -26,9 +40,8 @@ const TwoFactorAuth = ({ username, password, setIsTwoFactorAuth, availablePlatfo
 	};
 
 	const handlePlatform = (platform) => {
-		console.log('chosen platform:', platform);
-		// WAITING FOR API
-	}
+
+	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -42,7 +55,7 @@ const TwoFactorAuth = ({ username, password, setIsTwoFactorAuth, availablePlatfo
 			})
 			.catch((err) => {
 				console.error(err);
-				setError(err.response.data.error);
+				setError(err);
 			});
 	  };
 
