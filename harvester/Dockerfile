@@ -1,22 +1,12 @@
-FROM golang:1.22.4 AS builder
+FROM python:3.10-slim-buster
 
 WORKDIR /app
 
-COPY go.mod go.sum ./
-
-RUN go mod download
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o harvester ./cmd/main.go
+RUN apt-get update && apt-get install -y netcat
 
-FROM alpine:latest  
-
-RUN apk --no-cache add ca-certificates
-
-WORKDIR /root/
-
-COPY --from=builder /app/harvester .
-
-CMD ["./harvester"]
-
+CMD ["/bin/sh", "start.sh"]
