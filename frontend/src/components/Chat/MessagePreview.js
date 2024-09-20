@@ -33,27 +33,11 @@ const MessageText = styled.span`
 // export const MessagePreview = ({})
 
 export const MessagePreview = ({ conversationsData, onSelectChat }) => {
-	// console.log('MessagePreview: conversationData ', conversationsData);
-
-
-	// console.log('MessagePreview: lastMessages ', lastMessages);
-	// console.log('Messages with only content:', lastMessages.map(message => message.content));
-	// console.log('Messages with only username:', lastMessages.map(sender => sender.sender.username));
-
-	// Extract the last message from each conversation
-	const lastMessages = conversationsData.map(conversation =>
-	{
-		// Ensure the conversation has messages
-		const lastMessage = conversation.messages.length > 0
-			? conversation.messages[conversation.messages.length - 1]
-			: null;
-		return lastMessage;
-	});
+	console.log('MessagePreview: conversationData ', conversationsData);
 
 	return (
 		<>
 			{lastMessages.map((object, index) => (
-				console.log('USERNAME: ', object.sender.username),
 				<PreviewContainer key={index} onClick={() => onSelectChat(object.sender.username)}>
 					<ProfilePicture src={defaultAvatar} alt={`${lastMessages.sender}'s profile`} />
 					<MessageContent>

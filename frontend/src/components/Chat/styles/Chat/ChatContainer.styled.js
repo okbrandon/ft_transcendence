@@ -32,7 +32,7 @@ export const ChatHeaderStyled = styled.div`
 	border-radius: 10px 10px 0 0;
 `;
 
-export const ChatListFeatures = styled.div`
+export const MainChatContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	margin-right: 3%;

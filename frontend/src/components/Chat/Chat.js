@@ -3,27 +3,28 @@ import { SearchFriends } from './SearchFriends.js';
 import { MessagePreview } from './MessagePreview.js';
 import { DirectMessage } from './DirectMessage.js';
 import { Arrow } from './tools/Arrow.js';
-import ChatContainer, { ChatHeaderStyled, ChatListFeatures } from './styles/Chat/ChatContainer.styled.js';
+import ChatContainer, { ChatHeaderStyled, MainChatContainer } from './styles/Chat/ChatContainer.styled.js';
 import ScrollableComponent from './tools/ScrollableComponent.js';
 import { ChatContext } from '../../context/ChatContext.js';
 
 const Chat = () => {
 	const { conversations } = useContext(ChatContext);
 
-	console.log('Chat; conversations: ', conversations);
-	// log conversation id
-	console.log('Chat: conversationID: ', conversations.map(conversation => conversation.conversationID));
-	console.log('Chat: lastMessage: ', conversations.map(conversation => conversation.messages[conversation.messages.length - 1]));
+	if (process.env.NODE_ENV === 'development') {
+		console.log('Chat; conversations: ', conversations);
+		console.log('Chat: conversationID: ', conversations.map(convo => convo.conversationID));
+		console.log('Chat: lastMessage: ', conversations.map(convo => convo.messages[convo.messages.length - 1]));
+	}
 
-	// store in var number of conversationID user has
-	const total = conversations.length;
-
-	console.log('Chat: total: ', total);
-
+	// This is the list of open chats that will be displayed in the DirectMessage component
 	const [openChats, setOpenChats] = useState([]);
+	// This is the selected chat that will be displayed in the DirectMessage component
 	const [selectedChat, setSelectedChat] = useState(null);
+	// This is the minimized state of the DirectMessage component
 	const [$isMinimized, setIsMinimized] = useState(true);
+	// This is the minimized state of the MainChatContainer component
 	const [isOverlayMinimized, setIsOverlayMinimized] = useState(true);
+	// This is the state of the arrow in the MainChatContainer component for toggling the overlay and animation
 	const [isArrowActive, setIsArrowActive] = useState(true);
 
 	const openChat = (friendname) => {
@@ -56,14 +57,8 @@ const Chat = () => {
 
 	return (
 		<ChatContainer>
-			<ChatListFeatures $isMinimized={isOverlayMinimized}>
-				<ChatHeaderStyled onClick={handleToggleOverlayMinimize}>
-					Messaging
-					<Arrow
-						onClick={handleToggleOverlayMinimize}
-						ArrowAnimate={isArrowActive}
-					/>
-				</ChatHeaderStyled>
+			<MainChatContainer $isMinimized={isOverlayMinimized}>
+				<ChatHeader onClick={handleToggleMinimize}/>
 				{!isOverlayMinimized && (
 					<>
 						<SearchFriends onOpenChat={handleSelectFriend} />
@@ -73,7 +68,7 @@ const Chat = () => {
 						</ScrollableComponent>
 					</>
 				)}
-			</ChatListFeatures>
+			</MainChatContainer>
 			{selectedChat && (
 				<DirectMessage
 					selectedChatID={selectedChat}
