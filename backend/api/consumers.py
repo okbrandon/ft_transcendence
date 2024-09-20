@@ -30,7 +30,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			logger.info("Chat connection attempt without token")
 			await self.close()
 			return
-		
+
 		user = await self.get_user_from_token(token)
 
 		if user is None:
@@ -59,7 +59,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 			if not message_type:
 				raise Exception("Missing message type")
-			
+
 			match message_type:
 				case "send_message":
 					conversation_id = json_data.get("conversationID", None)
@@ -95,7 +95,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 			async with httpx.AsyncClient() as client:
 				response = await client.get(url, headers=headers)
-			
+
 			if response.status_code != 200:
 				raise Exception(f"Failed to get user info: {response.status_code} {response.reason}")
 
@@ -124,7 +124,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 					"senderUsername": senderUsername,
 					"messagePreview": message[:32] + "..." if len(message) > 32 else message
 				}))
-	
+
 	@sync_to_async
 	def add_message_to_conversation(self, conversation_id, socketUser, content):
 		conversation = Conversation.objects.get(conversationID=conversation_id)
@@ -156,7 +156,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 		for relationship in friends:
 			friend_id = relationship.userA if relationship.userA != socketUser.user_id else relationship.userB
-	
+
 			try:
 				friend = User.objects.get(userID=friend_id)
 			except User.DoesNotExist:
@@ -169,6 +169,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 			if not existing_conversation:
 				new_conversation = Conversation.objects.create(conversationID=generate_id("conv"), conversationType='private_message')
+				new_conversation.receipientID = user.userID
 				new_conversation.participants.add(user, friend)
 				new_conversation.save()
 
