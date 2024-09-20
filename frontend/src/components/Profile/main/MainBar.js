@@ -6,6 +6,7 @@ import { IconButton, IconsContainer, MainBarContainer, SectionContainer } from '
 import { AuthContext } from '../../../context/AuthContext';
 import 'react-circular-progressbar/dist/styles.css';
 import API from '../../../api/api';
+import logger from '../../../api/logger';
 
 const MainBar = ({ profileUser, matchArray, relation }) => {
 	const navigate = useNavigate();
@@ -15,12 +16,24 @@ const MainBar = ({ profileUser, matchArray, relation }) => {
 	const handleAddFriend = () => {
 		API.put('users/@me/relationships', { user: profileUser.userID, type: 0 })
 			.then(() => {
+				logger('Friend request sent');
 				setDisableAddFriend(true);
 			})
 			.catch(err => {
 				console.error(err.response.data.error);
 			});
 	};
+
+	const handleBlockUser = () => {
+		API.put('users/@me/relationships', { user: profileUser.userID, type: 2 })
+			.then(() => {
+				logger('User blocked');
+				setDisableAddFriend(true);
+			})
+			.catch(err => {
+				console.error(err.response.data.error);
+			});
+	}
 
 	return (
 		<SectionContainer>
@@ -36,7 +49,10 @@ const MainBar = ({ profileUser, matchArray, relation }) => {
 						</IconsContainer>
 					) : (
 						<IconsContainer>
-							<IconButton type="button">
+							<IconButton
+								type="button"
+								onClick={handleBlockUser}
+							>
 								<i className="bi bi-ban"/>
 							</IconButton>
 							<IconButton

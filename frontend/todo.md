@@ -1,6 +1,5 @@
 # TODO
 ## today
-- 2FA for settings
 - Harvester
 - Game interface
 - Friends: add popup

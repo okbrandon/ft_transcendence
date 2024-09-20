@@ -5,7 +5,7 @@ import OTPInputComponent from '../../Auth/OTPInput';
 import { AuthButton, ErrorMessage } from '../../Auth/styles/Authentication.styled';
 import { AvailablePlatformsContainer, PlatformButton } from '../../Auth/styles/TwoFactorAuth.styled';
 import { GetUser } from '../../../api/user';
-import { Backdrop, FormContainer } from './styles/TwoFactorAuthSecurity.styled';
+import { Backdrop, FormContainer } from '../styles/TwoFactorAuthSecurity.styled';
 
 const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactorAuth }) => {
 	const [availablePlatforms, setAvailablePlatforms] = useState([]);
