@@ -15,6 +15,8 @@ const Chat = () => {
 	const [isOverlayMinimized, setIsOverlayMinimized] = useState(true);
 	const [isArrowActive, setIsArrowActive] = useState(true);
 	const [convoObject, setConvoObject] = useState(null);
+	const [DMWinArrow, setDMWinArrow] = useState(false);
+	const [mainWinArrow, setMainWinArrow] = useState(false);
 
 	const handleSelectChat = (username) => {
 		setDMWindow(username);
@@ -24,13 +26,14 @@ const Chat = () => {
 		setDMWindow(null);
 	}
 
-	const handleToggleMinimize = () => {
+	const DMWinMinimizer = () => {
 		setIsMinimized(!$isMinimized);
+		setDMWinArrow(!DMWinArrow);
 	}
 
-	const handleToggleOverlayMinimize = () => {
+	const mainMinimizer = () => {
 		setIsOverlayMinimized(!isOverlayMinimized);
-		setIsArrowActive(!isArrowActive);
+		setMainWinArrow(!mainWinArrow);
 	}
 
 	const handleSelectFriend = (convo) => {
@@ -46,7 +49,7 @@ const Chat = () => {
 	return (
 		<ChatContainer>
 			<MainChatContainer $isMinimized={isOverlayMinimized}>
-				<ChatHeader toggleMinimization={handleToggleOverlayMinimize} isArrowActive={isArrowActive} />
+				<ChatHeader toggleMinimization={mainMinimizer} arrowState={mainWinArrow} />
 				{!isOverlayMinimized && (
 					<>
 						<SearchFriends onOpenChat={handleSelectFriend} />
@@ -62,8 +65,8 @@ const Chat = () => {
 					username={DMWindow}
 					onClose={handleCloseChat}
 					$isMinimized={$isMinimized}
-					toggleMinimization={handleToggleMinimize}
-					isArrowActive={isArrowActive}
+					toggleMinimization={DMWinMinimizer}
+					arrowState={DMWinArrow}
 				/>
 			)}
 		</ChatContainer>

@@ -18,7 +18,7 @@ export const ChatMessages = styled.div`
 	flex: 1;
 	padding: 10px;
 	overflow-y: auto;
-	color: #333;
+	color: #fff;
 	display: ${({ $isMinimized }) => ($isMinimized ? 'none' : 'block')};
 	transition: display 0.3s ease;
 `;
@@ -51,15 +51,23 @@ export const SenderBubble = styled.div`
 	padding: 10px;
 	margin: 5px;
 	max-width: 70%;
+	text-align: left;
+	display: block;
+	clear: both;
+	float: right;
 `;
 
-export const ReceiverBubble = styled.div`
-	background-color: #f1f0f0;
+export const HostBubble = styled.div`
+	background-color: #E8E2E2;
 	color: #333;
 	border-radius: 10px;
 	padding: 10px;
 	margin: 5px;
 	max-width: 70%;
+	text-align: right;
+	display: block;
+	clear: both;
+	float: left;
 `;
 
 export default DirectMessageContainer;
