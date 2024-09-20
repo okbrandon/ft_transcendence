@@ -6,7 +6,7 @@ from .util import generate_id
 class Match(models.Model):
     matchID = models.CharField(max_length = 48)
     playerA = models.JSONField # ex: {"id": "user_202020202020", "platform": "terminal"}
-    playerB = models.JSONField 
+    playerB = models.JSONField
     scores = models.JSONField # ex: {"user_202020202020": 5, "user_202020202021", 3}
     startedAt = models.DateTimeField
     finishedAt = models.DateTimeField(auto_now_add=True)
@@ -33,7 +33,7 @@ class Purchase(models.Model):
     def __str__(self):
         return self.purchaseID
 
-class User(AbstractUser):                      
+class User(AbstractUser):
     userID = models.CharField(max_length=48, unique=True)
     username = models.CharField(max_length = 16, unique=True)
     displayName = models.CharField(max_length = 16, null = True)
@@ -85,13 +85,14 @@ class UserSettings(models.Model):
     userID = models.CharField(max_length = 48)
     theme = models.CharField(max_length = 16)
     colorblind = models.BooleanField(default = False)
-    
+
     def __str__(self):
         return self.userID
 
 class Conversation(models.Model):
     conversationID = models.CharField(primary_key=True, max_length=48, default=generate_id("conv"), editable=False)
     conversationType = models.CharField(max_length=50, default='private_message')  # Can be expanded for different types
+    receipientID = models.CharField(max_length=48, null=True)
     participants = models.ManyToManyField(User, related_name='conversations')
 
     def __str__(self):
@@ -117,7 +118,7 @@ class Relationship(models.Model):
 
     def __str__(self):
         return self.relationshipID
-    
+
 class Token(models.Model):
     tokenID = models.CharField(max_length = 48)
     token = models.CharField(max_length = 256)
