@@ -8,8 +8,9 @@ export const GetRelationships = async () => {
 	return await API.get('users/@me/relationships');
 };
 
-export const GetFriends = async ({ userID }) => {
+export const GetFriends = async () => {
 	logger('Getting friends...');
+	const userID = localStorage.getItem('userID');
 
 	try {
 		const res = await API.get('users/@me/relationships');
@@ -19,6 +20,8 @@ export const GetFriends = async ({ userID }) => {
 				.map(async friend => {
 					try {
 						const userRes = await GetUserByUsername(friend.userA === userID ? friend.userB : friend.userA);
+						logger(`userA: ${friend.userA} and userID: ${userID}`);
+						logger(`Friend found: ${friend.userA === userID ? 'userB' : 'userA'}`);
 						return {
 							...friend,
 							displayName: userRes.data.displayName ? userRes.data.displayName : userRes.data.username,
