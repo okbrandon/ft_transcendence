@@ -53,7 +53,7 @@ const Visibility = () => {
 					{blockedUsers.map((relation, id) => (
 						<BlockedUserItem key={id}>
 							<div>
-								<BlockedUserAvatar src={relation.avatarID && relation.avatarID !== 'default' ? relation.avatarID : '/images/default-profile.png'} alt={`${relation.displayName}'s avatar`}/>
+								<BlockedUserAvatar src='/images/default-profile.png' alt={'Blocked user'}/>
 								<BlockedUserName>{relation.displayName}</BlockedUserName>
 							</div>
 							<UnblockButton onClick={e => handleUnblock(e, relation.userB)}>

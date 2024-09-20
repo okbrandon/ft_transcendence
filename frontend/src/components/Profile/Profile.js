@@ -9,6 +9,7 @@ import Loader from '../../styles/shared/Loader.styled';
 import DisplaySkin from './content/DisplaySkin';
 import { GetRelationships } from '../../api/friends';
 import { GetUserByUsername } from '../../api/user';
+import BlockedProfile from './BlockedProfile';
 
 const matchArray = [
 	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Brandon"}, scores: {playerA: 9, playerB: 10}, startedAt: "2021-09-01T12:28:01Z", finishedAt: "2021-09-01T12:30:38Z"},
@@ -71,7 +72,7 @@ const Profile = () => {
 
 	return (
 		<>
-			{relation || relation[0].status !== 2 ? (
+			{relation && relation[0].status !== 2 ? (
 				<ProfileContainer>
 					<UserProfileBanner $path={profileUser.bannerID || '/images/default-banner.png'}/>
 					<UserContainer>
@@ -82,14 +83,7 @@ const Profile = () => {
 						<MatchHistory matchArray={matchArray}/>
 					</UserContainer>
 				</ProfileContainer>
-			) : (
-				<ProfileContainer>
-					<UserProfileBanner $path={'/images/default-banner.png'}/>
-					<UserContainer>
-						<MainBar profileUser={null} matchArray={null} relation={null}/>
-					</UserContainer>
-				</ProfileContainer>
-			)}
+			) : <BlockedProfile/>}
 		</>
 	);
 };
