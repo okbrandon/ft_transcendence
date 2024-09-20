@@ -5,7 +5,7 @@ from .models import User, Match, Message, Conversation, Token, Relationship, Use
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["userID", "username", "displayName", "email", "mfaToken", "lang", 
+        fields = ["userID", "username", "displayName", "email", "mfaToken", "lang",
                   "avatarID", "bannerID", "bio", "oauthAccountID", "phone_number", "password", "flags", "money"]
         read_only_fields = ["userID", "mfaToken", "oauthAccountID", "flags", "money"]
 
@@ -65,4 +65,4 @@ class ConversationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Conversation
-        fields = ['conversationID', 'conversationType', 'participants', 'messages']
+        fields = ['conversationID', 'conversationType', 'receipientID', 'participants', 'messages']
