@@ -67,3 +67,33 @@ export const GetRequests = async () => {
 		return [];
 	}
 };
+
+export const GetBlockedUsers = async () => {
+	logger('Getting blocked users...');
+	const userID = localStorage.getItem('userID');
+
+	try {
+		const res = await API.get('users/@me/relationships');
+		const blockedUsers = await Promise.all(
+			res.data
+				.filter(relation => relation.status === 2)
+				.map(async blockedUser => {
+					try {
+						const userRes = await GetUserByUsername(blockedUser.userA === userID ? blockedUser.userB : blockedUser.userA);
+						return {
+							...blockedUser,
+							displayName: userRes.data.displayName ? userRes.data.displayName : userRes.data.username,
+							avatarID: userRes.data.avatarID,
+						};
+					} catch (error) {
+						console.error("Error fetching blocked user details: ", error);
+						return blockedUser;
+					}
+				})
+		);
+		return blockedUsers;
+	} catch (error) {
+		console.error("Error fetching blocked users: ", error);
+		return [];
+	}
+};

@@ -13,12 +13,6 @@ import {
 } from "./styles/RequestsList.styled";
 import API from "../../api/api";
 
-// const friendRequests = [
-// 	{ id: 1, name: "Chris", mutualFriends: 3 },
-// 	{ id: 2, name: "Pat", mutualFriends: 5 },
-// 	{ id: 3, name: "Jordan", mutualFriends: 1 },
-// ];
-
 const RequestsList = ({ requests, setRequests, setFriends }) => {
 	const handleAccept = (focusedRequest) => {
 		API.put('users/@me/relationships', { user: focusedRequest.userA, type: 1 })
@@ -43,7 +37,7 @@ const RequestsList = ({ requests, setRequests, setFriends }) => {
 					<RequestCard key={key}>
 						<RequestInfo>
 							<RequestProfile>
-								<RequestAvatar src={request.avatarID ? request.avatarID : '/images/default-profile.png'} alt={`${request.name}'s avatar`}/>
+								<RequestAvatar src={request.avatarID && request.avatarID !== 'default' ? request.avatarID : '/images/default-profile.png'} alt={`${request.name}'s avatar`}/>
 								<RequestName>{request.displayName}</RequestName>
 							</RequestProfile>
 						</RequestInfo>

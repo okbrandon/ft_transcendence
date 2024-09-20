@@ -29,7 +29,7 @@ const FriendsList = ({ friends }) => {
 				<FriendCard key={key}>
 					<FriendInfo onClick={() => handleProfile(relation.username)}>
 						<FriendStatus $status={true} />
-						<FriendAvatar src={relation.avatarID ? relation.avatarID : '/images/default-profile.png'} alt={`${relation.displayName}'s avatar`}/>
+						<FriendAvatar src={relation.avatarID  && relation.avatarID !== 'default' ? relation.avatarID : '/images/default-profile.png'} alt={`${relation.displayName}'s avatar`}/>
 						<FriendName>{relation.displayName}</FriendName>
 					</FriendInfo>
 					<Actions>
