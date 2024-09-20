@@ -1,5 +1,6 @@
 # TODO
 ## today
+- Search bar: show relation !== blocked || No relation
 - Harvester
 - Game interface
 - Friends: add popup
