@@ -1,6 +1,8 @@
 # TODO
 ## today
-- 2FA
+- 2FA for settings
+- Harvester
+- Game interface
 - Friends: add popup
 - Profile: block button API
 - harvesting:

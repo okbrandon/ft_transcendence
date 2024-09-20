@@ -10,7 +10,7 @@ import {
 	FortyTwoButton
 } from './styles/Authentication.styled';
 import { AuthContext } from '../../context/AuthContext';
-import TwoFactorAuth from './TwoFactorAuth';
+import TwoFactorAuth from './TwoFactorAuthSignIn';
 import Notification from '../Notification/Notification';
 
 const SignIn = () => {

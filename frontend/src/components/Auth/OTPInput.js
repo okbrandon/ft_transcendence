@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Hyphen, OTPContainer, OTPInput } from './styles/OTPInput.styled';
 
-const OTPInputComponent = ({ handleOTPComplete }) => {
+const OTPInputComponent = ({ setAuthCode, setDisableVerify }) => {
 	const [otp, setOtp] = useState(['', '', '', '', '', '']);
 	const inputRefs = useRef([]);
 
@@ -15,8 +15,11 @@ const OTPInputComponent = ({ handleOTPComplete }) => {
 				inputRefs.current[index + 1].focus();
 			}
 
+			setAuthCode(newOtp.join(''));
 			if (newOtp.join('').length === 6) {
-				handleOTPComplete(newOtp.join(''));
+				setDisableVerify(false);
+			} else {
+				setDisableVerify(true);
 			}
 		}
 	};
@@ -33,7 +36,12 @@ const OTPInputComponent = ({ handleOTPComplete }) => {
 				inputRefs.current[index].value = digit;
 			});
 
-			handleOTPComplete(newOtp.join(''));
+			setAuthCode(newOtp.join(''));
+			if (newOtp.join('').length === 6) {
+				setDisableVerify(false);
+			} else {
+				setDisableVerify(true);
+			}
 		}
 	};
 
