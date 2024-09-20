@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
 	ErrorMessage,
 	Form,
@@ -14,7 +14,7 @@ import { checkSecurityRestrictions } from "../../../scripts/restrictions";
 import { AuthContext } from "../../../context/AuthContext";
 import { GetUser } from "../../../api/user";
 import TwoFactorAuth from "./TwoFactorAuth";
-import TwoFactorAuthPassword from "../TwoFactorAuthPassword";
+import TwoFactorAuthPassword from "./TwoFactorAuthSecurity";
 
 const Security = ({ user }) => {
 	const { setUser } = useContext(AuthContext);
@@ -26,9 +26,19 @@ const Security = ({ user }) => {
 	const [cfPassword, setCfPassword] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [success, setSuccess] = useState('');
+	const [has2FA, setHas2FA] = useState(false);
 	const [showTwoFactorAuth, setShowTwoFactorAuth] = useState(false);
 	const [error, setError] = useState('');
-	const [serverError, setServerError] = useState('');
+
+	useEffect(() => {
+		API.get('auth/totp')
+			.then(res => {
+				setHas2FA(res.data.has_otp);
+			})
+			.catch(err => {
+				console.error(err.response.data.error);
+			})
+	}, []);
 
 	const handleChange = (e) => {
 		const { id, value } = e.target;
@@ -39,38 +49,6 @@ const Security = ({ user }) => {
 		}));
 	};
 
-	const handleTwoFactorAuthSubmit = (otp) => {
-		const submissionData = { ...formData, otp };
-
-		setLoading(true);
-		API.patch('/users/@me/profile', submissionData)
-			.then(() => {
-				setSuccess('Security updated successfully');
-				setError('');
-				setServerError('');
-				logger('Security updated successfully with:', submissionData);
-				GetUser()
-					.then(res => {
-						setUser(res.data);
-						logger('User data refetched and updated in context:', res.data);
-					})
-					.catch(err => {
-						setServerError(err.response.data.error);
-						setSuccess('');
-						setError('');
-					})
-			})
-			.catch(err => {
-				setServerError(err.response.data.error);
-				setSuccess('');
-				setError('');
-			})
-			.finally(() => {
-				setLoading(false);
-				setShowTwoFactorAuth(false);
-			});
-	}
-
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
@@ -79,46 +57,43 @@ const Security = ({ user }) => {
 		if (!submissionData.password) {
 			delete submissionData.password;
 		}
+		if (!submissionData.phone_number) {
+			delete submissionData.phone_number;
+		}
 
 		const errorMessage = checkSecurityRestrictions(submissionData, cfPassword);
 
 		if (errorMessage) {
 			setError(errorMessage);
 			setSuccess('');
-			setServerError('');
+		} else if (submissionData.password && has2FA) {
+			setShowTwoFactorAuth(true);
 		} else {
-			if (formData.password) {
-				setShowTwoFactorAuth(true);
-			} else {
-				setLoading(true);
-				API.patch('/users/@me/profile', submissionData)
-					.then(() => {
-						setSuccess('Security updated successfully');
-						setError('');
-						setServerError('');
-						logger('Security updated successfully with:', submissionData);
-						GetUser()
-							.then((res) => {
-								setUser(res.data);
-								logger('User data refetched and updated in context:', res.data);
-							})
-							.catch((err) => {
-								setServerError(err.response.data.error);
-								setSuccess('');
-								setError('');
-							});
-					})
-					.catch((err) => {
-						setServerError(err.response.data.error);
-						setSuccess('');
-						setError('');
-					})
-					.finally(() => {
-						setLoading(false);
-					});
-			}
+			setLoading(true);
+			API.patch('/users/@me/profile', submissionData)
+				.then(() => {
+					setSuccess('Security updated successfully');
+					setError('');
+					logger('Security updated successfully with:', submissionData);
+					GetUser()
+						.then(res => {
+							setUser(res.data);
+							logger('User data refetched and updated in context:', res.data);
+						})
+						.catch(err => {
+							setError(err.response.data.error);
+							setSuccess('');
+						});
+				})
+				.catch(err => {
+					setError(err.response.data.error);
+					setSuccess('');
+				})
+				.finally(() => {
+					setLoading(false);
+				});
 		}
-	}
+	};
 
 	return (
 		<>
@@ -126,7 +101,6 @@ const Security = ({ user }) => {
 				<SectionHeading>Security</SectionHeading>
 				<SubSectionHeading>Sign in</SubSectionHeading>
 				<label htmlFor="password">Password</label>
-				{error.includes("Password") && <ErrorMessage>{error}</ErrorMessage>}
 				<FormInput
 					type="password"
 					id="password"
@@ -136,7 +110,6 @@ const Security = ({ user }) => {
 					autoComplete="off"
 				/>
 				<label htmlFor="cfPassword">Confirm Password</label>
-				{error.includes("Passwords") && <ErrorMessage>{error}</ErrorMessage>}
 				<FormInput
 					type="password"
 					id="cfPassword"
@@ -147,7 +120,6 @@ const Security = ({ user }) => {
 				/>
 				<SubSectionHeading>Contact Information</SubSectionHeading>
 				<label htmlFor="email">Email</label>
-				{error.includes("Email") && <ErrorMessage>{error}</ErrorMessage>}
 				<FormInput
 					type="email"
 					id="email"
@@ -157,7 +129,6 @@ const Security = ({ user }) => {
 					autoComplete="email"
 				/>
 				<label htmlFor="phone_number">Phone number</label>
-				{error.includes("Phone") && <ErrorMessage>{error}</ErrorMessage>}
 				<FormInput
 					type="tel"
 					id="phone_number"
@@ -167,7 +138,7 @@ const Security = ({ user }) => {
 					autoComplete="tel"
 				/>
 				{success && <SuccessMessage>{success}</SuccessMessage>}
-				{serverError && <ErrorMessage>{serverError}</ErrorMessage>}
+				{error && <ErrorMessage>{error}</ErrorMessage>}
 				<SubmitButton type="submit" disabled={loading}>
 					{loading ? 'Saving...' : 'Save Changes'}
 				</SubmitButton>
@@ -176,7 +147,9 @@ const Security = ({ user }) => {
 			<TwoFactorAuth user={user} handleChange={handleChange}/>
 			{showTwoFactorAuth && (
 				<TwoFactorAuthPassword
-					onSubmit={handleSubmit}
+					formData={formData}
+					setUser={setUser}
+					setSuccess={setSuccess}
 					setShowTwoFactorAuth={setShowTwoFactorAuth}
 				/>
 			)}

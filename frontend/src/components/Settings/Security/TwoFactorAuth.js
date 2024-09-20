@@ -14,8 +14,8 @@ import { ErrorMessage } from "../styles/Settings.styled";
 
 const TwoFactorAuth = ({ user }) => {
 	const [is2FAEnabled, setIs2FAEnabled] = useState(false);
-	const [qrCodeToken, setQrCodeToken] = useState(''); // Store the token to generate the QR code
-	const [showQRCode, setShowQRCode] = useState(user.mfaToken ? true : false); // Control when to show QR code
+	const [qrCodeToken, setQrCodeToken] = useState('');
+	const [showQRCode, setShowQRCode] = useState(user.mfaToken ? true : false);
 	const [error, setError] = useState('');
 
 	useEffect(() => {
@@ -30,7 +30,7 @@ const TwoFactorAuth = ({ user }) => {
 
 	const handleToggle = () => {
 		if (is2FAEnabled) {
-			const enteredCode = window.prompt('Please enter your current 2FA code to disable it:');
+			const enteredCode = window.prompt('Please enter your current 2FA code to disable it:'); // change this
 			if (enteredCode) {
 				API.post('auth/totp/delete', { otp: enteredCode })
 					.then(() => {
