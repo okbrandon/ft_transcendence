@@ -323,6 +323,7 @@ class UserExports(APIView):
 
 class Stats():
 
+    @staticmethod
     def get_user_stats(user, period):
         now = timezone.now()
         period_type = ['daily', 'weekly', 'lifetime']
@@ -339,15 +340,20 @@ class Stats():
         if start_date:
             matches = matches.filter(startedAt__gte=start_date)
 
-        games_played = matches.count()
-        games_won = 0
-        games_lost = 0
+        matches = matches.annotate(
+            win=models.Count(models.Case(
+                models.When(winnerID=user.userID, then=1),
+                output_field=models.IntegerField()
+            )),
+            loss=models.Count(models.Case(
+                models.When(~models.Q(winnerID=user.userID) & (models.Q(playerA__contains={'id': user.userID}) | models.Q(playerB__contains={'id': user.userID})), then=1),
+                output_field=models.IntegerField()
+            ))
+        )
 
-        for match in matches:
-            if match.winnerID == user.userID:
-                games_won += 1
-            else:
-                games_lost += 1
+        games_played = matches.count()
+        games_won = matches.aggregate(total_wins=models.Count('win'))['total_wins']
+        games_lost = matches.aggregate(total_losses=models.Count('loss'))['total_losses']
 
         return {
             "userID": user.userID,
