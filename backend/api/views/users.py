@@ -223,7 +223,14 @@ class UserRelationshipsMe(APIView):
         except User.DoesNotExist:
             return Response({"error": "Target user does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
+        existing_relationship = (
+            Relationship.objects.filter(userA=me.userID, userB=target_user_id).first() or
+            Relationship.objects.filter(userA=target_user_id, userB=me.userID).first()
+        )
+
         if relationship_type == 2:
+            if existing_relationship and existing_relationship.status == 2:
+                return Response({"error": "Relationship already blocked"}, status=status.HTTP_400_BAD_REQUEST)
             Relationship.objects.filter(userA=me.userID, userB=target_user_id).delete()
             Relationship.objects.filter(userA=target_user_id, userB=me.userID).delete()
             Relationship.objects.create(
@@ -234,19 +241,14 @@ class UserRelationshipsMe(APIView):
             )
             return Response({"status": "User blocked"}, status=status.HTTP_200_OK)
 
-        existing_relationship = (
-            Relationship.objects.filter(userA=me.userID, userB=target_user_id).first() or
-            Relationship.objects.filter(userA=target_user_id, userB=me.userID).first()
-        )
-
         if existing_relationship:
+            if relationship_type == 0:
+                return Response({"error": "Relationship already exists"}, status=status.HTTP_400_BAD_REQUEST)
+
             if existing_relationship.status == 2: # Blocked relationship gets unblocked
                 existing_relationship.status = 1
                 existing_relationship.save()
                 return Response({"status": "User unblocked"}, status=status.HTTP_200_OK)
-
-            if relationship_type == 0:
-                return Response({"error": "Relationship already exists"}, status=status.HTTP_400_BAD_REQUEST)
 
             if relationship_type == 1:
                 if existing_relationship.status == 0 and existing_relationship.userB == me.userID:
