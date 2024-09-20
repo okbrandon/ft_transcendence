@@ -13,6 +13,8 @@ import {
 	UnblockButton
 } from "./styles/Visibility.styled";
 import Loader from "../../styles/shared/Loader.styled";
+import API from "../../api/api";
+import logger from "../../api/logger";
 
 const Visibility = () => {
 	const [blockedUsers, setBlockedUsers] = useState(null);
@@ -28,8 +30,16 @@ const Visibility = () => {
 		return <Loader/>;
 	}
 
-	const handleUnblock = (relationID) => {
-
+	const handleUnblock = (e, targetID) => {
+		e.preventDefault();
+		API.put('users/@me/relationships', { user: targetID, type: 1 })
+			.then(() => {
+				logger('User unblocked');
+				setBlockedUsers(blockedUsers.filter(user => user.userB !== targetID));
+			})
+			.catch(err => {
+				console.error(err.response.data.error);
+			});
 	};
 
 	console.log('Blocked Users:', blockedUsers);
@@ -46,7 +56,7 @@ const Visibility = () => {
 								<BlockedUserAvatar src={relation.avatarID && relation.avatarID !== 'default' ? relation.avatarID : '/images/default-profile.png'} alt={`${relation.displayName}'s avatar`}/>
 								<BlockedUserName>{relation.displayName}</BlockedUserName>
 							</div>
-							<UnblockButton onClick={() => handleUnblock(relation.relationshipID)}>
+							<UnblockButton onClick={e => handleUnblock(e, relation.userB)}>
 								Unblock
 							</UnblockButton>
 						</BlockedUserItem>
