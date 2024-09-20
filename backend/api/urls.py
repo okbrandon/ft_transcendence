@@ -39,6 +39,8 @@ urlpatterns = [
     path('users/@me/relationships/<str:relationshipID>', UserRelationshipsMe.as_view()),
     path('users/@me/harvest', UserHarvestMe.as_view()), # POST, GET, DELETE
     path('users/search', UserSearch.as_view()), # GET
+    path('users/@me/stats', Stats.UserMe.as_view()), # GET
+    path('users/<identifier>/stats', Stats.User.as_view()), # GET
 
     path('store/items', StoreItemsList.as_view()), # GET
     path('users/@me/purchases', UserPurchasesList.as_view()), # GET
@@ -51,7 +53,7 @@ urlpatterns = [
 
     # path('tournaments/<tournamentID>', TournamentInfo.as_view()), # GET, DELETE, PATCH
     # path('tournaments', TournamentCreate.as_view()), # POST
-    
+
 	path('chat/conversations', ConversationListView.as_view()),
 
     path('__internal/check_user_exists/<userID>', CheckUserExists.as_view()), # GET

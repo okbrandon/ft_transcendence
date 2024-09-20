@@ -3,6 +3,8 @@ import os
 import random
 import string
 
+from datetime import timedelta
+
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -14,6 +16,7 @@ from django.contrib.auth.hashers import make_password
 from django.shortcuts import get_object_or_404
 from django.db import models
 from django.http import Http404, HttpResponse
+from django.utils import timezone
 
 from ..models import User, Match, Relationship, UserSettings
 from ..serializers import UserSerializer, UserSettingsSerializer, MatchSerializer, RelationshipSerializer
@@ -317,3 +320,72 @@ class UserExports(APIView):
 
             send_data_package_ready_email(request.user.email)
             return response
+
+class Stats():
+
+    def get_user_stats(user, period):
+        now = timezone.now()
+        period_type = ['daily', 'weekly', 'lifetime']
+
+        if period == 'daily':
+            start_date = now - timedelta(days=1)
+        elif period == 'weekly':
+            start_date = now - timedelta(weeks=1)
+        else: # Lifetime
+            start_date = None
+
+        matches = Match.objects.filter(models.Q(playerA__contains={'id': user.userID}) | models.Q(playerB__contains={'id': user.userID}))
+
+        if start_date:
+            matches = matches.filter(startedAt__gte=start_date)
+
+        games_played = matches.count()
+        games_won = 0
+        games_lost = 0
+
+        for match in matches:
+            opponent_user_id = match.playerA['id'] if match.playerB['id'] == user.userID else match.playerB['id']
+
+            if match.scores.get(user.userID) > match.scores.get(opponent_user_id):
+                games_won += 1
+            else:
+                games_lost += 1
+
+        return {
+            "userID": user.userID,
+            "stats": {
+                "gamesPlayed": games_played,
+                "gamesWon": games_won,
+                "gamesLost": games_lost
+            },
+            "period": {
+                "type": period_type[period_type.index(period)] if period in period_type else "lifetime",
+                "from": start_date,
+                "to": now
+            }
+        }
+
+    class UserMe(APIView):
+        def get(self, request, *args, **kwargs):
+            me = request.user
+            period = request.query_params.get('period', None)
+            stats = Stats.get_user_stats(me, period)
+            return Response(stats, status=status.HTTP_200_OK)
+
+    class User(APIView):
+        def get_object(self, identifier):
+            try:
+                return User.objects.get(models.Q(userID=identifier) | models.Q(username=identifier))
+            except User.DoesNotExist:
+                return None
+
+        def get(self, request, identifier, *args, **kwargs):
+            user = self.get_object(identifier)
+            if not user:
+                return Response(
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            period = request.query_params.get('period', None)
+            stats = Stats.get_user_stats(user, period)
+            return Response(stats, status=status.HTTP_200_OK)
