@@ -344,9 +344,7 @@ class Stats():
         games_lost = 0
 
         for match in matches:
-            opponent_user_id = match.playerA['id'] if match.playerB['id'] == user.userID else match.playerB['id']
-
-            if match.scores.get(user.userID) > match.scores.get(opponent_user_id):
+            if match.winnerID == user.userID:
                 games_won += 1
             else:
                 games_lost += 1
