@@ -15,14 +15,13 @@ const Friends = () => {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [friends, setFriends] = useState(null);
 	const [requests, setRequests] = useState(null);
-	const userID = localStorage.getItem('userID');
 
 	useEffect(() => {
 		const fetchFriendsAndRequests = async () => {
 			try {
 				const [friendsResponse, requestsResponse] = await Promise.all([
-					GetFriends(userID),
-					GetRequests(userID),
+					GetFriends(),
+					GetRequests(),
 				]);
 
 				setFriends(friendsResponse);
@@ -33,7 +32,7 @@ const Friends = () => {
 		};
 
 		fetchFriendsAndRequests();
-	  }, [userID]);
+	  }, []);
 
 	if (!friends || !requests) {
 		return (
