@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Header } from './styles/Chat/ChatContainer.styled.js';
 import CloseButton from 'react-bootstrap/CloseButton';
 import Arrow  from './tools/Arrow.js';
+import useWebSocket from 'react-use-websocket';
+
 import DirectMessageContainer, {
 	ChatMessages,
 	SenderBubble,
@@ -11,8 +13,18 @@ import DirectMessageContainer, {
 	ActionButtonContainer
 } from './styles/DirectMessage/DirectMessage.styled.js';
 
+const SendMessage = (content, conversationID) => {
+	const message = {
+		type: 'send_message',
+		conversationID: conversationID,
+		content: content
+	};
+	// Send the message to the server WebSocket
+	sendMessage(JSON.stringify(message));
+}
+
 export const DirectMessage = ( { convo, username, onClose, $isMinimized, toggleMinimization, arrowState }) => {
-	const [input, setInput] = useState('');
+	const [content, setContent] = useState('');
 	console.log('DirectMessage displaying (convo): ', convo);
 	return (
 		<DirectMessageContainer $isMinimized={$isMinimized}>
@@ -24,7 +36,6 @@ export const DirectMessage = ( { convo, username, onClose, $isMinimized, toggleM
 				</ActionButtonContainer>
 			</Header>
 			<ChatMessages $isMinimized={$isMinimized}>
-				{/* Display all the messages */}
 				{convo.messages.map((message, index) => {
 					if (message.sender.username === username) {
 						return <SenderBubble key={index}>{message.content}</SenderBubble>;
@@ -36,7 +47,7 @@ export const DirectMessage = ( { convo, username, onClose, $isMinimized, toggleM
 			<ChatInputContainer $isMinimized={$isMinimized}>
 				<ChatInput
 					placeholder="Type a message..."
-					value={input}
+					value={content}
 					onChange={e => setInput(e.target.value)} />
 			</ChatInputContainer>
 		</DirectMessageContainer>
@@ -54,4 +65,8 @@ Sending a message:
 		"conversationID": "546a31fd-fb13-4b8f-8cbb-b3ac59c7d52c",
 		"content": "Hello, how are you?"
 	}
+
+	Where the conversationID is the conversation ID where the message is sent and content is the message content.
+
+	Once received, the server will add the message to the conversation messages and send a Websocket notification to the participants of the conversation to tell them that they need to request the conversations again.
 */

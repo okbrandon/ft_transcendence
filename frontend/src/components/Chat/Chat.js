@@ -13,7 +13,6 @@ const Chat = () => {
 	const [DMWindow, setDMWindow] = useState(null);
 	const [$isMinimized, setIsMinimized] = useState(true);
 	const [isOverlayMinimized, setIsOverlayMinimized] = useState(true);
-	const [isArrowActive, setIsArrowActive] = useState(true);
 	const [convoObject, setConvoObject] = useState(null);
 	const [DMWinArrow, setDMWinArrow] = useState(false);
 	const [mainWinArrow, setMainWinArrow] = useState(false);

@@ -128,7 +128,7 @@ const ChatProvider = ({ children }) => {
         }
       ]);
 
-	useWebSocket(WS_URL + localStorage.getItem('token'), {
+	const { sendMessage } = useWebSocket(WS_URL + localStorage.getItem('token'), {
 		onOpen: () => console.log(`WebSocket connection opened:`),
 		onMessage: (event) => {
 			const data = JSON.parse(event.data);
