@@ -18,7 +18,7 @@ const ChatContainer = styled.div`
 	transition: height 0.3s ease;
 `;
 
-export const ChatHeaderStyled = styled.div`
+export const Header = styled.div`
 	padding: 10px;
 	background-color: #000;
 	border: 1px solid #ddd;

@@ -1,29 +1,13 @@
 import React from 'react';
-import styled from 'styled-components';
+import Arrow from './tools/Arrow.js';
+import { Header } from './styles/Chat/ChatContainer.styled.js'
 
-export const ChatHeaderContainer = styled.div`
-	padding: 10px;
-	background-color: #000;
-	border: 1px solid #ddd;
-	font-weight: bold;
-	color: #fff;
-	position: relative;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	cursor: pointer;
-	border-radius: 10px 10px 0 0;
-`;
-
-const ChatHeader = () => {
+const ChatHeader = ({ toggleMinimization, isArrowActive }) => {
 	return (
-		<ChatHeaderContainer onClick={handleToggleOverlayMinimize}>
-					Messaging
-					<Arrow
-						onClick={handleToggleOverlayMinimize}
-						ArrowAnimate={isArrowActive}
-					/>
-		</ChatHeaderContainer>
+		<Header onClick={toggleMinimization}>
+			Messaging
+			<Arrow ArrowAnimate={isArrowActive} />
+		</Header>
 	);
 };
 

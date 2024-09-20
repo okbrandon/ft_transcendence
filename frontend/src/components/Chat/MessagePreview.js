@@ -37,32 +37,19 @@ export const MessagePreview = ({ conversationsData, onSelectChat }) => {
 
 	return (
 		<>
-			{lastMessages.map((object, index) => (
-				<PreviewContainer key={index} onClick={() => onSelectChat(object.sender.username)}>
-					<ProfilePicture src={defaultAvatar} alt={`${lastMessages.sender}'s profile`} />
-					<MessageContent>
-						<Sender>{object.sender.username}</Sender>
-						<MessageText>{object.content}</MessageText>
-					</MessageContent>
-				</PreviewContainer>
-			))}
-
-
-			{/* <PreviewContainer>
-
-
-				{lastMessages ? (
-					<>
-						<ProfilePicture src={defaultAvatar} alt={`${lastMessages.sender}'s profile`} />
+			{conversationsData.map((convo, index) => {
+				let lastMessageContent = convo.messages[convo.messages.length - 1].content;
+				let sender = convo.messages[convo.messages.length - 1].sender;
+				return (
+					<PreviewContainer key={index} onClick={() => onSelectChat(convo)}>
+						<ProfilePicture src={defaultAvatar} alt={'profile'} />
 						<MessageContent>
-							<Sender>{lastMessages.sender}</Sender>
-							<MessageText>{lastMessages.text}</MessageText>
+							<Sender>{sender.username}</Sender>
+							<MessageText>{lastMessageContent}</MessageText>
 						</MessageContent>
-					</>
-				) : (
-					<div>No messages to display</div>
-				)}
-			</PreviewContainer> */}
+					</PreviewContainer>
+				)
+			})}
 		</>
 	);
 };
