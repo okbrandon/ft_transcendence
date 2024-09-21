@@ -14,6 +14,7 @@ const AuthProvider = ({ children }) => {
 			GetUser()
 				.then((res) => {
 					setUser(res.data);
+					localStorage.setItem('userID', res.data.userID);
 				})
 				.catch((err) => {
 					console.error('Error fetching user data:', err);

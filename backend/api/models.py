@@ -1,13 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+
 from .util import generate_id
 
 class Match(models.Model):
     matchID = models.CharField(max_length = 48)
-    playerA = models.JSONField # ex: {"id": "user_202020202020", "platform": "terminal"}
-    playerB = models.JSONField 
+    playerA = models.JSONField(null=True) # ex: {"id": "user_202020202020", "platform": "terminal"}
+    playerB = models.JSONField(null=True)
     scores = models.JSONField # ex: {"user_202020202020": 5, "user_202020202021", 3}
-    startedAt = models.DateTimeField
+    winnerID = models.CharField(max_length = 48, null=True)
+    startedAt = models.DateTimeField(auto_now_add=True)
     finishedAt = models.DateTimeField(auto_now_add=True)
     flags = models.IntegerField # 1<<0 EMAILED_VERIFIED, 1<<1 AI_ACCOUNT, 1<<3 SCHEDULED_HARVEST, 1<<4 SCHEDULED_DELETION
 
@@ -32,7 +34,7 @@ class Purchase(models.Model):
     def __str__(self):
         return self.purchaseID
 
-class User(AbstractUser):                      
+class User(AbstractUser):
     userID = models.CharField(max_length=48, unique=True)
     username = models.CharField(max_length = 16, unique=True)
     displayName = models.CharField(max_length = 16, null = True)
@@ -84,13 +86,14 @@ class UserSettings(models.Model):
     userID = models.CharField(max_length = 48)
     theme = models.CharField(max_length = 16)
     colorblind = models.BooleanField(default = False)
-    
+
     def __str__(self):
         return self.userID
 
 class Conversation(models.Model):
     conversationID = models.CharField(primary_key=True, max_length=48, default=generate_id("conv"), editable=False)
     conversationType = models.CharField(max_length=50, default='private_message')  # Can be expanded for different types
+    receipientID = models.CharField(max_length=48, null=True)
     participants = models.ManyToManyField(User, related_name='conversations')
 
     def __str__(self):
@@ -116,7 +119,7 @@ class Relationship(models.Model):
 
     def __str__(self):
         return self.relationshipID
-    
+
 class Token(models.Model):
     tokenID = models.CharField(max_length = 48)
     token = models.CharField(max_length = 256)

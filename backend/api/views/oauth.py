@@ -1,16 +1,20 @@
 import requests
 import os
+
 from django.conf import settings
 from django.shortcuts import redirect
 from django.http import JsonResponse
-from rest_framework.views import APIView
 from django.contrib.auth import login
-from ..models import User
+
+from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import permission_classes
-from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
+
+from rest_framework_simplejwt.tokens import RefreshToken
+
 from ..util import generate_id, send_welcome_email
+from ..models import User
 
 @permission_classes([AllowAny])
 class OAuth42Login(APIView):

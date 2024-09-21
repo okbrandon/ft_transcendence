@@ -71,19 +71,3 @@ export const ImageUploadInput = styled.input`
 	display: none;
 `;
 
-export const RemoveButton = styled.button`
-	padding: 0.5rem 1rem;
-	border: none;
-	border-radius: 10px;
-	background: linear-gradient(135deg, #d41872, #a445b2);
-	color: #fff;
-	font-size: 1rem;
-	cursor: pointer;
-	transition: all 0.3s ease;
-	margin-top: 0.5rem;
-
-	&:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
-	}
-`;

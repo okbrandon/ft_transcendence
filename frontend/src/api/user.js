@@ -1,17 +1,18 @@
 import API from './api';
+import logger from './logger'
 
 export const GetUser = async () => {
-	console.log('Getting current user...');
+	logger('Getting current user...');
 	return await API.get('users/@me/profile');
 };
 
-export const GetUserByUsername = async (username) => {
-	console.log('Getting user by username...');
-	return await API.get(`users/${username}/profile`);
+export const GetUserByUsername = async (id) => {
+	logger('Getting user by id...');
+	return await API.get(`users/${id}/profile`);
 };
 
 export const GetUsers = async (input) => {
-	console.log('Getting users via search bar...');
+	logger('Getting users via search bar...');
 	return await API.get(`users/search?content=${input}`);
 }
 

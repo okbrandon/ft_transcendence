@@ -1,6 +1,12 @@
 import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import {
+	VerificationContainer,
+	VerificationMessage,
+	VerificationTitle
+} from './styles/Verify.styled';
+import Loader from '../../styles/shared/Loader.styled';
 
 const Verify = () => {
 	const location = useLocation();
@@ -11,23 +17,23 @@ const Verify = () => {
 
 		if (code) {
 			axios.post(`http://localhost:8888/api/v1/verify`, { code })
-				.then(response => {
-					console.log('Verification successful:', response.data);
-					window.location.href = '/';
+				.then(() => {
+					window.location.href = '/login';
 				})
-				.catch(error => {
-					console.error('Verification failed:', error.response.data);
+				.catch(() => {
+					window.location.href = '/login';
 				});
 		} else {
-			console.error('Verification code not found in URL parameters');
+			window.location.href = '404';
 		}
 	}, [location]);
 
 	return (
-		<div>
-			<h1>Please waiting for the verificationing</h1>
-			<p>We're verificating your emailing...</p>
-		</div>
+		<VerificationContainer>
+			<VerificationTitle>Verifying your email...</VerificationTitle>
+			<VerificationMessage>Please wait while we complete your email verification.</VerificationMessage>
+			<Loader/>
+		</VerificationContainer>
 	);
 };
 

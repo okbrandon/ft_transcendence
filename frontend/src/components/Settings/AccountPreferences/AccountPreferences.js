@@ -7,16 +7,17 @@ import {
 	LanguageDropdown,
 	SectionHeading,
 	SubSectionHeading,
-	SubmitButton,
 	SuccessMessage,
 	TextArea,
 } from '../styles/Settings.styled';
 import UploadImage from './UploadImage';
 import API from '../../../api/api';
+import { GetUser } from '../../../api/user';
+import logger from '../../../api/logger';
 import DeleteAccount from './DeleteAccount';
 import { checkAccountPreferencesRestrictions } from '../../../scripts/restrictions';
 import { AuthContext } from '../../../context/AuthContext';
-import { GetUser } from '../../../api/user';
+import PongButton from '../../../styles/shared/PongButton.styled';
 
 const AccountPreferences = ({ user }) => {
 	const { setUser } = useContext(AuthContext);
@@ -72,11 +73,11 @@ const AccountPreferences = ({ user }) => {
 					setSuccess('Account Preferences updated successfully.');
 					setError('');
 					setServerError('');
-					console.log('Account Preferences updated successfully with:', submissionData);
+					logger('Account Preferences updated successfully with:', submissionData);
 					GetUser()
 						.then((res) => {
 							setUser(res.data);
-							console.log('User data refetched and updated in context:', res.data);
+							logger('User data refetched and updated in context:', res.data);
 						})
 						.catch((err) => {
 							setServerError(err.response.data.error);
@@ -115,7 +116,7 @@ const AccountPreferences = ({ user }) => {
 				type="text"
 				id="displayName"
 				placeholder="Display Name"
-				value={formData.displayName}
+				value={formData.displayName || ''}
 				onChange={handleChange}
 			/>
 			<label htmlFor="bio">Bio</label>
@@ -147,9 +148,9 @@ const AccountPreferences = ({ user }) => {
 			<DeleteAccount/>
 			{success && <SuccessMessage>{success}</SuccessMessage>}
 			{serverError && <ErrorMessage>{serverError}</ErrorMessage>}
-			<SubmitButton type="submit" disabled={loading}>
+			<PongButton type="submit" disabled={loading}>
 				{loading ? 'Saving...' : 'Save Changes'}
-			</SubmitButton>
+			</PongButton>
 		</Form>
 	);
 };

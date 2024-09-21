@@ -136,7 +136,28 @@ export const FortyTwoButton = styled(Button)`
 `;
 
 export const ErrorMessage = styled.p`
+	color: #ff4d4f;
+	background-color: rgba(255, 77, 79, 0.1);
+	border: 1px solid rgba(255, 77, 79, 0.2);
+	padding: 1rem;
+	border-radius: 5px;
+	margin-bottom: 1.5rem;
 	font-size: 1rem;
-	font-weight: 600;
-	color: #ff0000 !important;
+`;
+
+export const Input = styled.input`
+	width: 100%;
+	padding: 1rem;
+	margin-bottom: 1.5rem;
+	border-radius: 5px;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	background-color: rgba(30, 30, 30, 0.8);
+	color: #fff;
+	font-size: 1rem;
+	outline: none;
+	transition: border-color 0.3s ease;
+
+	&:focus {
+		border-color: rgba(164, 69, 178, 0.7);
+	}
 `;

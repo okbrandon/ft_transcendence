@@ -1,17 +1,18 @@
 from rest_framework import serializers
+
 from .models import User, Match, Message, Conversation, Token, Relationship, UserSettings, StoreItem, Purchase, VerificationCode
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["userID", "username", "displayName", "email", "mfaToken", "lang", 
+        fields = ["userID", "username", "displayName", "email", "mfaToken", "lang",
                   "avatarID", "bannerID", "bio", "oauthAccountID", "phone_number", "password", "flags", "money"]
         read_only_fields = ["userID", "mfaToken", "oauthAccountID", "flags", "money"]
 
 class MatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Match
-        fields = ["matchID", "playerA", "playerB", "scores", "startedAt", "finishedAt", "flags"]
+        fields = ["matchID", "playerA", "playerB", "scores", "winnerID", "startedAt", "finishedAt", "flags"]
 
 class RelationshipSerializer(serializers.ModelSerializer):
     class Meta:
@@ -64,4 +65,4 @@ class ConversationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Conversation
-        fields = ['conversationID', 'conversationType', 'participants', 'messages']
+        fields = ['conversationID', 'conversationType', 'receipientID', 'participants', 'messages']

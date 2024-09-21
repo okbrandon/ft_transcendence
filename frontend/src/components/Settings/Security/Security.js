@@ -1,18 +1,20 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
 	ErrorMessage,
 	Form,
 	FormInput,
 	SectionHeading,
 	SubSectionHeading,
-	SubmitButton,
 	SuccessMessage
 } from "../styles/Settings.styled";
 import API from "../../../api/api";
+import logger from "../../../api/logger";
 import { checkSecurityRestrictions } from "../../../scripts/restrictions";
 import { AuthContext } from "../../../context/AuthContext";
 import { GetUser } from "../../../api/user";
 import TwoFactorAuth from "./TwoFactorAuth";
+import TwoFactorAuthPassword from "./TwoFactorAuthSecurity";
+import PongButton from "../../../styles/shared/PongButton.styled";
 
 const Security = ({ user }) => {
 	const { setUser } = useContext(AuthContext);
@@ -20,15 +22,23 @@ const Security = ({ user }) => {
 		email: user.email,
 		phone_number: user.phone_number || '',
 		password: '',
-		mfaToken: user.mfaToken || '',
 	});
 	const [cfPassword, setCfPassword] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [success, setSuccess] = useState('');
+	const [has2FA, setHas2FA] = useState(false);
+	const [showTwoFactorAuth, setShowTwoFactorAuth] = useState(false);
 	const [error, setError] = useState('');
-	const [serverError, setServerError] = useState('');
 
-	console.log('User data in Security:', user);
+	useEffect(() => {
+		API.get('auth/totp')
+			.then(res => {
+				setHas2FA(res.data.has_otp);
+			})
+			.catch(err => {
+				console.error(err.response.data.error);
+			})
+	}, []);
 
 	const handleChange = (e) => {
 		const { id, value } = e.target;
@@ -47,8 +57,8 @@ const Security = ({ user }) => {
 		if (!submissionData.password) {
 			delete submissionData.password;
 		}
-		if (!submissionData.mfaToken) {
-			delete submissionData.mfaToken;
+		if (!submissionData.phone_number) {
+			delete submissionData.phone_number;
 		}
 
 		const errorMessage = checkSecurityRestrictions(submissionData, cfPassword);
@@ -56,36 +66,34 @@ const Security = ({ user }) => {
 		if (errorMessage) {
 			setError(errorMessage);
 			setSuccess('');
-			setServerError('');
+		} else if (submissionData.password && has2FA) {
+			setShowTwoFactorAuth(true);
 		} else {
 			setLoading(true);
 			API.patch('/users/@me/profile', submissionData)
 				.then(() => {
 					setSuccess('Security updated successfully');
 					setError('');
-					setServerError('');
-					console.log('Security updated successfully with:', submissionData);
+					logger('Security updated successfully with:', submissionData);
 					GetUser()
-						.then((res) => {
+						.then(res => {
 							setUser(res.data);
-							console.log('User data refetched and updated in context:', res.data);
+							logger('User data refetched and updated in context:', res.data);
 						})
-						.catch((err) => {
-							setServerError(err.response.data.error);
+						.catch(err => {
+							setError(err.response.data.error);
 							setSuccess('');
-							setError('');
 						});
 				})
-				.catch((err) => {
-					setServerError(err.response.data.error);
+				.catch(err => {
+					setError(err.response.data.error);
 					setSuccess('');
-					setError('');
 				})
 				.finally(() => {
 					setLoading(false);
 				});
 		}
-	}
+	};
 
 	return (
 		<>
@@ -93,7 +101,6 @@ const Security = ({ user }) => {
 				<SectionHeading>Security</SectionHeading>
 				<SubSectionHeading>Sign in</SubSectionHeading>
 				<label htmlFor="password">Password</label>
-				{error.includes("Password") && <ErrorMessage>{error}</ErrorMessage>}
 				<FormInput
 					type="password"
 					id="password"
@@ -103,7 +110,6 @@ const Security = ({ user }) => {
 					autoComplete="off"
 				/>
 				<label htmlFor="cfPassword">Confirm Password</label>
-				{error.includes("Passwords") && <ErrorMessage>{error}</ErrorMessage>}
 				<FormInput
 					type="password"
 					id="cfPassword"
@@ -114,7 +120,6 @@ const Security = ({ user }) => {
 				/>
 				<SubSectionHeading>Contact Information</SubSectionHeading>
 				<label htmlFor="email">Email</label>
-				{error.includes("Email") && <ErrorMessage>{error}</ErrorMessage>}
 				<FormInput
 					type="email"
 					id="email"
@@ -124,7 +129,6 @@ const Security = ({ user }) => {
 					autoComplete="email"
 				/>
 				<label htmlFor="phone_number">Phone number</label>
-				{error.includes("Phone") && <ErrorMessage>{error}</ErrorMessage>}
 				<FormInput
 					type="tel"
 					id="phone_number"
@@ -134,13 +138,21 @@ const Security = ({ user }) => {
 					autoComplete="tel"
 				/>
 				{success && <SuccessMessage>{success}</SuccessMessage>}
-				{serverError && <ErrorMessage>{serverError}</ErrorMessage>}
-				<SubmitButton type="submit" disabled={loading}>
+				{error && <ErrorMessage>{error}</ErrorMessage>}
+				<PongButton type="submit" disabled={loading}>
 					{loading ? 'Saving...' : 'Save Changes'}
-				</SubmitButton>
+				</PongButton>
 			</Form>
 			<SubSectionHeading>Two-Factor Authentication</SubSectionHeading>
 			<TwoFactorAuth user={user} handleChange={handleChange}/>
+			{showTwoFactorAuth && (
+				<TwoFactorAuthPassword
+					formData={formData}
+					setUser={setUser}
+					setSuccess={setSuccess}
+					setShowTwoFactorAuth={setShowTwoFactorAuth}
+				/>
+			)}
 		</>
 	);
 };

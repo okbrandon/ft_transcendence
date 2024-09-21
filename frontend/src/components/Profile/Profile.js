@@ -1,13 +1,15 @@
-import React, { useContext, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import MainBar from './main/MainBar';
 import About from './content/About';
 import MatchHistory from './content/MatchHistory';
 import Winrate from './content/Winrate';
 import { ProfileContainer, UserContainer, UserProfileBanner } from './styles/Profile.styled';
 import Loader from '../../styles/shared/Loader.styled';
-import ProfileProvider, { ProfileContext } from '../../context/ProfileContext';
 import DisplaySkin from './content/DisplaySkin';
+import { GetRelationships } from '../../api/friends';
+import { GetUserByUsername } from '../../api/user';
+import BlockedProfile from './BlockedProfile';
 
 const matchArray = [
 	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Brandon"}, scores: {playerA: 9, playerB: 10}, startedAt: "2021-09-01T12:28:01Z", finishedAt: "2021-09-01T12:30:38Z"},
@@ -30,42 +32,61 @@ const matchArray = [
 	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Kian"}, scores: {playerA: 10, playerB: 9}, startedAt: "2021-09-01T12:38:48Z", finishedAt: "2021-09-01T12:40:51Z"},
 ];
 
-export const ProfileParent = () => {
+const Profile = () => {
+	const navigate = useNavigate();
 	const { username } = useParams();
+	const [profileUser, setProfileUser] = useState(null);
+	const [relation, setRelation] = useState(null);
+	const userID = localStorage.getItem('userID');
 
 	useEffect(() => {
 		window.scrollTo(0, 0);
-	}, []);
+		GetUserByUsername(username)
+			.then(res => {
+				setProfileUser(res.data);
+			})
+			.catch(err => {
+				console.error(err);
+				navigate('/404');
+			})
+		}, [username, navigate]);
 
-	return (
-		<ProfileProvider username={username}>
-			<Profile/>
-		</ProfileProvider>
-	);
-};
+	useEffect(() => {
+		if (profileUser) {
+			GetRelationships()
+				.then(res => {
+					setRelation(res.data.filter(rel => profileUser.userID === rel.userB || profileUser.userID === rel.userA));
+				})
+				.catch(err => {
+					console.error(err);
+				})
+		}
+	}, [profileUser]);
 
-const Profile = () => {
-	const { loading, profileUser } = useContext(ProfileContext);
-
-	if (loading) {
+	if (!profileUser || !relation) {
 		return (
 			<ProfileContainer>
 				<Loader/>
 			</ProfileContainer>
 		);
 	};
-
+	console.log(relation[0]);
+	console.log(userID);
 	return (
-		<ProfileContainer>
-			<UserProfileBanner $path={profileUser.bannerID || '/images/default-banner.png'}/>
-			<UserContainer>
-				<MainBar profileUser={profileUser} matchArray={matchArray}/>
-				<About profileUser={profileUser} matchArray={matchArray}/>
-				<DisplaySkin profileUser={profileUser}/>
-				<Winrate matchArray={matchArray}/>
-				<MatchHistory matchArray={matchArray}/>
-			</UserContainer>
-		</ProfileContainer>
+		<>
+			{relation && (relation[0].status !== 2 || profileUser.userID === userID) ? (
+				<ProfileContainer>
+					<UserProfileBanner $path={profileUser.bannerID || '/images/default-banner.png'}/>
+					<UserContainer>
+						<MainBar profileUser={profileUser} matchArray={matchArray} relation={relation}/>
+						<About profileUser={profileUser} matchArray={matchArray}/>
+						<DisplaySkin profileUser={profileUser}/>
+						<Winrate matchArray={matchArray}/>
+						<MatchHistory matchArray={matchArray}/>
+					</UserContainer>
+				</ProfileContainer>
+			) : <BlockedProfile/>}
+		</>
 	);
 };
 

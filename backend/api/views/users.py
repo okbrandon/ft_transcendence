@@ -3,19 +3,24 @@ import os
 import random
 import string
 
+from datetime import timedelta
+
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
+
 from django.contrib.auth.hashers import make_password
+from django.shortcuts import get_object_or_404
 from django.db import models
 from django.http import Http404, HttpResponse
+from django.utils import timezone
 
 from ..models import User, Match, Relationship, UserSettings
 from ..serializers import UserSerializer, UserSettingsSerializer, MatchSerializer, RelationshipSerializer
-from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
-from ..util import send_otp_via_sms, send_data_package_ready_email, get_safe_profile
+from ..util import send_otp_via_sms, send_data_package_ready_email, get_safe_profile, generate_id
 from ..validators import *
 
 class UserProfileMe(APIView):
@@ -50,10 +55,17 @@ class UserProfileMe(APIView):
                         return Response({"error": "Invalid phone number. Phone number must be in E.164 format (e.g., +1234567890)."}, status=status.HTTP_400_BAD_REQUEST)
                     elif field == 'password' and not validate_password(data[field]):
                         return Response({"error": "Invalid password. Password must be 8-72 characters long, contain at least one lowercase letter, one uppercase letter, one digit, and one special character."}, status=status.HTTP_400_BAD_REQUEST)
-                    
+
                     updated_fields[field] = data[field]
 
             if 'password' in updated_fields:
+                if me.mfaToken:
+                    otp = data.get('otp')
+                    if not otp:
+                        return Response({"error": "OTP is required to change password when MFA is enabled."}, status=status.HTTP_400_BAD_REQUEST)
+                    totp = pyotp.TOTP(me.mfaToken)
+                    if not totp.verify(otp):
+                        return Response({"error": "Invalid OTP."}, status=status.HTTP_400_BAD_REQUEST)
                 updated_fields['password'] = make_password(updated_fields['password'])
 
             if 'phone_number' in updated_fields:
@@ -214,37 +226,64 @@ class UserRelationshipsMe(APIView):
         except User.DoesNotExist:
             return Response({"error": "Target user does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
-        # If either user is blocking the other, update or create a blocked relationship
+        existing_relationship = (
+            Relationship.objects.filter(userA=me.userID, userB=target_user_id).first() or
+            Relationship.objects.filter(userA=target_user_id, userB=me.userID).first()
+        )
+
         if relationship_type == 2:
+            if existing_relationship and existing_relationship.status == 2:
+                return Response({"error": "Relationship already blocked"}, status=status.HTTP_400_BAD_REQUEST)
             Relationship.objects.filter(userA=me.userID, userB=target_user_id).delete()
             Relationship.objects.filter(userA=target_user_id, userB=me.userID).delete()
-            Relationship.objects.create(userA=me.userID, userB=target_user_id, status=2)
+            Relationship.objects.create(
+                relationshipID=generate_id("rel"),
+                userA=me.userID,
+                userB=target_user_id,
+                status=2
+            )
             return Response({"status": "User blocked"}, status=status.HTTP_200_OK)
 
-        # Check if there is an existing relationship from the target user
-        existing_relationship = Relationship.objects.filter(userA=target_user_id, userB=me.userID).first()
-        if existing_relationship and existing_relationship.status != 2:
+        if existing_relationship:
             if relationship_type == 0:
-                return Response({"error": "Friend request already exists"}, status=status.HTTP_400_BAD_REQUEST)
-            elif relationship_type == 1:
+                return Response({"error": "Relationship already exists"}, status=status.HTTP_400_BAD_REQUEST)
+
+            if existing_relationship.status == 2: # Blocked relationship gets unblocked
                 existing_relationship.status = 1
                 existing_relationship.save()
-                return Response({"status": "You are now friends"}, status=status.HTTP_200_OK)
+                return Response({"status": "User unblocked"}, status=status.HTTP_200_OK)
 
-        # Check if there is an existing relationship initiated by the current user
-        existing_relationship = Relationship.objects.filter(userA=me.userID, userB=target_user_id).first()
-        if existing_relationship and existing_relationship.status != 2:
-            if relationship_type == 0 and existing_relationship.status == 0:
-                return Response({"error": "Friend request already sent"}, status=status.HTTP_400_BAD_REQUEST)
-            elif relationship_type == 1 and existing_relationship.status == 0:
-                existing_relationship.status = 1
-                existing_relationship.save()
-                return Response({"status": "You are now friends"}, status=status.HTTP_200_OK)
+            if relationship_type == 1:
+                if existing_relationship.status == 0 and existing_relationship.userB == me.userID:
+                    existing_relationship.status = 1
+                    existing_relationship.save()
+                    return Response({"status": "Friend request accepted"}, status=status.HTTP_200_OK)
+                else:
+                    return Response({"error": "Cannot directly set friendship status"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Create a new relationship
-        Relationship.objects.create(userA=me.userID, userB=target_user_id, status=relationship_type)
-        message = "Friend request sent" if relationship_type == 0 else "You are now friends"
-        return Response({"status": message}, status=status.HTTP_200_OK)
+        if relationship_type == 0:
+            Relationship.objects.create(
+                relationshipID=generate_id("rel"),
+                userA=me.userID,
+                userB=target_user_id,
+                status=0
+            )
+            return Response({"status": "Friend request sent"}, status=status.HTTP_200_OK)
+
+        return Response({"error": "Invalid operation"}, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, relationshipID, *args, **kwargs):
+        me = request.user
+
+        # Find the relationship by ID
+        relationship = get_object_or_404(
+            Relationship,
+            relationshipID=relationshipID
+        )
+
+        relationship.delete()
+
+        return Response({"status": "Relationship deleted"}, status=status.HTTP_200_OK)
 
 class UserMatchesMe(APIView):
     def get(self, request, *args, **kwargs):
@@ -281,3 +320,76 @@ class UserExports(APIView):
 
             send_data_package_ready_email(request.user.email)
             return response
+
+class Stats():
+
+    @staticmethod
+    def get_user_stats(user, period):
+        now = timezone.now()
+        period_type = ['daily', 'weekly', 'lifetime']
+
+        if period == 'daily':
+            start_date = now - timedelta(days=1)
+        elif period == 'weekly':
+            start_date = now - timedelta(weeks=1)
+        else: # Lifetime
+            start_date = None
+
+        matches = Match.objects.filter(models.Q(playerA__contains={'id': user.userID}) | models.Q(playerB__contains={'id': user.userID}))
+
+        if start_date:
+            matches = matches.filter(startedAt__gte=start_date)
+
+        matches = matches.annotate(
+            win=models.Count(models.Case(
+                models.When(winnerID=user.userID, then=1),
+                output_field=models.IntegerField()
+            )),
+            loss=models.Count(models.Case(
+                models.When(~models.Q(winnerID=user.userID) & (models.Q(playerA__contains={'id': user.userID}) | models.Q(playerB__contains={'id': user.userID})), then=1),
+                output_field=models.IntegerField()
+            ))
+        )
+
+        games_played = matches.count()
+        games_won = matches.aggregate(total_wins=models.Count('win'))['total_wins']
+        games_lost = matches.aggregate(total_losses=models.Count('loss'))['total_losses']
+
+        return {
+            "userID": user.userID,
+            "stats": {
+                "gamesPlayed": games_played,
+                "gamesWon": games_won,
+                "gamesLost": games_lost
+            },
+            "period": {
+                "type": period_type[period_type.index(period)] if period in period_type else "lifetime",
+                "from": start_date,
+                "to": now
+            }
+        }
+
+    class UserMe(APIView):
+        def get(self, request, *args, **kwargs):
+            me = request.user
+            period = request.query_params.get('period', None)
+            stats = Stats.get_user_stats(me, period)
+            return Response(stats, status=status.HTTP_200_OK)
+
+    class User(APIView):
+        def get_object(self, identifier):
+            try:
+                return User.objects.get(models.Q(userID=identifier) | models.Q(username=identifier))
+            except User.DoesNotExist:
+                return None
+
+        def get(self, request, identifier, *args, **kwargs):
+            user = self.get_object(identifier)
+            if not user:
+                return Response(
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            period = request.query_params.get('period', None)
+            stats = Stats.get_user_stats(user, period)
+            return Response(stats, status=status.HTTP_200_OK)
