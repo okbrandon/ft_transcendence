@@ -1,12 +1,6 @@
 ## TODO - today
 
-### Problematic
-- Chat Preview:
-	- Display Correct Username
-	- Interaction with ChatPreview (onClick event) should open DirectMessage Window
-
-
-- Implement backend into chat
+- Send to `conversationID` the `content` with type `send_message`.
 - Cleanup file structure
 - Add styling into chat
 	- Chat Bubbbles
@@ -57,4 +51,4 @@
 
 ## LeaderBoard
 
-- endpoint: 
+- endpoint:
