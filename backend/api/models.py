@@ -5,10 +5,11 @@ from .util import generate_id
 
 class Match(models.Model):
     matchID = models.CharField(max_length = 48)
-    playerA = models.JSONField # ex: {"id": "user_202020202020", "platform": "terminal"}
-    playerB = models.JSONField
+    playerA = models.JSONField(null=True) # ex: {"id": "user_202020202020", "platform": "terminal"}
+    playerB = models.JSONField(null=True)
     scores = models.JSONField # ex: {"user_202020202020": 5, "user_202020202021", 3}
-    startedAt = models.DateTimeField
+    winnerID = models.CharField(max_length = 48, null=True)
+    startedAt = models.DateTimeField(auto_now_add=True)
     finishedAt = models.DateTimeField(auto_now_add=True)
     flags = models.IntegerField # 1<<0 EMAILED_VERIFIED, 1<<1 AI_ACCOUNT, 1<<3 SCHEDULED_HARVEST, 1<<4 SCHEDULED_DELETION
 

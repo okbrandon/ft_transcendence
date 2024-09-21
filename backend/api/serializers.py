@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
 class MatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Match
-        fields = ["matchID", "playerA", "playerB", "scores", "startedAt", "finishedAt", "flags"]
+        fields = ["matchID", "playerA", "playerB", "scores", "winnerID", "startedAt", "finishedAt", "flags"]
 
 class RelationshipSerializer(serializers.ModelSerializer):
     class Meta:
