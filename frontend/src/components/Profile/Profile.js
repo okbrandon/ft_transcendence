@@ -37,6 +37,7 @@ const Profile = () => {
 	const { username } = useParams();
 	const [profileUser, setProfileUser] = useState(null);
 	const [relation, setRelation] = useState(null);
+	const userID = localStorage.getItem('userID');
 
 	useEffect(() => {
 		window.scrollTo(0, 0);
@@ -48,7 +49,7 @@ const Profile = () => {
 				console.error(err);
 				navigate('/404');
 			})
-		}, [username]);
+		}, [username, navigate]);
 
 	useEffect(() => {
 		if (profileUser) {
@@ -69,10 +70,11 @@ const Profile = () => {
 			</ProfileContainer>
 		);
 	};
-
+	console.log(relation[0]);
+	console.log(userID);
 	return (
 		<>
-			{relation && relation[0].status !== 2 ? (
+			{relation && (relation[0].status !== 2 || profileUser.userID === userID) ? (
 				<ProfileContainer>
 					<UserProfileBanner $path={profileUser.bannerID || '/images/default-banner.png'}/>
 					<UserContainer>

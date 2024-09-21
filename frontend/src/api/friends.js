@@ -79,7 +79,7 @@ export const GetBlockedUsers = async () => {
 		const res = await API.get('users/@me/relationships');
 		const blockedUsers = await Promise.all(
 			res.data
-				.filter(relation => relation.status === 2)
+				.filter(relation => relation.status === 2 && relation.userA === userID)
 				.map(async blockedUser => {
 					try {
 						const userRes = await GetUserByUsername(blockedUser.userA === userID ? blockedUser.userB : blockedUser.userA);
