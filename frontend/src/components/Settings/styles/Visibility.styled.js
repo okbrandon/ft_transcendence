@@ -33,23 +33,3 @@ export const BlockedUserName = styled.span`
 	color: #fff;
 	font-weight: 600;
 `;
-
-export const UnblockButton = styled.button`
-	background-color: #ff4d4d;
-	color: white;
-	border: none;
-	padding: 10px 15px;
-	border-radius: 8px;
-	cursor: pointer;
-	transition: background-color 0.3s ease;
-	font-weight: bold;
-
-	&:hover {
-		background-color: #ff1a1a;
-	}
-
-	&:disabled {
-		background-color: #ccc;
-		cursor: not-allowed;
-	}
-`;

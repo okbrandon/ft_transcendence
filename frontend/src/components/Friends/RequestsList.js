@@ -1,8 +1,6 @@
 import React from "react";
 import {
-	AcceptButton,
 	Actions,
-	DeclineButton,
 	NoRequests,
 	RequestAvatar,
 	RequestCard,
@@ -12,6 +10,7 @@ import {
 	RequestsListContainer
 } from "./styles/RequestsList.styled";
 import API from "../../api/api";
+import PongButton from "../../styles/shared/PongButton.styled";
 
 const RequestsList = ({ requests, setRequests, setFriends }) => {
 	const handleAccept = (focusedRequest) => {
@@ -43,8 +42,8 @@ const RequestsList = ({ requests, setRequests, setFriends }) => {
 						</RequestInfo>
 						{request.userA !== localStorage.getItem('userID') ? (
 							<Actions>
-								<AcceptButton onClick={() => handleAccept(request)}>Accept</AcceptButton>
-								<DeclineButton onClick={() => handleDecline(request.relationshipID)}>Decline</DeclineButton>
+								<PongButton onClick={() => handleAccept(request)}>Accept</PongButton>
+								<PongButton $backgroundColor='#ff5555' onClick={() => handleDecline(request.relationshipID)}>Decline</PongButton>
 							</Actions>
 						) : (
 							<p>Request sent</p>

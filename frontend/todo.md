@@ -1,6 +1,6 @@
 # TODO
 ## today
-- Search bar: show relation !== blocked || No relation
+- friends: evan is going to directly add the user's data
 - Harvester
 - Game interface
 - Friends: add popup

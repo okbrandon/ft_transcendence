@@ -1,7 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import {
-	ActionButton,
 	Actions,
 	FriendAvatar,
 	FriendCard,
@@ -9,8 +8,8 @@ import {
 	FriendName,
 	FriendStatus,
 	FriendsListContainer,
-	RemoveButton
 } from "./styles/FriendsList.styled";
+import PongButton from "../../styles/shared/PongButton.styled";
 
 const FriendsList = ({ friends }) => {
 	const navigate = useNavigate();
@@ -33,9 +32,15 @@ const FriendsList = ({ friends }) => {
 						<FriendName>{relation.displayName}</FriendName>
 					</FriendInfo>
 					<Actions>
-						<ActionButton>Invite</ActionButton>
-						<ActionButton>Message</ActionButton>
-						<RemoveButton type="button" onClick={() => handleRemove(relation)}>Remove</RemoveButton>
+						<PongButton type="button">Invite</PongButton>
+						<PongButton type="button">Message</PongButton>
+						<PongButton
+							type="button"
+							$backgroundColor="#ff5555"
+							onClick={() => handleRemove(relation)}
+						>
+							Remove
+						</PongButton>
 					</Actions>
 				</FriendCard>
 			))}

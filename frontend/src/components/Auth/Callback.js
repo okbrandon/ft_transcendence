@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { CallbackContainer, CallbackMessage, CallbackTitle } from './styles/Callback.styled';
 import Loader from '../../styles/shared/Loader.styled';

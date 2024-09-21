@@ -187,28 +187,6 @@ export const LanguageDropdown = styled.select`
 	width: 100%;
 `;
 
-export const SubmitButton = styled.button`
-	padding: 1rem 2rem;
-	border: none;
-	border-radius: 5px;
-	background-color: rgba(164, 69, 178, 0.7);
-	color: #fff;
-	font-size: 1rem;
-	cursor: pointer;
-	transition: all 0.3s ease;
-
-	&:hover {
-		background-color: rgba(164, 69, 178, 0.9);
-		box-shadow: 0 0 15px rgba(164, 69, 178, 0.7);
-	}
-
-	&:disabled {
-		background-color: rgba(164, 69, 178, 0.5);
-		cursor: not-allowed;
-		pointer-events: none;
-	}
-`;
-
 export const ErrorMessage = styled.p`
   color: #721c24;
   background-color: #f8d7da;

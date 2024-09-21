@@ -37,7 +37,7 @@ const SignIn = () => {
 				.catch((err) => {
 					if (err.status === 400 && err.response.data.error.includes('OTP')) {
 						setAvailablePlatforms(err.response.data.available_platforms);
-						setIsTwoFactorAuth(true); // WAITING FOR API
+						setIsTwoFactorAuth(true);
 					} else {
 						setError(err.response.data.error);
 					}

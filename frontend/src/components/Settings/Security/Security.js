@@ -5,7 +5,6 @@ import {
 	FormInput,
 	SectionHeading,
 	SubSectionHeading,
-	SubmitButton,
 	SuccessMessage
 } from "../styles/Settings.styled";
 import API from "../../../api/api";
@@ -15,6 +14,7 @@ import { AuthContext } from "../../../context/AuthContext";
 import { GetUser } from "../../../api/user";
 import TwoFactorAuth from "./TwoFactorAuth";
 import TwoFactorAuthPassword from "./TwoFactorAuthSecurity";
+import PongButton from "../../../styles/shared/PongButton.styled";
 
 const Security = ({ user }) => {
 	const { setUser } = useContext(AuthContext);
@@ -139,9 +139,9 @@ const Security = ({ user }) => {
 				/>
 				{success && <SuccessMessage>{success}</SuccessMessage>}
 				{error && <ErrorMessage>{error}</ErrorMessage>}
-				<SubmitButton type="submit" disabled={loading}>
+				<PongButton type="submit" disabled={loading}>
 					{loading ? 'Saving...' : 'Save Changes'}
-				</SubmitButton>
+				</PongButton>
 			</Form>
 			<SubSectionHeading>Two-Factor Authentication</SubSectionHeading>
 			<TwoFactorAuth user={user} handleChange={handleChange}/>
