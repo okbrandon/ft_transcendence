@@ -224,7 +224,7 @@ class UserRelationshipsMe(APIView):
         relationships = Relationship.objects.filter(userA=me.userID) | Relationship.objects.filter(userB=me.userID)
 
         serializer = RelationshipSerializer(relationships, many=True, context={'request': request})
-        
+
         # Process the serialized data to include only the other user's profile
         processed_relationships = []
         for relationship in serializer.data:
@@ -274,11 +274,6 @@ class UserRelationshipsMe(APIView):
         if existing_relationship:
             if relationship_type == 0:
                 return Response({"error": "Relationship already exists"}, status=status.HTTP_400_BAD_REQUEST)
-
-            if existing_relationship.status == 2: # Blocked relationship gets unblocked
-                existing_relationship.status = 1
-                existing_relationship.save()
-                return Response({"status": "User unblocked"}, status=status.HTTP_200_OK)
 
             if relationship_type == 1:
                 if existing_relationship.status == 0 and existing_relationship.userB == me.userID:
