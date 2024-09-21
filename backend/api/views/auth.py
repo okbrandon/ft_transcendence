@@ -232,7 +232,7 @@ class CheckOTP(APIView):
     def get(self, request, *args, **kwargs):
         user = request.user
         has_otp = user.mfaToken is not None and user.mfaToken != ""
-
+        
         return Response({
             "has_otp": has_otp
         }, status=status.HTTP_200_OK)
