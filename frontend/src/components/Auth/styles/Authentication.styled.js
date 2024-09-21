@@ -161,24 +161,3 @@ export const Input = styled.input`
 		border-color: rgba(164, 69, 178, 0.7);
 	}
 `;
-
-export const AuthButton = styled.button`
-	width: 100%;
-	padding: 1rem;
-	border: none;
-	border-radius: 5px;
-	background-color: rgba(164, 69, 178, 0.7);
-	color: #fff;
-	font-size: 1.2rem;
-	cursor: pointer;
-	transition: background-color 0.3s ease;
-
-	&:hover {
-		background-color: rgba(164, 69, 178, 0.9);
-	}
-
-	&:disabled {
-		background-color: rgba(164, 69, 178, 0.5);
-		cursor: not-allowed;
-	}
-`;

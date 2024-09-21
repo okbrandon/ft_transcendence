@@ -7,7 +7,6 @@ import {
 	LanguageDropdown,
 	SectionHeading,
 	SubSectionHeading,
-	SubmitButton,
 	SuccessMessage,
 	TextArea,
 } from '../styles/Settings.styled';
@@ -18,6 +17,7 @@ import logger from '../../../api/logger';
 import DeleteAccount from './DeleteAccount';
 import { checkAccountPreferencesRestrictions } from '../../../scripts/restrictions';
 import { AuthContext } from '../../../context/AuthContext';
+import PongButton from '../../../styles/shared/PongButton.styled';
 
 const AccountPreferences = ({ user }) => {
 	const { setUser } = useContext(AuthContext);
@@ -148,9 +148,9 @@ const AccountPreferences = ({ user }) => {
 			<DeleteAccount/>
 			{success && <SuccessMessage>{success}</SuccessMessage>}
 			{serverError && <ErrorMessage>{serverError}</ErrorMessage>}
-			<SubmitButton type="submit" disabled={loading}>
+			<PongButton type="submit" disabled={loading}>
 				{loading ? 'Saving...' : 'Save Changes'}
-			</SubmitButton>
+			</PongButton>
 		</Form>
 	);
 };

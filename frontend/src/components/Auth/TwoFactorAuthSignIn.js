@@ -6,11 +6,11 @@ import logger from "../../api/logger";
 import { AuthContext } from "../../context/AuthContext";
 import OTPInputComponent from "./OTPInput";
 import {
-	AuthButton,
 	FormContainer,
 	ErrorMessage
 } from "./styles/Authentication.styled";
 import { AvailablePlatformsContainer, PlatformButton } from "./styles/TwoFactorAuth.styled";
+import PongButton from "../../styles/shared/PongButton.styled";
 
 const TwoFactorAuthSignIn = ({ username, password, setIsTwoFactorAuth, availablePlatforms }) => {
 	const navigate = useNavigate();
@@ -69,12 +69,12 @@ const TwoFactorAuthSignIn = ({ username, password, setIsTwoFactorAuth, available
 				)}
 			</AvailablePlatformsContainer>
 
-			<AuthButton type="submit" disabled={disableVerify}>
+			<PongButton type="submit" disabled={disableVerify}>
 				Verify
-			</AuthButton>
-			<AuthButton type="AuthButton" onClick={() => setIsTwoFactorAuth(false)}>
+			</PongButton>
+			<PongButton type="AuthButton" onClick={() => setIsTwoFactorAuth(false)}>
 				Back
-			</AuthButton>
+			</PongButton>
 		</FormContainer>
 	);
 };

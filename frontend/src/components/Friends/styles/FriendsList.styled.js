@@ -57,27 +57,3 @@ export const Actions = styled.div`
 	display: flex;
 	gap: 1rem;
 `;
-
-export const ActionButton = styled.button`
-	background: #333;
-	color: #fff;
-	padding: 0.6rem 1rem;
-	border-radius: 8px;
-	border: none;
-	cursor: pointer;
-	font-size: 0.9rem;
-	transition: background 0.3s ease;
-
-	&:hover {
-		background: #444;
-	}
-`;
-
-export const RemoveButton = styled(ActionButton)`
-	background: #ff5555;
-	color: #fff;
-
-	&:hover {
-		background: #ff3333;
-	}
-`;

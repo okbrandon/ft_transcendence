@@ -10,11 +10,11 @@ import {
 	BlockedUserItem,
 	BlockedUserList,
 	BlockedUserName,
-	UnblockButton
 } from "./styles/Visibility.styled";
 import Loader from "../../styles/shared/Loader.styled";
 import API from "../../api/api";
 import logger from "../../api/logger";
+import PongButton from "../../styles/shared/PongButton.styled";
 
 const Visibility = () => {
 	const [blockedUsers, setBlockedUsers] = useState(null);
@@ -42,8 +42,6 @@ const Visibility = () => {
 			});
 	};
 
-	console.log('Blocked Users:', blockedUsers);
-
 	return (
 		<Form>
 			<SectionHeading>Visibility</SectionHeading>
@@ -56,9 +54,9 @@ const Visibility = () => {
 								<BlockedUserAvatar src='/images/default-profile.png' alt={'Blocked user'}/>
 								<BlockedUserName>{relation.displayName}</BlockedUserName>
 							</div>
-							<UnblockButton onClick={e => handleUnblock(e, relation.userB)}>
+							<PongButton onClick={e => handleUnblock(e, relation.userB)}>
 								Unblock
-							</UnblockButton>
+							</PongButton>
 						</BlockedUserItem>
 					))}
 				</BlockedUserList>

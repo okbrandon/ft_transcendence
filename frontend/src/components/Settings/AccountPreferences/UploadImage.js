@@ -5,10 +5,10 @@ import {
 	ImageUploadContainer,
 	ImageUploadInput,
 	ImageUploadLabel,
-	RemoveButton,
 } from '../styles/UploadImage.styled';
 import { ErrorMessage } from '../styles/Settings.styled';
 import { GetImage } from '../../../api/user';
+import PongButton from '../../../styles/shared/PongButton.styled';
 
 const ImageSettings = ({ user, setFormData, handleChange }) => {
 	const [profileImage, setProfileImage] = useState(user.avatarID === 'default' ? '' : user.avatarID);
@@ -67,9 +67,9 @@ const ImageSettings = ({ user, setFormData, handleChange }) => {
 						)}
 					</ImagePreviewContainer>
 					{profileImage && (
-						<RemoveButton onClick={() => handleRemoveImage("avatarID", setProfileImage, profilePictureRef)}>
+						<PongButton onClick={() => handleRemoveImage("avatarID", setProfileImage, profilePictureRef)}>
 							Remove Image
-						</RemoveButton>
+						</PongButton>
 					)}
 				</ImageUploadContainer>
 				<ImageUploadContainer>
@@ -89,9 +89,9 @@ const ImageSettings = ({ user, setFormData, handleChange }) => {
 						)}
 					</ImagePreviewContainer>
 					{bannerImage && (
-						<RemoveButton onClick={() => handleRemoveImage("bannerID", setBannerImage, bannerPictureRef)}>
+						<PongButton onClick={() => handleRemoveImage("bannerID", setBannerImage, bannerPictureRef)}>
 							Remove Image
-						</RemoveButton>
+						</PongButton>
 					)}
 				</ImageUploadContainer>
 				{error && <ErrorMessage>{error}</ErrorMessage>}

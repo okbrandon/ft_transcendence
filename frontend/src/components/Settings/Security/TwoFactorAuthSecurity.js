@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import API from '../../../api/api';
 import logger from '../../../api/logger';
 import OTPInputComponent from '../../Auth/OTPInput';
-import { AuthButton, ErrorMessage } from '../../Auth/styles/Authentication.styled';
+import { ErrorMessage } from '../../Auth/styles/Authentication.styled';
 import { AvailablePlatformsContainer, PlatformButton } from '../../Auth/styles/TwoFactorAuth.styled';
 import { GetUser } from '../../../api/user';
 import { Backdrop, FormContainer } from '../styles/TwoFactorAuthSecurity.styled';
+import PongButton from '../../../styles/shared/PongButton.styled';
 
 const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactorAuth }) => {
 	const [availablePlatforms, setAvailablePlatforms] = useState([]);
@@ -96,13 +97,13 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactor
 					)}
 				</AvailablePlatformsContainer>
 
-				<AuthButton type="submit" disabled={disableVerify}>
+				<PongButton type="submit" disabled={disableVerify}>
 					Verify
-				</AuthButton>
+				</PongButton>
 
-				<AuthButton type="button" onClick={() => setShowTwoFactorAuth(false)}>
+				<PongButton type="button" onClick={() => setShowTwoFactorAuth(false)}>
 					Back
-				</AuthButton>
+				</PongButton>
 			</FormContainer>
 		</>
 	);
