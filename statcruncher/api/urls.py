@@ -1,9 +1,9 @@
-from django.http import JsonResponse
 from django.urls import path
 
+from .views.leaderboard import *
+
 urlpatterns = [
-	# path('update', LeaderboardUpdate.as_view()), # POST (ask for leaderboard refresh)
-	# path('daily', LeaderboardDaily.as_view()), # GET (get daily leaderboard)
-	# path('weekly', LeaderboardWeekly.as_view()), # GET (get weekly leaderboard)
-	# path('lifetime', LeaderboardLifetime.as_view()) # GET (get lifetime leaderboard)
+	path('daily', Leaderboard.Daily.as_view(), name='leaderboard'), # GET
+	path('weekly', Leaderboard.Weekly.as_view(), name='leaderboard'), # GET
+	path('lifetime', Leaderboard.Lifetime.as_view(), name='leaderboard'), # GET
 ]

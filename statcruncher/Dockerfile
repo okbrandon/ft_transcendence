@@ -9,4 +9,6 @@ COPY . .
 
 RUN apt-get update && apt-get install -y netcat
 
+EXPOSE 9000
+
 CMD ["/bin/sh", "start.sh"]
