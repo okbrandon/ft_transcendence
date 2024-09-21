@@ -120,12 +120,25 @@ class UserProfile(APIView):
             )
 
         serializer = UserSerializer(user)
-        data = serializer.data
-        if 'email' in data:
-            del data['email']
-        return Response(data, status=status.HTTP_200_OK)
-
         profile = get_safe_profile(serializer.data, me=False)
+
+        # Check relationship status with the requesting user
+        me = request.user
+        relationship = Relationship.objects.filter(
+            (models.Q(userA=me.userID) & models.Q(userB=user.userID)) |
+            (models.Q(userA=user.userID) & models.Q(userB=me.userID))
+        ).first()
+
+        if relationship:
+            if relationship.status == 0:
+                profile['relationship'] = 'pending'
+            elif relationship.status == 1:
+                profile['relationship'] = 'friends'
+            elif relationship.status == 2:
+                profile['relationship'] = 'blocked'
+        else:
+            profile['relationship'] = None
+
         return Response(profile, status=status.HTTP_200_OK)
 
 class UserMatches(APIView):
@@ -210,8 +223,22 @@ class UserRelationshipsMe(APIView):
         me = request.user
         relationships = Relationship.objects.filter(userA=me.userID) | Relationship.objects.filter(userB=me.userID)
 
-        serializer = RelationshipSerializer(relationships, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = RelationshipSerializer(relationships, many=True, context={'request': request})
+        
+        # Process the serialized data to include only the other user's profile
+        processed_relationships = []
+        for relationship in serializer.data:
+            other_user_id = relationship['userB'] if relationship['userA'] == me.userID else relationship['userA']
+            other_user = User.objects.get(userID=other_user_id)
+            other_user_serializer = UserSerializer(other_user)
+            processed_relationship = {
+                'relationshipID': relationship['relationshipID'],
+                'status': relationship['status'],
+                'user': get_safe_profile(other_user_serializer.data, me=False)
+            }
+            processed_relationships.append(processed_relationship)
+
+        return Response(processed_relationships, status=status.HTTP_200_OK)
 
     def put(self, request, *args, **kwargs):
         me = request.user
@@ -299,11 +326,21 @@ class UserSearch(APIView):
         if not content:
             return Response({"error": "No search content provided"}, status=status.HTTP_400_BAD_REQUEST)
 
-        users = User.objects.filter(models.Q(displayName__icontains=content) | models.Q(username__icontains=content))
+        me = request.user
+        blocked_users = Relationship.objects.filter(
+            models.Q(userA=me.userID, status=2) | models.Q(userB=me.userID, status=2)
+        ).values_list('userA', 'userB')
+
+        blocked_user_ids = [user for pair in blocked_users for user in pair if user != me.userID]
+
+        users = User.objects.filter(
+            models.Q(displayName__icontains=content) | models.Q(username__icontains=content)
+        ).exclude(userID__in=blocked_user_ids)
+
         serializer = UserSerializer(users, many=True)
 
         profiles = get_safe_profile(serializer.data, me=False, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(profiles, status=status.HTTP_200_OK)
 
 class UserExports(APIView):
     def get(self, request, *args, **kwargs):
