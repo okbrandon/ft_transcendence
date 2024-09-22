@@ -88,7 +88,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 	async def get_user_from_token(self, token):
 		try:
-			url = "http://backend:8000/api/v1/users/@me/profile"
+			url = "http://backend/api/v1/users/@me/profile"
 			headers = {
 				"Authorization": f"Bearer {token}"
 			}

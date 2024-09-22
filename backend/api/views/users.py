@@ -224,8 +224,8 @@ class UserRelationshipsMe(APIView):
         relationships = Relationship.objects.filter(userA=me.userID) | Relationship.objects.filter(userB=me.userID)
 
         serializer = RelationshipSerializer(relationships, many=True, context={'request': request})
-
-        # Process the serialized data to include only the other user's profile
+        
+        # Process the serialized data to include both the sender and target user's profile
         processed_relationships = []
         for relationship in serializer.data:
             other_user_id = relationship['userB'] if relationship['userA'] == me.userID else relationship['userA']
@@ -234,7 +234,8 @@ class UserRelationshipsMe(APIView):
             processed_relationship = {
                 'relationshipID': relationship['relationshipID'],
                 'status': relationship['status'],
-                'user': get_safe_profile(other_user_serializer.data, me=False)
+                'sender': get_safe_profile(UserSerializer(me).data, me=False),
+                'target': get_safe_profile(other_user_serializer.data, me=False)
             }
             processed_relationships.append(processed_relationship)
 
