@@ -23,7 +23,7 @@ const AccountPreferences = ({ user }) => {
 	const { setUser } = useContext(AuthContext);
 	const [formData, setFormData] = useState({
 		username: user.username,
-		displayName: user.displayName,
+		displayName: user.displayName === user.username ? '' : user.displayName,
 		bio: user.bio,
 		lang: user.lang,
 	});
@@ -75,17 +75,17 @@ const AccountPreferences = ({ user }) => {
 					setServerError('');
 					logger('Account Preferences updated successfully with:', submissionData);
 					GetUser()
-						.then((res) => {
-							setUser(res.data);
-							logger('User data refetched and updated in context:', res.data);
+						.then(user => {
+							setUser(user);
+							logger('User data refetched and updated in context:', user);
 						})
-						.catch((err) => {
+						.catch(err => {
 							setServerError(err.response.data.error);
 							setSuccess('');
 							setError('');
 						});
 				})
-				.catch((err) => {
+				.catch(err => {
 					setServerError(err.response.data.error);
 					setSuccess('');
 					setError('');

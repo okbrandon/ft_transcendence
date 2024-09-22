@@ -6,20 +6,21 @@ import {
 	RequestInfo,
 	RequestName,
 	RequestProfile,
-	RequestsListContainer
 } from "./styles/RequestsList.styled";
 import API from "../../api/api";
 import PongButton from "../../styles/shared/PongButton.styled";
 import { NoRelation } from "./styles/Friends.styled";
+import { ListContainer } from "./styles/FriendsList.styled";
+import { useNavigate } from "react-router-dom";
 
 const RequestsList = ({ requests, setRequests, setFriends }) => {
-	const userID = localStorage.getItem('userID');
+	const navigate = useNavigate();
 
 	const handleAccept = (focusedRequest) => {
-		API.put('users/@me/relationships', { user: focusedRequest.user, type: 1 })
+		API.put('users/@me/relationships', { user: focusedRequest.userID, type: 1 })
 			.then(() => {
-				setFriends(prev => ([...prev, { ...focusedRequest, status: 1 }]));
-				setRequests(prev => prev.filter((relation) => relation.relationshipID !== focusedRequest.relationshipID));
+				setFriends(prev => ([...prev, focusedRequest]));
+				setRequests(prev => prev.filter((request) => request.username !== focusedRequest.username));
 			})
 			.catch(err => {
 				console.error(err.response.data.error);
@@ -27,29 +28,38 @@ const RequestsList = ({ requests, setRequests, setFriends }) => {
 	};
 
 	const handleDecline = (id) => {
-		setRequests(requests.filter((request) => request.relationshipID !== id));
-		alert("Friend request declined.");
+		API.delete(`users/@me/relationships/${id}`)
+			.then(() => {
+				setRequests(requests.filter(request => request.relationID !== id));
+			})
+			.catch(err => {
+				console.error(err.response.data.error);
+			});
+	};
+
+	const handleProfile = username => {
+		navigate(`/profile/${username}`);
 	};
 
 	return (
-		<RequestsListContainer>
+		<ListContainer>
 			{requests.length ? (
-				requests.map((relation, key) => (
+				requests.map((request, key) => (
 					<RequestCard key={key}>
 						<RequestInfo>
-							<RequestProfile>
-								<RequestAvatar src={relation.user.avatarID} alt={`${relation.user.displayName}'s avatar`}/>
-								<RequestName>{relation.displayName}</RequestName>
+							<RequestProfile onClick={() => handleProfile(request.username)}>
+								<RequestAvatar src={request.avatarID} alt={`${request.displayName}'s avatar`}/>
+								<RequestName>{request.displayName}</RequestName>
 							</RequestProfile>
 						</RequestInfo>
-						{relation.user.userID === userID ? (
+						{request.is === 'sender' ? (
 							<Actions>
-								<PongButton onClick={() => handleAccept(relation)}>Accept</PongButton>
-								<PongButton $backgroundColor='#ff5555' onClick={() => handleDecline(relation.relationshipID)}>Decline</PongButton>
+								<PongButton onClick={() => handleAccept(request)}>Accept</PongButton>
+								<PongButton $backgroundColor='#ff5555' onClick={() => handleDecline(request.relationID)}>Decline</PongButton>
 							</Actions>
 						) : (
 							<Actions>
-								<PongButton $backgroundColor='#ff5555' onClick={() => handleDecline(relation.relationshipID)}>Cancel</PongButton>
+								<PongButton $backgroundColor='#ff5555' onClick={() => handleDecline(request.relationID)}>Cancel</PongButton>
 							</Actions>
 						)}
 					</RequestCard>
@@ -57,7 +67,7 @@ const RequestsList = ({ requests, setRequests, setFriends }) => {
 			) : (
 				<NoRelation>No new friend requests</NoRelation>
 			)}
-		</RequestsListContainer>
+		</ListContainer>
 	);
 };
 

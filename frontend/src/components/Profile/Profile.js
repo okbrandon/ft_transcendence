@@ -7,7 +7,7 @@ import Winrate from './content/Winrate';
 import { ProfileContainer, UserContainer, UserProfileBanner } from './styles/Profile.styled';
 import Loader from '../../styles/shared/Loader.styled';
 import DisplaySkin from './content/DisplaySkin';
-import { GetRelationships } from '../../api/friends';
+import { GetUserFromRelation } from '../../api/friends';
 import { GetUserByUsername } from '../../api/user';
 import BlockedProfile from './BlockedProfile';
 
@@ -47,14 +47,14 @@ const Profile = () => {
 			.catch(err => {
 				console.error(err);
 				navigate('/404');
-			})
+			});
 	}, [username, navigate]);
 
 	useEffect(() => {
 		if (profileUser) {
-			GetRelationships()
-				.then(relations => {
-					setRelation(relations.filter(relation => profileUser.username === relation.user.username)?.[0]);
+			GetUserFromRelation(profileUser.username)
+				.then(user => {
+					setRelation(user);
 				})
 				.catch(err => {
 					console.error(err);
@@ -62,7 +62,7 @@ const Profile = () => {
 		}
 	}, [profileUser]);
 
-	if (!profileUser) {
+	if (!profileUser || !relation) {
 		return (
 			<ProfileContainer>
 				<Loader/>
@@ -72,7 +72,7 @@ const Profile = () => {
 
 	return (
 		<>
-			{(relation && (relation.status !== 2 || profileUser.userID === userID)) || !relation ? (
+			{(relation.length && (relation[0].status !== 2 || profileUser.userID === userID)) || !relation.length ? (
 				<ProfileContainer>
 					<UserProfileBanner $path={profileUser.bannerID}/>
 					<UserContainer>

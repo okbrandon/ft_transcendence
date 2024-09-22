@@ -1,21 +1,25 @@
 import API from './api';
 import logger from './logger'
 
+export const formatUserData = user => {
+	if (user.displayName === null) {
+		user.displayName = user.username;
+	}
+	if (user.avatarID === 'default' || user.avatarID === null) {
+		user.avatarID = '/images/default-profile.png';
+	}
+	if (user.bannerID === null) {
+		user.bannerID = '/images/default-banner.png';
+	}
+	return user;
+};
+
 export const GetUser = async () => {
 	try {
 		logger('Getting current user...');
 		const res = await API.get(`users/@me/profile`);
 
-		const user = res.data;
-		if (user.displayName === null) {
-			user.displayName = user.username;
-		}
-		if (user.avatarID === 'default' || user.avatarID === null) {
-			user.avatarID = '/images/default-profile.png';
-		}
-		if (user.bannerID === null) {
-			user.bannerID = '/images/default-banner.png';
-		}
+		const user = formatUserData(res.data);
 		return user;
 	} catch (err) {
 		console.error(err.response?.data?.error || 'An error occurred');
@@ -28,16 +32,7 @@ export const GetUserByUsername = async (id) => {
 		logger('Getting user by username...');
 		const res = await API.get(`users/${id}/profile`);
 
-		const user = res.data;
-		if (user.displayName === null) {
-			user.displayName = user.username;
-		}
-		if (user.avatarID === 'default' || user.avatarID === null) {
-			user.avatarID = '/images/default-profile.png';
-		}
-		if (user.bannerID === null) {
-			user.bannerID = '/images/default-banner.png';
-		}
+		const user = formatUserData(res.data);
 		return user;
 	} catch (err) {
 		console.error(err.response?.data?.error || 'An error occurred');
@@ -50,18 +45,9 @@ export const GetUsers = async (input) => {
 		logger('Getting users...');
 		const res = await API.get(`users/search?content=${input}`);
 
-		const users = res.data;
-		users.forEach(user => {
-			if (user.displayName === null) {
-				user.displayName = user.username;
-			}
-			if (user.avatarID === 'default' || user.avatarID === null) {
-				user.avatarID = '/images/default-profile.png';
-			}
-			if (user.bannerID === null) {
-				user.bannerID = '/images/default-banner.png';
-			}
-		});
+		logger(`input is ${input}`);
+		logger(res.data);
+		const users = formatUserData(res.data);
 		return users;
 	} catch (err) {
 		console.error(err.response?.data?.error || 'An error occurred');

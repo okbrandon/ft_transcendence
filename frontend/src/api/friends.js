@@ -1,25 +1,16 @@
+import { GetOtherFromRelationship } from "../scripts/relation";
 import API from "./api";
 import logger from "./logger";
+import { formatUserData } from "./user";
 
-export const GetRelationships = async () => {
+export const GetUserFromRelation = async (profileUsername) => {
 	try {
-		logger('Getting relationships...');
+		logger('Getting user from relation...');
 		const res = await API.get('users/@me/relationships');
 
-		const relationships = res.data.map(relation => {
-			if (relation.user.displayName === null) {
-				relation.user.displayName = relation.user.username;
-			}
-			if (relation.user.avatarID === 'default' || relation.user.avatarID === null) {
-				relation.user.avatarID = '/images/default-profile.png';
-			}
-			if (relation.user.bannerID === null) {
-				relation.user.bannerID = '/images/default-banner.png';
-			}
-			return relation;
-		});
-
-		return relationships;
+		const user = res.data.filter(relation => relation.sender.username === profileUsername || relation.target.username === profileUsername);
+		if (!user.length) return [];
+		return user;
 	} catch (err) {
 		console.error(err.response?.data?.error || 'An error occurred');
 		return [];
@@ -30,22 +21,17 @@ export const GetFriends = async () => {
 	try {
 		logger('Getting friends...');
 		const res = await API.get('users/@me/relationships');
+		const userID = localStorage.getItem('userID');
 
-		const relationships = res.data
+		const friends = res.data
 			.filter(relation => relation.status === 1)
 			.map(relation => {
-				if (relation.user.displayName === null) {
-					relation.user.displayName = relation.user.username;
-				}
-				if (relation.user.avatarID === 'default' || relation.user.avatarID === null) {
-					relation.user.avatarID = '/images/default-profile.png';
-				}
-				if (relation.user.bannerID === null) {
-					relation.user.bannerID = '/images/default-banner.png';
-				}
-				return relation;
+				relation.sender = formatUserData(relation.sender);
+				relation.target = formatUserData(relation.target);
+				const friend = GetOtherFromRelationship(relation, userID);
+				return { ...friend, relationID: relation.relationshipID };
 			});
-		return relationships;
+		return friends;
 	} catch (err) {
 		console.error(err.response?.data?.error || 'An error occurred');
 		return [];
@@ -58,21 +44,15 @@ export const GetRequests = async () => {
 		const res = await API.get('users/@me/relationships');
 		const userID = localStorage.getItem('userID');
 
-		const relationships = res.data
-			.filter(relation => relation.status === 0 && relation.user.userID !== userID)
+		const requests = res.data
+			.filter(relation => relation.status === 0)
 			.map(relation => {
-				if (relation.user.displayName === null) {
-					relation.user.displayName = relation.user.username;
-				}
-				if (relation.user.avatarID === 'default' || relation.user.avatarID === null) {
-					relation.user.avatarID = '/images/default-profile.png';
-				}
-				if (relation.user.bannerID === null) {
-					relation.user.bannerID = '/images/default-banner.png';
-				}
-				return relation;
+				relation.sender = formatUserData(relation.sender);
+				relation.target = formatUserData(relation.target);
+				const request = GetOtherFromRelationship(relation, userID);
+				return { ...request, relationID: relation.relationshipID };
 			});
-		return relationships;
+		return requests;
 	} catch (err) {
 		console.error(err.response?.data?.error || 'An error occurred');
 		return [];
@@ -85,21 +65,15 @@ export const GetBlockedUsers = async () => {
 		const res = await API.get('users/@me/relationships');
 		const userID = localStorage.getItem('userID');
 
-		const relationships = res.data
-			.filter(relation => relation.status === 2 && relation.user.userID !== userID)
+		const blockedUsers = res.data
+			.filter(relation => relation.status === 2)
 			.map(relation => {
-				if (relation.user.displayName === null) {
-					relation.user.displayName = relation.user.username;
-				}
-				if (relation.user.avatarID === 'default' || relation.user.avatarID === null) {
-					relation.user.avatarID = '/images/default-profile.png';
-				}
-				if (relation.user.bannerID === null) {
-					relation.user.bannerID = '/images/default-banner.png';
-				}
-				return relation;
+				relation.sender = formatUserData(relation.sender);
+				relation.target = formatUserData(relation.target);
+				const blockedUser = GetOtherFromRelationship(relation, userID);
+				return { ...blockedUser, relationID: relation.relationshipID };
 			})
-			return relationships;
+			return blockedUsers;
 	} catch (err) {
 		console.error(err.response?.data?.error || 'An error occurred');
 		return [];

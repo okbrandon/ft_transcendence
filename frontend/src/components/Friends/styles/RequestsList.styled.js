@@ -1,13 +1,5 @@
 import styled from "styled-components";
 
-export const RequestsListContainer = styled.div`
-	display: grid;
-	grid-template-columns: repeat(4, minmax(250px, 1fr));
-	gap: 1.5rem;
-	position: relative;
-	margin-top: 2rem;
-`;
-
 export const RequestCard = styled.div`
 	background: rgba(26, 26, 26, 0.5);
 	padding: 1.5rem;
@@ -33,8 +25,8 @@ export const RequestInfo = styled.div`
 
 export const RequestProfile = styled.div`
 	display: flex;
-	justify-content: space-between;
 	align-items: center;
+	cursor: pointer;
 `;
 
 export const RequestAvatar = styled.img`

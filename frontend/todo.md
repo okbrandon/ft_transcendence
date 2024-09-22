@@ -1,5 +1,6 @@
 # TODO
 ## today
+- friends.styled merge friends and requests .styled
 - friends: evan is going to directly add the user's data
 - Harvester
 - Game interface

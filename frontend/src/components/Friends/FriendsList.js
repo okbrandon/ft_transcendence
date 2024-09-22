@@ -7,31 +7,38 @@ import {
 	FriendInfo,
 	FriendName,
 	FriendStatus,
-	FriendsListContainer,
+	ListContainer,
 } from "./styles/FriendsList.styled";
 import PongButton from "../../styles/shared/PongButton.styled";
 import { NoRelation } from "./styles/Friends.styled";
+import API from "../../api/api";
 
-const FriendsList = ({ friends }) => {
+const FriendsList = ({ friends, setFriends }) => {
 	const navigate = useNavigate();
 
 	const handleProfile = (username) => {
 		navigate(`/profile/${username}`)
 	};
 
-	const handleRemove = (relation) => {
-		// handleRemove logic here
+	const handleRemove = (relationID) => {
+		API.delete(`users/@me/relationships/${relationID}`)
+			.then(() => {
+				setFriends(friends.filter(friend => friend.relationID !== relationID));
+			})
+			.catch(err => {
+				console.error(err.response?.data?.error || 'An error occurred');
+			});
 	};
 
 	return (
-		<FriendsListContainer>
+		<ListContainer>
 			{friends.length ? (
-				friends.map((relation, key) => (
+				friends.map((friend, key) => (
 					<FriendCard key={key}>
-						<FriendInfo onClick={() => handleProfile(relation.user.username)}>
+						<FriendInfo onClick={() => handleProfile(friend.username)}>
 							<FriendStatus $status={true} />
-							<FriendAvatar src={relation.user.avatarID} alt={`${relation.user.displayName}'s avatar`}/>
-							<FriendName>{relation.user.displayName}</FriendName>
+							<FriendAvatar src={friend.avatarID} alt={`${friend.displayName}'s avatar`}/>
+							<FriendName>{friend.displayName}</FriendName>
 						</FriendInfo>
 						<Actions>
 							<PongButton type="button">Invite</PongButton>
@@ -39,7 +46,7 @@ const FriendsList = ({ friends }) => {
 							<PongButton
 								type="button"
 								$backgroundColor="#ff5555"
-								onClick={() => handleRemove(relation)}
+								onClick={() => handleRemove(friend.relationID)}
 							>
 								Remove
 							</PongButton>
@@ -49,7 +56,7 @@ const FriendsList = ({ friends }) => {
 			) : (
 				<NoRelation>No friends found</NoRelation>
 			)}
-		</FriendsListContainer>
+		</ListContainer>
 	);
 };
 

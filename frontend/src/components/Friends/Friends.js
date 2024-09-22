@@ -23,7 +23,6 @@ const Friends = () => {
 					GetFriends(),
 					GetRequests(),
 				]);
-
 				setFriends(friendsResponse);
 				setRequests(requestsResponse);
 			} catch (err) {
@@ -42,7 +41,9 @@ const Friends = () => {
 		);
 	}
 
-	const filteredFriends = friends.filter(friend => friend.user.displayName.toLowerCase().includes(searchTerm.toLowerCase()));
+	const filteredFriends = friends.filter(friend => {
+		return friend.displayName.toLowerCase().includes(searchTerm.toLowerCase());
+	});
 
 	return (
 		<PageContainer>
@@ -61,7 +62,7 @@ const Friends = () => {
 				className="mb-3"
 			>
 				<Tab eventKey="friends" title="Friends">
-					<FriendsList friends={filteredFriends}/>
+					<FriendsList friends={filteredFriends} setFriends={setFriends}/>
 				</Tab>
 				<Tab eventKey="requests" title="Requests">
 					<RequestsList requests={requests} setRequests={setRequests} setFriends={setFriends}/>

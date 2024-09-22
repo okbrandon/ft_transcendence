@@ -22,8 +22,7 @@ const Privacy = () => {
 			.then(() => {
 				setIsDataReady(true);
 			})
-			.catch(err => {
-				console.log(err.response.data.error);
+			.catch(() => {
 				setIsDataReady(false);
 			});
 	}, []);

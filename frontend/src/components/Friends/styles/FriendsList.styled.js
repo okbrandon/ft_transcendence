@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const FriendsListContainer = styled.div`
+export const ListContainer = styled.div`
 	display: grid;
 	grid-template-columns: repeat(1, minmax(250px, 1fr));
 	gap: 1.5rem;
