@@ -13,11 +13,11 @@ const SearchBar = () => {
 		setInput(newInput);
 		if (newInput) {
 			GetUsers(newInput)
-				.then((users) => {
-					setResults(users.data)
+				.then(users => {
+					setResults(users);
 				})
-				.catch((err) => {
-					console.error(err.response.data.error);
+				.catch(err => {
+					console.error(err?.response?.data?.error || 'An error occurred');
 				});
 		} else {
 			setResults(null);

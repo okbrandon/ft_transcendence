@@ -11,7 +11,7 @@ import logger from '../../../api/logger';
 const MainBar = ({ profileUser, matchArray, relation }) => {
 	const navigate = useNavigate();
 	const { user } = useContext(AuthContext);
-	const [disableAddFriend, setDisableAddFriend] = useState(relation.length ? true : false);
+	const [disableAddFriend, setDisableAddFriend] = useState(relation ? true : false);
 
 	const handleAddFriend = () => {
 		API.put('users/@me/relationships', { user: profileUser.userID, type: 0 })

@@ -1,7 +1,6 @@
 import React from "react";
 import {
 	Actions,
-	NoRequests,
 	RequestAvatar,
 	RequestCard,
 	RequestInfo,
@@ -11,13 +10,16 @@ import {
 } from "./styles/RequestsList.styled";
 import API from "../../api/api";
 import PongButton from "../../styles/shared/PongButton.styled";
+import { NoRelation } from "./styles/Friends.styled";
 
 const RequestsList = ({ requests, setRequests, setFriends }) => {
+	const userID = localStorage.getItem('userID');
+
 	const handleAccept = (focusedRequest) => {
-		API.put('users/@me/relationships', { user: focusedRequest.userA, type: 1 })
-			.then(res => {
+		API.put('users/@me/relationships', { user: focusedRequest.user, type: 1 })
+			.then(() => {
 				setFriends(prev => ([...prev, { ...focusedRequest, status: 1 }]));
-				setRequests(prev => prev.filter((request) => request.relationshipID !== focusedRequest.relationshipID));
+				setRequests(prev => prev.filter((relation) => relation.relationshipID !== focusedRequest.relationshipID));
 			})
 			.catch(err => {
 				console.error(err.response.data.error);
@@ -31,27 +33,29 @@ const RequestsList = ({ requests, setRequests, setFriends }) => {
 
 	return (
 		<RequestsListContainer>
-			{requests ? (
-				requests.map((request, key) => (
+			{requests.length ? (
+				requests.map((relation, key) => (
 					<RequestCard key={key}>
 						<RequestInfo>
 							<RequestProfile>
-								<RequestAvatar src={request.avatarID && request.avatarID !== 'default' ? request.avatarID : '/images/default-profile.png'} alt={`${request.name}'s avatar`}/>
-								<RequestName>{request.displayName}</RequestName>
+								<RequestAvatar src={relation.user.avatarID} alt={`${relation.user.displayName}'s avatar`}/>
+								<RequestName>{relation.displayName}</RequestName>
 							</RequestProfile>
 						</RequestInfo>
-						{request.userA !== localStorage.getItem('userID') ? (
+						{relation.user.userID === userID ? (
 							<Actions>
-								<PongButton onClick={() => handleAccept(request)}>Accept</PongButton>
-								<PongButton $backgroundColor='#ff5555' onClick={() => handleDecline(request.relationshipID)}>Decline</PongButton>
+								<PongButton onClick={() => handleAccept(relation)}>Accept</PongButton>
+								<PongButton $backgroundColor='#ff5555' onClick={() => handleDecline(relation.relationshipID)}>Decline</PongButton>
 							</Actions>
 						) : (
-							<p>Request sent</p>
+							<Actions>
+								<PongButton $backgroundColor='#ff5555' onClick={() => handleDecline(relation.relationshipID)}>Cancel</PongButton>
+							</Actions>
 						)}
 					</RequestCard>
 				))
 			) : (
-				<NoRequests>No new friend requests</NoRequests>
+				<NoRelation>No new friend requests</NoRelation>
 			)}
 		</RequestsListContainer>
 	);

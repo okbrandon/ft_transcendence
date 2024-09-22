@@ -10,6 +10,7 @@ import {
 	FriendsListContainer,
 } from "./styles/FriendsList.styled";
 import PongButton from "../../styles/shared/PongButton.styled";
+import { NoRelation } from "./styles/Friends.styled";
 
 const FriendsList = ({ friends }) => {
 	const navigate = useNavigate();
@@ -24,26 +25,30 @@ const FriendsList = ({ friends }) => {
 
 	return (
 		<FriendsListContainer>
-			{friends.map((relation, key) => (
-				<FriendCard key={key}>
-					<FriendInfo onClick={() => handleProfile(relation.username)}>
-						<FriendStatus $status={true} />
-						<FriendAvatar src={relation.avatarID  && relation.avatarID !== 'default' ? relation.avatarID : '/images/default-profile.png'} alt={`${relation.displayName}'s avatar`}/>
-						<FriendName>{relation.displayName}</FriendName>
-					</FriendInfo>
-					<Actions>
-						<PongButton type="button">Invite</PongButton>
-						<PongButton type="button">Message</PongButton>
-						<PongButton
-							type="button"
-							$backgroundColor="#ff5555"
-							onClick={() => handleRemove(relation)}
-						>
-							Remove
-						</PongButton>
-					</Actions>
-				</FriendCard>
-			))}
+			{friends.length ? (
+				friends.map((relation, key) => (
+					<FriendCard key={key}>
+						<FriendInfo onClick={() => handleProfile(relation.user.username)}>
+							<FriendStatus $status={true} />
+							<FriendAvatar src={relation.user.avatarID} alt={`${relation.user.displayName}'s avatar`}/>
+							<FriendName>{relation.user.displayName}</FriendName>
+						</FriendInfo>
+						<Actions>
+							<PongButton type="button">Invite</PongButton>
+							<PongButton type="button">Message</PongButton>
+							<PongButton
+								type="button"
+								$backgroundColor="#ff5555"
+								onClick={() => handleRemove(relation)}
+							>
+								Remove
+							</PongButton>
+						</Actions>
+					</FriendCard>
+				))
+			) : (
+				<NoRelation>No friends found</NoRelation>
+			)}
 		</FriendsListContainer>
 	);
 };

@@ -42,7 +42,7 @@ const Friends = () => {
 		);
 	}
 
-	const filteredFriends = friends.filter(friend => friend.displayName.toLowerCase().includes(searchTerm.toLowerCase()));
+	const filteredFriends = friends.filter(friend => friend.user.displayName.toLowerCase().includes(searchTerm.toLowerCase()));
 
 	return (
 		<PageContainer>

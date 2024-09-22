@@ -83,3 +83,12 @@ export const SearchInput = styled.input`
 		border-color: rgba(164, 69, 178, 0.5);
 	}
 `;
+
+export const NoRelation = styled.div`
+	position: absolute;
+	width: 100%;
+	font-size: 1.2rem;
+	color: #cccccc;
+	text-align: center;
+	margin-top: 2rem;
+`;

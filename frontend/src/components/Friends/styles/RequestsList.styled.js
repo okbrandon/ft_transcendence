@@ -55,12 +55,3 @@ export const Actions = styled.div`
 	display: flex;
 	gap: 0.8rem;
 `;
-
-export const NoRequests = styled.div`
-	position: absolute;
-	width: 100%;
-	font-size: 1.2rem;
-	color: #cccccc;
-	text-align: center;
-	margin-top: 2rem;
-`;

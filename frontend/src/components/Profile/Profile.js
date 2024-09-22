@@ -40,22 +40,21 @@ const Profile = () => {
 	const userID = localStorage.getItem('userID');
 
 	useEffect(() => {
-		window.scrollTo(0, 0);
 		GetUserByUsername(username)
-			.then(res => {
-				setProfileUser(res.data);
+			.then(user => {
+				setProfileUser(user);
 			})
 			.catch(err => {
 				console.error(err);
 				navigate('/404');
 			})
-		}, [username, navigate]);
+	}, [username, navigate]);
 
 	useEffect(() => {
 		if (profileUser) {
 			GetRelationships()
-				.then(res => {
-					setRelation(res.data.filter(rel => profileUser.userID === rel.userB || profileUser.userID === rel.userA));
+				.then(relations => {
+					setRelation(relations.filter(relation => profileUser.username === relation.user.username)?.[0]);
 				})
 				.catch(err => {
 					console.error(err);
@@ -63,20 +62,19 @@ const Profile = () => {
 		}
 	}, [profileUser]);
 
-	if (!profileUser || !relation) {
+	if (!profileUser) {
 		return (
 			<ProfileContainer>
 				<Loader/>
 			</ProfileContainer>
 		);
 	};
-	console.log(relation[0]);
-	console.log(userID);
+
 	return (
 		<>
-			{relation && (relation[0].status !== 2 || profileUser.userID === userID) ? (
+			{(relation && (relation.status !== 2 || profileUser.userID === userID)) || !relation ? (
 				<ProfileContainer>
-					<UserProfileBanner $path={profileUser.bannerID || '/images/default-banner.png'}/>
+					<UserProfileBanner $path={profileUser.bannerID}/>
 					<UserContainer>
 						<MainBar profileUser={profileUser} matchArray={matchArray} relation={relation}/>
 						<About profileUser={profileUser} matchArray={matchArray}/>
