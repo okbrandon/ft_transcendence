@@ -1,16 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import {
-	Actions,
-	FriendAvatar,
-	FriendCard,
-	FriendInfo,
-	FriendName,
-	FriendStatus,
-	ListContainer,
-} from "./styles/FriendsList.styled";
 import PongButton from "../../styles/shared/PongButton.styled";
-import { NoRelation } from "./styles/Friends.styled";
+import { ListCard, NoRelation, ProfileAvatar, ProfileInfo, ProfileName, ProfileStatus } from "./styles/Friends.styled";
 import API from "../../api/api";
 
 const FriendsList = ({ friends, setFriends }) => {
@@ -34,12 +25,12 @@ const FriendsList = ({ friends, setFriends }) => {
 		<ListContainer>
 			{friends.length ? (
 				friends.map((friend, key) => (
-					<FriendCard key={key}>
-						<FriendInfo onClick={() => handleProfile(friend.username)}>
-							<FriendStatus $status={true} />
-							<FriendAvatar src={friend.avatarID} alt={`${friend.displayName}'s avatar`}/>
-							<FriendName>{friend.displayName}</FriendName>
-						</FriendInfo>
+					<ListCard key={key}>
+						<ProfileInfo onClick={() => handleProfile(friend.username)}>
+							<ProfileStatus $status={true} />
+							<ProfileAvatar src={friend.avatarID} alt={`${friend.displayName}'s avatar`}/>
+							<ProfileName>{friend.displayName}</ProfileName>
+						</ProfileInfo>
 						<Actions>
 							<PongButton type="button">Invite</PongButton>
 							<PongButton type="button">Message</PongButton>
@@ -51,7 +42,7 @@ const FriendsList = ({ friends, setFriends }) => {
 								Remove
 							</PongButton>
 						</Actions>
-					</FriendCard>
+					</ListCard>
 				))
 			) : (
 				<NoRelation>No friends found</NoRelation>

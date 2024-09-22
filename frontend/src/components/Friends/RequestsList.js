@@ -1,16 +1,7 @@
 import React from "react";
-import {
-	Actions,
-	RequestAvatar,
-	RequestCard,
-	RequestInfo,
-	RequestName,
-	RequestProfile,
-} from "./styles/RequestsList.styled";
 import API from "../../api/api";
 import PongButton from "../../styles/shared/PongButton.styled";
-import { NoRelation } from "./styles/Friends.styled";
-import { ListContainer } from "./styles/FriendsList.styled";
+import { Actions, ListCard, ListContainer, NoRelation, ProfileAvatar, ProfileInfo, ProfileName } from "./styles/Friends.styled";
 import { useNavigate } from "react-router-dom";
 
 const RequestsList = ({ requests, setRequests, setFriends }) => {
@@ -45,13 +36,11 @@ const RequestsList = ({ requests, setRequests, setFriends }) => {
 		<ListContainer>
 			{requests.length ? (
 				requests.map((request, key) => (
-					<RequestCard key={key}>
-						<RequestInfo>
-							<RequestProfile onClick={() => handleProfile(request.username)}>
-								<RequestAvatar src={request.avatarID} alt={`${request.displayName}'s avatar`}/>
-								<RequestName>{request.displayName}</RequestName>
-							</RequestProfile>
-						</RequestInfo>
+					<ListCard key={key}>
+						<ProfileInfo onClick={() => handleProfile(request.username)}>
+								<ProfileAvatar src={request.avatarID} alt={`${request.displayName}'s avatar`}/>
+								<ProfileName>{request.displayName}</ProfileName>
+						</ProfileInfo>
 						{request.is === 'sender' ? (
 							<Actions>
 								<PongButton onClick={() => handleAccept(request)}>Accept</PongButton>
@@ -62,7 +51,7 @@ const RequestsList = ({ requests, setRequests, setFriends }) => {
 								<PongButton $backgroundColor='#ff5555' onClick={() => handleDecline(request.relationID)}>Cancel</PongButton>
 							</Actions>
 						)}
-					</RequestCard>
+					</ListCard>
 				))
 			) : (
 				<NoRelation>No new friend requests</NoRelation>
