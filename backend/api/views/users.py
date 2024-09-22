@@ -228,14 +228,17 @@ class UserRelationshipsMe(APIView):
         # Process the serialized data to include both the sender and target user's profile
         processed_relationships = []
         for relationship in serializer.data:
-            other_user_id = relationship['userB'] if relationship['userA'] == me.userID else relationship['userA']
-            other_user = User.objects.get(userID=other_user_id)
-            other_user_serializer = UserSerializer(other_user)
+            sender_id = relationship['userA']
+            target_id = relationship['userB']
+            sender = User.objects.get(userID=sender_id)
+            target = User.objects.get(userID=target_id)
+            sender_serializer = UserSerializer(sender)
+            target_serializer = UserSerializer(target)
             processed_relationship = {
                 'relationshipID': relationship['relationshipID'],
                 'status': relationship['status'],
-                'sender': get_safe_profile(UserSerializer(me).data, me=False),
-                'target': get_safe_profile(other_user_serializer.data, me=False)
+                'sender': get_safe_profile(sender_serializer.data, me=False),
+                'target': get_safe_profile(target_serializer.data, me=False)
             }
             processed_relationships.append(processed_relationship)
 
