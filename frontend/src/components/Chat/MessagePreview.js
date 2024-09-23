@@ -37,10 +37,23 @@ export const MessagePreview = ({ conversationsData, onSelectChat }) => {
 		<>
 			{conversationsData.map((convo, index) => {
 				if (convo.messages.length === 0) {
-					return null;
+					const senderID = convo.participants.find((participant) => participant.userID !== convo.receipientID).userID;
+					console.log('Sender ID: ', senderID);
+					const sender = convo.participants.find((participant) => participant.userID === senderID);
+					return (
+						<PreviewContainer key={index} onClick={() => onSelectChat(convo)}>
+							<ProfilePicture src={defaultAvatar} alt={'profile'} />
+							<MessageContent>
+								<Sender>{sender.username}</Sender>
+								<MessageText>No messages yet</MessageText>
+							</MessageContent>
+						</PreviewContainer>
+					)
 				}
-				let lastMessageContent = convo.messages[convo.messages.length - 1].content;
-				let sender = convo.messages[convo.messages.length - 1].sender;
+				const senderID = convo.participants.find((participant) => participant.userID !== convo.receipientID).userID;
+				const sender = convo.participants.find((participant) => participant.userID === senderID);
+				const lastMessage = convo.messages[convo.messages.length - 1];
+				const lastMessageContent = lastMessage.content;
 				return (
 					<PreviewContainer key={index} onClick={() => onSelectChat(convo)}>
 						<ProfilePicture src={defaultAvatar} alt={'profile'} />

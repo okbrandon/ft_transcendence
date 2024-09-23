@@ -1,7 +1,9 @@
 ## TODO - today
 
-- Fix horizontal scroll
--
+- Make chat conversation possible.
+- Include feature to block a profile.
+- Include button to redirect to profile of a player.
+- Add button to invite player for game tournament.
 
 - Send to `conversationID` the `content` with type `send_message`.
 - Cleanup file structure

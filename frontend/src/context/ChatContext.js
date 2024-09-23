@@ -23,6 +23,17 @@ const ChatProvider = ({ children }) => {
 		}
 	}, []);
 
+	const fetchConverations = () => {
+		API.get('chat/conversations')
+			.then((response) => {
+				console.log('Received conversations:', response.data.conversations);
+				setConversations(response.data.conversations);
+			})
+			.catch((error) => {
+				console.error('Error fetching conversations:', error);
+			});
+	}
+
 	const {
 		sendMessage,
 		lastMessage,
@@ -30,27 +41,14 @@ const ChatProvider = ({ children }) => {
 	} = useWebSocket(socketUrl, {
 		onOpen: () => {
 			console.log('WebSocket connection opened');
-			API.get('chat/conversations')
-				.then((response) => {
-					console.log('Received conversations:', response.data.conversations);
-					setConversations(response.data.conversations);
-				})
-				.catch((error) => {
-					console.error('Error fetching conversations:', error);
-				});
+			fetchConverations();
 		},
 		onMessage: (event) => {
 			const data = JSON.parse(event.data);
-			console.log('Received WebSocket message:', data);
+			console.log('Received message:', data);
+
 			if (data.type === 'conversation_update') {
-				API.get('chat/conversations')
-					.then((response) => {
-						console.log('Received conversations:', response.data.conversations);
-						setConversations(response.data.conversations);
-					})
-					.catch((error) => {
-						console.error('Error fetching conversations:', error);
-					});
+				fetchConverations();
 			}
 		},
 		onError: (error) => console.error('WebSocket error:', error),
@@ -58,12 +56,12 @@ const ChatProvider = ({ children }) => {
 		shouldReconnect: (closeEvent) => true, // Reconnect on close
 	});
 
-	// Incoming message from WebSocket
+	// Update message history when a new message is received
 	useEffect(() => {
-		if (lastMessage !== null) {
-			setMessageHistory((prev) => prev.concat(lastMessage));
+		if (lastMessage) {
+			setMessageHistory((prev) => [...prev, lastMessage]);
 		}
-    }, [lastMessage]);
+	}, [lastMessage]);
 
 	// Log WebSocket connection status
     useEffect(() => {
@@ -86,7 +84,7 @@ const ChatProvider = ({ children }) => {
 	}, [readyState]);
 
 	return (
-	<ChatContext.Provider value={{ conversations, sendMessage }}>
+	<ChatContext.Provider value={{ conversations, sendMessage, messageHistory }}>
 			{ children }
 		</ChatContext.Provider>
 	);

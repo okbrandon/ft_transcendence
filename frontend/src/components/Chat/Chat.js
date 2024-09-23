@@ -38,11 +38,11 @@ const Chat = () => {
 	const handleSelectFriend = (convo) => {
 		console.log('Selected conversation: ', convo);
 
-		let userName = convo.messages.map((message) => message.sender.username);
-		let userNameFromLastMessage = userName[userName.length - 1];
-		console.log('Username', userName);
+		const senderID = convo.participants.find((participant) => participant.userID !== convo.receipientID).userID;
+		const sender = convo.participants.find((participant) => participant.userID === senderID);
+		console.log('Selected sender: ', sender);
 		setConvoObject(convo);
-		handleSelectChat(userNameFromLastMessage);
+		handleSelectChat(sender.username);
 	};
 
 	return (

@@ -16,6 +16,7 @@ import DirectMessageContainer, {
 export const DirectMessage = ( { convo, username, onClose, $isMinimized, toggleMinimization, arrowState }) => {
 	const [content, setContent] = useState('');
 	const { sendMessage } = useContext(ChatContext);
+	const { messageHistory } = useContext(ChatContext);
 
 	const handleMessage = () => {
 		// handle sending empty string message
@@ -32,7 +33,6 @@ export const DirectMessage = ( { convo, username, onClose, $isMinimized, toggleM
 	};
 
 
-	console.log('DirectMessage convo:', convo);
 	return (
 		<DirectMessageContainer $isMinimized={$isMinimized}>
 			<Header onClick={toggleMinimization}>
@@ -44,10 +44,20 @@ export const DirectMessage = ( { convo, username, onClose, $isMinimized, toggleM
 			</Header>
 			<ChatMessages $isMinimized={$isMinimized}>
 				{convo.messages.map((message, index) => {
-					if (message.sender.username === username) {
-						return <SenderBubble key={index}>{message.content}</SenderBubble>;
+					const senderID = convo.participants.find((participant) => participant.userID !== convo.receipientID).userID;
+					const sender = convo.participants.find((participant) => participant.userID === senderID);
+					if (sender !== convo.receipientID) {
+						return (
+							<SenderBubble key={index}>
+								{message.content}
+							</SenderBubble>
+						);
 					} else {
-						return <HostBubble key={index}>{message.content}</HostBubble>;
+						return (
+							<HostBubble key={index}>
+								{message.content}
+							</HostBubble>
+						);
 					}
 				})}
 			</ChatMessages>
