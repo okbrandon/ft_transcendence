@@ -2,6 +2,7 @@ import pyotp
 import os
 import random
 import string
+import logging
 
 from datetime import timedelta
 
@@ -18,10 +19,17 @@ from django.db import models
 from django.http import Http404, HttpResponse
 from django.utils import timezone
 
+from channels.layers import get_channel_layer
+
+from asgiref.sync import async_to_sync
+
 from ..models import User, Match, Relationship, UserSettings
 from ..serializers import UserSerializer, UserSettingsSerializer, MatchSerializer, RelationshipSerializer
 from ..util import send_otp_via_sms, send_data_package_ready_email, get_safe_profile, generate_id
 from ..validators import *
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class UserProfileMe(APIView):
     def get(self, request, *args, **kwargs):
@@ -224,7 +232,7 @@ class UserRelationshipsMe(APIView):
         relationships = Relationship.objects.filter(userA=me.userID) | Relationship.objects.filter(userB=me.userID)
 
         serializer = RelationshipSerializer(relationships, many=True, context={'request': request})
-        
+
         # Process the serialized data to include both the sender and target user's profile
         processed_relationships = []
         for relationship in serializer.data:
@@ -288,12 +296,13 @@ class UserRelationshipsMe(APIView):
                     return Response({"error": "Cannot directly set friendship status"}, status=status.HTTP_400_BAD_REQUEST)
 
         if relationship_type == 0:
-            Relationship.objects.create(
+            relationship = Relationship.objects.create(
                 relationshipID=generate_id("rel"),
                 userA=me.userID,
                 userB=target_user_id,
                 status=0
             )
+            self.notify_chat_websocket(relationship)
             return Response({"status": "Friend request sent"}, status=status.HTTP_200_OK)
 
         return Response({"error": "Invalid operation"}, status=status.HTTP_400_BAD_REQUEST)
@@ -310,6 +319,26 @@ class UserRelationshipsMe(APIView):
         relationship.delete()
 
         return Response({"status": "Relationship deleted"}, status=status.HTTP_200_OK)
+
+    def notify_chat_websocket(self, relationship):
+        channel_layer = get_channel_layer()
+        group_name = f"chat_{relationship.userB}"
+
+        try:
+            async_to_sync(channel_layer.group_send)(
+                group_name,
+                {
+                    "type": "friend_request",
+                    "message": {
+                        "type": "relationship",
+                        "relationshipID": relationship.relationshipID,
+                        "from": relationship.userA,
+                    }
+                }
+            )
+        except Exception as _:
+            logger.error(f"Failed to send friend request notification. User {relationship.userB} might be offline.")
+
 
 class UserMatchesMe(APIView):
     def get(self, request, *args, **kwargs):

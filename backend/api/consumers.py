@@ -138,7 +138,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.close()
             return
 
-        self.user_group_name = f"user_{self.user.userID}"
+        self.user_group_name = f"chat_{self.user.userID}"
 
         await self.channel_layer.group_add(
             self.user_group_name,
@@ -200,7 +200,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         participants = await sync_to_async(list)(conversation.participants.all())
 
         for participant in participants:
-            participant_group_name = f"user_{participant.userID}"
+            participant_group_name = f"chat_{participant.userID}"
 
             await self.channel_layer.group_send(
                 participant_group_name,
@@ -216,6 +216,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "type": "conversation_update",
             "senderUsername": event["senderUsername"],
             "messagePreview": event["messagePreview"]
+        }))
+
+    async def friend_request(self, event):
+        await self.send(json.dumps({
+            "type": "friend_request",
+            "message": event["message"]
         }))
 
     @sync_to_async
