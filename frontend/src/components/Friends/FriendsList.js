@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import PongButton from "../../styles/shared/PongButton.styled";
-import { ListCard, NoRelation, ProfileAvatar, ProfileInfo, ProfileName, ProfileStatus } from "./styles/Friends.styled";
+import { Actions, ListCard, ListContainer, NoRelation, ProfileAvatar, ProfileInfo, ProfileName, ProfileStatus } from "./styles/Friends.styled";
 import API from "../../api/api";
 
 const FriendsList = ({ friends, setFriends }) => {
