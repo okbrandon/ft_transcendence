@@ -29,7 +29,7 @@ def validate_image(image):
         return False
 
 def validate_phone_number(phone):
-    return re.match(r'^\+[1-9]\d{1,14}$', phone) is not None
+    return re.match(r'^\+[1-9]\d{1,14}$', phone) or None
 
 def validate_bio(bio):
     if bio is None:

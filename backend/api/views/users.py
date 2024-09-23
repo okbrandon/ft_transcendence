@@ -224,7 +224,7 @@ class UserRelationshipsMe(APIView):
         relationships = Relationship.objects.filter(userA=me.userID) | Relationship.objects.filter(userB=me.userID)
 
         serializer = RelationshipSerializer(relationships, many=True, context={'request': request})
-
+        
         # Process the serialized data to include both the sender and target user's profile
         processed_relationships = []
         for relationship in serializer.data:
