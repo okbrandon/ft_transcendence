@@ -30,7 +30,7 @@ const SignIn = () => {
 	};
 	const handleFortyTwo = (event) => {
 		event.preventDefault();
-		window.location.href = `${window.origin.host}/api/v1/auth/42/login`;
+		window.location.href = `/api/v1/auth/42/login`;
 	};
 
 	return (
