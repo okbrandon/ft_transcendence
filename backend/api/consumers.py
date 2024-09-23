@@ -308,7 +308,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             await asyncio.sleep(self.heartbeat_interval)
             self.missed_heartbeats += 1
             if self.missed_heartbeats >= 3:
-                logger.info(f"User {self.user.username} missed 3 heartbeats, closing connection")
+                logger.info(f"[{self.__class__.__name__}] User {self.user.username} missed 3 heartbeats, closing connection")
                 await self.leave_match()
                 await self.close(code=4000)  # Use a custom close code
                 break
