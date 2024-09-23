@@ -9,7 +9,6 @@ import Loader from '../../styles/shared/Loader.styled';
 import DisplaySkin from './content/DisplaySkin';
 import { GetUserFromRelation } from '../../api/friends';
 import { GetUserByUsername } from '../../api/user';
-import BlockedProfile from './BlockedProfile';
 
 const matchArray = [
 	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Brandon"}, scores: {playerA: 9, playerB: 10}, startedAt: "2021-09-01T12:28:01Z", finishedAt: "2021-09-01T12:30:38Z"},
@@ -71,9 +70,11 @@ const Profile = () => {
 	};
 
 	return (
-		<>
-			{(relation.length && (relation[0].status !== 2 || profileUser.userID === userID)) || !relation.length ? (
-				<ProfileContainer>
+		<ProfileContainer>
+			{(relation.length && relation[0].status === 2 && relation[0].target.userID === userID && profileUser.userID !== userID) ? (
+				<Loader $profilePicture={profileUser.avatarID}/>
+			) : (
+				<>
 					<UserProfileBanner $path={profileUser.bannerID}/>
 					<UserContainer>
 						<MainBar profileUser={profileUser} matchArray={matchArray} relation={relation}/>
@@ -82,9 +83,9 @@ const Profile = () => {
 						<Winrate matchArray={matchArray}/>
 						<MatchHistory matchArray={matchArray}/>
 					</UserContainer>
-				</ProfileContainer>
-			) : <BlockedProfile/>}
-		</>
+				</>
+			)}
+		</ProfileContainer>
 	);
 };
 
