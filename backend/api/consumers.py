@@ -24,6 +24,120 @@ class SocketUser:
         self.user_id = user_id
         self.username = username
 
+class StatusConsumer(AsyncWebsocketConsumer):
+
+    async def connect(self):
+        self.user = None
+        self.heartbeat_task = None
+        self.failed_heartbeats = 0
+
+        query_string = self.scope['query_string'].decode()
+        query_params = urllib.parse.parse_qs(query_string)
+        token = query_params.get('token', [None])[0]
+
+        if token is None:
+            logger.info("[StatusConsummer] Connection attempt without token")
+            await self.close()
+            return
+
+        userID = await self.get_userID_from_token(token)
+
+        if userID is None:
+            logger.info("[StatusConsummer] Connection attempt with invalid token")
+            await self.close()
+            return
+
+        try:
+            self.user = await sync_to_async(User.objects.get)(userID=userID)
+        except User.DoesNotExist:
+            logger.info(f"[StatusConsummer] User {userID} not found")
+            await self.close()
+            return
+
+        await self.accept()
+        self.heartbeat_task = asyncio.create_task(self.check_heartbeat())
+        logger.info(f"[StatusConsummer] User {self.user.username} connected")
+
+    async def disconnect(self, close_code):
+        if self.heartbeat_task and not self.heartbeat_task.done():
+            self.heartbeat_task.cancel()
+        if self.user is not None:
+            await self.update_user_status(False, None)
+            logger.info(f"[StatusConsummer] User {self.user.username} disconnected")
+
+    async def receive(self, text_data):
+        try:
+            json_data = json.loads(text_data)
+            message_type = json_data.get("type", None)
+
+            if not message_type:
+                raise Exception("Missing message type")
+
+            match message_type:
+                case "heartbeat":
+                    activity = json_data.get("activity", None)
+
+                    if activity is None:
+                        raise Exception("Missing activity")
+                    if activity not in ["HOME", "QUEUEING", "PLAYING_VS_AI", "PLAYING_MULTIPLAYER"]:
+                        raise Exception("Invalid activity, not in [HOME, QUEUEING, PLAYING_VS_AI, PLAYING_MULTIPLAYER]")
+
+                    self.failed_heartbeats = 0
+                    await self.update_user_status(True, activity)
+
+                case _:
+                    raise Exception(f"Invalid message type: {message_type}")
+
+        except Exception as err:
+            await self.send(json.dumps({
+                "type": "error",
+                "message": "Invalid JSON",
+                "more_info": str(err)
+            }))
+
+    @sync_to_async
+    def update_user_status(self, online, activity):
+        self.user.status = {
+            "online": online,
+            "activity": activity,
+            "last_seen": timezone.now().isoformat()
+        }
+        self.user.save()
+
+    async def check_heartbeat(self):
+        while True:
+            await asyncio.sleep(4)
+            self.failed_heartbeats += 1
+
+            if self.failed_heartbeats >= 3:
+                logger.info(f"[StatusConsummer] User {self.user.username} missed 3 heartbeats, closing connection")
+                await self.close()
+                break
+
+            await self.send(json.dumps({
+                "type": "heartbeat"
+            }))
+
+    async def get_userID_from_token(self, token):
+        try:
+            url = "http://backend:8000/api/v1/users/@me/profile"
+            headers = {
+                "Authorization": f"Bearer {token}"
+            }
+
+            async with httpx.AsyncClient() as client:
+                response = await client.get(url, headers=headers)
+
+            if response.status_code != 200:
+                raise Exception(f"Failed to get user info: {response.status_code} {response.reason}")
+
+            user_data = response.json()
+            return user_data["userID"]
+
+        except Exception as err:
+            logger.error(f"An error occurred getting the user from token: {err}")
+            return None
+
 class ChatConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
@@ -255,14 +369,14 @@ class GameConsumer(AsyncWebsocketConsumer):
             f"match_{self.match.matchID}",
             self.channel_name
         )
-        
+
         player_side = await self.get_player_side()
-        
+
         await self.send_json({
             "e": "PLAYER_SIDE",
             "d": {"side": player_side}
         })
-        
+
         await self.channel_layer.group_send(
             f"match_{self.match.matchID}",
             {
@@ -462,7 +576,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                 "scores": event['scores']
             }
         })
-    
+
     async def send_paddle_hit_event(self, player_id):
         # Get the current game state
         game_state = self.match.get_game_state()  # Assuming there's a method to get the game state
