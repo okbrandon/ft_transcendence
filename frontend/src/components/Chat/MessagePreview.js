@@ -30,35 +30,43 @@ const MessageText = styled.span`
 	opacity: 0.5;
 `;
 
-// export const MessagePreview = ({})
+export const MessagePreview = ({ conversationsData, setFocusedConvID, handleSelectChat }) => {
+	const userID = localStorage.getItem('userID');
 
-export const MessagePreview = ({ conversationsData, onSelectChat }) => {
+	const handleSelectFriend = (convo) => {
+		console.log('Selected conversation: ', convo);
+		const other = convo.participants.find((participant) => participant.userID !== userID);
+
+		const senderID = convo.participants.find((participant) => participant.userID !== convo.receipientID).userID;
+		const sender = convo.participants.find((participant) => participant.userID === senderID);
+		console.log('Selected sender: ', sender);
+		setFocusedConvID(convo.conversationID);
+		handleSelectChat(other.username);
+	};
+
 	return (
 		<>
 			{conversationsData.map((convo, index) => {
 				if (convo.messages.length === 0) {
-					const senderID = convo.participants.find((participant) => participant.userID !== convo.receipientID).userID;
-					console.log('Sender ID: ', senderID);
-					const sender = convo.participants.find((participant) => participant.userID === senderID);
+					const other = convo.participants.find((participant) => participant.userID === userID);
 					return (
-						<PreviewContainer key={index} onClick={() => onSelectChat(convo)}>
-							<ProfilePicture src={defaultAvatar} alt={'profile'} />
+						<PreviewContainer key={index} onClick={() => handleSelectFriend(convo)}>
+							<ProfilePicture src={other.avatarID === 'default' ? '/images/default-profile.png' : other.avatarID} alt={`${other.username}'s profile picture`} />
 							<MessageContent>
-								<Sender>{sender.username}</Sender>
+								<Sender>{other.username}</Sender>
 								<MessageText>No messages yet</MessageText>
 							</MessageContent>
 						</PreviewContainer>
 					)
 				}
-				const senderID = convo.participants.find((participant) => participant.userID !== convo.receipientID).userID;
-				const sender = convo.participants.find((participant) => participant.userID === senderID);
+				const other = convo.participants.find((participant) => participant.userID !== userID);
 				const lastMessage = convo.messages[convo.messages.length - 1];
 				const lastMessageContent = lastMessage.content;
 				return (
-					<PreviewContainer key={index} onClick={() => onSelectChat(convo)}>
-						<ProfilePicture src={defaultAvatar} alt={'profile'} />
+					<PreviewContainer key={index} onClick={() => handleSelectFriend(convo)}>
+						<ProfilePicture src={other.avatarID === 'default' ? '/images/default-profile.png' : other.avatarID} alt={`${other.username}'s profile picture`} />
 						<MessageContent>
-							<Sender>{sender.username}</Sender>
+							<Sender>{other.username}</Sender>
 							<MessageText>{lastMessageContent}</MessageText>
 						</MessageContent>
 					</PreviewContainer>

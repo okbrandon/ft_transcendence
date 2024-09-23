@@ -13,9 +13,9 @@ const Chat = () => {
 	const [DMWindow, setDMWindow] = useState(null);
 	const [$isMinimized, setIsMinimized] = useState(true);
 	const [isOverlayMinimized, setIsOverlayMinimized] = useState(true);
-	const [convoObject, setConvoObject] = useState(null);
 	const [DMWinArrow, setDMWinArrow] = useState(false);
 	const [mainWinArrow, setMainWinArrow] = useState(false);
+	const [focusedConvID, setFocusedConvID] = useState(null);
 
 	const handleSelectChat = (username) => {
 		setDMWindow(username);
@@ -35,15 +35,15 @@ const Chat = () => {
 		setMainWinArrow(!mainWinArrow);
 	}
 
-	const handleSelectFriend = (convo) => {
-		console.log('Selected conversation: ', convo);
+	// const handleSelectFriend = (convo) => {
+	// 	console.log('Selected conversation: ', convo);
 
-		const senderID = convo.participants.find((participant) => participant.userID !== convo.receipientID).userID;
-		const sender = convo.participants.find((participant) => participant.userID === senderID);
-		console.log('Selected sender: ', sender);
-		setConvoObject(convo);
-		handleSelectChat(sender.username);
-	};
+	// 	const senderID = convo.participants.find((participant) => participant.userID !== convo.receipientID).userID;
+	// 	const sender = convo.participants.find((participant) => participant.userID === senderID);
+	// 	console.log('Selected sender: ', sender);
+	// 	setConvoObject(convo);
+	// 	handleSelectChat(sender.username);
+	// };
 
 	return (
 		<ChatContainer>
@@ -51,16 +51,17 @@ const Chat = () => {
 				<ChatHeader toggleMinimization={mainMinimizer} arrowState={mainWinArrow} />
 				{!isOverlayMinimized && (
 					<>
-						<SearchFriends onOpenChat={handleSelectFriend} />
+						<SearchFriends/>
 						<ScrollableComponent>
-							<MessagePreview conversationsData={conversations} onSelectChat={handleSelectFriend} />
+							<MessagePreview conversationsData={conversations} setFocusedConvID={setFocusedConvID} handleSelectChat={handleSelectChat}/>
 						</ScrollableComponent>
 					</>
 				)}
 			</MainChatContainer>
 			{DMWindow && (
 				<DirectMessage
-					convo={convoObject}
+					conversationID={focusedConvID}
+					conversations={conversations}
 					username={DMWindow}
 					onClose={handleCloseChat}
 					$isMinimized={$isMinimized}

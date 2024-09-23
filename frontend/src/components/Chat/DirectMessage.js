@@ -1,8 +1,8 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Header } from './styles/Chat/ChatContainer.styled.js';
 import CloseButton from 'react-bootstrap/CloseButton';
-import Arrow  from './tools/Arrow.js';
-import { ChatContext } from '../../context/ChatContext.js';
+import Arrow from './tools/Arrow.js';
+import { ChatContext } from '../../context/ChatContext.js'; // Import WebSocket context
 
 import DirectMessageContainer, {
 	ChatMessages,
@@ -13,26 +13,32 @@ import DirectMessageContainer, {
 	ActionButtonContainer
 } from './styles/DirectMessage/DirectMessage.styled.js';
 
-export const DirectMessage = ( { convo, username, onClose, $isMinimized, toggleMinimization, arrowState }) => {
-	const [content, setContent] = useState('');
-	const { sendMessage } = useContext(ChatContext);
-	const { messageHistory } = useContext(ChatContext);
+export const DirectMessage = ({ conversationID, conversations, username, onClose, $isMinimized, toggleMinimization, arrowState }) => {
+	const [content, setContent] = useState(''); // Track the message being typed
+	const { sendMessage } = useContext(ChatContext); // Get WebSocket context
+	const [realConvo, setRealConvo] = useState(null); // CACA
+	const userID = localStorage.getItem('userID');
 
+	useEffect(() => {
+		setRealConvo(conversations.find(c => c.conversationID === conversationID));
+	}, [conversations]);
+
+	if (!realConvo) return null;
+	// 2. Handle sending new messages
 	const handleMessage = () => {
-		// handle sending empty string message
-		if (content.trim === '') { return ; }
+		if (content.trim() === '') return; // Prevent sending empty messages
 
 		const messageData = {
 			type: 'send_message',
-			conversationID: convo.conversationID,
+			conversationID: realConvo.conversationID,
 			content: content,
 		};
 
-		sendMessage(JSON.stringify(messageData)); // send message to websocket
-		setContent(''); // clear input
+		sendMessage(JSON.stringify(messageData)); // Send the message via WebSocket
+		setContent(''); // Clear the input field
 	};
-
-
+	console.log(realConvo);
+	// 3. Render the messages
 	return (
 		<DirectMessageContainer $isMinimized={$isMinimized}>
 			<Header onClick={toggleMinimization}>
@@ -42,33 +48,36 @@ export const DirectMessage = ( { convo, username, onClose, $isMinimized, toggleM
 					<CloseButton variant='white' onClick={onClose} />
 				</ActionButtonContainer>
 			</Header>
+
 			<ChatMessages $isMinimized={$isMinimized}>
-				{convo.messages.map((message, index) => {
-					const senderID = convo.participants.find((participant) => participant.userID !== convo.receipientID).userID;
-					const sender = convo.participants.find((participant) => participant.userID === senderID);
-					if (sender !== convo.receipientID) {
-						return (
-							<SenderBubble key={index}>
-								{message.content}
-							</SenderBubble>
-						);
-					} else {
-						return (
-							<HostBubble key={index}>
-								{message.content}
-							</HostBubble>
-						);
-					}
+				{/* Combine the historical messages and WebSocket messages */}
+				{/* {combinedMessages.map((message, index) => {
+					const isSender = message.sender.username === convo.participants.find(p => p.userID === convo.receipientID)?.username;
+
+					return isSender ? (
+						<SenderBubble key={index}>{message.content}</SenderBubble>
+					) : (
+						<HostBubble key={index}>{message.content}</HostBubble>
+					);
+				})} */}
+				{realConvo.messages.map((message, index) => {
+					return message.sender.userID === userID ? (
+						<SenderBubble key={index}>{message.content}</SenderBubble>
+					) : (
+						<HostBubble key={index}>{message.content}</HostBubble>
+					);
 				})}
 			</ChatMessages>
+
+			{/* Chat input for typing new messages */}
 			<ChatInputContainer $isMinimized={$isMinimized}>
 				<ChatInput
 					placeholder="Type a message..."
 					value={content}
-					onChange={e => setContent(e.target.value)} // Update content on input change
+					onChange={e => setContent(e.target.value)} // Update input content
 					onKeyDown={e => {
 						if (e.key === 'Enter') {
-							handleMessage();
+							handleMessage(); // Send message on Enter key press
 						}
 					}}
 				/>
@@ -76,20 +85,3 @@ export const DirectMessage = ( { convo, username, onClose, $isMinimized, toggleM
 		</DirectMessageContainer>
 	);
 };
-
-/*
-Sending a message:
-
-	When sending a message, the user sends a JSON object to the Websocket connection previously established at the authentication. The JSON object must contain the following fields:
-
-
-	{
-		"type": "send_message",
-		"conversationID": "546a31fd-fb13-4b8f-8cbb-b3ac59c7d52c",
-		"content": "Hello, how are you?"
-	}
-
-	Where the conversationID is the conversation ID where the message is sent and content is the message content.
-
-	Once received, the server will add the message to the conversation messages and send a Websocket notification to the participants of the conversation to tell them that they need to request the conversations again.
-*/
