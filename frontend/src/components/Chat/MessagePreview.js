@@ -33,11 +33,12 @@ const MessageText = styled.span`
 // export const MessagePreview = ({})
 
 export const MessagePreview = ({ conversationsData, onSelectChat }) => {
-	console.log('MessagePreview: conversationData ', conversationsData);
-
 	return (
 		<>
 			{conversationsData.map((convo, index) => {
+				if (convo.messages.length === 0) {
+					return null;
+				}
 				let lastMessageContent = convo.messages[convo.messages.length - 1].content;
 				let sender = convo.messages[convo.messages.length - 1].sender;
 				return (

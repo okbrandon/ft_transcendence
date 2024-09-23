@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Header } from './styles/Chat/ChatContainer.styled.js';
 import CloseButton from 'react-bootstrap/CloseButton';
 import Arrow  from './tools/Arrow.js';
-import useWebSocket from 'react-use-websocket';
+import { ChatContext } from '../../context/ChatContext.js';
 
 import DirectMessageContainer, {
 	ChatMessages,
@@ -13,19 +13,26 @@ import DirectMessageContainer, {
 	ActionButtonContainer
 } from './styles/DirectMessage/DirectMessage.styled.js';
 
-const SendMessage = (content, conversationID) => {
-	const message = {
-		type: 'send_message',
-		conversationID: conversationID,
-		content: content
-	};
-	// Send the message to the server WebSocket
-	sendMessage(JSON.stringify(message));
-}
-
 export const DirectMessage = ( { convo, username, onClose, $isMinimized, toggleMinimization, arrowState }) => {
 	const [content, setContent] = useState('');
-	console.log('DirectMessage displaying (convo): ', convo);
+	const { sendMessage } = useContext(ChatContext);
+
+	const handleMessage = () => {
+		// handle sending empty string message
+		if (content.trim === '') { return ; }
+
+		const messageData = {
+			type: 'send_message',
+			conversationID: convo.conversationID,
+			content: content,
+		};
+
+		sendMessage(JSON.stringify(messageData)); // send message to websocket
+		setContent(''); // clear input
+	};
+
+
+	console.log('DirectMessage convo:', convo);
 	return (
 		<DirectMessageContainer $isMinimized={$isMinimized}>
 			<Header onClick={toggleMinimization}>
@@ -48,7 +55,13 @@ export const DirectMessage = ( { convo, username, onClose, $isMinimized, toggleM
 				<ChatInput
 					placeholder="Type a message..."
 					value={content}
-					onChange={e => setInput(e.target.value)} />
+					onChange={e => setContent(e.target.value)} // Update content on input change
+					onKeyDown={e => {
+						if (e.key === 'Enter') {
+							handleMessage();
+						}
+					}}
+				/>
 			</ChatInputContainer>
 		</DirectMessageContainer>
 	);

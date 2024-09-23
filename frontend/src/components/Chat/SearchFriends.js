@@ -3,7 +3,7 @@ import SearchFriendsContainer, { SearchInput, Dropdown, FriendItem } from './sty
 
 export const SearchFriends = ({ onOpenChat }) => {
 	const [searchQuery, setSearchQuery] = useState('');
-	const [friends, setFriends] = useState(['Alice', 'Bob', 'Brandonation', 'Evanescence', 'Hanministrateur', 'Kianatomy']);
+	const [friends, setFriends] = useState([]);
 
 	const filteredFriends = friends.filter(friend =>
 	friend.toLowerCase().includes(searchQuery.toLowerCase())
