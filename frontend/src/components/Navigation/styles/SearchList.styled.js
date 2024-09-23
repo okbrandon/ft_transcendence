@@ -2,27 +2,40 @@ import styled from "styled-components";
 
 export const SearchListContainer = styled.div`
 	position: absolute;
-	top: 37px;
+	top: 45px;
 	width: 100%;
-	background-color: rgba(10, 10, 10, 0.95);
-	border: 1px solid rgba(255, 255, 255, 0.2);
-	border-radius: 8px;
+	background-color: rgba(20, 20, 20, 0.98);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 12px;
 	z-index: 1000;
-	max-height: 150px;
+	max-height: 200px;
 	overflow-y: auto;
-	box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.5);
+	box-shadow: 0px 6px 30px rgba(0, 0, 0, 0.6);
+	padding: 5px 0;
+	transition: max-height 0.3s ease-in-out;
+
+	scrollbar-width: thin;
+	scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+
+	&::-webkit-scrollbar {
+		width: 6px;
+	}
+	&::-webkit-scrollbar-thumb {
+		background-color: rgba(255, 255, 255, 0.2);
+		border-radius: 10px;
+	}
 `;
 
 export const SearchListItem = styled.div`
 	display: flex;
 	align-items: center;
-	padding: 10px 15px;
+	padding: 12px 18px;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 	cursor: pointer;
-	transition: all 0.3s ease;
+	transition: background-color 0.25s ease, transform 0.25s ease;
 
 	&:hover {
-		background-color: rgba(255, 255, 255, 0.1);
+		background-color: rgba(255, 255, 255, 0.15);
 	}
 
 	&:last-child {
@@ -31,18 +44,29 @@ export const SearchListItem = styled.div`
 `;
 
 export const SearchListItemImage = styled.img`
-	width: 30px;
-	height: 30px;
+	width: 35px;
+	height: 35px;
 	border-radius: 50%;
 	object-fit: cover;
-	margin-right: 10px;
-	border: 2px solid rgba(255, 255, 255, 0.2);
+	margin-right: 12px;
+	border: 2px solid rgba(255, 255, 255, 0.3);
+	transition: border-color 0.3s ease;
+
+	&:hover {
+		border-color: rgba(255, 255, 255, 0.6);
+	}
 `;
 
 export const SearchListItemText = styled.p`
-	color: #ffffff;
-	font-size: 1rem;
+	color: #f0f0f0;
+	font-size: 1.1rem;
 	margin: 0;
 	font-family: "Roboto", sans-serif;
-	letter-spacing: 0.5px;
+	letter-spacing: 0.6px;
+	font-weight: 500;
+	transition: color 0.3s ease;
+
+	${SearchListItem}:hover & {
+		color: #ffffff;
+	}
 `;

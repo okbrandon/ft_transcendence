@@ -224,7 +224,7 @@ class UserRelationshipsMe(APIView):
         relationships = Relationship.objects.filter(userA=me.userID) | Relationship.objects.filter(userB=me.userID)
 
         serializer = RelationshipSerializer(relationships, many=True, context={'request': request})
-        
+
         # Process the serialized data to include both the sender and target user's profile
         processed_relationships = []
         for relationship in serializer.data:
@@ -326,15 +326,15 @@ class UserSearch(APIView):
             return Response({"error": "No search content provided"}, status=status.HTTP_400_BAD_REQUEST)
 
         me = request.user
-        blocked_users = Relationship.objects.filter(
-            models.Q(userA=me.userID, status=2) | models.Q(userB=me.userID, status=2)
-        ).values_list('userA', 'userB')
+        # blocked_users = Relationship.objects.filter(
+        #     models.Q(userA=me.userID, status=2) | models.Q(userB=me.userID, status=2)
+        # ).values_list('userA', 'userB')
 
-        blocked_user_ids = [user for pair in blocked_users for user in pair if user != me.userID]
+        # blocked_user_ids = [user for pair in blocked_users for user in pair if user != me.userID]
 
         users = User.objects.filter(
             models.Q(displayName__icontains=content) | models.Q(username__icontains=content)
-        ).exclude(userID__in=blocked_user_ids)
+        )
 
         serializer = UserSerializer(users, many=True)
 

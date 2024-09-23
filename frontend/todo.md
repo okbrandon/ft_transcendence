@@ -3,7 +3,7 @@
 - Profile: `users/@me/stats` -> win / loss / ratio
 - Game interface
 - Profile: block button API
-- Friends: add popup
+- Friends: add (websocket)
 
 ## Waiting leader
 - Tell Leader to fix the problem with setting the phone_number back to null

@@ -42,12 +42,8 @@ export const GetUserByUsername = async (id) => {
 
 export const GetUsers = async (input) => {
 	try {
-		logger('Getting users...');
 		const res = await API.get(`users/search?content=${input}`);
-
-		logger(`input is ${input}`);
-		logger(res.data);
-		const users = formatUserData(res.data);
+		const users = res.data.map(formatUserData);
 		return users;
 	} catch (err) {
 		console.error(err.response?.data?.error || 'An error occurred');
