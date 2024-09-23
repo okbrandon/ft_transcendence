@@ -15,7 +15,7 @@ class Match(models.Model):
 
     def __str__(self):
         return self.matchID
-    
+
 class GameToken(models.Model):
     token = models.CharField(max_length=48, unique=True)
     matchID = models.CharField(max_length=48)
@@ -99,7 +99,7 @@ class UserSettings(models.Model):
         return self.userID
 
 class Conversation(models.Model):
-    conversationID = models.CharField(primary_key=True, max_length=48, default=generate_id("conv"), editable=False)
+    conversationID = models.CharField(primary_key=True, max_length=48, default="", editable=False)
     conversationType = models.CharField(max_length=50, default='private_message')  # Can be expanded for different types
     receipientID = models.CharField(max_length=48, null=True)
     participants = models.ManyToManyField(User, related_name='conversations')
@@ -108,7 +108,7 @@ class Conversation(models.Model):
         return str(self.conversationID)
 
 class Message(models.Model):
-    messageID = models.CharField(primary_key=True, max_length=48, default=generate_id("msg"), editable=False)
+    messageID = models.CharField(primary_key=True, max_length=48, default="", editable=False)
     conversation = models.ForeignKey(Conversation, null=True, related_name='messages', on_delete=models.CASCADE)
     content = models.CharField(max_length=256)
     sender = models.ForeignKey(User, null=True, related_name='sent_messages', on_delete=models.CASCADE)
