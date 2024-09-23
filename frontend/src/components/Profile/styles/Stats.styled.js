@@ -19,7 +19,6 @@ export const SectionContainer = styled.div`
 	border-radius: 20px;
 	border: 1px solid rgba(255, 255, 255, 0.1);
 	box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1), 0 0 15px rgba(164, 69, 178, 0.4);
-	padding: 30px;
 `;
 
 export const WinrateContainer = styled.div`
