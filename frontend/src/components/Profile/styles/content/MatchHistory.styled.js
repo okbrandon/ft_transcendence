@@ -37,7 +37,7 @@ export const MatchCardTable = styled.table`
 
 	& tbody {
 		display: block;
-		max-height: 610px;
+		height: 610px;
 		overflow-y: auto;
 		width: 100%;
 		margin-top: 75px;
