@@ -27,7 +27,7 @@ const FriendsList = ({ friends, setFriends }) => {
 				friends.map((friend, key) => (
 					<ListCard key={key}>
 						<ProfileInfo onClick={() => handleProfile(friend.username)}>
-							<ProfileStatus $status={true} />
+							<ProfileStatus $status={friend.status?.online || false}/>
 							<ProfileAvatar src={friend.avatarID} alt={`${friend.displayName}'s avatar`}/>
 							<ProfileName>{friend.displayName}</ProfileName>
 						</ProfileInfo>

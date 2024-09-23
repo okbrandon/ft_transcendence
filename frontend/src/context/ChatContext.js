@@ -1,14 +1,27 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useRef, useState } from "react";
 import API from '../api/api';
-import useWebSocket from 'react-use-websocket';
+import { useLocation } from "react-router-dom";
 
-const WS_URL = 'ws://localhost:8888/ws/chat/?token=';
+const WS_CHAT_URL = 'ws://localhost:8888/ws/chat/?token=';
+const WS_STATUS_URL = 'ws://localhost:8888/ws/status/?token=';
 
 export const ChatContext = createContext({
 	conversations: [],
 });
 
+const setActivity = (location) => {
+	if (location === '/vs-ai' || location === '/vs-player') {
+		return 'QUEUEING';
+	} else if (location === 'solo-vs-ai') {
+		return 'PLAYING_VS_AI';
+	}
+	return 'HOME';
+};
+
 const ChatProvider = ({ children }) => {
+	const location = useLocation();
+	const socketStatus = useRef(null);
+	const socketChat = useRef(null);
 	const [conversations, setConversations] = useState([
 				{
 					"conversationID": "conv_MTcyNjMwMjg5NjQ2MDc3Mg",
@@ -128,23 +141,46 @@ const ChatProvider = ({ children }) => {
 				}
 			]);
 
-useWebSocket(WS_URL + localStorage.getItem('token'), {
-	onOpen: () => console.log(`WebSocket connection opened:`),
-	onMessage: (event) => {
-		const data = JSON.parse(event.data);
-		console.log(data);
-		if (data.type === 'conversation_update') {
-			API.get('chat/conversations')
-				.then((response) => {
-					console.log('(ChatMessages); Harvested data: ', response.data.conversations);
-					setConversations(response.data.conversations);
-				})
-				.catch((error) => {
-					console.log('FAILED TO HARVEST: ', error);
-				});
-		}
-	},
-});
+	useEffect(() => {
+		socketChat.current = new WebSocket(WS_CHAT_URL + localStorage.getItem('token'));
+		socketChat.current.onopen = () => {
+			console.log('WebSocket for Chat connection opened');
+		};
+		socketChat.current.onmessage = (event) => {
+			const data = JSON.parse(event.data);
+			console.log(data);
+			if (data.type === 'conversation_update') {
+				API.get('chat/conversations')
+					.then((response) => {
+						console.log('(ChatMessages); Harvested data: ', response.data.conversations);
+						setConversations(response.data.conversations);
+					})
+					.catch((error) => {
+						console.log('FAILED TO HARVEST: ', error);
+					});
+			}
+		};
+	}, []);
+
+	useEffect(() => {
+		socketStatus.current = new WebSocket(WS_STATUS_URL + localStorage.getItem('token'));
+		socketStatus.current.onopen = () => {
+			console.log('WebSocket for Status connection opened');
+		};
+		socketStatus.current.onmessage = (event) => {
+			const data = JSON.parse(event.data);
+			if (data.type === 'heartbeat') {
+				socketStatus.current.send(JSON.stringify({
+					type: 'heartbeat',
+					activity: setActivity(location.pathname)
+				}));
+			}
+		};
+
+		return () => {
+			socketStatus.current.close();
+		};
+	}, [location]);
 
 	return (
 		<ChatContext.Provider value={{ conversations }}>

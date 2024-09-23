@@ -125,7 +125,7 @@ export const ProfileAvatar = styled.img`
 export const ProfileStatus = styled.span`
 	width: 12px;
 	height: 12px;
-	background: ${({ $status }) => $status === "online" ? "#00ff88" : "#ff5555"};
+	background: ${({ $status }) => $status === true ? "#00ff88" : "#ff5555"};
 	border-radius: 50%;
 	margin-right: 2rem;
 	box-shadow: 0 0 10px ${({ $status }) => ($status === "online" ? "#00ff88" : "#ff5555")};
