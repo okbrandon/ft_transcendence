@@ -30,34 +30,34 @@ class StatusConsumer(AsyncWebsocketConsumer):
         token = query_params.get('token', [None])[0]
 
         if token is None:
-            logger.info("[StatusConsummer] Connection attempt without token")
+            logger.info(f"[{self.__class__.__name__}] Connection attempt without token")
             await self.close()
             return
 
         userID = await get_user_id_from_token(token)
 
         if userID is None:
-            logger.info("[StatusConsummer] Connection attempt with invalid token")
+            logger.info(f"[{self.__class__.__name__}] Connection attempt with invalid token")
             await self.close()
             return
 
         try:
             self.user = await sync_to_async(User.objects.get)(userID=userID)
         except User.DoesNotExist:
-            logger.info(f"[StatusConsummer] User {userID} not found")
+            logger.info(f"[{self.__class__.__name__}] User {userID} not found")
             await self.close()
             return
 
         await self.accept()
         self.heartbeat_task = asyncio.create_task(self.check_heartbeat())
-        logger.info(f"[StatusConsummer] User {self.user.username} connected")
+        logger.info(f"[{self.__class__.__name__}] User {self.user.username} connected")
 
     async def disconnect(self, close_code):
         if self.heartbeat_task and not self.heartbeat_task.done():
             self.heartbeat_task.cancel()
         if self.user is not None:
             await self.update_user_status(False, None)
-            logger.info(f"[StatusConsummer] User {self.user.username} disconnected")
+            logger.info(f"[{self.__class__.__name__}] User {self.user.username} disconnected")
 
     async def receive(self, text_data):
         try:
@@ -104,7 +104,7 @@ class StatusConsumer(AsyncWebsocketConsumer):
             self.failed_heartbeats += 1
 
             if self.failed_heartbeats >= 3:
-                logger.info(f"[StatusConsummer] User {self.user.username} missed 3 heartbeats, closing connection")
+                logger.info(f"[{self.__class__.__name__}] User {self.user.username} missed 3 heartbeats, closing connection")
                 await self.close()
                 break
 
