@@ -14,15 +14,9 @@ from django.db.models import Q, Count
 from django.utils import timezone
 
 from .models import Conversation, User, Relationship, Match, GameToken
-from .util import generate_id
+from .util import generate_id, get_user_id_from_token
 
 logger = logging.getLogger(__name__)
-connected_users = {}
-
-class SocketUser:
-    def __init__(self, user_id, username):
-        self.user_id = user_id
-        self.username = username
 
 class StatusConsumer(AsyncWebsocketConsumer):
 
@@ -40,7 +34,7 @@ class StatusConsumer(AsyncWebsocketConsumer):
             await self.close()
             return
 
-        userID = await self.get_userID_from_token(token)
+        userID = await get_user_id_from_token(token)
 
         if userID is None:
             logger.info("[StatusConsummer] Connection attempt with invalid token")
@@ -118,26 +112,6 @@ class StatusConsumer(AsyncWebsocketConsumer):
                 "type": "heartbeat"
             }))
 
-    async def get_userID_from_token(self, token):
-        try:
-            url = "http://backend:8000/api/v1/users/@me/profile"
-            headers = {
-                "Authorization": f"Bearer {token}"
-            }
-
-            async with httpx.AsyncClient() as client:
-                response = await client.get(url, headers=headers)
-
-            if response.status_code != 200:
-                raise Exception(f"Failed to get user info: {response.status_code} {response.reason}")
-
-            user_data = response.json()
-            return user_data["userID"]
-
-        except Exception as err:
-            logger.error(f"An error occurred getting the user from token: {err}")
-            return None
-
 class ChatConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
@@ -146,30 +120,43 @@ class ChatConsumer(AsyncWebsocketConsumer):
         token = query_params.get('token', [None])[0]
 
         if token is None:
-            logger.info("Chat connection attempt without token")
+            logger.info(f"[{self.__class__.__name__}] Connection attempt without token")
             await self.close()
             return
 
-        user = await self.get_user_from_token(token)
+        userID = await get_user_id_from_token(token)
 
-        if user is None:
-            logger.info("Chat connection attempt with invalid token")
+        if userID is None:
+            logger.info(f"[{self.__class__.__name__}] Connection attempt with invalid token")
             await self.close()
             return
 
-        connected_users[self] = user
+        try:
+            self.user = await sync_to_async(User.objects.get)(userID=userID)
+        except User.DoesNotExist:
+            logger.info(f"[{self.__class__.__name__}] User {userID} not found")
+            await self.close()
+            return
 
-        logger.info(f"User {user.username} connected")
-        await self.ensure_conversations_exist(user)
-        logger.info(f"User {user.username} conversations ensured")
+        self.user_group_name = f"user_{self.user.userID}"
+
+        await self.channel_layer.group_add(
+            self.user_group_name,
+            self.channel_name
+        )
+
+        logger.info(f"[{self.__class__.__name__}] User {self.user.username} connected")
+        await self.ensure_conversations_exist(self.user)
+        logger.info(f"[{self.__class__.__name__}] User {self.user.username} conversations ensured")
         await self.accept()
 
     async def disconnect(self, close_code):
-        user = connected_users.get(self, None)
+        await self.channel_layer.group_discard(
+            self.user_group_name,
+            self.channel_name
+        )
 
-        if user is not None:
-            logger.info(f"User {user.username} disconnected")
-            del connected_users[self]
+        logger.info(f"[{self.__class__.__name__}] User {self.user.username} disconnected")
 
     async def receive(self, text_data):
         try:
@@ -183,18 +170,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 case "send_message":
                     conversation_id = json_data.get("conversationID", None)
                     content = json_data.get("content", None)
-                    user = connected_users.get(self, None)
 
-                    if user is None:
+                    if self.user is None:
                         raise Exception("Something went wrong when receiving the message")
                     if conversation_id is None:
                         raise Exception("Missing conversation ID")
                     if content is None:
                         raise Exception("Missing content")
 
-                    logger.info(f"Received message from {user.username}: {json_data}")
-                    await self.add_message_to_conversation(conversation_id, user, content)
-                    await self.notify_new_message(conversation_id, user.username, content)
+                    logger.info(f"[{self.__class__.__name__}] Received message from {self.user.username}: {json_data}")
+                    await self.add_message_to_conversation(conversation_id, self.user, content)
+                    await self.notify_new_message(conversation_id, self.user.username, content)
 
                 case _:
                     raise Exception(f"Invalid message type: {message_type}")
@@ -205,56 +191,39 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "more_info": str(err)
             }))
 
-    async def get_user_from_token(self, token):
-        try:
-            url = "http://backend:8000/api/v1/users/@me/profile"
-            headers = {
-                "Authorization": f"Bearer {token}"
-            }
-
-            async with httpx.AsyncClient() as client:
-                response = await client.get(url, headers=headers)
-
-            if response.status_code != 200:
-                raise Exception(f"Failed to get user info: {response.status_code} {response.reason}")
-
-            user_data = response.json()
-            user = SocketUser(user_id=user_data["userID"], username=user_data["username"])
-            return user
-
-        except Exception as err:
-            logger.error(f"An error occurred getting the user from token: {err}")
-            return None
-
-    async def notify_new_message(self, conversationID, senderUsername, message):
-        conversation = await sync_to_async(Conversation.objects.get)(conversationID=conversationID)
-
-        if not conversation:
-            raise Exception(f"Conversation {conversationID} not found")
-
-        participants = await sync_to_async(list)(conversation.participants.all())
-
-        for participant in participants:
-            connected_user = {consumer for consumer, user in connected_users.items() if user.user_id == participant.userID}
-
-            if connected_user:
-                await connected_user.pop().send(json.dumps({
-                    "type": "conversation_update",
-                    "senderUsername": senderUsername,
-                    "messagePreview": message[:32] + "..." if len(message) > 32 else message
-                }))
-
-    @sync_to_async
-    def add_message_to_conversation(self, conversation_id, socketUser, content):
-        conversation = Conversation.objects.get(conversationID=conversation_id)
+    async def notify_new_message(self, conversation_id, sender_username, message):
+        conversation = await sync_to_async(Conversation.objects.get)(conversationID=conversation_id)
 
         if not conversation:
             raise Exception(f"Conversation {conversation_id} not found")
 
-        try:
-            user = User.objects.get(userID=socketUser.user_id)
-        except User.DoesNotExist:
-            return
+        participants = await sync_to_async(list)(conversation.participants.all())
+
+        for participant in participants:
+            participant_group_name = f"user_{participant.userID}"
+
+            await self.channel_layer.group_send(
+                participant_group_name,
+                {
+                    "type": "conversation_update",
+                    "senderUsername": sender_username,
+                    "messagePreview": message[:32] + "..." if len(message) > 32 else message
+                }
+            )
+
+    async def conversation_update(self, event):
+        await self.send(json.dumps({
+            "type": "conversation_update",
+            "senderUsername": event["senderUsername"],
+            "messagePreview": event["messagePreview"]
+        }))
+
+    @sync_to_async
+    def add_message_to_conversation(self, conversation_id, user, content):
+        conversation = Conversation.objects.get(conversationID=conversation_id)
+
+        if not conversation:
+            raise Exception(f"Conversation {conversation_id} not found")
 
         if user not in conversation.participants.all():
             raise Exception(f"User {user.username} is not part of conversation {conversation_id}")
@@ -263,18 +232,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
         conversation.save()
 
     @sync_to_async
-    def ensure_conversations_exist(self, socketUser):
+    def ensure_conversations_exist(self, user):
         friends = Relationship.objects.filter(
-            Q(userA=socketUser.user_id) | Q(userB=socketUser.user_id)
+            Q(userA=user.userID) | Q(userB=user.userID)
         )
         friends = friends.exclude(
-            Q(status=2) & (Q(userA=socketUser.user_id) | Q(userB=socketUser.user_id))
+            Q(status=2) & (Q(userA=user.userID) | Q(userB=user.userID))
         )
 
-        user = User.objects.get(userID=socketUser.user_id)
+        user = User.objects.get(userID=user.userID)
 
         for relationship in friends:
-            friend_id = relationship.userA if relationship.userA != socketUser.user_id else relationship.userB
+            friend_id = relationship.userA if relationship.userA != user.userID else relationship.userB
 
             try:
                 friend = User.objects.get(userID=friend_id)
