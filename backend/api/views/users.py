@@ -68,9 +68,6 @@ class UserProfileMe(APIView):
                         return Response({"error": "Invalid OTP."}, status=status.HTTP_400_BAD_REQUEST)
                 updated_fields['password'] = make_password(updated_fields['password'])
 
-            if 'phone_number' in updated_fields:
-                send_otp_via_sms(updated_fields['phone_number'])
-
             for field, value in updated_fields.items():
                 setattr(me, field, value)
 
@@ -224,7 +221,7 @@ class UserRelationshipsMe(APIView):
         relationships = Relationship.objects.filter(userA=me.userID) | Relationship.objects.filter(userB=me.userID)
 
         serializer = RelationshipSerializer(relationships, many=True, context={'request': request})
-        
+
         # Process the serialized data to include both the sender and target user's profile
         processed_relationships = []
         for relationship in serializer.data:

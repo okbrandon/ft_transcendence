@@ -74,11 +74,9 @@ const Security = ({ user }) => {
 				.then(() => {
 					setSuccess('Security updated successfully');
 					setError('');
-					logger('Security updated successfully with:', submissionData);
 					GetUser()
-						.then(res => {
-							setUser(res.data);
-							logger('User data refetched and updated in context:', res.data);
+						.then(user => {
+							setUser(user);
 						})
 						.catch(err => {
 							setError(err.response.data.error);

@@ -93,7 +93,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def get_user_from_token(self, token):
         try:
-            url = "http://backend/api/v1/users/@me/profile"
+            url = "http://backend:8000/api/v1/users/@me/profile"
             headers = {
                 "Authorization": f"Bearer {token}"
             }
@@ -255,14 +255,14 @@ class GameConsumer(AsyncWebsocketConsumer):
             f"match_{self.match.matchID}",
             self.channel_name
         )
-        
+
         player_side = await self.get_player_side()
-        
+
         await self.send_json({
             "e": "PLAYER_SIDE",
             "d": {"side": player_side}
         })
-        
+
         await self.channel_layer.group_send(
             f"match_{self.match.matchID}",
             {
@@ -462,7 +462,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                 "scores": event['scores']
             }
         })
-    
+
     async def send_paddle_hit_event(self, player_id):
         # Get the current game state
         game_state = self.match.get_game_state()  # Assuming there's a method to get the game state
