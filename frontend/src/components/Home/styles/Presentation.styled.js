@@ -1,5 +1,4 @@
 import styled, { keyframes } from "styled-components";
-import { motion } from "framer-motion";
 
 export const PresentationSection = styled.section`
 	display: flex;
@@ -89,9 +88,23 @@ const floatPaddleAnimation = keyframes`
 	}
 `;
 
-export const PongPaddleBackground = styled(motion.div)`
+const slideInLeft = keyframes`
+	0% {
+		left: -150px;
+		rotate: -60deg;
+		opacity: 0;
+	}
+	100% {
+		left: -50px;
+		rotate: -60deg;
+		opacity: 1;
+	}
+`;
+
+export const PongPaddleBackground = styled.div`
 	position: absolute;
 	top: 250px;
+	left: -150px;
 	width: 600px;
 	height: 120px;
 	background: linear-gradient(0deg, rgba(255, 255, 255, 0.7) 0%, rgba(200, 200, 200, 0.4) 100%);
@@ -99,8 +112,12 @@ export const PongPaddleBackground = styled(motion.div)`
 	animation: ${floatPaddleAnimation} 4s ease-in-out infinite;
 	overflow: hidden;
 	z-index: -1;
-	opacity: 0.8;
+	opacity: 0;
 	box-shadow: 0 0 10px rgba(255, 255, 255, 0.1), 0 0 20px rgba(255, 255, 255, 0.05);
+
+	&.visible {
+		animation: ${slideInLeft} 1s forwards;
+	}
 `;
 
 const floatBallAnimation = keyframes`
@@ -115,9 +132,21 @@ const floatBallAnimation = keyframes`
 	}
 `;
 
-export const PongBallBackground = styled(motion.div)`
+const slideInRightKeyframe = keyframes`
+	0% {
+		right: -50px;
+		opacity: 0;
+	}
+	100% {
+		right: 150px;
+		opacity: 1;
+	}
+`;
+
+export const PongBallBackground = styled.div`
 	position: absolute;
 	bottom: 100px;
+	right: -50px;
 	width: 160px;
 	height: 160px;
 	background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.7), rgba(200, 200, 200, 0.4));
@@ -125,6 +154,10 @@ export const PongBallBackground = styled(motion.div)`
 	animation: ${floatBallAnimation} 6s ease-in-out infinite;
 	overflow: hidden;
 	z-index: -1;
-	opacity: 0.8;
+	opacity: 0;
 	box-shadow: 0 0 15px rgba(255, 255, 255, 0.2), 0 0 10px rgba(255, 255, 255, 0.1);
+
+	&.visible {
+		animation: ${slideInRightKeyframe} 1s forwards;
+	}
 `;

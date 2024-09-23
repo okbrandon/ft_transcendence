@@ -1,19 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
-import { motion } from "framer-motion";
 import { MatchHistoryContainer, MatchCardTable } from "../styles/content/MatchHistory.styled";
 import { CardTitle } from "../styles/Profile.styled";
 import { getDuration, getDate } from "../../../scripts/match";
-
-const variants = {
-	hidden: { opacity: 0, y: -10 },
-	visible: (i) => ({
-		opacity: 1,
-		y: 0,
-		transition: {
-		duration: 1,
-		},
-	}),
-};
 
 const MatchHistory = ({ matchArray }) => {
 	const [visibleRows, setVisibleRows] = useState([]);
@@ -61,20 +49,16 @@ const MatchHistory = ({ matchArray }) => {
 						</thead>
 						<tbody ref={containerRef}>
 							{matchArray.map((match, index) => (
-								<motion.tr
+								<tr
 									key={index}
-									initial="hidden"
-									animate={visibleRows.includes(index) ? "visible" : "hidden"}
-									custom={index}
-									variants={variants}
-									className="match-card"
+									className={`match-card ${visibleRows.includes(index) ? "visible" : ""}`}
 								>
 									<td>{match.playerB.displayName}</td>
 									<td>{getDuration(match.startedAt, match.finishedAt)}</td>
 									<td>{match.scores.playerA} - {match.scores.playerB}</td>
 									<td>{match.scores.playerA > match.scores.playerB ? "Victory" : "Defeat"}</td>
 									<td>{getDate(match.finishedAt)}</td>
-								</motion.tr>
+								</tr>
 							))}
 						</tbody>
 					</MatchCardTable>

@@ -49,9 +49,17 @@ export const MatchCardTable = styled.table`
 	}
 
 	& tbody tr {
+		opacity: 0;
+		transform: translateY(-10px);
+		transition: opacity 1s ease-out, transform 1s ease-out;
 		display: table;
 		width: 100%;
 		table-layout: fixed;
+	}
+
+	& tbody tr.visible {
+		opacity: 1;
+		transform: translateY(0);
 	}
 
 	& td {
