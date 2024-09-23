@@ -3,10 +3,12 @@ from rest_framework import serializers
 from .models import User, Match, Message, Conversation, Token, Relationship, UserSettings, StoreItem, Purchase, VerificationCode
 
 class UserSerializer(serializers.ModelSerializer):
+    status = serializers.JSONField()
+
     class Meta:
         model = User
         fields = ["userID", "username", "displayName", "email", "mfaToken", "lang",
-                  "avatarID", "bannerID", "bio", "oauthAccountID", "phone_number", "password", "flags", "money"]
+                  "avatarID", "bannerID", "bio", "oauthAccountID", "phone_number", "password", "flags", "money", "status"]
         read_only_fields = ["userID", "mfaToken", "oauthAccountID", "flags", "money"]
 
 class MatchSerializer(serializers.ModelSerializer):
