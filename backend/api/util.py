@@ -3,8 +3,13 @@ import base64
 import random
 import resend
 import os
+import httpx
+import logging
 
 from plivo import RestClient
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def generate_id(prefix: str) -> str:
     timestamp = str(int(time.time() * 1000))
@@ -112,14 +117,34 @@ def send_data_package_ready_email(to: str):
 def get_safe_profile(data: dict, me: bool, many: bool = False):
     if many:
         return [get_safe_profile(item, me, False) for item in data]
-    
+
     safe_data = data.copy()
     fields_to_remove = ['password', 'mfaToken', 'oauthAccountID']
-    
+
     if not me:
         fields_to_remove.extend(['email', 'phone_number', 'money'])
-    
+
     for field in fields_to_remove:
         safe_data.pop(field, None)
-    
+
     return safe_data
+
+async def get_user_id_from_token(token):
+    try:
+        url = "http://backend:8000/api/v1/users/@me/profile"
+        headers = {
+            "Authorization": f"Bearer {token}"
+        }
+
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url, headers=headers)
+
+        if response.status_code != 200:
+            raise Exception(f"Exited with bad status_code: {response.status_code} {response.reason}")
+
+        user_data = response.json()
+        return user_data["userID"]
+
+    except Exception as err:
+        logger.error(f"User from token failed: {err}")
+        return None
