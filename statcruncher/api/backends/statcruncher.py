@@ -28,9 +28,11 @@ class StatCruncher():
 		if start_date:
 			matches = [match for match in matches if match['finishedAt'] >= start_date]
 
+		played = len(matches)
+
+		# Filter matches where the user is the winner
 		matches = [match for match in matches if match['winnerID'] == user['userID']]
 
-		played = len(matches)
 		wins = len(matches)
 		losses = len(matches) - wins
 
