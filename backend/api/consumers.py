@@ -201,10 +201,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(
-            self.user_group_name,
-            self.channel_name
-        )
+        if (self.user_group_name):
+            await self.channel_layer.group_discard(
+                self.user_group_name,
+                self.channel_name
+            )
 
         logger.info(f"[{self.__class__.__name__}] User {self.user.username} disconnected")
 
@@ -459,7 +460,7 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def start_game(self):
         self.game_state = {
             'ball': {'x': self.terrain_width // 2, 'y': self.terrain_height // 2, 'dx': random.choice([-5, 5]), 'dy': random.choice([-5, 5])},
-            'paddles': {self.match.playerA['id']: self.terrain_height // 2 - self.paddle_height // 2, 
+            'paddles': {self.match.playerA['id']: self.terrain_height // 2 - self.paddle_height // 2,
                         self.match.playerB['id']: self.terrain_height // 2 - self.paddle_height // 2},
             'scores': {self.match.playerA['id']: 0, self.match.playerB['id']: 0}
         }
@@ -497,13 +498,13 @@ class GameConsumer(AsyncWebsocketConsumer):
             ball['dy'] *= -1
 
         # Check for collisions with paddles
-        if (ball['x'] <= self.paddle_offset + self.paddle_width and 
+        if (ball['x'] <= self.paddle_offset + self.paddle_width and
             paddles[self.match.playerA['id']] <= ball['y'] <= paddles[self.match.playerA['id']] + self.paddle_height) or \
-           (ball['x'] >= self.terrain_width - self.paddle_offset - self.paddle_width and 
+           (ball['x'] >= self.terrain_width - self.paddle_offset - self.paddle_width and
             paddles[self.match.playerB['id']] <= ball['y'] <= paddles[self.match.playerB['id']] + self.paddle_height):
             ball['dx'] *= -1
             asyncio.create_task(self.send_paddle_hit_event(self.match.playerA['id']))
-        elif (ball['x'] >= self.terrain_width - self.paddle_offset - self.paddle_width and 
+        elif (ball['x'] >= self.terrain_width - self.paddle_offset - self.paddle_width and
               paddles[self.match.playerB['id']] <= ball['y'] <= paddles[self.match.playerB['id']] + self.paddle_height):
             ball['dx'] *= -1
             asyncio.create_task(self.send_paddle_hit_event(self.match.playerB['id']))
@@ -523,7 +524,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             asyncio.create_task(self.end_game())
 
     def reset_ball(self):
-        self.game_state['ball'] = {'x': self.terrain_width // 2, 'y': self.terrain_height // 2, 
+        self.game_state['ball'] = {'x': self.terrain_width // 2, 'y': self.terrain_height // 2,
                                    'dx': random.choice([-5, 5]), 'dy': random.choice([-5, 5])}
 
     async def send_game_update(self):
