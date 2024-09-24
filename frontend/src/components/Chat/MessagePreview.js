@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import defaultAvatar from './img/default-avatar.jpg';
 import ProfilePicture from './styles/global/ProfilePicture.styled';
 import ScrollableComponent from './tools/ScrollableComponent';
+import { GetFriends } from '../../api/friends';
 
 const PreviewContainer = styled.div`
 	padding: 10px;
@@ -29,49 +30,82 @@ const MessageText = styled.span`
 	overflow: hidden;
 	text-overflow: ellipsis;
 	opacity: 0.5;
+	font-size: 0.9rem;
+`;
+
+const NoFriendsMessage = styled.div`
+	padding: 20px;
+	text-align: center;
+	color: #666;
+	font-size: 1.2rem;
 `;
 
 export const MessagePreview = ({ conversationsData, setFocusedConvID, handleSelectChat }) => {
 	const userID = localStorage.getItem('userID');
+	const [friends, setFriends] = useState([]);
+	const [loading, setLoading] = useState(true);
 
-	const handleSelectFriend = (convo) => {
-		console.log('Selected conversation: ', convo);
-		const other = convo.participants.find((participant) => participant.userID !== userID);
+	useEffect(() => {
+		const fetchFriends = async () => {
+			const friendsData = await GetFriends();
+			setFriends(friendsData);
+			setLoading(false);
+		};
+		fetchFriends();
+	}, []);
 
-		const senderID = convo.participants.find((participant) => participant.userID !== convo.receipientID).userID;
-		const sender = convo.participants.find((participant) => participant.userID === senderID);
-		console.log('Selected sender: ', sender);
-		setFocusedConvID(convo.conversationID);
-		handleSelectChat(other.username);
+	const handleSelectFriend = (friend) => {
+		handleSelectChat(friend.username);
+		setFocusedConvID(friend.userID);
 	};
 
+	const renderFriendPreview = (friend, index, message = 'Click to start a conversation') => (
+		<PreviewContainer key={index} onClick={() => handleSelectFriend(friend)}>
+			<ProfilePicture
+				src={defaultAvatar}
+				alt={`${friend.username}'s profile picture`}
+			/>
+			<MessageContent>
+				<Sender>{friend.username}</Sender>
+				<MessageText>{message}</MessageText>
+			</MessageContent>
+		</PreviewContainer>
+	);
+
+	// Loading state
+	if (loading) {
+		return <NoFriendsMessage>Loading friends...</NoFriendsMessage>;
+	}
+
+	// No friends found
+	if (friends.length === 0) {
+		return <NoFriendsMessage>No friends yet</NoFriendsMessage>;
+	}
+
+	// No conversations, but we have friends
+	if (conversationsData.length === 0) {
+		return (
+			<ScrollableComponent>
+				{friends.map((friend, index) =>
+					renderFriendPreview(friend, index)
+				)}
+			</ScrollableComponent>
+		);
+	}
+
+	// If there are conversations, render them
 	return (
 		<ScrollableComponent>
 			{conversationsData.map((convo, index) => {
+				const other = convo.participants.find(participant => participant.userID !== userID);
+
 				if (convo.messages.length === 0) {
-					const other = convo.participants.find((participant) => participant.userID === userID);
-					return (
-						<PreviewContainer key={index} onClick={() => handleSelectFriend(convo)}>
-							<ProfilePicture src={other.avatarID === 'default' ? '/images/default-profile.png' : other.avatarID} alt={`${other.username}'s profile picture`} />
-							<MessageContent>
-								<Sender>{other.username}</Sender>
-								<MessageText>No messages yet</MessageText>
-							</MessageContent>
-						</PreviewContainer>
-					)
+					return renderFriendPreview(other, index, 'No messages yet');
 				}
-				const other = convo.participants.find((participant) => participant.userID !== userID);
+
+				// Last message in conversation
 				const lastMessage = convo.messages[convo.messages.length - 1];
-				const lastMessageContent = lastMessage.content;
-				return (
-					<PreviewContainer key={index} onClick={() => handleSelectFriend(convo)}>
-						<ProfilePicture src={other.avatarID === 'default' ? defaultAvatar : other.avatarID} alt={`${other.username}'s profile picture`} />
-						<MessageContent>
-							<Sender>{other.username}</Sender>
-							<MessageText>{lastMessageContent}</MessageText>
-						</MessageContent>
-					</PreviewContainer>
-				)
+				return renderFriendPreview(other, index, lastMessage.content);
 			})}
 		</ScrollableComponent>
 	);
