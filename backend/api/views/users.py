@@ -291,6 +291,7 @@ class UserRelationshipsMe(APIView):
                 if existing_relationship.status == 0 and existing_relationship.userB == me.userID:
                     existing_relationship.status = 1
                     existing_relationship.save()
+                    self.notify_chat_websocket(existing_relationship)
                     return Response({"status": "Friend request accepted"}, status=status.HTTP_200_OK)
                 else:
                     return Response({"error": "Cannot directly set friendship status"}, status=status.HTTP_400_BAD_REQUEST)
@@ -322,17 +323,18 @@ class UserRelationshipsMe(APIView):
 
     def notify_chat_websocket(self, relationship):
         channel_layer = get_channel_layer()
-        group_name = f"chat_{relationship.userB}"
+        group_name = f"chat_{relationship.userB}" if relationship.status == 0 else f"chat_{relationship.userA}"
 
         try:
             async_to_sync(channel_layer.group_send)(
                 group_name,
                 {
                     "type": "friend_request",
-                    "message": {
+                    "status": "pending" if relationship.status == 0 else "accepted",
+                    "data": {
                         "type": "relationship",
                         "relationshipID": relationship.relationshipID,
-                        "from": relationship.userA,
+                        "from": relationship.userA if relationship.status == 0 else relationship.userB,
                     }
                 }
             )

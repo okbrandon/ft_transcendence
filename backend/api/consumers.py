@@ -271,7 +271,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def friend_request(self, event):
         await self.send(json.dumps({
             "type": "friend_request",
-            "message": event["message"]
+            "status": event["status"],
+            "data": event["data"]
         }))
 
     @sync_to_async
