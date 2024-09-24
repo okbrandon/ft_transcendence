@@ -34,9 +34,7 @@ const PrivateRoutes = () => {
 	}, [setIsLoggedIn]);
 
 	return (
-		isLoggedIn ? (
-			<Outlet/>
-		) : <Navigate to="/login"/>
+		isLoggedIn ? <Outlet/> : <Navigate to="/login"/>
 	);
 };
 

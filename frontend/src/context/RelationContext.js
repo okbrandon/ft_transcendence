@@ -141,6 +141,7 @@ const RelationProvider = ({ children }) => {
 					]
 				}
 			]);
+	const [updatedFriend, setUpdatedFriend] = useState(null);
 
 	useEffect(() => {
 		socketChat.current = new WebSocket(WS_CHAT_URL + localStorage.getItem('token'));
@@ -175,6 +176,9 @@ const RelationProvider = ({ children }) => {
 					activity: setActivity('HOME')
 				}));
 			}
+			else if (data.type === 'connection_event') {
+				setUpdatedFriend(data.user);
+			}
 		};
 		socketStatus.current.onerror = (error) => {
 			console.error('WebSocket for Status encountered an error:', error);
@@ -202,7 +206,7 @@ const RelationProvider = ({ children }) => {
 	}, [location.pathname]);
 
 	return (
-		<RelationContext.Provider value={{ conversations }}>
+		<RelationContext.Provider value={{ conversations, updatedFriend, setUpdatedFriend }}>
 			{ children }
 		</RelationContext.Provider>
 	);

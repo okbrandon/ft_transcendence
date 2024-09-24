@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
 	Header,
 	PageContainer,
@@ -10,9 +10,11 @@ import RequestsList from "./RequestsList";
 import FriendsList from "./FriendsList";
 import Loader from "../../styles/shared/Loader.styled";
 import { GetFriends, GetRequests } from "../../api/friends";
+import { RelationContext } from "../../context/RelationContext";
 
 const Friends = () => {
 	const [searchTerm, setSearchTerm] = useState("");
+	const { updatedFriend, setUpdatedFriend } = useContext(RelationContext);
 	const [friends, setFriends] = useState(null);
 	const [requests, setRequests] = useState(null);
 
@@ -31,7 +33,22 @@ const Friends = () => {
 		};
 
 		fetchFriendsAndRequests();
-	  }, []);
+	}, []);
+
+	useEffect(() => {
+		if (friends && updatedFriend) {
+			setFriends(prev => prev.map(f => {
+				if (f.username === updatedFriend.username) {
+					return {
+						...f,
+						status: updatedFriend.status,
+					};
+				}
+				return f;
+			}));
+			setUpdatedFriend(null);
+		}
+	}, [updatedFriend, setUpdatedFriend, friends]);
 
 	if (!friends || !requests) {
 		return (

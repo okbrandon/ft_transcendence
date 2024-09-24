@@ -12,12 +12,12 @@ const Root = () => {
 		<>
 			<NavBar/>
 			<main>
-				<Outlet/>
-				{ isLoggedIn && (
+				{ isLoggedIn ? (
 					<RelationProvider>
+						<Outlet/>
 						<Chat/>
 					</RelationProvider>
-				) }
+				) : <Outlet/> }
 			</main>
 			<Footer/>
 		</>
