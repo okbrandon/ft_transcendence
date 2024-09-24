@@ -4,7 +4,7 @@ import NavBar from '../Navigation/Navigation';
 import Footer from '../Footer/Footer';
 import { AuthContext } from '../../context/AuthContext';
 import Chat from '../Chat/Chat';
-import ChatProvider from '../../context/ChatContext';
+import RelationProvider from '../../context/RelationContext';
 
 const Root = () => {
 	const { isLoggedIn } = useContext(AuthContext);
@@ -14,9 +14,9 @@ const Root = () => {
 			<main>
 				<Outlet/>
 				{ isLoggedIn && (
-					<ChatProvider>
+					<RelationProvider>
 						<Chat/>
-					</ChatProvider>
+					</RelationProvider>
 				) }
 			</main>
 			<Footer/>

@@ -1,9 +1,7 @@
 # TODO
 ## today
-- remove framer.motion
 - Profile: `users/@me/stats` -> win / loss / ratio
 - Game interface
-- Profile: block button API
 - Friends: add (websocket)
 
 ## Waiting leader

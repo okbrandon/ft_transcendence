@@ -1,24 +1,25 @@
 import React, { createContext, useEffect, useRef, useState } from "react";
 import API from '../api/api';
 import { useLocation } from "react-router-dom";
+import logger from "../api/logger";
 
 const WS_CHAT_URL = 'ws://localhost:8888/ws/chat/?token=';
 const WS_STATUS_URL = 'ws://localhost:8888/ws/status/?token=';
 
-export const ChatContext = createContext({
+export const RelationContext = createContext({
 	conversations: [],
 });
 
 const setActivity = (location) => {
 	if (location === '/vs-ai' || location === '/vs-player') {
 		return 'QUEUEING';
-	} else if (location === 'solo-vs-ai') {
+	} else if (location === '/solo-vs-ai') {
 		return 'PLAYING_VS_AI';
 	}
 	return 'HOME';
 };
 
-const ChatProvider = ({ children }) => {
+const RelationProvider = ({ children }) => {
 	const location = useLocation();
 	const socketStatus = useRef(null);
 	const socketChat = useRef(null);
@@ -144,49 +145,67 @@ const ChatProvider = ({ children }) => {
 	useEffect(() => {
 		socketChat.current = new WebSocket(WS_CHAT_URL + localStorage.getItem('token'));
 		socketChat.current.onopen = () => {
-			console.log('WebSocket for Chat connection opened');
+			logger('WebSocket for Chat connection opened');
 		};
 		socketChat.current.onmessage = (event) => {
 			const data = JSON.parse(event.data);
-			console.log(data);
 			if (data.type === 'conversation_update') {
 				API.get('chat/conversations')
 					.then((response) => {
-						console.log('(ChatMessages); Harvested data: ', response.data.conversations);
 						setConversations(response.data.conversations);
 					})
 					.catch((error) => {
-						console.log('FAILED TO HARVEST: ', error);
+						console.error('Failed to update conversations:', error);
 					});
 			}
 		};
-	}, []);
+		socketChat.current.onerror = (error) => {
+			console.error('WebSocket for Chat encountered an error:', error);
+		};
 
-	useEffect(() => {
 		socketStatus.current = new WebSocket(WS_STATUS_URL + localStorage.getItem('token'));
 		socketStatus.current.onopen = () => {
-			console.log('WebSocket for Status connection opened');
+			logger('WebSocket for Status connection opened');
 		};
 		socketStatus.current.onmessage = (event) => {
 			const data = JSON.parse(event.data);
 			if (data.type === 'heartbeat') {
 				socketStatus.current.send(JSON.stringify({
 					type: 'heartbeat',
-					activity: setActivity(location.pathname)
+					activity: setActivity('HOME')
 				}));
 			}
 		};
+		socketStatus.current.onerror = (error) => {
+			console.error('WebSocket for Status encountered an error:', error);
+		};
 
 		return () => {
-			socketStatus.current.close();
+			if (socketChat.current) {
+				socketChat.current.close();
+				logger('WebSocket for Chat closed');
+			}
+			if (socketStatus.current) {
+				socketStatus.current.close();
+				logger('WebSocket for Status closed');
+			}
 		};
-	}, [location]);
+	}, []);
+
+	useEffect(() => {
+		if (socketStatus.current && socketStatus.current.readyState === WebSocket.OPEN) {
+			socketStatus.current.send(JSON.stringify({
+				type: 'heartbeat',
+				activity: setActivity(location.pathname)
+			}));
+		}
+	}, [location.pathname]);
 
 	return (
-		<ChatContext.Provider value={{ conversations }}>
+		<RelationContext.Provider value={{ conversations }}>
 			{ children }
-		</ChatContext.Provider>
+		</RelationContext.Provider>
 	);
 };
 
-export default ChatProvider;
+export default RelationProvider;
