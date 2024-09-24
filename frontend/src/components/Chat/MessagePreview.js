@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import defaultAvatar from './img/default-avatar.jpg';
+import ProfilePicture from './styles/global/ProfilePicture.styled';
 
 const PreviewContainer = styled.div`
 	padding: 10px;
@@ -9,13 +10,6 @@ const PreviewContainer = styled.div`
 	display: flex;
 	align-items: center;
 	cursor: pointer;
-`;
-
-const ProfilePicture = styled.img`
-	width: 40px;
-	height: 40px;
-	border-radius: 50%;
-	margin-right: 10px;
 `;
 
 const MessageContent = styled.div`
@@ -28,25 +22,34 @@ const Sender = styled.strong`
 `;
 
 const MessageText = styled.span`
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	opacity: 0.5;
 `;
 
-export const MessagePreview = ({ messages, onClick }) => {
-	const lastMessage = messages.length > 0 ? messages[messages.length - 1] : null;
+// export const MessagePreview = ({})
+
+export const MessagePreview = ({ conversationsData, onSelectChat }) => {
+	console.log('MessagePreview: conversationData ', conversationsData);
 
 	return (
-	<PreviewContainer onClick={onClick}>
-			{lastMessage ? (
-				<>
-					<ProfilePicture src={defaultAvatar} alt={`${lastMessage.sender}'s profile`} />
-					<MessageContent>
-						<Sender>{lastMessage.sender}</Sender>
-						<MessageText>{lastMessage.text}</MessageText>
-					</MessageContent>
-				</>
-			) : (
-				<div>No messages to display</div>
-			)}
-		</PreviewContainer>
+		<>
+			{conversationsData.map((convo, index) => {
+				let lastMessageContent = convo.messages[convo.messages.length - 1].content;
+				let sender = convo.messages[convo.messages.length - 1].sender;
+				return (
+					<PreviewContainer key={index} onClick={() => onSelectChat(convo)}>
+						<ProfilePicture src={defaultAvatar} alt={'profile'} />
+						<MessageContent>
+							<Sender>{sender.username}</Sender>
+							<MessageText>{lastMessageContent}</MessageText>
+						</MessageContent>
+					</PreviewContainer>
+				)
+			})}
+		</>
 	);
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
 	Header,
 	PageContainer,
@@ -8,25 +8,59 @@ import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import RequestsList from "./RequestsList";
 import FriendsList from "./FriendsList";
-
-const friends = [
-	{ id: 1, name: "Brandon", status: "online" },
-	{ id: 2, name: "Evan", status: "offline" },
-	{ id: 3, name: "Kian", status: "online" },
-	{ id: 4, name: "Alex", status: "offline" },
-	{ id: 5, name: "Jessica", status: "online" },
-	{ id: 6, name: "Sarah", status: "offline" },
-	{ id: 7, name: "John", status: "online" },
-	{ id: 8, name: "Jane", status: "online" },
-	{ id: 9, name: "Mathieu", status: "online" },
-];
+import Loader from "../../styles/shared/Loader.styled";
+import { GetFriends, GetRequests } from "../../api/friends";
+import { RelationContext } from "../../context/RelationContext";
 
 const Friends = () => {
 	const [searchTerm, setSearchTerm] = useState("");
+	const { updatedFriend, setUpdatedFriend } = useContext(RelationContext);
+	const [friends, setFriends] = useState(null);
+	const [requests, setRequests] = useState(null);
 
-	const filteredFriends = friends.filter(friend =>
-		friend.name.toLowerCase().includes(searchTerm.toLowerCase())
-	);
+	useEffect(() => {
+		const fetchFriendsAndRequests = async () => {
+			try {
+				const [friendsResponse, requestsResponse] = await Promise.all([
+					GetFriends(),
+					GetRequests(),
+				]);
+				setFriends(friendsResponse);
+				setRequests(requestsResponse);
+			} catch (err) {
+				console.error(err.response.data.error);
+			}
+		};
+
+		fetchFriendsAndRequests();
+	}, []);
+
+	useEffect(() => {
+		if (friends && updatedFriend) {
+			setFriends(prev => prev.map(f => {
+				if (f.username === updatedFriend.username) {
+					return {
+						...f,
+						status: updatedFriend.status,
+					};
+				}
+				return f;
+			}));
+			setUpdatedFriend(null);
+		}
+	}, [updatedFriend, setUpdatedFriend, friends]);
+
+	if (!friends || !requests) {
+		return (
+			<PageContainer>
+				<Loader/>
+			</PageContainer>
+		);
+	}
+
+	const filteredFriends = friends.filter(friend => {
+		return friend.displayName.toLowerCase().includes(searchTerm.toLowerCase());
+	});
 
 	return (
 		<PageContainer>
@@ -45,10 +79,10 @@ const Friends = () => {
 				className="mb-3"
 			>
 				<Tab eventKey="friends" title="Friends">
-					<FriendsList friends={filteredFriends}/>
+					<FriendsList friends={filteredFriends} setFriends={setFriends}/>
 				</Tab>
 				<Tab eventKey="requests" title="Requests">
-					<RequestsList/>
+					<RequestsList requests={requests} setRequests={setRequests} setFriends={setFriends}/>
 				</Tab>
 			</Tabs>
 		</PageContainer>

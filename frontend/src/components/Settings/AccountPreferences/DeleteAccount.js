@@ -10,6 +10,7 @@ import {
 	ModalButton
 } from '../styles/DeleteAccount.styled';
 import API from '../../../api/api';
+import logger from '../../../api/logger'
 
 const DeleteAccount = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,7 +21,7 @@ const DeleteAccount = () => {
 			.then(() => {
 				localStorage.removeItem('token');
 				localStorage.removeItem('refresh');
-				console.log('Account Deleted');
+				logger('Account Deleted');
 				navigate('/login');
 			})
 			.catch((err) => {

@@ -18,7 +18,6 @@ const refreshToken = async () => {
 	const newToken = response.data.access;
 
 	localStorage.setItem("token", newToken);
-	console.log('Token refreshed', newToken);
 	return newToken;
 };
 

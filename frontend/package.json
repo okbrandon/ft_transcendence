@@ -10,7 +10,6 @@
     "axios": "^1.7.3",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
-    "framer-motion": "^11.3.8",
     "jwt-decode": "^4.0.0",
     "react": "^18.3.1",
     "react-apexcharts": "^1.4.1",
@@ -20,6 +19,7 @@
     "react-qr-code": "^2.0.15",
     "react-router-dom": "^6.24.1",
     "react-scripts": "5.0.1",
+    "react-use-websocket": "^4.8.1",
     "styled-components": "^6.1.11",
     "web-vitals": "^2.1.4"
   },

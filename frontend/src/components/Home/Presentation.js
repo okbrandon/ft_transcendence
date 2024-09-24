@@ -7,39 +7,6 @@ import {
 	PongElementsBackground,
 } from "./styles/Presentation.styled";
 
-const slideInLeft = {
-	hidden: {
-		left: '-150px',
-		opacity: 0
-	},
-	visible: {
-		left: '-50px',
-		opacity: 1,
-		transition: { duration: 1 }
-	},
-	exit: {
-		left: '-150px',
-		opacity: 0
-	},
-};
-
-const slideInRight = {
-	hidden: {
-		right: "-50px",
-		opacity: 0
-	},
-	visible: {
-		right: '150px',
-		opacity: 1,
-		transition: { duration: 1 }
-	},
-	exit: {
-		right: "-50px",
-		opacity: 0
-	},
-}
-
-
 const Presentation = () => {
 	const [visible, setVisible] = useState(false);
 	const presentationRef = useRef(null);
@@ -65,16 +32,8 @@ const Presentation = () => {
 				tournaments.</p>
 			</PresentationContent>
 			<PongElementsBackground>
-				<PongPaddleBackground
-					initial="hidden"
-					animate={visible ? "visible" : "hidden"}
-					variants={slideInLeft}
-				/>
-				<PongBallBackground
-					initial="hidden"
-					animate={visible ? "visible" : "hidden"}
-					variants={slideInRight}
-				/>
+				<PongPaddleBackground className={visible ? "visible" : ""}/>
+				<PongBallBackground className={visible ? "visible" : ""}/>
 			</PongElementsBackground>
 		</PresentationSection>
 	);

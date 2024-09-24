@@ -32,10 +32,10 @@ const SignUp = () => {
 		} else {
 			ApiSignup(formData)
 				.then(() => {
-					navigate('/login')
+					navigate('/login/send-email-notification');
 				})
 				.catch((error) => {
-					setError(error);
+					setError(error.response.data.error);
 				});
 		}
 	};

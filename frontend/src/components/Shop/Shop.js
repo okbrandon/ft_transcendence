@@ -38,8 +38,6 @@ const Shop = () => {
 		}
 	};
 
-	console.log(user);
-
 	return (
 		<ShopContainer>
 			<Header>

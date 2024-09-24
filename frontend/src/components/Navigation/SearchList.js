@@ -11,12 +11,10 @@ const SearchList = ({ results, setInput, setResults }) => {
 		navigate(`/profile/${username}`);
 	};
 
-	console.log(results);
-
 	return (
 		<SearchListContainer>
-			{results.length ? results.map((profile, id) => (
-				<SearchListItem key={id} onClick={() => handleSelect(profile.username)}>
+			{results && results.length ? results.map((profile) => (
+				<SearchListItem key={profile.userID} onClick={() => handleSelect(profile.username)}>
 					<SearchListItemImage src={profile.avatarID} alt='profile picture'/>
 					<SearchListItemText>{profile.displayName}</SearchListItemText>
 				</SearchListItem>
