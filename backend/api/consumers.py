@@ -329,6 +329,13 @@ class GameConsumer(AsyncWebsocketConsumer):
         self.game_loop_task = None
         self.heartbeat_task = None
 
+        # Load configuration from environment variables
+        self.terrain_width = int(os.getenv('PONG_TERRAIN_WIDTH', 1200))
+        self.terrain_height = int(os.getenv('PONG_TERRAIN_HEIGHT', 750))
+        self.paddle_width = int(os.getenv('PONG_PADDLE_WIDTH', 10))
+        self.paddle_height = int(os.getenv('PONG_PADDLE_HEIGHT', 100))
+        self.paddle_offset = int(os.getenv('PONG_PADDLE_OFFSET', 20))
+
         if await self.validate_game_token():
             await self.accept()
             await self.send_json({
@@ -451,8 +458,9 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     async def start_game(self):
         self.game_state = {
-            'ball': {'x': 400, 'y': 300, 'dx': random.choice([-5, 5]), 'dy': random.choice([-5, 5])},
-            'paddles': {self.match.playerA['id']: 250, self.match.playerB['id']: 250},
+            'ball': {'x': self.terrain_width // 2, 'y': self.terrain_height // 2, 'dx': random.choice([-5, 5]), 'dy': random.choice([-5, 5])},
+            'paddles': {self.match.playerA['id']: self.terrain_height // 2 - self.paddle_height // 2, 
+                        self.match.playerB['id']: self.terrain_height // 2 - self.paddle_height // 2},
             'scores': {self.match.playerA['id']: 0, self.match.playerB['id']: 0}
         }
         await self.channel_layer.group_send(
@@ -485,15 +493,18 @@ class GameConsumer(AsyncWebsocketConsumer):
         ball['y'] += ball['dy']
 
         # Check for collisions with top and bottom walls
-        if ball['y'] <= 0 or ball['y'] >= 600:
+        if ball['y'] <= 0 or ball['y'] >= self.terrain_height:
             ball['dy'] *= -1
 
         # Check for collisions with paddles
-        if (ball['x'] <= 20 and paddles[self.match.playerA['id']] <= ball['y'] <= paddles[self.match.playerA['id']] + 100) or \
-           (ball['x'] >= 780 and paddles[self.match.playerB['id']] <= ball['y'] <= paddles[self.match.playerB['id']] + 100):
+        if (ball['x'] <= self.paddle_offset + self.paddle_width and 
+            paddles[self.match.playerA['id']] <= ball['y'] <= paddles[self.match.playerA['id']] + self.paddle_height) or \
+           (ball['x'] >= self.terrain_width - self.paddle_offset - self.paddle_width and 
+            paddles[self.match.playerB['id']] <= ball['y'] <= paddles[self.match.playerB['id']] + self.paddle_height):
             ball['dx'] *= -1
             asyncio.create_task(self.send_paddle_hit_event(self.match.playerA['id']))
-        elif (ball['x'] >= 780 and paddles[self.match.playerB['id']] <= ball['y'] <= paddles[self.match.playerB['id']] + 100):
+        elif (ball['x'] >= self.terrain_width - self.paddle_offset - self.paddle_width and 
+              paddles[self.match.playerB['id']] <= ball['y'] <= paddles[self.match.playerB['id']] + self.paddle_height):
             ball['dx'] *= -1
             asyncio.create_task(self.send_paddle_hit_event(self.match.playerB['id']))
 
@@ -502,7 +513,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             scores[self.match.playerB['id']] += 1
             self.reset_ball()
             asyncio.create_task(self.player_scored(self.match.playerB['id']))
-        elif ball['x'] >= 800:
+        elif ball['x'] >= self.terrain_width:
             scores[self.match.playerA['id']] += 1
             self.reset_ball()
             asyncio.create_task(self.player_scored(self.match.playerA['id']))
@@ -512,7 +523,8 @@ class GameConsumer(AsyncWebsocketConsumer):
             asyncio.create_task(self.end_game())
 
     def reset_ball(self):
-        self.game_state['ball'] = {'x': 400, 'y': 300, 'dx': random.choice([-5, 5]), 'dy': random.choice([-5, 5])}
+        self.game_state['ball'] = {'x': self.terrain_width // 2, 'y': self.terrain_height // 2, 
+                                   'dx': random.choice([-5, 5]), 'dy': random.choice([-5, 5])}
 
     async def send_game_update(self):
         await self.channel_layer.group_send(
@@ -528,7 +540,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             paddle_pos = self.game_state['paddles'][self.user.userID]
             if direction == 'up' and paddle_pos > 0:
                 self.game_state['paddles'][self.user.userID] -= 10
-            elif direction == 'down' and paddle_pos < 500:
+            elif direction == 'down' and paddle_pos < self.terrain_height - self.paddle_height:
                 self.game_state['paddles'][self.user.userID] += 10
 
     async def player_scored(self, scorer_id):
