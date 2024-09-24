@@ -1,9 +1,10 @@
 ## TODO - today
 
-- Make chat conversation possible.
+- Include auto scroll down
 - Include feature to block a profile.
 - Include button to redirect to profile of a player.
-- Add button to invite player for game tournament.
+- Add button to invite player for game tournament. (okbrandon)
+- Add profile next to chat bubbles
 
 - Send to `conversationID` the `content` with type `send_message`.
 - Cleanup file structure

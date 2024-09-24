@@ -35,16 +35,6 @@ const Chat = () => {
 		setMainWinArrow(!mainWinArrow);
 	}
 
-	// const handleSelectFriend = (convo) => {
-	// 	console.log('Selected conversation: ', convo);
-
-	// 	const senderID = convo.participants.find((participant) => participant.userID !== convo.receipientID).userID;
-	// 	const sender = convo.participants.find((participant) => participant.userID === senderID);
-	// 	console.log('Selected sender: ', sender);
-	// 	setConvoObject(convo);
-	// 	handleSelectChat(sender.username);
-	// };
-
 	return (
 		<ChatContainer>
 			<MainChatContainer $isMinimized={isOverlayMinimized}>
@@ -52,9 +42,11 @@ const Chat = () => {
 				{!isOverlayMinimized && (
 					<>
 						<SearchFriends/>
-						<ScrollableComponent>
-							<MessagePreview conversationsData={conversations} setFocusedConvID={setFocusedConvID} handleSelectChat={handleSelectChat}/>
-						</ScrollableComponent>
+						<MessagePreview
+							conversationsData={conversations}
+							setFocusedConvID={setFocusedConvID}
+							handleSelectChat={handleSelectChat}
+						/>
 					</>
 				)}
 			</MainChatContainer>

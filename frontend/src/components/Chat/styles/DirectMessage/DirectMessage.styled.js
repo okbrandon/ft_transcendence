@@ -21,6 +21,7 @@ export const ChatMessages = styled.div`
 	color: #fff;
 	display: ${({ $isMinimized }) => ($isMinimized ? 'none' : 'block')};
 	transition: display 0.3s ease;
+	max-height: 100%;
 `;
 
 export const ChatInputContainer = styled.div`
@@ -51,7 +52,6 @@ export const SenderBubble = styled.div`
 	padding: 10px;
 	margin: 5px;
 	max-width: 70%;
-	text-align: left;
 	display: block;
 	clear: both;
 	float: right;
@@ -64,7 +64,6 @@ export const HostBubble = styled.div`
 	padding: 10px;
 	margin: 5px;
 	max-width: 70%;
-	text-align: right;
 	display: block;
 	clear: both;
 	float: left;

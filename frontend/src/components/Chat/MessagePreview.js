@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import defaultAvatar from './img/default-avatar.jpg';
 import ProfilePicture from './styles/global/ProfilePicture.styled';
+import ScrollableComponent from './tools/ScrollableComponent';
 
 const PreviewContainer = styled.div`
 	padding: 10px;
@@ -45,7 +46,7 @@ export const MessagePreview = ({ conversationsData, setFocusedConvID, handleSele
 	};
 
 	return (
-		<>
+		<ScrollableComponent>
 			{conversationsData.map((convo, index) => {
 				if (convo.messages.length === 0) {
 					const other = convo.participants.find((participant) => participant.userID === userID);
@@ -64,7 +65,7 @@ export const MessagePreview = ({ conversationsData, setFocusedConvID, handleSele
 				const lastMessageContent = lastMessage.content;
 				return (
 					<PreviewContainer key={index} onClick={() => handleSelectFriend(convo)}>
-						<ProfilePicture src={other.avatarID === 'default' ? '/images/default-profile.png' : other.avatarID} alt={`${other.username}'s profile picture`} />
+						<ProfilePicture src={other.avatarID === 'default' ? defaultAvatar : other.avatarID} alt={`${other.username}'s profile picture`} />
 						<MessageContent>
 							<Sender>{other.username}</Sender>
 							<MessageText>{lastMessageContent}</MessageText>
@@ -72,6 +73,6 @@ export const MessagePreview = ({ conversationsData, setFocusedConvID, handleSele
 					</PreviewContainer>
 				)
 			})}
-		</>
+		</ScrollableComponent>
 	);
 };
