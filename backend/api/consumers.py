@@ -62,14 +62,13 @@ class StatusConsumer(AsyncWebsocketConsumer):
         logger.info(f"[{self.__class__.__name__}] User {self.user.username} connected")
 
     async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(
-            self.user_group_name,
-            self.channel_name
-        )
-
         if self.heartbeat_task and not self.heartbeat_task.done():
             self.heartbeat_task.cancel()
         if self.user is not None:
+            await self.channel_layer.group_discard(
+                self.user_group_name,
+                self.channel_name
+            )
             await self.update_user_status(False, None)
             await self.notify_friends_connection(self.user)
             logger.info(f"[{self.__class__.__name__}] User {self.user.username} disconnected")
@@ -159,7 +158,7 @@ class StatusConsumer(AsyncWebsocketConsumer):
             await self.send(json.dumps({
                 "type": "heartbeat"
             }))
-            await asyncio.sleep(8)
+            await asyncio.sleep(2)
 
 class ChatConsumer(AsyncWebsocketConsumer):
 
