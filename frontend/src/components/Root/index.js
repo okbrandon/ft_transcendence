@@ -7,19 +7,27 @@ import Chat from '../Chat/Chat';
 import RelationProvider from '../../context/RelationContext';
 
 const Root = () => {
-	const { isLoggedIn } = useContext(AuthContext);
+	const { isLoggedIn, showPersistentUI } = useContext(AuthContext);
 	return (
 		<>
-			<NavBar/>
-			<main>
-				{ isLoggedIn ? (
-					<RelationProvider>
-						<Outlet/>
-						<Chat/>
-					</RelationProvider>
-				) : <Outlet/> }
-			</main>
-			<Footer/>
+			{showPersistentUI ? (
+				<>
+					<NavBar/>
+					<main>
+						{ isLoggedIn ? (
+							<RelationProvider>
+								<Outlet/>
+								<Chat/>
+							</RelationProvider>
+						) : <Outlet/> }
+					</main>
+					<Footer/>
+				</>
+			) : (
+				<main>
+					<Outlet/>
+				</main>
+			)}
 		</>
 	);
 };
