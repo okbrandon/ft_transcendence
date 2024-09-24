@@ -14,7 +14,8 @@ from django.db.models import Q, Count
 from django.utils import timezone
 
 from .models import Conversation, User, Relationship, Match, GameToken
-from .util import generate_id, get_user_id_from_token
+from .util import generate_id, get_user_id_from_token, get_safe_profile
+from .serializers import UserSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +25,7 @@ class StatusConsumer(AsyncWebsocketConsumer):
         self.user = None
         self.heartbeat_task = None
         self.failed_heartbeats = 0
+        self.first_heartbeat = True
 
         query_string = self.scope['query_string'].decode()
         query_params = urllib.parse.parse_qs(query_string)
@@ -48,15 +50,28 @@ class StatusConsumer(AsyncWebsocketConsumer):
             await self.close()
             return
 
+        self.user_group_name = f"status_{self.user.userID}"
+
+        await self.channel_layer.group_add(
+            self.user_group_name,
+            self.channel_name
+        )
+
         await self.accept()
         self.heartbeat_task = asyncio.create_task(self.check_heartbeat())
         logger.info(f"[{self.__class__.__name__}] User {self.user.username} connected")
 
     async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(
+            self.user_group_name,
+            self.channel_name
+        )
+
         if self.heartbeat_task and not self.heartbeat_task.done():
             self.heartbeat_task.cancel()
         if self.user is not None:
             await self.update_user_status(False, None)
+            await self.notify_friends_connection(self.user)
             logger.info(f"[{self.__class__.__name__}] User {self.user.username} disconnected")
 
     async def receive(self, text_data):
@@ -79,6 +94,10 @@ class StatusConsumer(AsyncWebsocketConsumer):
                     self.failed_heartbeats = 0
                     await self.update_user_status(True, activity)
 
+                    if self.first_heartbeat:
+                        await self.notify_friends_connection(self.user)
+                        self.first_heartbeat = False
+
                 case _:
                     raise Exception(f"Invalid message type: {message_type}")
 
@@ -98,21 +117,52 @@ class StatusConsumer(AsyncWebsocketConsumer):
         }
         self.user.save()
 
+    async def notify_friends_connection(self, user):
+        friends = await sync_to_async(list)(
+            Relationship.objects.filter(
+                Q(userA=user.userID) | Q(userB=user.userID),
+                status=1
+            )
+        )
+
+        for relationship in friends:
+            friend_id = relationship.userA if relationship.userA != user.userID else relationship.userB
+
+            try:
+                friend = await sync_to_async(User.objects.get)(userID=friend_id)
+            except User.DoesNotExist:
+                continue
+
+            await self.channel_layer.group_send(
+                f"status_{friend.userID}",
+                {
+                    "type": "connection_event",
+                    "user": get_safe_profile(UserSerializer(user).data, me=False)
+                }
+            )
+
+    async def connection_event(self, event):
+        await self.send(json.dumps({
+            "type": "connection_event",
+            "user": event["user"]
+        }))
+
     async def check_heartbeat(self):
         while True:
-            await asyncio.sleep(4)
             self.failed_heartbeats += 1
 
             if self.failed_heartbeats >= 3:
                 logger.info(f"[{self.__class__.__name__}] User {self.user.username} missed 3 heartbeats, closing connection")
-                await self.close()
+                await self.close(code=4000)
                 break
 
             await self.send(json.dumps({
                 "type": "heartbeat"
             }))
+            await asyncio.sleep(8)
 
 class ChatConsumer(AsyncWebsocketConsumer):
+
 
     async def connect(self):
         query_string = self.scope['query_string'].decode()
