@@ -8,7 +8,6 @@ const AuthProvider = ({ children }) => {
 	const [isLoggedIn, setIsLoggedIn] = useState(() => isValidToken());
 	const [user, setUser] = useState(null);
 	const [loading, setLoading] = useState(true);
-	const [showPersistentUI, setShowPersistentUI] = useState(true);
 
 	useEffect(() => {
 		if (isLoggedIn) {
@@ -35,8 +34,6 @@ const AuthProvider = ({ children }) => {
 			user,
 			setUser,
 			loading,
-			showPersistentUI,
-			setShowPersistentUI
 		}}>
 			{ children }
 		</AuthContext.Provider>

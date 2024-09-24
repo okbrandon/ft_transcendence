@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../context/AuthContext';
 import {
 	GameContainer,
 	GameSeparator,
@@ -17,7 +16,6 @@ import {
 
 const Game = () => {
 	const navigate = useNavigate();
-	const { setShowPersistentUI } = useContext(AuthContext);
 	const [leftBarPressed, setLeftBarPressed] = useState({up: false, down: false});
 	const [rightBarPressed, setRightBarPressed] = useState({up: false, down: false});
 	const [leftPaddleTop, setLeftBarTop] = useState(247);
@@ -26,10 +24,6 @@ const Game = () => {
 	const [ballY, setBallY] = useState(400);
 	const [leftScore, setLeftScore] = useState(0);
 	const [rightScore, setRightScore] = useState(0);
-
-	useEffect(() => {
-		setShowPersistentUI(false);
-	}, [setShowPersistentUI]);
 
 	useEffect(() => {
 		const handleKeydown = (event) => {

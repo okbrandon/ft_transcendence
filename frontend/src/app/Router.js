@@ -28,12 +28,11 @@ import Settings from '../components/Settings/Settings';
 import GameProvider from '../context/GameContext';
 
 const PrivateRoutes = () => {
-	const { isLoggedIn, setIsLoggedIn, setShowPersistentUI } = useContext(AuthContext);
+	const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
 
 	useEffect(() => {
 		setIsLoggedIn(isValidToken());
 	}, [setIsLoggedIn]);
-	setShowPersistentUI(true);
 	return (
 		isLoggedIn ? <Outlet/> : <Navigate to="/login"/>
 	);

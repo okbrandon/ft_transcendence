@@ -1,7 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Spinner from "react-bootstrap/Spinner";
-import { AuthContext } from "../../context/AuthContext";
 import {
 	ButtonsContainer,
 	PageContainer,
@@ -11,13 +10,8 @@ import {
 
 const Match = ({ roomId }) => {
 	const navigate = useNavigate();
-	const { setShowPersistentUI } = useContext(AuthContext);
 	const [player1, setPlayer1] = useState({ displayName: "TestPlayer1" });
 	const [player2, setPlayer2] = useState(null);
-
-	useEffect(() => {
-		setShowPersistentUI(true);
-	}, [setShowPersistentUI]);
 
 	return (
 		<PageContainer>
