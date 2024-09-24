@@ -163,8 +163,9 @@ class StatusConsumer(AsyncWebsocketConsumer):
 
 class ChatConsumer(AsyncWebsocketConsumer):
 
-
     async def connect(self):
+        self.user = None
+
         query_string = self.scope['query_string'].decode()
         query_params = urllib.parse.parse_qs(query_string)
         token = query_params.get('token', [None])[0]
@@ -201,13 +202,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
-        if (self.user_group_name):
+        if self.user:
             await self.channel_layer.group_discard(
                 self.user_group_name,
                 self.channel_name
             )
 
-        logger.info(f"[{self.__class__.__name__}] User {self.user.username} disconnected")
+            logger.info(f"[{self.__class__.__name__}] User {self.user.username} disconnected")
 
     async def receive(self, text_data):
         try:
