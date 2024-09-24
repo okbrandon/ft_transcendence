@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import FormControl from 'react-bootstrap/FormControl';
+import debounce from 'lodash/debounce';
 import SearchList from './SearchList';
 import { SearchBarContainer } from './styles/Navigation.styled';
 import { GetUsers } from '../../api/user';
@@ -20,23 +21,33 @@ const SearchBar = () => {
 		return () => {
 			document.removeEventListener('mousedown', handleClickOutside);
 		}
-	}, [])
+	}, []);
 
-	const handleInput = (event) => {
-		const newInput = event.target.value;
-		setInput(newInput);
-		if (newInput) {
-			GetUsers(newInput)
-				.then(users => {
+	useEffect(() => {
+		const debouncedSearch = debounce((query) => {
+			if (query) {
+				GetUsers(query)
+				.then((users) => {
 					setResults(users);
 				})
-				.catch(err => {
+				.catch((err) => {
 					console.error(err?.response?.data?.error || 'An error occurred');
 				});
-		} else {
-			setResults(null);
-		}
-	}
+			} else {
+				setResults(null);
+			}
+		}, 500);
+
+		debouncedSearch(input);
+
+		return () => {
+			debouncedSearch.cancel();
+		};
+	}, [input]);
+
+	const handleInput = event => {
+		setInput(event.target.value);
+	};
 
 	const handleSubmit = e => {
 		e.preventDefault();
