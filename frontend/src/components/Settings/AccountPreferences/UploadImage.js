@@ -11,8 +11,8 @@ import { GetImage } from '../../../api/user';
 import PongButton from '../../../styles/shared/PongButton.styled';
 
 const ImageSettings = ({ user, setFormData, handleChange }) => {
-	const [profileImage, setProfileImage] = useState(user.avatarID === 'default' ? '' : user.avatarID);
-	const [bannerImage, setBannerImage] = useState(user.bannerID || '');
+	const [profileImage, setProfileImage] = useState(user.avatarID);
+	const [bannerImage, setBannerImage] = useState(user.bannerID);
 	const [error, setError] = useState('');
 	const profilePictureRef = useRef(null);
 	const bannerPictureRef = useRef(null);
@@ -37,12 +37,9 @@ const ImageSettings = ({ user, setFormData, handleChange }) => {
 
 	const handleRemoveImage = (type, setImage, inputRef) => {
 		setImage(null);
-		setFormData(data => {
-			const updatedData = { ...data };
-			delete updatedData[type];
-			return updatedData;
-		});
-
+		setFormData(data => (
+			{ ...data, [type]: null }
+		))
 		if (inputRef.current) {
 			inputRef.current.value = '';
 		}

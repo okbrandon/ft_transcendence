@@ -1,6 +1,7 @@
 # TODO
 ## today
 - Profile: `users/@me/stats` -> win / loss / ratio
+- Profile: when A friend requests B and B also friend requests A then status: 1
 - Game interface
 - Friends: add (websocket)
 

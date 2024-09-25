@@ -56,7 +56,7 @@ const Banner = () => {
 					/>
 				</BannerPaddlesContainer>
 				<h1>Wiggle your Paddle!</h1>
-				<PlayButton variant="light" onClick={() => navigate("/solo-vs-ai")}>
+				<PlayButton variant="light" onClick={() => navigate("/game")}>
 					PLAY NOW
 				</PlayButton>
 			</BannerSection>

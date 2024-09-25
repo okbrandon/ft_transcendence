@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../context/AuthContext';
 import {
 	GameContainer,
 	GameSeparator,
@@ -14,10 +13,10 @@ import {
 	Score,
 	ScoreContainer,
 } from './styles/Game.styled';
+import Spinner from 'react-bootstrap/Spinner';
 
 const Game = () => {
 	const navigate = useNavigate();
-	const { setShowPersistentUI } = useContext(AuthContext);
 	const [leftBarPressed, setLeftBarPressed] = useState({up: false, down: false});
 	const [rightBarPressed, setRightBarPressed] = useState({up: false, down: false});
 	const [leftPaddleTop, setLeftBarTop] = useState(247);
@@ -26,10 +25,6 @@ const Game = () => {
 	const [ballY, setBallY] = useState(400);
 	const [leftScore, setLeftScore] = useState(0);
 	const [rightScore, setRightScore] = useState(0);
-
-	useEffect(() => {
-		setShowPersistentUI(false);
-	}, [setShowPersistentUI]);
 
 	useEffect(() => {
 		const handleKeydown = (event) => {
@@ -94,8 +89,10 @@ const Game = () => {
 				</Profile>
 				<p>Press <b>Q</b> to quit game</p>
 				<Profile>
-					<ProfileImage src='/images/default-profile.png' alt='Profile Picture'/>
-					<ProfileName>Player 2</ProfileName>
+					{/* <ProfileImage src='/images/default-profile.png' alt='Profile Picture'/>
+					<ProfileName>Player 2</ProfileName> */}
+					<p>Waiting for player</p>
+					<Spinner animation='border'/>
 				</Profile>
 			</ProfilesContainer>
 			<GameContainer>

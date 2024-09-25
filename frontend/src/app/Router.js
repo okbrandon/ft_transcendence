@@ -21,19 +21,17 @@ import PlayMenu from '../components/Game/PlayMenu';
 import Shop from '../components/Shop/Shop';
 import Tournament from '../components/Game/Tournament/Tournament';
 import JoinTournament from '../components/Game/Tournament/JoinTournament';
-import Match from '../components/Game/Match';
 import Friends from '../components/Friends/Friends';
 import PageNotFound from '../components/PageNotFound/PageNotFound';
 import Settings from '../components/Settings/Settings';
 import GameProvider from '../context/GameContext';
 
 const PrivateRoutes = () => {
-	const { isLoggedIn, setIsLoggedIn, setShowPersistentUI } = useContext(AuthContext);
+	const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
 
 	useEffect(() => {
 		setIsLoggedIn(isValidToken());
 	}, [setIsLoggedIn]);
-	setShowPersistentUI(true);
 	return (
 		isLoggedIn ? <Outlet/> : <Navigate to="/login"/>
 	);
@@ -62,7 +60,6 @@ const Router = createBrowserRouter(createRoutesFromElements(
 				<Route path="tournament" element={ <Tournament/> }/>
 				<Route path="tournament-room" element={ <JoinTournament/> }/> {/* ⚒️ testing... */}
 				<Route element={ <GameRoutes/> }>
-					<Route path="matchmaking" element={ <Match/> }/>
 					<Route path="game" element={ <Game/> }/>
 				</Route>
 				<Route path="leaderboard" element={ <Leaderboard/> }/>
