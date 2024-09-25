@@ -1,13 +1,9 @@
 # TODO
 ## today
+- password bombastic side eye
+- langue -> localstorage key = i18nextLng fr-FR / en-US / es-ES
 - Profile: `users/@me/stats` -> win / loss / ratio
-- Profile: when A friend requests B and B also friend requests A then status: 1
-- Game interface
 - Friends: add (websocket)
-
-## Waiting leader
-- Tell Leader to fix the problem with setting the phone_number back to null
-- Ask for the code you receive when setting a number
 
 ## Secondary
 - Change colors of logout button

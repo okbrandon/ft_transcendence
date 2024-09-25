@@ -1,30 +1,7 @@
-import React, { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import React from "react";
 import { LanguageDropdownButton } from "./styles/LanguageDropdown.styled";
-import API from "../../api/api";
 
-const LanguageDropdown = () => {
-	const { user, setUser } = useContext(AuthContext);
-	const [language, setLanguage] = useState("en");
-
-	useEffect(() => {
-		if (user) setLanguage(user.lang);
-	}, [user]);
-
-	const handleChange = (e) => {
-		setLanguage(e.target.value);
-		API.patch('/users/@me/profile', { lang: e.target.value })
-			.then(() => {
-				setUser(prev => ({
-					...prev,
-					lang: e.target.value,
-				}));
-			})
-			.catch(err => {
-				console.error(err.response?.data?.error || 'An error occurred');
-			});
-	};
-
+const LanguageDropdown = ({ handleChange, language }) => {
 	return (
 		<LanguageDropdownButton
 			id="nav-lang"
