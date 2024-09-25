@@ -18,8 +18,8 @@ import { checkAccountPreferencesRestrictions } from '../../../scripts/restrictio
 import { AuthContext } from '../../../context/AuthContext';
 import PongButton from '../../../styles/shared/PongButton.styled';
 
-const AccountPreferences = ({ user }) => {
-	const { setUser } = useContext(AuthContext);
+const AccountPreferences = () => {
+	const { user, setUser } = useContext(AuthContext);
 	const [formData, setFormData] = useState({
 		username: user.username,
 		displayName: user.displayName === user.username ? '' : user.displayName,

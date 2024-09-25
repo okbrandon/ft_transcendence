@@ -15,7 +15,7 @@ import { AuthContext } from '../../context/AuthContext';
 import Loader from '../../styles/shared/Loader.styled';
 
 const Settings = () => {
-	const { user, loading } = useContext(AuthContext);
+	const { loading } = useContext(AuthContext);
 	const [activeSection, setActiveSection] = useState("account");
 	const navigate = useNavigate();
 
@@ -61,8 +61,8 @@ const Settings = () => {
 			</SideBar>
 
 			<ContentArea>
-				{activeSection === "account" && <AccountPreferences user={user}/>}
-				{activeSection === "security" && <Security user={user}/>}
+				{activeSection === "account" && <AccountPreferences/>}
+				{activeSection === "security" && <Security/>}
 				{activeSection === "visibility" && <Visibility/>}
 				{activeSection === "privacy" && <Privacy/>}
 			</ContentArea>

@@ -8,7 +8,6 @@ import {
 	SuccessMessage
 } from "../styles/Settings.styled";
 import API from "../../../api/api";
-import logger from "../../../api/logger";
 import { checkSecurityRestrictions } from "../../../scripts/restrictions";
 import { AuthContext } from "../../../context/AuthContext";
 import { GetUser } from "../../../api/user";
@@ -16,8 +15,8 @@ import TwoFactorAuth from "./TwoFactorAuth";
 import TwoFactorAuthPassword from "./TwoFactorAuthSecurity";
 import PongButton from "../../../styles/shared/PongButton.styled";
 
-const Security = ({ user }) => {
-	const { setUser } = useContext(AuthContext);
+const Security = () => {
+	const { user, setUser } = useContext(AuthContext);
 	const [formData, setFormData] = useState({
 		email: user.email,
 		phone_number: user.phone_number || '',
