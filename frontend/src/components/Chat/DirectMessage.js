@@ -6,12 +6,37 @@ import { ChatContext } from '../../context/ChatContext.js';
 
 import DirectMessageContainer, {
 	ChatMessages,
+	NewConversationMessage,
 	SenderBubble,
 	HostBubble,
 	ChatInputContainer,
 	ChatInput,
 	ActionButtonContainer
 } from './styles/DirectMessage/DirectMessage.styled.js';
+
+const DisplayChatMessages = ({ $isMinimized, realConvo, userID, messagesEndRef, otherUser }) => {
+	if (!realConvo || realConvo.messages === null) {
+		return (
+			<ChatMessages $isMinimized={$isMinimized}>
+				<NewConversationMessage>
+					It's your first time chatting with {otherUser}. Say hi, don't be shy!
+				</NewConversationMessage>
+				<div ref={messagesEndRef} />
+			</ChatMessages>
+		);
+	} else {
+		<ChatMessages $isMinimized={$isMinimized}>
+			{realConvo.messages.map((message, index) => {
+				return message.sender.userID === userID ? (
+					<SenderBubble key={index}>{message.content}</SenderBubble>
+				) : (
+					<HostBubble key={index}>{message.content}</HostBubble>
+				);
+			})}
+			<div ref={messagesEndRef} />
+		</ChatMessages>;
+	}
+};
 
 export const DirectMessage = ({ conversationID, conversations, username, onClose, $isMinimized, toggleMinimization, arrowState }) => {
 	const userID = localStorage.getItem('userID');
@@ -30,8 +55,6 @@ export const DirectMessage = ({ conversationID, conversations, username, onClose
 			messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
 		}
 	}, [realConvo?.messages]);
-
-	if (!realConvo) return null;
 
 	const handleMessage = () => {
 		if (content.trim() === '') return;
@@ -56,16 +79,13 @@ export const DirectMessage = ({ conversationID, conversations, username, onClose
 				</ActionButtonContainer>
 			</Header>
 
-			<ChatMessages $isMinimized={$isMinimized}>
-				{realConvo.messages.map((message, index) => {
-					return message.sender.userID === userID ? (
-						<SenderBubble key={index}>{message.content}</SenderBubble>
-					) : (
-						<HostBubble key={index}>{message.content}</HostBubble>
-					);
-				})}
-				<div ref={messagesEndRef} />
-			</ChatMessages>
+			<DisplayChatMessages
+				$isMinimized={$isMinimized}
+				realConvo={realConvo}
+				userID={userID}
+				messagesEndRef={messagesEndRef}
+				otherUser={username}
+			/>
 
 			<ChatInputContainer $isMinimized={$isMinimized}>
 				<ChatInput

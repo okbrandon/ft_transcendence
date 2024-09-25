@@ -44,6 +44,7 @@ export const MessagePreview = ({ conversationsData, setFocusedConvID, handleSele
 	const userID = localStorage.getItem('userID');
 	const [friends, setFriends] = useState([]);
 	const [loading, setLoading] = useState(true);
+	console.log(conversationsData);
 
 	useEffect(() => {
 		const fetchFriends = async () => {
@@ -56,7 +57,16 @@ export const MessagePreview = ({ conversationsData, setFocusedConvID, handleSele
 
 	const handleSelectFriend = (friend) => {
 		handleSelectChat(friend.username);
-		setFocusedConvID(friend.userID);
+		if (conversationsData.length === 0) {
+			setFocusedConvID(null);
+			return;
+		} else {
+			const convo = conversationsData.find((convo) => {
+				const other = convo.participants.find(participant => participant.userID !== userID);
+				return other.username === friend.username;
+			});
+			setFocusedConvID(convo);
+		}
 	};
 
 	const renderFriendPreview = (friend, index, message = 'Click to start a conversation') => (

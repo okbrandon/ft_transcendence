@@ -1,16 +1,5 @@
 ## TODO - today
 
-### Problematic
-- Chat Preview:
-	- Display Correct Username
-	- Interaction with ChatPreview (onClick event) should open DirectMessage Window
-
-
-- Implement backend into chat
-- Cleanup file structure
-- Add styling into chat
-	- Chat Bubbbles
-
 ### structure conversations chat
 
 {
@@ -57,4 +46,4 @@
 
 ## LeaderBoard
 
-- endpoint: 
+- endpoint:

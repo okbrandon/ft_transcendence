@@ -21,7 +21,7 @@ export const ChatMessages = styled.div`
 	color: #fff;
 	display: ${({ $isMinimized }) => ($isMinimized ? 'none' : 'block')};
 	transition: display 0.3s ease;
-	max-height: 100%;
+	height: 100%;
 `;
 
 export const ChatInputContainer = styled.div`
@@ -43,6 +43,30 @@ export const ActionButtonContainer = styled.div`
 	display: flex;
 	align-items: flex-start;
 	justify-content: center;
+`;
+
+export const NewConversationMessage = styled.div`
+	padding: 20px;
+	text-align: center;
+	animation: pulse 1s infinite linear;
+	background-color: #6a0dad;
+	border-radius: 20px;
+	font-weight: bold;
+	animation-duration: 4s;
+
+	@keyframes pulse {
+		0% {
+			opacity: 0.5;
+		}
+		50% {
+			opacity: 1;
+		}
+		100% {
+			opacity: 0.5;
+		}
+	}
+
+	font-size: 0.9rem;
 `;
 
 export const SenderBubble = styled.div`
