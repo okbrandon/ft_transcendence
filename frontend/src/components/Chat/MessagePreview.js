@@ -40,7 +40,7 @@ const NoFriendsMessage = styled.div`
 	font-size: 1.2rem;
 `;
 
-export const MessagePreview = ({ conversationsData, setFocusedConvID, handleSelectChat }) => {
+export const MessagePreview = ({ conversationsData, handleSelectChat }) => {
 	const userID = localStorage.getItem('userID');
 	const [friends, setFriends] = useState([]);
 	const [loading, setLoading] = useState(true);
@@ -55,17 +55,12 @@ export const MessagePreview = ({ conversationsData, setFocusedConvID, handleSele
 	}, []);
 
 	const handleSelectFriend = (friend) => {
-		handleSelectChat(friend.username);
-		if (conversationsData.length === 0) {
-			setFocusedConvID(null);
-			return;
-		} else {
-			const convo = conversationsData.find((convo) => {
-				const other = convo.participants.find(participant => participant.userID !== userID);
-				return other.username === friend.username;
-			});
-			setFocusedConvID(convo.conversationID);
-		}
+		const convo = conversationsData.find((convo) => {
+			const other = convo.participants.find(participant => participant.userID !== userID);
+			return other.username === friend.username;
+		});
+
+		  handleSelectChat(friend.username, convo ? convo.conversationID : null);
 	};
 
 	const renderFriendPreview = (friend, index, message = 'Click to start a conversation') => (
@@ -81,17 +76,14 @@ export const MessagePreview = ({ conversationsData, setFocusedConvID, handleSele
 		</PreviewContainer>
 	);
 
-	// Loading state
 	if (loading) {
 		return <NoFriendsMessage>Loading friends...</NoFriendsMessage>;
 	}
 
-	// No friends found
 	if (friends.length === 0) {
 		return <NoFriendsMessage>No friends yet</NoFriendsMessage>;
 	}
 
-	// No conversations, but we have friends
 	if (conversationsData.length === 0) {
 		return (
 			<ScrollableComponent>
@@ -102,7 +94,6 @@ export const MessagePreview = ({ conversationsData, setFocusedConvID, handleSele
 		);
 	}
 
-	// If there are conversations, render them
 	return (
 		<ScrollableComponent>
 			{conversationsData.map((convo, index) => {
@@ -112,7 +103,6 @@ export const MessagePreview = ({ conversationsData, setFocusedConvID, handleSele
 					return renderFriendPreview(other, index, 'No messages yet');
 				}
 
-				// Last message in conversation
 				const lastMessage = convo.messages[convo.messages.length - 1];
 				return renderFriendPreview(other, index, lastMessage.content);
 			})}

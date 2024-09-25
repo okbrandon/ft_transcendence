@@ -8,7 +8,7 @@ const DirectMessageContainer = styled.div`
 	position: relative !important;
 	margin-right: 1%;
 	max-width: 320px;
-	height: ${({ $isMinimized }) => ($isMinimized ? '45px' : '500px')};
+	height: ${({ $isOpen, $isMinimized }) => $isOpen ? ($isMinimized ? '45px' : '500px') : '45px'};
 	transition: height 0.3s ease;
 	border: 1px solid #ddd;
 	border-radius: 10px 10px 0 0;

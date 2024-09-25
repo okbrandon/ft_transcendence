@@ -37,17 +37,21 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 	}
 };
 
-export const DirectMessage = ({ conversationID, conversations, username, onClose, $isMinimized, toggleMinimization, arrowState }) => {
+export const DirectMessage = ({
+	isOpen,
+	conversationID,
+	conversations,
+	username,
+	onClose,
+	isMinimized,
+	toggleMinimization,
+}) => {
 	const userID = localStorage.getItem('userID');
-
 	const [content, setContent] = useState('');
 	const { sendMessage } = useContext(RelationContext);
-	const [realConvo, setRealConvo] = useState(null);
 	const messagesEndRef = useRef(null);
 
-	useEffect(() => {
-		setRealConvo(conversations.find(c => c.conversationID === conversationID));
-	}, [conversations, conversationID]);
+	const realConvo = conversations.find(c => c.conversationID === conversationID);
 
 	useEffect(() => {
 		if (messagesEndRef.current) {
@@ -59,47 +63,49 @@ export const DirectMessage = ({ conversationID, conversations, username, onClose
 	const handleMessage = () => {
 		if (content.trim() === '') return;
 
-		const messageData = {
+		sendMessage(JSON.stringify({
 			type: 'send_message',
-			conversationID: realConvo.conversationID,
+			conversationID: conversationID,
 			content: content,
-		};
-
-		sendMessage(JSON.stringify(messageData));
+		}))
 		setContent('');
 	};
 
 	return (
-		<DirectMessageContainer $isMinimized={$isMinimized}>
+		<DirectMessageContainer $isOpen={isOpen} $isMinimized={isMinimized}>
 			<Header onClick={toggleMinimization}>
 				{username}
 				<ActionButtonContainer>
-					<Arrow ArrowAnimate={arrowState} />
+					<Arrow ArrowAnimate={!isMinimized} />
 					<CloseButton variant='white' onClick={onClose} />
 				</ActionButtonContainer>
 			</Header>
 
-			<ChatMessages $isMinimized={$isMinimized}>
-				<DisplayChatMessages
-					realConvo={realConvo}
-					userID={userID}
-					messagesEndRef={messagesEndRef}
-					otherUser={username}
-				/>
-			</ChatMessages>
+			{isOpen && !isMinimized && (
+				<>
+					<ChatMessages>
+						<DisplayChatMessages
+							realConvo={realConvo}
+							userID={userID}
+							messagesEndRef={messagesEndRef}
+							otherUser={username}
+						/>
+					</ChatMessages>
 
-			<ChatInputContainer $isMinimized={$isMinimized}>
-				<ChatInput
-					placeholder="Type a message..."
-					value={content}
-					onChange={e => setContent(e.target.value)}
-					onKeyDown={e => {
-						if (e.key === 'Enter') {
-							handleMessage();
-						}
-					}}
-				/>
-			</ChatInputContainer>
+					<ChatInputContainer>
+						<ChatInput
+							placeholder="Type a message..."
+							value={content}
+							onChange={e => setContent(e.target.value)}
+							onKeyDown={e => {
+								if (e.key === 'Enter') {
+									handleMessage();
+								}
+							}}
+						/>
+					</ChatInputContainer>
+				</>
+			)}
 		</DirectMessageContainer>
 	);
 };

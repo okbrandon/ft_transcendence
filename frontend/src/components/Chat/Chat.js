@@ -8,28 +8,36 @@ import ChatHeader from './ChatHeader.js';
 
 const Chat = () => {
 	const { conversations } = useContext(RelationContext);
-
-	console.log('at Chat.js, conversations:', conversations);
-
-	const [DMWindow, setDMWindow] = useState(null);
-	const [$isMinimized, setIsMinimized] = useState(true);
 	const [isOverlayMinimized, setIsOverlayMinimized] = useState(true);
-	const [DMWinArrow, setDMWinArrow] = useState(false);
 	const [mainWinArrow, setMainWinArrow] = useState(false);
-	const [focusedConvID, setFocusedConvID] = useState(null);
 
-	const handleSelectChat = (username) => {
-		setDMWindow(username);
-	}
+	const [directMessage, setDirectMessage] = useState({
+		isOpen: false,
+		isMinimized: false,
+		username: null,
+		conversationID: null,
+	});
+
+	const handleSelectChat = (username, conversationID) => {
+		setDirectMessage({
+			isOpen: true,
+			isMinimized: false,
+			username,
+			conversationID,
+		});
+	};
 
 	const handleCloseChat = () => {
-		setDMWindow(null);
+		setDirectMessage(prev => ({...prev, isOpen: false, isMinimized: false}));
 	}
 
-	const DMWinMinimizer = () => {
-		setIsMinimized(!$isMinimized);
-		setDMWinArrow(!DMWinArrow);
-	}
+	const toggleDMMinimization = () => {
+		setDirectMessage(prev => ({
+			...prev,
+			isOpen: true,
+			isMinimized: !prev.isMinimized,
+		}));
+	};
 
 	const mainMinimizer = () => {
 		setIsOverlayMinimized(!isOverlayMinimized);
@@ -45,21 +53,17 @@ const Chat = () => {
 						<SearchFriends/>
 						<MessagePreview
 							conversationsData={conversations}
-							setFocusedConvID={setFocusedConvID}
 							handleSelectChat={handleSelectChat}
 						/>
 					</>
 				)}
 			</MainChatContainer>
-			{DMWindow && (
+			{directMessage.username && (
 				<DirectMessage
-					conversationID={focusedConvID}
+					{...directMessage}
 					conversations={conversations}
-					username={DMWindow}
 					onClose={handleCloseChat}
-					$isMinimized={$isMinimized}
-					toggleMinimization={DMWinMinimizer}
-					arrowState={DMWinArrow}
+					toggleMinimization={toggleDMMinimization}
 				/>
 			)}
 		</ChatContainer>
