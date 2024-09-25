@@ -131,10 +131,22 @@ export const ProfileStatus = styled.span`
 	box-shadow: 0 0 10px ${({ $status }) => ($status === "online" ? "#00ff88" : "#ff5555")};
 `;
 
+export const ProfileInfoContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	margin-top: 20px;
+	margin-left: 10px;
+`;
+
 export const ProfileName = styled.h3`
 	font-size: 1.3rem;
 	font-family: "Roboto", sans-serif;
-	padding: 0.5rem 0.5rem;
+`;
+
+export const ProfileActivity = styled.p`
+	font-size: 1rem;
+	font-family: "Roboto", sans-serif;
+	color: rgba(255, 255, 255, 0.5);
 `;
 
 export const Actions = styled.div`

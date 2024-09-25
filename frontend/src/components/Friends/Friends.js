@@ -14,7 +14,7 @@ import { RelationContext } from "../../context/RelationContext";
 
 const Friends = () => {
 	const [searchTerm, setSearchTerm] = useState("");
-	const { updatedFriend, setUpdatedFriend } = useContext(RelationContext);
+	const { isRefresh, setIsRefresh } = useContext(RelationContext);
 	const [friends, setFriends] = useState(null);
 	const [requests, setRequests] = useState(null);
 
@@ -33,22 +33,24 @@ const Friends = () => {
 		};
 
 		fetchFriendsAndRequests();
-	}, []);
+		setIsRefresh(false);
+	}, [setIsRefresh, isRefresh]);
 
-	useEffect(() => {
-		if (friends && updatedFriend) {
-			setFriends(prev => prev.map(f => {
-				if (f.username === updatedFriend.username) {
-					return {
-						...f,
-						status: updatedFriend.status,
-					};
-				}
-				return f;
-			}));
-			setUpdatedFriend(null);
-		}
-	}, [updatedFriend, setUpdatedFriend, friends]);
+	// useEffect(() => {
+	// 	if (friends && updateUserStatus) {
+	// 		console.log(updateUserStatus);
+	// 		setFriends(prev => prev.map(f => {
+	// 			if (f.username === updateUserStatus.username) {
+	// 				return {
+	// 					...f,
+	// 					status: updateUserStatus.status,
+	// 				};
+	// 			}
+	// 			return f;
+	// 		}));
+	// 		setUpdateUserStatus(null);
+	// 	}
+	// }, [updateUserStatus, setUpdateUserStatus, friends]);
 
 	if (!friends || !requests) {
 		return (

@@ -1,17 +1,39 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import PongButton from "../../styles/shared/PongButton.styled";
-import { Actions, ListCard, ListContainer, NoRelation, ProfileAvatar, ProfileInfo, ProfileName, ProfileStatus } from "./styles/Friends.styled";
+import {
+	Actions,
+	ListCard,
+	ListContainer,
+	NoRelation,
+	ProfileActivity,
+	ProfileAvatar,
+	ProfileInfo,
+	ProfileInfoContainer,
+	ProfileName,
+	ProfileStatus,
+} from "./styles/Friends.styled";
 import API from "../../api/api";
+
+const setActivityDescription = activity => {
+	if (activity === "QUEUEING") {
+		return "In queue";
+	} else if (activity === "PLAYING_VS_AI") {
+		return "Playing vs AI";
+	} else if (activity === "HOME") {
+		return "In lobby";
+	}
+	return "Touching grass...";
+}
 
 const FriendsList = ({ friends, setFriends }) => {
 	const navigate = useNavigate();
 
-	const handleProfile = (username) => {
+	const handleProfile = username => {
 		navigate(`/profile/${username}`)
 	};
 
-	const handleRemove = (relationID) => {
+	const handleRemove = relationID => {
 		API.delete(`users/@me/relationships/${relationID}`)
 			.then(() => {
 				setFriends(friends.filter(friend => friend.relationID !== relationID));
@@ -29,7 +51,10 @@ const FriendsList = ({ friends, setFriends }) => {
 						<ProfileInfo onClick={() => handleProfile(friend.username)}>
 							<ProfileStatus $status={friend.status?.online || false}/>
 							<ProfileAvatar src={friend.avatarID} alt={`${friend.displayName}'s avatar`}/>
-							<ProfileName>{friend.displayName}</ProfileName>
+							<ProfileInfoContainer>
+								<ProfileName>{friend.displayName}</ProfileName>
+								<ProfileActivity>{setActivityDescription(friend.status?.activity)}</ProfileActivity>
+							</ProfileInfoContainer>
 						</ProfileInfo>
 						<Actions>
 							<PongButton type="button">Invite</PongButton>

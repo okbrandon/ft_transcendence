@@ -10,10 +10,10 @@ export const RelationContext = createContext({
 	conversations: [],
 });
 
-const setActivity = (location) => {
+const setActivity = location => {
 	if (location === '/vs-ai' || location === '/vs-player') {
 		return 'QUEUEING';
-	} else if (location === '/solo-vs-ai') {
+	} else if (location === '/game') {
 		return 'PLAYING_VS_AI';
 	}
 	return 'HOME';
@@ -23,6 +23,7 @@ const RelationProvider = ({ children }) => {
 	const location = useLocation();
 	const socketStatus = useRef(null);
 	const socketChat = useRef(null);
+	const pathnameRef = useRef(location.pathname);
 	const [conversations, setConversations] = useState([
 				{
 					"conversationID": "conv_MTcyNjMwMjg5NjQ2MDc3Mg",
@@ -141,7 +142,7 @@ const RelationProvider = ({ children }) => {
 					]
 				}
 			]);
-	const [updatedFriend, setUpdatedFriend] = useState(null);
+	const [isRefresh, setIsRefresh] = useState(false);
 
 	useEffect(() => {
 		socketChat.current = new WebSocket(WS_CHAT_URL + localStorage.getItem('token'));
@@ -158,30 +159,12 @@ const RelationProvider = ({ children }) => {
 					.catch((error) => {
 						console.error('Failed to update conversations:', error);
 					});
+			} else if (data.type === 'friend_request') {
+				setIsRefresh(true);
 			}
 		};
 		socketChat.current.onerror = (error) => {
 			console.error('WebSocket for Chat encountered an error:', error);
-		};
-
-		socketStatus.current = new WebSocket(WS_STATUS_URL + localStorage.getItem('token'));
-		socketStatus.current.onopen = () => {
-			logger('WebSocket for Status connection opened');
-		};
-		socketStatus.current.onmessage = (event) => {
-			const data = JSON.parse(event.data);
-			if (data.type === 'heartbeat') {
-				socketStatus.current.send(JSON.stringify({
-					type: 'heartbeat',
-					activity: setActivity('HOME')
-				}));
-			}
-			else if (data.type === 'connection_event') {
-				setUpdatedFriend(data.user);
-			}
-		};
-		socketStatus.current.onerror = (error) => {
-			console.error('WebSocket for Status encountered an error:', error);
 		};
 
 		return () => {
@@ -189,6 +172,30 @@ const RelationProvider = ({ children }) => {
 				socketChat.current.close();
 				logger('WebSocket for Chat closed');
 			}
+		};
+	}, []);
+
+	useEffect(() => {
+		socketStatus.current = new WebSocket(WS_STATUS_URL + localStorage.getItem('token'));
+		socketStatus.current.onopen = () => {
+			logger('WebSocket for Status connection opened');
+		};
+		socketStatus.current.onmessage = event => {
+			const data = JSON.parse(event.data);
+			if (data.type === 'heartbeat') {
+				socketStatus.current.send(JSON.stringify({
+					type: 'heartbeat',
+					activity: setActivity(pathnameRef.current)
+				}));
+			} else if (data.type === 'connection_event') {
+				setIsRefresh(true);
+			}
+		};
+		socketStatus.current.onerror = (error) => {
+			console.error('WebSocket for Status encountered an error:', error);
+		};
+
+		return () => {
 			if (socketStatus.current) {
 				socketStatus.current.close();
 				logger('WebSocket for Status closed');
@@ -197,16 +204,15 @@ const RelationProvider = ({ children }) => {
 	}, []);
 
 	useEffect(() => {
-		if (socketStatus.current && socketStatus.current.readyState === WebSocket.OPEN) {
-			socketStatus.current.send(JSON.stringify({
-				type: 'heartbeat',
-				activity: setActivity(location.pathname)
-			}));
-		}
+		pathnameRef.current = location.pathname;
 	}, [location.pathname]);
 
 	return (
-		<RelationContext.Provider value={{ conversations, updatedFriend, setUpdatedFriend }}>
+		<RelationContext.Provider value={{
+			conversations,
+			isRefresh,
+			setIsRefresh,
+		}}>
 			{ children }
 		</RelationContext.Provider>
 	);
