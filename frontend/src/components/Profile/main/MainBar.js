@@ -11,18 +11,29 @@ import logger from '../../../api/logger';
 const MainBar = ({ profileUser, matchArray, relation }) => {
 	const navigate = useNavigate();
 	const { user } = useContext(AuthContext);
-	const [disableAddFriend, setDisableAddFriend] = useState(!!relation.length);
+	const [disableAddFriend, setDisableAddFriend] = useState(!!(relation.length && relation[0].status !== 0));
 	const [disableBlockUser, setDisableBlockUser] = useState(!!(relation.length && relation[0].status === 2));
 
 	const handleAddFriend = () => {
-		API.put('users/@me/relationships', { user: profileUser.userID, type: 0 })
-			.then(() => {
-				logger('Friend request sent');
-				setDisableAddFriend(true);
-			})
-			.catch(err => {
-				console.error(err.response.data.error);
-			});
+		if (relation.length && relation[0].status === 0) {
+			API.put('users/@me/relationships', { user: profileUser.userID, type: 1 })
+				.then(() => {
+					logger('Friend request accepted from Profile page');
+					setDisableAddFriend(true);
+				})
+				.catch(err => {
+					console.error(err.response?.data?.error || 'An error occurred.');
+				})
+		} else {
+			API.put('users/@me/relationships', { user: profileUser.userID, type: 0 })
+				.then(() => {
+					logger('Friend request sent');
+					setDisableAddFriend(true);
+				})
+				.catch(err => {
+					console.error(err.response.data.error);
+				});
+		}
 	};
 
 	const handleBlockUser = () => {
@@ -33,7 +44,7 @@ const MainBar = ({ profileUser, matchArray, relation }) => {
 				setDisableBlockUser(true);
 			})
 			.catch(err => {
-				console.error(err.response.data.error);
+				console.error(err.response?.data?.error || 'An error occurred.');
 			});
 	}
 
