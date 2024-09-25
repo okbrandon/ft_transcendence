@@ -56,11 +56,11 @@ const Router = createBrowserRouter(createRoutesFromElements(
 				<Route path="profile/:username" element={ <Profile/> }/>
 				<Route path="settings" element={ <Settings/> }/>
 				<Route path="shop" element={ <Shop/> }/>
-				<Route path="playmenu" element={ <PlayMenu/> }/>
 				<Route path="tournament" element={ <Tournament/> }/>
 				<Route path="tournament-room" element={ <JoinTournament/> }/> {/* ⚒️ testing... */}
 				<Route element={ <GameRoutes/> }>
-					<Route path="game" element={ <Game/> }/>
+					<Route path="game/:gameToken" element={ <Game/> }/>
+					<Route path="playmenu" element={ <PlayMenu/> }/>
 				</Route>
 				<Route path="leaderboard" element={ <Leaderboard/> }/>
 			</Route>

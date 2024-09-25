@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+import React, { createContext, useContext, useCallback, useEffect, useRef, useState } from 'react';
 import { AuthContext } from './AuthContext';
 import logger from '../api/logger';
 
@@ -11,10 +11,12 @@ const GameProvider = ({ children }) => {
 	const user = authContext ? authContext.user : null;
 	const [gameState, setGameState] = useState(null);
 	const [playerSide, setPlayerSide] = useState(null);
+	const [player, setPlayer] = useState(null);
 	const [opponent, setOpponent] = useState(null);
+	const [countdown, setCountdown] = useState(null);
 	const socketGame = useRef(null);
 
-	const connectToGame = (gameToken) => {
+	const connectToGame = useCallback((gameToken) => {
 		if (socketGame.current) {
 			socketGame.current.close();
 		}
@@ -31,19 +33,28 @@ const GameProvider = ({ children }) => {
 				case 'HEARTBEAT_INTERVAL':
 					setHeartbeatInterval(data.d.interval);
 					break;
-				case 'PLAYER_SIDE':
-					setPlayerSide(data.d.side);
-					break;
 				case 'PLAYER_JOIN':
-					if (user && data.d.id !== user.userID) {
-						setOpponent(data.d);
+					const { user, side } = data.d;
+					if (user.id === localStorage.getItem('userID')) {
+						setPlayerSide(side);
+						setPlayer(user);
+					} else {
+						setOpponent(user);
 					}
 					break;
+				case 'GAME_START_SEQUENCE':
+					setCountdown(15);
+					break;
+				case 'GAME_BEGIN':
+					setCountdown(null);
+					setGameState(data.d);
 				case 'GAME_UPDATE':
 					setGameState(data.d);
 					break;
 				case 'GAME_ENDED':
 					handleGameEnded(data.d);
+					break;
+				case 'HEARTBEAT_ACK':
 					break;
 				default:
 					logger(`Unhandled game event: ${data.e}`);
@@ -57,7 +68,13 @@ const GameProvider = ({ children }) => {
 		socketGame.current.onclose = () => {
 			logger('WebSocket for Game closed');
 		};
-	};
+
+		return () => {
+			if (socketGame.readyState === WebSocket.OPEN) {
+				socketGame.close();
+			}
+		};
+	}, []);
 
 	const setHeartbeatInterval = (interval) => {
 		if (socketGame.current) {
@@ -96,6 +113,9 @@ const GameProvider = ({ children }) => {
 			gameState,
 			playerSide,
 			opponent,
+			player,
+			countdown,
+			setCountdown,
 			movePaddle
 		}}>
 			{children}

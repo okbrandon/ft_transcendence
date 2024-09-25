@@ -12,7 +12,7 @@ const Root = () => {
 	const [showPersistentUI, setShowPersistentUI] = useState(true);
 
 	useEffect(() => {
-		if (location.pathname === '/game') {
+		if (location.pathname.includes('/game')) {
 			setShowPersistentUI(false);
 		} else {
 			setShowPersistentUI(true);

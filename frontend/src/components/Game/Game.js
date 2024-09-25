@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { GameContext } from '../../context/GameContext';
 import {
 	GameContainer,
 	GameSeparator,
@@ -16,6 +17,7 @@ import {
 import Spinner from 'react-bootstrap/Spinner';
 
 const Game = () => {
+	const { gameToken } = useParams();
 	const navigate = useNavigate();
 	const [leftBarPressed, setLeftBarPressed] = useState({up: false, down: false});
 	const [rightBarPressed, setRightBarPressed] = useState({up: false, down: false});
@@ -25,6 +27,27 @@ const Game = () => {
 	const [ballY, setBallY] = useState(400);
 	const [leftScore, setLeftScore] = useState(0);
 	const [rightScore, setRightScore] = useState(0);
+	const { connectToGame, gameState, playerSide, opponent, player, countdown, setCountdown } = useContext(GameContext);
+	const [leftPlayer, setLeftPlayer] = useState(null);
+	const [rightPlayer, setRightPlayer] = useState(null);
+
+	useEffect(() => {
+		console.log("effect ws");
+		let isConnected = false;
+
+		const connectGame = async () => {
+			if (!isConnected) {
+			await connectToGame(gameToken);
+			isConnected = true;
+			}
+		};
+
+		connectGame();
+
+		return () => {
+			isConnected = false;
+		};
+	}, [connectToGame, gameToken]);
 
 	useEffect(() => {
 		const handleKeydown = (event) => {
@@ -80,19 +103,59 @@ const Game = () => {
 		}
 	}, [rightBarPressed]);
 
-	return (
-		<PageContainer>
-			<ProfilesContainer>
+	useEffect(() => {
+		let timer;
+		if (countdown !== null && countdown > 0) {
+		  timer = setTimeout(() => {
+			setCountdown(prev => prev - 1);
+		  }, 1000);
+		}
+		return () => clearTimeout(timer);
+	}, [countdown]);
+
+	useEffect(() => {
+		if (playerSide === 'left') {
+			setLeftPlayer(player);
+			setRightPlayer(opponent);
+		} else if (playerSide === 'right') {
+			setLeftPlayer(opponent);
+			setRightPlayer(player);
+		}
+	}, [playerSide, opponent]);
+
+    return (
+        <PageContainer>
+            <ProfilesContainer>
 				<Profile>
-					<ProfileImage src='/images/default-profile.png' alt='Profile Picture'/>
-					<ProfileName>Player 1</ProfileName>
+					{leftPlayer ? (
+						<>
+							<ProfileImage src='/images/default-profile.png' alt='Profile Picture'/>
+							<ProfileName>{leftPlayer.id === localStorage.getItem('userID') ? leftPlayer.username : opponent?.username}</ProfileName>
+						</>
+					) : (
+						<>
+							<p>Waiting for player</p>
+							<Spinner animation='border'/>
+						</>
+					)}
 				</Profile>
-				<p>Press <b>Q</b> to quit game</p>
+				{countdown !== null ? (
+					<p>Game starts in <b>{countdown}</b>s</p>
+				) : (
+					<p>Press <b>Q</b> to quit game</p>
+				)}
 				<Profile>
-					{/* <ProfileImage src='/images/default-profile.png' alt='Profile Picture'/>
-					<ProfileName>Player 2</ProfileName> */}
-					<p>Waiting for player</p>
-					<Spinner animation='border'/>
+					{rightPlayer ? (
+						<>
+							<ProfileImage src='/images/default-profile.png' alt='Profile Picture'/>
+							<ProfileName>{rightPlayer.id === localStorage.getItem('userID') ? rightPlayer.username : opponent?.username}</ProfileName>
+						</>
+					) : (
+						<>
+							<p>Waiting for player</p>
+							<Spinner animation='border'/>
+						</>
+					)}
 				</Profile>
 			</ProfilesContainer>
 			<GameContainer>
