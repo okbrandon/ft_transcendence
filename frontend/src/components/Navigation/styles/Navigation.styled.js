@@ -135,6 +135,8 @@ const fadeIn = keyframes`
 `;
 
 export const ProfileDropdownButton = styled(Dropdown)`
+	margin-left: 30px;
+
 	& .btn-primary {
 		color: #fff;
 		background: none;

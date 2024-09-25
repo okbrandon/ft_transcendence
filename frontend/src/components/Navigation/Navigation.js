@@ -9,6 +9,7 @@ import {
 	ConnectButton
 } from './styles/Navigation.styled';
 import { AuthContext } from '../../context/AuthContext';
+import Language from './LanguageDropdown';
 
 const NavBar = () => {
 	const { isLoggedIn } = useContext(AuthContext);
@@ -27,9 +28,10 @@ const NavBar = () => {
 								<StyledNavLink to="playmenu">PLAY</StyledNavLink>
 							</NavItemsContainer>
 						</NavItemsContainer>
-						<NavItemsContainer $gap='50px'>
+						<NavItemsContainer>
 							<SearchBar/>
 							<ProfileDropdown/>
+							<Language/>
 						</NavItemsContainer>
 					</>
 				) : (

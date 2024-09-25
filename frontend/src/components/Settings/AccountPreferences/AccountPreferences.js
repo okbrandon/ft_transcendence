@@ -32,6 +32,7 @@ const AccountPreferences = () => {
 	const [error, setError] = useState('');
 	const [serverError, setServerError] = useState('');
 
+	console.log(user);
 	const handleChange = (e) => {
 		const { id, value } = e.target;
 
@@ -132,9 +133,9 @@ const AccountPreferences = () => {
 			<SubSectionHeading>Profile Image & Background</SubSectionHeading>
 			<UploadImage user={user} setFormData={setFormData} handleChange={handleChange}/>
 			<SubSectionHeading>General Preferences</SubSectionHeading>
-			<label htmlFor="lang">Language</label>
+			<label htmlFor="settings-lang">Language</label>
 			<LanguageDropdown
-				id="lang"
+				id="settings-lang"
 				value={formData.lang}
 				onChange={handleChange}
 			>
