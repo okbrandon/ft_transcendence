@@ -109,6 +109,11 @@ class StatusConsumer(AsyncWebsocketConsumer):
 
     @sync_to_async
     def update_user_status(self, online, activity):
+        try:
+            self.user = User.objects.get(userID=self.user.userID)
+        except User.DoesNotExist:
+            return
+
         self.user.status = {
             "online": online,
             "activity": activity,
