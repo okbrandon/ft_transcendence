@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import { ApiSignup } from '../../api/auth';
-import { AuthenticationSection, ErrorMessage, FormContainer } from './styles/Authentication.styled';
+import { AuthenticationSection, ErrorMessage, FormContainer, LanguageDropdownButton } from './styles/Authentication.styled';
 import { checkSignUpRestrictions } from '../../scripts/restrictions';
 
 const SignUp = () => {
@@ -11,6 +11,7 @@ const SignUp = () => {
 		username: '',
 		email: '',
 		password: '',
+		lang: 'en',
 	});
 	const [cfPassword, setCfPassword] = useState('');
 	const [error, setError] = useState('');
@@ -44,6 +45,16 @@ const SignUp = () => {
 		<AuthenticationSection>
 			<FormContainer onSubmit={handleSubmit}>
 				<h1>Sign Up</h1>
+				<LanguageDropdownButton
+					id="lang"
+					value={formData.lang}
+					onChange={handleChange}
+					autoComplete='off'
+				>
+					<option value="en">🇬🇧 English</option>
+					<option value="es">🇪🇸 Español</option>
+					<option value="fr">🇫🇷 Français</option>
+				</LanguageDropdownButton>
 				<FormContainer.Group className="mb-3">
 					<FormContainer.Control
 						id="username"

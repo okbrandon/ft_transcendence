@@ -1,11 +1,15 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { LanguageDropdownButton } from "./styles/LanguageDropdown.styled";
 import API from "../../api/api";
 
 const LanguageDropdown = () => {
 	const { user, setUser } = useContext(AuthContext);
-	const [language, setLanguage] = useState(user?.lang || "en");
+	const [language, setLanguage] = useState("en");
+
+	useEffect(() => {
+		if (user) setLanguage(user.lang);
+	}, [user]);
 
 	const handleChange = (e) => {
 		setLanguage(e.target.value);
@@ -26,6 +30,7 @@ const LanguageDropdown = () => {
 			id="nav-lang"
 			value={language}
 			onChange={handleChange}
+			autoComplete="off"
 		>
 			<option value="en">🇬🇧 en</option>
 			<option value="es">🇪🇸 es</option>

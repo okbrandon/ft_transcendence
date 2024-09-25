@@ -4,7 +4,6 @@ import {
 	ErrorMessage,
 	Form,
 	FormInput,
-	LanguageDropdown,
 	SectionHeading,
 	SubSectionHeading,
 	SuccessMessage,
@@ -32,7 +31,6 @@ const AccountPreferences = () => {
 	const [error, setError] = useState('');
 	const [serverError, setServerError] = useState('');
 
-	console.log(user);
 	const handleChange = (e) => {
 		const { id, value } = e.target;
 
@@ -68,7 +66,6 @@ const AccountPreferences = () => {
 			setServerError('');
 		} else {
 			setLoading(true);
-			console.log(submissionData);
 			API.patch('/users/@me/profile', submissionData)
 				.then(() => {
 					setSuccess('Account Preferences updated successfully.');
@@ -79,13 +76,13 @@ const AccountPreferences = () => {
 							setUser(user);
 						})
 						.catch(err => {
-							setServerError(err.response.data.error);
+							setServerError(err.response?.data?.error || 'An error occurred');
 							setSuccess('');
 							setError('');
 						});
 				})
 				.catch(err => {
-					setServerError(err.response.data.error);
+					setServerError(err.response?.data?.error || 'An error occurred');
 					setSuccess('');
 					setError('');
 				})
@@ -132,17 +129,6 @@ const AccountPreferences = () => {
 			</BioContainer>
 			<SubSectionHeading>Profile Image & Background</SubSectionHeading>
 			<UploadImage user={user} setFormData={setFormData} handleChange={handleChange}/>
-			<SubSectionHeading>General Preferences</SubSectionHeading>
-			<label htmlFor="settings-lang">Language</label>
-			<LanguageDropdown
-				id="settings-lang"
-				value={formData.lang}
-				onChange={handleChange}
-			>
-				<option value="en">🇬🇧 English</option>
-				<option value="es">🇪🇸 Spanish</option>
-				<option value="fr">🇫🇷 French</option>
-			</LanguageDropdown>
 			<SubSectionHeading>Account Management</SubSectionHeading>
 			<DeleteAccount/>
 			{success && <SuccessMessage>{success}</SuccessMessage>}

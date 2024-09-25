@@ -176,17 +176,6 @@ export const TextArea = styled.textarea`
 	}
 `;
 
-export const LanguageDropdown = styled.select`
-	padding: 1rem;
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	border-radius: 5px;
-	background-color: rgba(25, 25, 25, 0.5);
-	color: #fff;
-	margin-bottom: 3.5rem;
-	font-size: 1rem;
-	width: 100%;
-`;
-
 export const ErrorMessage = styled.p`
   color: #721c24;
   background-color: #f8d7da;

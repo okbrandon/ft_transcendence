@@ -6,9 +6,6 @@ export const checkSignUpRestrictions = (data, cfPassword) => {
 		return '';
 	}
 
-	// else if (lang.length !== 2 || !['en', 'fr', 'es'].includes(lang)) {
-	// 	errorMessage = 'Unsupported language, must be either "en", "fr", or "es".';
-
 	if (!data.username) { // username
 		return 'Username is required.';
 	} else if (data.username.length < 4 || data.username.length > 16) {
