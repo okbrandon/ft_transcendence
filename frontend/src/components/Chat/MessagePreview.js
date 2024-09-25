@@ -44,7 +44,6 @@ export const MessagePreview = ({ conversationsData, setFocusedConvID, handleSele
 	const userID = localStorage.getItem('userID');
 	const [friends, setFriends] = useState([]);
 	const [loading, setLoading] = useState(true);
-	console.log(conversationsData);
 
 	useEffect(() => {
 		const fetchFriends = async () => {
@@ -65,7 +64,7 @@ export const MessagePreview = ({ conversationsData, setFocusedConvID, handleSele
 				const other = convo.participants.find(participant => participant.userID !== userID);
 				return other.username === friend.username;
 			});
-			setFocusedConvID(convo);
+			setFocusedConvID(convo.conversationID);
 		}
 	};
 

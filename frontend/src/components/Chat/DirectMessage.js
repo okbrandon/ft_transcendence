@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect, useRef } from 'react';
 import { Header } from './styles/Chat/ChatContainer.styled.js';
 import CloseButton from 'react-bootstrap/CloseButton';
 import Arrow from './tools/Arrow.js';
-import { ChatContext } from '../../context/ChatContext.js';
+import { RelationContext } from '../../context/RelationContext.js';
 
 import DirectMessageContainer, {
 	ChatMessages,
@@ -14,27 +14,26 @@ import DirectMessageContainer, {
 	ActionButtonContainer
 } from './styles/DirectMessage/DirectMessage.styled.js';
 
-const DisplayChatMessages = ({ $isMinimized, realConvo, userID, messagesEndRef, otherUser }) => {
+const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) => {
 	if (!realConvo || realConvo.messages === null) {
 		return (
-			<ChatMessages $isMinimized={$isMinimized}>
-				<NewConversationMessage>
-					It's your first time chatting with {otherUser}. Say hi, don't be shy!
-				</NewConversationMessage>
-				<div ref={messagesEndRef} />
-			</ChatMessages>
+			<NewConversationMessage>
+				It's your first time chatting with {otherUser}. Say hi, don't be shy!
+			</NewConversationMessage>
 		);
 	} else {
-		<ChatMessages $isMinimized={$isMinimized}>
-			{realConvo.messages.map((message, index) => {
-				return message.sender.userID === userID ? (
-					<SenderBubble key={index}>{message.content}</SenderBubble>
-				) : (
-					<HostBubble key={index}>{message.content}</HostBubble>
-				);
-			})}
-			<div ref={messagesEndRef} />
-		</ChatMessages>;
+		return (
+			<>
+				{realConvo.messages.map((message, index) => {
+					return message.sender.userID === userID ? (
+						<SenderBubble key={index}>{message.content}</SenderBubble>
+					) : (
+						<HostBubble key={index}>{message.content}</HostBubble>
+					);
+				})}
+				<div ref={messagesEndRef} />	
+			</>
+		);
 	}
 };
 
@@ -42,7 +41,7 @@ export const DirectMessage = ({ conversationID, conversations, username, onClose
 	const userID = localStorage.getItem('userID');
 
 	const [content, setContent] = useState('');
-	const { sendMessage } = useContext(ChatContext);
+	const { sendMessage } = useContext(RelationContext);
 	const [realConvo, setRealConvo] = useState(null);
 	const messagesEndRef = useRef(null);
 
@@ -79,13 +78,14 @@ export const DirectMessage = ({ conversationID, conversations, username, onClose
 				</ActionButtonContainer>
 			</Header>
 
-			<DisplayChatMessages
-				$isMinimized={$isMinimized}
-				realConvo={realConvo}
-				userID={userID}
-				messagesEndRef={messagesEndRef}
-				otherUser={username}
-			/>
+			<ChatMessages $isMinimized={$isMinimized}>
+				<DisplayChatMessages
+					realConvo={realConvo}
+					userID={userID}
+					messagesEndRef={messagesEndRef}
+					otherUser={username}
+				/>
+			</ChatMessages>
 
 			<ChatInputContainer $isMinimized={$isMinimized}>
 				<ChatInput
@@ -96,6 +96,7 @@ export const DirectMessage = ({ conversationID, conversations, username, onClose
 						if (e.key === 'Enter') {
 							handleMessage();
 						}
+
 					}}
 				/>
 			</ChatInputContainer>

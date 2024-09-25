@@ -21,7 +21,7 @@ export const ChatMessages = styled.div`
 	color: #fff;
 	display: ${({ $isMinimized }) => ($isMinimized ? 'none' : 'block')};
 	transition: display 0.3s ease;
-	height: 100%;
+	max-height: 100%;
 `;
 
 export const ChatInputContainer = styled.div`
