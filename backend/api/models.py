@@ -4,14 +4,22 @@ from django.contrib.auth.models import AbstractUser
 from .util import generate_id
 
 class Match(models.Model):
-    matchID = models.CharField(max_length = 48)
+    matchID = models.CharField(max_length = 48, unique=True)
     playerA = models.JSONField(null=True) # ex: {"id": "user_202020202020", "platform": "terminal"}
     playerB = models.JSONField(null=True)
-    scores = models.JSONField # ex: {"user_202020202020": 5, "user_202020202021", 3}
+    scores = models.JSONField(default=dict) # ex: {"user_202020202020": 5, "user_202020202021", 3}
     winnerID = models.CharField(max_length = 48, null=True)
     startedAt = models.DateTimeField(auto_now_add=True)
-    finishedAt = models.DateTimeField(auto_now_add=True)
-    flags = models.IntegerField # 1<<0 EMAILED_VERIFIED, 1<<1 AI_ACCOUNT, 1<<3 SCHEDULED_HARVEST, 1<<4 SCHEDULED_DELETION
+    finishedAt = models.DateTimeField(null=True)
+    flags = models.IntegerField(default=0) # 1<<0 = AI, 1<<1 = 1v1
+
+    def __str__(self):
+        return self.matchID
+
+class GameToken(models.Model):
+    token = models.CharField(max_length=48, unique=True)
+    matchID = models.CharField(max_length=48)
+    userID = models.CharField(max_length=48)
 
     def __str__(self):
         return self.matchID
@@ -50,6 +58,7 @@ class User(AbstractUser):
     password = models.CharField(max_length = 128)
     flags = models.IntegerField(default = 0) # 1 << 0 = EMAIL_VERIFIED, 1 << 1 = IS_AI, 1 << 2 = ACCOUNT_DISABLED, 1<<3 = SCHEDULED_HARVESTING
     money = models.IntegerField(default = 0)
+    status = models.JSONField(null=True) # ex: {"online": True, "activity": "PLAYING", "last_seen": "2021-01-01T00:00:00Z"}
 
     # Override the groups and user_permissions to avoid field clashes
     groups = models.ManyToManyField(
@@ -91,7 +100,7 @@ class UserSettings(models.Model):
         return self.userID
 
 class Conversation(models.Model):
-    conversationID = models.CharField(primary_key=True, max_length=48, default=generate_id("conv"), editable=False)
+    conversationID = models.CharField(primary_key=True, max_length=48, default="", editable=False)
     conversationType = models.CharField(max_length=50, default='private_message')  # Can be expanded for different types
     receipientID = models.CharField(max_length=48, null=True)
     participants = models.ManyToManyField(User, related_name='conversations')
@@ -100,7 +109,7 @@ class Conversation(models.Model):
         return str(self.conversationID)
 
 class Message(models.Model):
-    messageID = models.CharField(primary_key=True, max_length=48, default=generate_id("msg"), editable=False)
+    messageID = models.CharField(primary_key=True, max_length=48, default="", editable=False)
     conversation = models.ForeignKey(Conversation, null=True, related_name='messages', on_delete=models.CASCADE)
     content = models.CharField(max_length=256)
     sender = models.ForeignKey(User, null=True, related_name='sent_messages', on_delete=models.CASCADE)

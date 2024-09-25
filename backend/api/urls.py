@@ -11,7 +11,8 @@ from .views.oauth import *
 from .views.store import *
 from .views.verification import *
 from .views.conversations import *
-from .views.leaderboard import *
+from .views.leaderboards import *
+from .views.matches import *
 
 from django.http import JsonResponse
 from django.urls import path
@@ -55,12 +56,13 @@ urlpatterns = [
     # path('tournaments/<tournamentID>', TournamentInfo.as_view()), # GET, DELETE, PATCH
     # path('tournaments', TournamentCreate.as_view()), # POST
 
+    path('leaderboards/daily', Leaderboards.Daily.as_view()), # GET
+    path('leaderboards/weekly', Leaderboards.Weekly.as_view()), # GET
+    path('leaderboards/lifetime', Leaderboards.Lifetime.as_view()), # GET
+
 	path('chat/conversations', ConversationListView.as_view()),
 
-    path('leaderboard', Leaderboard.as_view()), # GET
-
-    path('__internal/check_user_exists/<userID>', CheckUserExists.as_view()), # GET
-    path('__internal/create_match', CreateMatchHistory.as_view()), # POST
+    path('matches', MatchCreate.as_view()),
 
     path('health', HealthCheck.as_view()),
 ]

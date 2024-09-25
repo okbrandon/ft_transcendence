@@ -2,6 +2,7 @@ import pyotp
 import os
 import random
 import string
+import logging
 
 from datetime import timedelta
 
@@ -18,10 +19,17 @@ from django.db import models
 from django.http import Http404, HttpResponse
 from django.utils import timezone
 
+from channels.layers import get_channel_layer
+
+from asgiref.sync import async_to_sync
+
 from ..models import User, Match, Relationship, UserSettings
 from ..serializers import UserSerializer, UserSettingsSerializer, MatchSerializer, RelationshipSerializer
 from ..util import send_otp_via_sms, send_data_package_ready_email, get_safe_profile, generate_id
 from ..validators import *
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class UserProfileMe(APIView):
     def get(self, request, *args, **kwargs):
@@ -120,12 +128,25 @@ class UserProfile(APIView):
             )
 
         serializer = UserSerializer(user)
-        data = serializer.data
-        if 'email' in data:
-            del data['email']
-        return Response(data, status=status.HTTP_200_OK)
-
         profile = get_safe_profile(serializer.data, me=False)
+
+        # Check relationship status with the requesting user
+        me = request.user
+        relationship = Relationship.objects.filter(
+            (models.Q(userA=me.userID) & models.Q(userB=user.userID)) |
+            (models.Q(userA=user.userID) & models.Q(userB=me.userID))
+        ).first()
+
+        if relationship:
+            if relationship.status == 0:
+                profile['relationship'] = 'pending'
+            elif relationship.status == 1:
+                profile['relationship'] = 'friends'
+            elif relationship.status == 2:
+                profile['relationship'] = 'blocked'
+        else:
+            profile['relationship'] = None
+
         return Response(profile, status=status.HTTP_200_OK)
 
 class UserMatches(APIView):
@@ -210,8 +231,26 @@ class UserRelationshipsMe(APIView):
         me = request.user
         relationships = Relationship.objects.filter(userA=me.userID) | Relationship.objects.filter(userB=me.userID)
 
-        serializer = RelationshipSerializer(relationships, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = RelationshipSerializer(relationships, many=True, context={'request': request})
+
+        # Process the serialized data to include both the sender and target user's profile
+        processed_relationships = []
+        for relationship in serializer.data:
+            sender_id = relationship['userA']
+            target_id = relationship['userB']
+            sender = User.objects.get(userID=sender_id)
+            target = User.objects.get(userID=target_id)
+            sender_serializer = UserSerializer(sender)
+            target_serializer = UserSerializer(target)
+            processed_relationship = {
+                'relationshipID': relationship['relationshipID'],
+                'status': relationship['status'],
+                'sender': get_safe_profile(sender_serializer.data, me=False),
+                'target': get_safe_profile(target_serializer.data, me=False)
+            }
+            processed_relationships.append(processed_relationship)
+
+        return Response(processed_relationships, status=status.HTTP_200_OK)
 
     def put(self, request, *args, **kwargs):
         me = request.user
@@ -248,26 +287,23 @@ class UserRelationshipsMe(APIView):
             if relationship_type == 0:
                 return Response({"error": "Relationship already exists"}, status=status.HTTP_400_BAD_REQUEST)
 
-            if existing_relationship.status == 2: # Blocked relationship gets unblocked
-                existing_relationship.status = 1
-                existing_relationship.save()
-                return Response({"status": "User unblocked"}, status=status.HTTP_200_OK)
-
             if relationship_type == 1:
                 if existing_relationship.status == 0 and existing_relationship.userB == me.userID:
                     existing_relationship.status = 1
                     existing_relationship.save()
+                    self.notify_chat_websocket(existing_relationship)
                     return Response({"status": "Friend request accepted"}, status=status.HTTP_200_OK)
                 else:
                     return Response({"error": "Cannot directly set friendship status"}, status=status.HTTP_400_BAD_REQUEST)
 
         if relationship_type == 0:
-            Relationship.objects.create(
+            relationship = Relationship.objects.create(
                 relationshipID=generate_id("rel"),
                 userA=me.userID,
                 userB=target_user_id,
                 status=0
             )
+            self.notify_chat_websocket(relationship)
             return Response({"status": "Friend request sent"}, status=status.HTTP_200_OK)
 
         return Response({"error": "Invalid operation"}, status=status.HTTP_400_BAD_REQUEST)
@@ -285,6 +321,27 @@ class UserRelationshipsMe(APIView):
 
         return Response({"status": "Relationship deleted"}, status=status.HTTP_200_OK)
 
+    def notify_chat_websocket(self, relationship):
+        channel_layer = get_channel_layer()
+        group_name = f"chat_{relationship.userB}" if relationship.status == 0 else f"chat_{relationship.userA}"
+
+        try:
+            async_to_sync(channel_layer.group_send)(
+                group_name,
+                {
+                    "type": "friend_request",
+                    "status": "pending" if relationship.status == 0 else "accepted",
+                    "data": {
+                        "type": "relationship",
+                        "relationshipID": relationship.relationshipID,
+                        "from": relationship.userA if relationship.status == 0 else relationship.userB,
+                    }
+                }
+            )
+        except Exception as _:
+            logger.error(f"Failed to send friend request notification. User {relationship.userB} might be offline.")
+
+
 class UserMatchesMe(APIView):
     def get(self, request, *args, **kwargs):
         me = request.user
@@ -299,11 +356,21 @@ class UserSearch(APIView):
         if not content:
             return Response({"error": "No search content provided"}, status=status.HTTP_400_BAD_REQUEST)
 
-        users = User.objects.filter(models.Q(displayName__icontains=content) | models.Q(username__icontains=content))
+        me = request.user
+        # blocked_users = Relationship.objects.filter(
+        #     models.Q(userA=me.userID, status=2) | models.Q(userB=me.userID, status=2)
+        # ).values_list('userA', 'userB')
+
+        # blocked_user_ids = [user for pair in blocked_users for user in pair if user != me.userID]
+
+        users = User.objects.filter(
+            models.Q(displayName__icontains=content) | models.Q(username__icontains=content)
+        )
+
         serializer = UserSerializer(users, many=True)
 
         profiles = get_safe_profile(serializer.data, me=False, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(profiles, status=status.HTTP_200_OK)
 
 class UserExports(APIView):
     def get(self, request, *args, **kwargs):
