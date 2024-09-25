@@ -67,6 +67,7 @@ const AccountPreferences = ({ user }) => {
 			setServerError('');
 		} else {
 			setLoading(true);
+			console.log(submissionData);
 			API.patch('/users/@me/profile', submissionData)
 				.then(() => {
 					setSuccess('Account Preferences updated successfully.');

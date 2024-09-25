@@ -37,12 +37,9 @@ const ImageSettings = ({ user, setFormData, handleChange }) => {
 
 	const handleRemoveImage = (type, setImage, inputRef) => {
 		setImage(null);
-		setFormData(data => {
-			const updatedData = { ...data };
-			delete updatedData[type];
-			return updatedData;
-		});
-
+		setFormData(data => (
+			{ ...data, [type]: null }
+		))
 		if (inputRef.current) {
 			inputRef.current.value = '';
 		}
