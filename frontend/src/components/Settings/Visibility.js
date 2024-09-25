@@ -21,8 +21,8 @@ const Visibility = () => {
 
 	useEffect(() => {
 		GetBlockedUsers()
-			.then(res => {
-				setBlockedUsers(res);
+			.then(users => {
+				setBlockedUsers(users.filter(user => user.is === 'target'));
 			});
 	}, []);
 
@@ -30,12 +30,12 @@ const Visibility = () => {
 		return <Loader/>;
 	}
 
-	const handleUnblock = (e, targetID) => {
+	const handleUnblock = (e, relationID) => {
 		e.preventDefault();
-		API.put('users/@me/relationships', { user: targetID, type: 1 })
+		API.delete(`users/@me/relationships/${relationID}`)
 			.then(() => {
 				logger('User unblocked');
-				setBlockedUsers(blockedUsers.filter(user => user.userB !== targetID));
+				setBlockedUsers(blockedUsers.filter(user => user.relationID !== relationID));
 			})
 			.catch(err => {
 				console.error(err.response.data.error);
@@ -54,7 +54,7 @@ const Visibility = () => {
 								<BlockedUserAvatar src='/images/default-profile.png' alt={'Blocked user'}/>
 								<BlockedUserName>{relation.displayName}</BlockedUserName>
 							</div>
-							<PongButton onClick={e => handleUnblock(e, relation.userB)}>
+							<PongButton onClick={e => handleUnblock(e, relation.relationID)}>
 								Unblock
 							</PongButton>
 						</BlockedUserItem>

@@ -51,7 +51,7 @@ const Loader = styled.div`
 		height: 30px;
 		width: 30px;
 		border-radius: 50%;
-		background: #fff;
+		${({ $profilePicture }) => $profilePicture ? `background: url(${$profilePicture}) center/cover;` : 'background: #fff;'}
 		animation: ${loadingBounce} 0.5s ease-in-out infinite alternate;
 	}
 

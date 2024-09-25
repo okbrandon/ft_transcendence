@@ -12,12 +12,12 @@ const AuthProvider = ({ children }) => {
 	useEffect(() => {
 		if (isLoggedIn) {
 			GetUser()
-				.then((res) => {
-					setUser(res.data);
-					localStorage.setItem('userID', res.data.userID);
+				.then(user => {
+					setUser(user);
+					localStorage.setItem('userID', user.userID);
 				})
-				.catch((err) => {
-					console.error('Error fetching user data:', err);
+				.catch(err => {
+					console.error(err.response?.data?.error || 'An error occurred');
 				})
 				.finally(() => {
 					setLoading(false);
@@ -28,7 +28,13 @@ const AuthProvider = ({ children }) => {
 	}, [isLoggedIn]);
 
 	return (
-		<AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, user, setUser, loading }}>
+		<AuthContext.Provider value={{
+			isLoggedIn,
+			setIsLoggedIn,
+			user,
+			setUser,
+			loading,
+		}}>
 			{ children }
 		</AuthContext.Provider>
 	);

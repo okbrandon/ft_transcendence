@@ -25,6 +25,7 @@ import Match from '../components/Game/Match';
 import Friends from '../components/Friends/Friends';
 import PageNotFound from '../components/PageNotFound/PageNotFound';
 import Settings from '../components/Settings/Settings';
+import GameProvider from '../context/GameContext';
 
 const PrivateRoutes = () => {
 	const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
@@ -32,9 +33,16 @@ const PrivateRoutes = () => {
 	useEffect(() => {
 		setIsLoggedIn(isValidToken());
 	}, [setIsLoggedIn]);
-
 	return (
 		isLoggedIn ? <Outlet/> : <Navigate to="/login"/>
+	);
+};
+
+const GameRoutes = () => {
+	return (
+		<GameProvider>
+			<Outlet/>
+		</GameProvider>
 	);
 };
 
@@ -52,14 +60,12 @@ const Router = createBrowserRouter(createRoutesFromElements(
 				<Route path="playmenu" element={ <PlayMenu/> }/>
 				<Route path="tournament" element={ <Tournament/> }/>
 				<Route path="tournament-room" element={ <JoinTournament/> }/> {/* ⚒️ testing... */}
-				<Route path="vs-ai" element={ <Match/> }/>
-                <Route path="vs-player" element={ <Match/> }/>
+				<Route element={ <GameRoutes/> }>
+					<Route path="matchmaking" element={ <Match/> }/>
+					<Route path="game" element={ <Game/> }/>
+				</Route>
 				<Route path="leaderboard" element={ <Leaderboard/> }/>
-				<Route path="vs-player" element={ <Match/> }/>
 			</Route>
-		</Route>
-		<Route element={ <PrivateRoutes/>}>
-			<Route path="solo-vs-ai" element={ <Game/> }/>
 		</Route>
 		<Route path="callback" element={ <Callback/> }/>
 		<Route path="verify" element={ <Verify/> }/>

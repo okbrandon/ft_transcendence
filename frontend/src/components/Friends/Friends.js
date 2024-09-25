@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
 	Header,
 	PageContainer,
@@ -10,9 +10,11 @@ import RequestsList from "./RequestsList";
 import FriendsList from "./FriendsList";
 import Loader from "../../styles/shared/Loader.styled";
 import { GetFriends, GetRequests } from "../../api/friends";
+import { RelationContext } from "../../context/RelationContext";
 
 const Friends = () => {
 	const [searchTerm, setSearchTerm] = useState("");
+	const { updatedFriend, setUpdatedFriend } = useContext(RelationContext);
 	const [friends, setFriends] = useState(null);
 	const [requests, setRequests] = useState(null);
 
@@ -23,7 +25,6 @@ const Friends = () => {
 					GetFriends(),
 					GetRequests(),
 				]);
-
 				setFriends(friendsResponse);
 				setRequests(requestsResponse);
 			} catch (err) {
@@ -32,7 +33,22 @@ const Friends = () => {
 		};
 
 		fetchFriendsAndRequests();
-	  }, []);
+	}, []);
+
+	useEffect(() => {
+		if (friends && updatedFriend) {
+			setFriends(prev => prev.map(f => {
+				if (f.username === updatedFriend.username) {
+					return {
+						...f,
+						status: updatedFriend.status,
+					};
+				}
+				return f;
+			}));
+			setUpdatedFriend(null);
+		}
+	}, [updatedFriend, setUpdatedFriend, friends]);
 
 	if (!friends || !requests) {
 		return (
@@ -42,7 +58,9 @@ const Friends = () => {
 		);
 	}
 
-	const filteredFriends = friends.filter(friend => friend.displayName.toLowerCase().includes(searchTerm.toLowerCase()));
+	const filteredFriends = friends.filter(friend => {
+		return friend.displayName.toLowerCase().includes(searchTerm.toLowerCase());
+	});
 
 	return (
 		<PageContainer>
@@ -61,7 +79,7 @@ const Friends = () => {
 				className="mb-3"
 			>
 				<Tab eventKey="friends" title="Friends">
-					<FriendsList friends={filteredFriends}/>
+					<FriendsList friends={filteredFriends} setFriends={setFriends}/>
 				</Tab>
 				<Tab eventKey="requests" title="Requests">
 					<RequestsList requests={requests} setRequests={setRequests} setFriends={setFriends}/>

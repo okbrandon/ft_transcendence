@@ -12,6 +12,7 @@ const MainBar = ({ profileUser, matchArray, relation }) => {
 	const navigate = useNavigate();
 	const { user } = useContext(AuthContext);
 	const [disableAddFriend, setDisableAddFriend] = useState(relation.length ? true : false);
+	const [disableBlockUser, setDisableBlockUser] = useState(relation.length && relation[0].status === 2 ? true : false);
 
 	const handleAddFriend = () => {
 		API.put('users/@me/relationships', { user: profileUser.userID, type: 0 })
@@ -29,6 +30,7 @@ const MainBar = ({ profileUser, matchArray, relation }) => {
 			.then(() => {
 				logger('User blocked');
 				setDisableAddFriend(true);
+				setDisableBlockUser(true);
 			})
 			.catch(err => {
 				console.error(err.response.data.error);
@@ -52,6 +54,7 @@ const MainBar = ({ profileUser, matchArray, relation }) => {
 							<IconButton
 								type="button"
 								onClick={handleBlockUser}
+								disabled={disableBlockUser}
 							>
 								<i className="bi bi-ban"/>
 							</IconButton>

@@ -3,7 +3,6 @@ import Banner from "./Banner";
 import Presentation from "./Presentation";
 import Contributors from "./Contributors";
 import Features from "./Features";
-import Chat from "../Chat/Chat";
 
 const Home = () => {
 	return (

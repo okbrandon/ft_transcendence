@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AuthenticationContainer } from './styles/Authentication.styled';
 import SignIn from './SignIn';
 import SignUp from './SignUp';

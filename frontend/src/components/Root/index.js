@@ -1,25 +1,44 @@
-import React, { useContext, useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import React, { useContext, useEffect, useState } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
 import NavBar from '../Navigation/Navigation';
 import Footer from '../Footer/Footer';
 import { AuthContext } from '../../context/AuthContext';
 import Chat from '../Chat/Chat';
-import ChatProvider from '../../context/ChatContext';
+import RelationProvider from '../../context/RelationContext';
 
 const Root = () => {
+	const location = useLocation();
 	const { isLoggedIn } = useContext(AuthContext);
+	const [showPersistentUI, setShowPersistentUI] = useState(true);
+
+	useEffect(() => {
+		if (location.pathname === '/game') {
+			setShowPersistentUI(false);
+		} else {
+			setShowPersistentUI(true);
+		}
+	}, [location]);
+
 	return (
 		<>
-			<NavBar/>
-			<main>
-				<Outlet/>
-				{ isLoggedIn && (
-					<ChatProvider>
-						<Chat/>
-					</ChatProvider>
-				) }
-			</main>
-			<Footer/>
+			{showPersistentUI ? (
+				<>
+					<NavBar/>
+					<main>
+						{ isLoggedIn ? (
+							<RelationProvider>
+								<Outlet/>
+								<Chat/>
+							</RelationProvider>
+						) : <Outlet/> }
+					</main>
+					<Footer/>
+				</>
+			) : (
+				<main>
+					<Outlet/>
+				</main>
+			)}
 		</>
 	);
 };

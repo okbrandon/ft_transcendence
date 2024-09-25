@@ -1,50 +1,53 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import {
-	Actions,
-	FriendAvatar,
-	FriendCard,
-	FriendInfo,
-	FriendName,
-	FriendStatus,
-	FriendsListContainer,
-} from "./styles/FriendsList.styled";
 import PongButton from "../../styles/shared/PongButton.styled";
+import { Actions, ListCard, ListContainer, NoRelation, ProfileAvatar, ProfileInfo, ProfileName, ProfileStatus } from "./styles/Friends.styled";
+import API from "../../api/api";
 
-const FriendsList = ({ friends }) => {
+const FriendsList = ({ friends, setFriends }) => {
 	const navigate = useNavigate();
 
 	const handleProfile = (username) => {
 		navigate(`/profile/${username}`)
 	};
 
-	const handleRemove = (relation) => {
-		// handleRemove logic here
+	const handleRemove = (relationID) => {
+		API.delete(`users/@me/relationships/${relationID}`)
+			.then(() => {
+				setFriends(friends.filter(friend => friend.relationID !== relationID));
+			})
+			.catch(err => {
+				console.error(err.response?.data?.error || 'An error occurred');
+			});
 	};
 
 	return (
-		<FriendsListContainer>
-			{friends.map((relation, key) => (
-				<FriendCard key={key}>
-					<FriendInfo onClick={() => handleProfile(relation.username)}>
-						<FriendStatus $status={true} />
-						<FriendAvatar src={relation.avatarID  && relation.avatarID !== 'default' ? relation.avatarID : '/images/default-profile.png'} alt={`${relation.displayName}'s avatar`}/>
-						<FriendName>{relation.displayName}</FriendName>
-					</FriendInfo>
-					<Actions>
-						<PongButton type="button">Invite</PongButton>
-						<PongButton type="button">Message</PongButton>
-						<PongButton
-							type="button"
-							$backgroundColor="#ff5555"
-							onClick={() => handleRemove(relation)}
-						>
-							Remove
-						</PongButton>
-					</Actions>
-				</FriendCard>
-			))}
-		</FriendsListContainer>
+		<ListContainer>
+			{friends.length ? (
+				friends.map((friend, key) => (
+					<ListCard key={key}>
+						<ProfileInfo onClick={() => handleProfile(friend.username)}>
+							<ProfileStatus $status={friend.status?.online || false}/>
+							<ProfileAvatar src={friend.avatarID} alt={`${friend.displayName}'s avatar`}/>
+							<ProfileName>{friend.displayName}</ProfileName>
+						</ProfileInfo>
+						<Actions>
+							<PongButton type="button">Invite</PongButton>
+							<PongButton type="button">Message</PongButton>
+							<PongButton
+								type="button"
+								$backgroundColor="#ff5555"
+								onClick={() => handleRemove(friend.relationID)}
+							>
+								Remove
+							</PongButton>
+						</Actions>
+					</ListCard>
+				))
+			) : (
+				<NoRelation>No friends found</NoRelation>
+			)}
+		</ListContainer>
 	);
 };
 

@@ -83,3 +83,70 @@ export const SearchInput = styled.input`
 		border-color: rgba(164, 69, 178, 0.5);
 	}
 `;
+
+export const ListContainer = styled.div`
+	display: grid;
+	grid-template-columns: repeat(1, minmax(250px, 1fr));
+	gap: 1.5rem;
+	margin-top: 2rem;
+`;
+
+export const ListCard = styled.div`
+	background: rgba(26, 26, 26, 0.5);
+	padding: 1.5rem;
+	border-radius: 15px;
+	box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.5);
+	transition: all 0.3s ease;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	&:hover {
+		transform: translateY(-5px);
+		box-shadow: 0px 8px 30px rgba(255, 255, 255, 0.15), 0px 0px 20px rgba(164, 69, 178, 0.2);
+	}
+`;
+
+export const ProfileInfo = styled.div`
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+`;
+
+export const ProfileAvatar = styled.img`
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	margin-right: 10px;
+	object-fit: cover;
+	border: 2px solid rgba(255, 255, 255, 0.2);
+`;
+
+export const ProfileStatus = styled.span`
+	width: 12px;
+	height: 12px;
+	background: ${({ $status }) => $status === true ? "#00ff88" : "#ff5555"};
+	border-radius: 50%;
+	margin-right: 2rem;
+	box-shadow: 0 0 10px ${({ $status }) => ($status === "online" ? "#00ff88" : "#ff5555")};
+`;
+
+export const ProfileName = styled.h3`
+	font-size: 1.3rem;
+	font-family: "Roboto", sans-serif;
+	padding: 0.5rem 0.5rem;
+`;
+
+export const Actions = styled.div`
+	display: flex;
+	gap: 1rem;
+`;
+
+export const NoRelation = styled.div`
+	position: absolute;
+	width: 100%;
+	font-size: 1.2rem;
+	color: #cccccc;
+	text-align: center;
+	margin-top: 2rem;
+`;

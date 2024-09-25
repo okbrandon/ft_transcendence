@@ -1,102 +1,81 @@
+import { GetOtherFromRelationship } from "../scripts/relation";
 import API from "./api";
 import logger from "./logger";
-import { GetUserByUsername } from "./user";
+import { formatUserData } from "./user";
 
-export const GetRelationships = async () => {
-	logger('Getting relationships...');
+export const GetUserFromRelation = async (profileUsername) => {
+	try {
+		logger('Getting user from relation...');
+		const res = await API.get('users/@me/relationships');
 
-	return await API.get('users/@me/relationships');
+		const user = res.data.filter(relation => relation.sender.username === profileUsername || relation.target.username === profileUsername);
+		if (!user.length) return [];
+		return user;
+	} catch (err) {
+		console.error(err.response?.data?.error || 'An error occurred');
+		return [];
+	}
 };
 
 export const GetFriends = async () => {
-	logger('Getting friends...');
-	const userID = localStorage.getItem('userID');
-
 	try {
+		logger('Getting friends...');
 		const res = await API.get('users/@me/relationships');
-		const friends = await Promise.all(
-			res.data
-				.filter(relation => relation.status === 1)
-				.map(async friend => {
-					try {
-						const userRes = await GetUserByUsername(friend.userA === userID ? friend.userB : friend.userA);
-						logger(`userA: ${friend.userA} and userID: ${userID}`);
-						logger(`Friend found: ${friend.userA === userID ? 'userB' : 'userA'}`);
-						return {
-							...friend,
-							displayName: userRes.data.displayName ? userRes.data.displayName : userRes.data.username,
-							username: userRes.data.username,
-							avatarID: userRes.data.avatarID,
-						};
-					} catch (error) {
-						console.error("Error fetching friend details: ", error);
-						return friend;
-					}
-				})
-		);
+		const userID = localStorage.getItem('userID');
+
+		const friends = res.data
+			.filter(relation => relation.status === 1)
+			.map(relation => {
+				relation.sender = formatUserData(relation.sender);
+				relation.target = formatUserData(relation.target);
+				const friend = GetOtherFromRelationship(relation, userID);
+				return { ...friend, relationID: relation.relationshipID };
+			});
 		return friends;
-	} catch (error) {
-		console.error("Error fetching friends: ", error);
+	} catch (err) {
+		console.error(err.response?.data?.error || 'An error occurred');
 		return [];
 	}
 };
 
 export const GetRequests = async () => {
-	logger('Getting requests...');
-	const userID = localStorage.getItem('userID');
-
 	try {
+		logger ('Getting requests...');
 		const res = await API.get('users/@me/relationships');
-		const requests = await Promise.all(
-			res.data
-				.filter(relation => relation.status === 0)
-				.map(async request => {
-					try {
-						const userRes = await GetUserByUsername(request.userA === userID ? request.userB : request.userA);
-						return {
-							...request,
-							displayName: userRes.data.displayName ? userRes.data.displayName : userRes.data.username,
-							avatarID: userRes.data.avatarID,
-						};
-					} catch (error) {
-						console.error("Error fetching request details: ", error);
-						return request;
-					}
-				})
-		);
+		const userID = localStorage.getItem('userID');
+
+		const requests = res.data
+			.filter(relation => relation.status === 0)
+			.map(relation => {
+				relation.sender = formatUserData(relation.sender);
+				relation.target = formatUserData(relation.target);
+				const request = GetOtherFromRelationship(relation, userID);
+				return { ...request, relationID: relation.relationshipID };
+			});
 		return requests;
-	} catch (error) {
-		console.error("Error fetching requests: ", error);
+	} catch (err) {
+		console.error(err.response?.data?.error || 'An error occurred');
 		return [];
 	}
 };
 
 export const GetBlockedUsers = async () => {
-	logger('Getting blocked users...');
-	const userID = localStorage.getItem('userID');
-
 	try {
+		logger('Getting blocked users...');
 		const res = await API.get('users/@me/relationships');
-		const blockedUsers = await Promise.all(
-			res.data
-				.filter(relation => relation.status === 2 && relation.userA === userID)
-				.map(async blockedUser => {
-					try {
-						const userRes = await GetUserByUsername(blockedUser.userA === userID ? blockedUser.userB : blockedUser.userA);
-						return {
-							...blockedUser,
-							displayName: userRes.data.displayName ? userRes.data.displayName : userRes.data.username,
-							avatarID: userRes.data.avatarID,
-						};
-					} catch (error) {
-						console.error("Error fetching blocked user details: ", error);
-						return blockedUser;
-					}
-				})
-		);
-		return blockedUsers;
-	} catch (error) {
-		console.error("Error fetching blocked users: ", error);
+		const userID = localStorage.getItem('userID');
+
+		const blockedUsers = res.data
+			.filter(relation => relation.status === 2)
+			.map(relation => {
+				relation.sender = formatUserData(relation.sender);
+				relation.target = formatUserData(relation.target);
+				const blockedUser = GetOtherFromRelationship(relation, userID);
+				return { ...blockedUser, relationID: relation.relationshipID };
+			})
+			return blockedUsers;
+	} catch (err) {
+		console.error(err.response?.data?.error || 'An error occurred');
 		return [];
 	}
 };
