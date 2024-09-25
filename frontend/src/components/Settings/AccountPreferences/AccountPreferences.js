@@ -13,7 +13,6 @@ import {
 import UploadImage from './UploadImage';
 import API from '../../../api/api';
 import { GetUser } from '../../../api/user';
-import logger from '../../../api/logger';
 import DeleteAccount from './DeleteAccount';
 import { checkAccountPreferencesRestrictions } from '../../../scripts/restrictions';
 import { AuthContext } from '../../../context/AuthContext';
@@ -73,11 +72,9 @@ const AccountPreferences = ({ user }) => {
 					setSuccess('Account Preferences updated successfully.');
 					setError('');
 					setServerError('');
-					logger('Account Preferences updated successfully with:', submissionData);
 					GetUser()
 						.then(user => {
 							setUser(user);
-							logger('User data refetched and updated in context:', user);
 						})
 						.catch(err => {
 							setServerError(err.response.data.error);
