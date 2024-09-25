@@ -15,13 +15,14 @@ const DirectMessageContainer = styled.div`
 `;
 
 export const ChatMessages = styled.div`
-	flex: 1;
+	height: 500px;
+	max-height: calc(100% - 100px);
 	padding: 10px;
-	overflow-y: auto;
 	color: #fff;
-	display: ${({ $isMinimized }) => ($isMinimized ? 'none' : 'block')};
-	transition: display 0.3s ease;
-	max-height: 100%;
+	display: ${({ $isMinimized }) => ($isMinimized ? 'none' : 'flex')};
+	flex-direction: column;
+	overflow-y: auto;
+	transition: all 0.3s ease;
 `;
 
 export const ChatInputContainer = styled.div`
@@ -72,25 +73,21 @@ export const NewConversationMessage = styled.div`
 export const SenderBubble = styled.div`
 	background-color: #0084ff;
 	color: #fff;
-	border-radius: 10px;
+	border-radius: 10px 10px 0 10px;
 	padding: 10px;
-	margin: 5px;
+	margin: 5px 5px 5px auto;
 	max-width: 70%;
-	display: block;
-	clear: both;
-	float: right;
+	align-self: flex-end;
 `;
 
 export const HostBubble = styled.div`
 	background-color: #E8E2E2;
 	color: #333;
-	border-radius: 10px;
+	border-radius: 10px 10px 10px 0;
 	padding: 10px;
-	margin: 5px;
+	margin: 5px auto 5px 5px;
 	max-width: 70%;
-	display: block;
-	clear: both;
-	float: left;
+	align-self: flex-start;
 `;
 
 export default DirectMessageContainer;

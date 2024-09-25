@@ -15,7 +15,7 @@ import DirectMessageContainer, {
 } from './styles/DirectMessage/DirectMessage.styled.js';
 
 const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) => {
-	if (!realConvo || realConvo.messages === null) {
+	if (!realConvo || realConvo.messages.length === 0) {
 		return (
 			<NewConversationMessage>
 				It's your first time chatting with {otherUser}. Say hi, don't be shy!
@@ -31,7 +31,7 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 						<HostBubble key={index}>{message.content}</HostBubble>
 					);
 				})}
-				<div ref={messagesEndRef} />	
+				<div ref={messagesEndRef} />
 			</>
 		);
 	}
@@ -47,13 +47,14 @@ export const DirectMessage = ({ conversationID, conversations, username, onClose
 
 	useEffect(() => {
 		setRealConvo(conversations.find(c => c.conversationID === conversationID));
-	}, [conversations]);
+	}, [conversations, conversationID]);
 
 	useEffect(() => {
 		if (messagesEndRef.current) {
 			messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
 		}
 	}, [realConvo?.messages]);
+
 
 	const handleMessage = () => {
 		if (content.trim() === '') return;
@@ -96,7 +97,6 @@ export const DirectMessage = ({ conversationID, conversations, username, onClose
 						if (e.key === 'Enter') {
 							handleMessage();
 						}
-
 					}}
 				/>
 			</ChatInputContainer>
