@@ -13,6 +13,7 @@ import {
 	Score,
 	ScoreContainer,
 } from './styles/Game.styled';
+import Spinner from 'react-bootstrap/Spinner';
 
 const Game = () => {
 	const navigate = useNavigate();
@@ -88,8 +89,10 @@ const Game = () => {
 				</Profile>
 				<p>Press <b>Q</b> to quit game</p>
 				<Profile>
-					<ProfileImage src='/images/default-profile.png' alt='Profile Picture'/>
-					<ProfileName>Player 2</ProfileName>
+					{/* <ProfileImage src='/images/default-profile.png' alt='Profile Picture'/>
+					<ProfileName>Player 2</ProfileName> */}
+					<p>Waiting for player</p>
+					<Spinner animation='border'/>
 				</Profile>
 			</ProfilesContainer>
 			<GameContainer>
