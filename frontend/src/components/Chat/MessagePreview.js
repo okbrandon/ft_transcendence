@@ -43,8 +43,10 @@ const NoFriendsMessage = styled.div`
 export const MessagePreview = ({ conversationsData, handleSelectChat }) => {
 	const userID = localStorage.getItem('userID');
 	const [friends, setFriends] = useState([]);
+	const [friendStatus, setFriendStatus] = useState([]); // useState for finding conversation type: 1/2 1: friends, 2: blocked request received
 	const [loading, setLoading] = useState(true);
 
+	// Fetching friends temporarily for rendering purposes, to remove once backend is implemented
 	useEffect(() => {
 		const fetchFriends = async () => {
 			const friendsData = await GetFriends();
@@ -53,14 +55,14 @@ export const MessagePreview = ({ conversationsData, handleSelectChat }) => {
 		};
 		fetchFriends();
 	}, []);
-
+	// same here, to remove once backend is implemented
 	const handleSelectFriend = (friend) => {
 		const convo = conversationsData.find((convo) => {
 			const other = convo.participants.find(participant => participant.userID !== userID);
 			return other.username === friend.username;
 		});
 
-		  handleSelectChat(friend.username, convo ? convo.conversationID : null);
+		handleSelectChat(friend.username, convo ? convo.conversationID : null);
 	};
 
 	const renderFriendPreview = (friend, index, message = 'Click to start a conversation') => (

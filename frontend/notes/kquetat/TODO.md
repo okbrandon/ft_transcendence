@@ -15,7 +15,7 @@
 - Search friends features:
 	- Fix the feature.
 		- Map through the list of friends.
-	- Implement the Invite button, (waiting for gameserver)
+	- Implement the Invite button, (TODO LATER : waiting for gameserver)
 	- Block button,
 	- Profile button,
 
