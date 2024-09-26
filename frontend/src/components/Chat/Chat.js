@@ -28,7 +28,12 @@ const Chat = () => {
 	};
 
 	const handleCloseChat = () => {
-		setDirectMessage(prev => ({...prev, isOpen: false, isMinimized: false}));
+		setDirectMessage({
+			isOpen: false,
+			isMinimized: false,
+			username: null,
+			conversationID: null,
+		});
 	}
 
 	const toggleDMMinimization = () => {
