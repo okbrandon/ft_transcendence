@@ -67,6 +67,8 @@ export const DropdownItem = styled.button`
 		}
 	}
 	&[data-action="block"] {
+		border-radius: 0 0 5px 0;
+
 		&:hover {
 			background-color: #EE4266;
 			color: #fff;

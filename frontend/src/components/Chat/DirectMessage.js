@@ -3,6 +3,7 @@ import { Header } from './styles/Chat/ChatContainer.styled.js';
 import CloseButton from 'react-bootstrap/CloseButton';
 import Arrow from './tools/Arrow.js';
 import { RelationContext } from '../../context/RelationContext.js';
+import { useNavigate } from 'react-router-dom';
 
 import DirectMessageContainer, {
 	ChatMessages,
@@ -54,31 +55,34 @@ export const DirectMessage = ({
 	const { sendMessage } = useContext(RelationContext);
 	const messagesEndRef = useRef(null);
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+	const navigate = useNavigate();
 
 	const realConvo = conversations.find(c => c.conversationID === conversationID);
 
 	const toggleDropdown = (event) => {
 		event.stopPropagation();
+		console.log("Toggling dropdown");
 		setIsDropdownOpen(!isDropdownOpen);
 	}
 
-	const handleDropdownAction = (action) => {
-		console.log(action);
+	const handleDropdownAction = (event, action) => {
+		console.log("action: ");
+
+		switch (action) {
+			case 'profile':
+				navigate(`/profile/${username}`);
+				break;
+			case 'invite':
+				console.log('invite');
+				break;
+			case 'block':
+				console.log('block');
+				break;
+			default:
+				break;
+		}
 		setIsDropdownOpen(false);
 	};
-
-	useEffect(() => {
-		const handleClickOutside = (event) => {
-			if (isDropdownOpen && !event.target.closest('.dropdown-container')) {
-				setIsDropdownOpen(false);
-			}
-		};
-
-		document.addEventListener('mousedown', handleClickOutside);
-		return () => {
-			document.removeEventListener('mousedown', handleClickOutside);
-		};
-	}, [isDropdownOpen]);
 
 	useEffect(() => {
 		if (messagesEndRef.current) {
@@ -103,13 +107,13 @@ export const DirectMessage = ({
 			<Header onClick={toggleMinimization}>
 				<Username onClick={toggleDropdown}>{username}</Username>
 				<Dropdown $isOpen={isDropdownOpen}>
-					<DropdownItem data-action="profile" onClick={() => handleDropdownAction('profile')}>Profile</DropdownItem>
-					<DropdownItem data-action="invite" onClick={() => handleDropdownAction('invite')}>Invite</DropdownItem>
-					<DropdownItem data-action="block" onClick={() => handleDropdownAction('block')}>Block</DropdownItem>
+					<DropdownItem data-action="profile" onClick={(e) => handleDropdownAction(e, 'profile')}>Profile</DropdownItem>
+					<DropdownItem data-action="invite" onClick={(e) => handleDropdownAction(e, 'invite')}>Invite</DropdownItem>
+					<DropdownItem data-action="block" onClick={(e) => handleDropdownAction(e, 'block')}>Block</DropdownItem>
 				</Dropdown>
 				<ActionButtonContainer>
 					<Arrow ArrowAnimate={!isMinimized} />
-					<CloseButton variant='white' onClick={onClose} />
+					<CloseButton variant='white' onClick={(e) => { onClose(); }} />
 				</ActionButtonContainer>
 			</Header>
 
