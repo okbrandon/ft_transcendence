@@ -3,6 +3,8 @@ import { Header } from './styles/Chat/ChatContainer.styled.js';
 import CloseButton from 'react-bootstrap/CloseButton';
 import Arrow from './tools/Arrow.js';
 import { RelationContext } from '../../context/RelationContext.js';
+import API from '../../api/api.js';
+import ConfirmationModal from './tools/ConfirmationModal.js';
 import { useNavigate } from 'react-router-dom';
 
 import DirectMessageContainer, {
@@ -55,9 +57,11 @@ export const DirectMessage = ({
 	const { sendMessage } = useContext(RelationContext);
 	const messagesEndRef = useRef(null);
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+	const [isBlockModalOpen, setIsBlockModalOpen] = useState(false);
 	const navigate = useNavigate();
 
 	const realConvo = conversations.find(c => c.conversationID === conversationID);
+
 
 	const toggleDropdown = (event) => {
 		event.stopPropagation();
@@ -65,18 +69,38 @@ export const DirectMessage = ({
 		setIsDropdownOpen(!isDropdownOpen);
 	}
 
-	const handleDropdownAction = (event, action) => {
-		console.log("action: ");
+	const handleBlockUser = () => {
+		const other = realConvo.participants.find(id => id !== userID);
 
+		if (!other || !other.userID) return;
+		if (other.userID === userID) {
+			console.error('You cannot block yourself');
+			return;
+		}
+
+
+		API.put('users/@me/relationships', { user: other.userID, type: 2 })
+			.then(() => {
+				console.log('User blocked');
+			})
+			.catch(err => {
+				console.error(err.response.data.error);
+			});
+		setIsBlockModalOpen(false);
+	}
+
+	const handleDropdownAction = (action) => {
+		console.log(action);
 		switch (action) {
 			case 'profile':
 				navigate(`/profile/${username}`);
 				break;
 			case 'invite':
-				console.log('invite');
+				console.log('invite'); // Waiting for gameserver
 				break;
 			case 'block':
 				console.log('block');
+				setIsBlockModalOpen(true);
 				break;
 			default:
 				break;
@@ -103,17 +127,18 @@ export const DirectMessage = ({
 	};
 
 	return (
+		<>
 		<DirectMessageContainer $isOpen={isOpen} $isMinimized={isMinimized}>
 			<Header onClick={toggleMinimization}>
 				<Username onClick={toggleDropdown}>{username}</Username>
 				<Dropdown $isOpen={isDropdownOpen}>
-					<DropdownItem data-action="profile" onClick={(e) => handleDropdownAction(e, 'profile')}>Profile</DropdownItem>
-					<DropdownItem data-action="invite" onClick={(e) => handleDropdownAction(e, 'invite')}>Invite</DropdownItem>
-					<DropdownItem data-action="block" onClick={(e) => handleDropdownAction(e, 'block')}>Block</DropdownItem>
+					<DropdownItem data-action="profile" onClick={() => handleDropdownAction('profile')}>Profile</DropdownItem>
+					<DropdownItem data-action="invite" onClick={() => handleDropdownAction('invite')}>Invite</DropdownItem>
+					<DropdownItem data-action="block" onClick={() => handleDropdownAction('block')}>Block</DropdownItem>
 				</Dropdown>
 				<ActionButtonContainer>
 					<Arrow ArrowAnimate={!isMinimized} />
-					<CloseButton variant='white' onClick={(e) => { onClose(); }} />
+					<CloseButton variant='white' onClick={onClose} />
 				</ActionButtonContainer>
 			</Header>
 
@@ -143,5 +168,14 @@ export const DirectMessage = ({
 				</>
 			)}
 		</DirectMessageContainer>
+
+		<ConfirmationModal
+			isOpen={isBlockModalOpen}
+			onClose={() => setIsBlockModalOpen(false)}
+			onConfirm={handleBlockUser}
+			title="Block User"
+			message={`Are you sure you want to block ${username}? You won't be able to see their messages or receive invitations from them.`}
+		/>
+	  </>
 	);
 };

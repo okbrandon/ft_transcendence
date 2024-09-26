@@ -2,11 +2,8 @@
 
 - Add feature to interact with profile picture and access that person's profile. (redirection to profile page)
 	- Add styling in DMWinHeader.
-		- on:hover: underline the username.
 		- on:click:
-			- dropdown to select profile.
-				- redirect to page profile.
-			- dropdown to invite user to game party.
+			- dropdown to invite user to game party. (waiting for gameserver)
 				- add a notification to user, to confirm that he wants to invite him.
 			- dropdown to select block.
 				- add a notification to user, to confirm the blocking of the user selected.
@@ -14,6 +11,9 @@
 					- the blocked user cannot see the conversation anymore.
 					- (optional): custom message to say that user was blocked.
 						- (optional): another custom message to the user that blocked, 'You blocked that user'.
+
+- SendButton:
+	- add an extra button for mouse to send.
 
 - Search friends features:
 	- Fix the feature.
@@ -38,7 +38,7 @@
 {
 									1 CONVERSATION (Type: 'Array')
 									   |
-									   |
+									   |--- 'type: 1/2': 'friends/blocked'
 									   |
 	0:---------|                       |--- 'conversationID': "conv_MTcyNjMwMjg5NjQ2MDc3Mg"
 	1:---------| Conversations ------- |
