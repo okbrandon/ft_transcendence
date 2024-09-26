@@ -4,7 +4,6 @@ import httpx
 import json
 import asyncio
 import random
-import os
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
@@ -301,7 +300,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             Q(userA=user.userID) | Q(userB=user.userID)
         )
         friends = friends.exclude(
-            Q(status=2) & (Q(userA=user.userID) | Q(userB=user.userID))
+            Q(status=2) | Q(status=0),
+            Q(userA=user.userID) | Q(userB=user.userID)
         )
 
         user = User.objects.get(userID=user.userID)
@@ -360,31 +360,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         if self.game_loop_task:
             self.game_loop_task.cancel()
         if self.match:
-            await self.handle_player_leave()
-
-    async def handle_player_leave(self):
-        opponent = await self.get_opponent()
-        player_side = await self.get_player_side()
-        
-        await self.channel_layer.group_send(
-            f"match_{self.match.matchID}",
-            {
-                "type": "player_leave",
-                "user": await self.get_user_profile(),
-                "side": player_side
-            }
-        )
-
-        if opponent:
-            await self.update_match_winner(opponent)
-        else:
-            await self.destroy_match()
-
-        await self.channel_layer.group_discard(
-            f"match_{self.match.matchID}",
-            self.channel_name
-        )
-
+            await self.leave_match()
 
     async def receive(self, text_data):
         data = json.loads(text_data)
@@ -404,14 +380,9 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.missed_heartbeats += 1
             if self.missed_heartbeats >= 3:
                 logger.info(f"[{self.__class__.__name__}] User {self.user.username} missed 3 heartbeats, closing connection")
-                await self.handle_player_leave()
+                await self.leave_match()
                 await self.close(code=4000)  # Use a custom close code
                 break
-
-    @database_sync_to_async
-    def destroy_match(self):
-        self.match.delete()
-        logger.info(f"Match {self.match.matchID} destroyed as it became empty")
 
     @database_sync_to_async
     def get_player_side(self):
@@ -441,25 +412,18 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         player_side = await self.get_player_side()
 
+        await self.send_json({
+            "e": "PLAYER_SIDE",
+            "d": {"side": player_side}
+        })
+
         await self.channel_layer.group_send(
             f"match_{self.match.matchID}",
             {
                 "type": "player_join",
-                "user": await self.get_user_profile(),
-                "side": player_side
+                "user": await self.get_user_profile()
             }
         )
-
-        # If this is the second player to join, send the first player's join event to this player
-        if player_side == 'right':
-            first_player = await self.get_user_profile(self.match.playerA['id'])
-            await self.send_json({
-                "e": "PLAYER_JOIN",
-                "d": {
-                    "user": first_player,
-                    "side": "left"
-                }
-            })
 
         if await self.both_players_joined():
             await self.start_game()
@@ -468,15 +432,13 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def leave_match(self):
         if self.match:
             opponent = await self.get_opponent()
-            player_side = await self.get_player_side()
             if opponent:
                 await self.update_match_winner(opponent)
                 await self.channel_layer.group_send(
                     f"match_{self.match.matchID}",
                     {
                         "type": "player_leave",
-                        "user": await self.get_user_profile(),
-                        "side": player_side
+                        "user": await self.get_user_profile()
                     }
                 )
             await self.channel_layer.group_discard(
@@ -512,7 +474,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             f"match_{self.match.matchID}",
             {"type": "game_start_sequence"}
         )
-        await asyncio.sleep(16)  # Wait for 3 seconds before starting the game
+        await asyncio.sleep(3)  # Wait for 3 seconds before starting the game
         self.game_loop_task = asyncio.create_task(self.game_loop())
         await self.channel_layer.group_send(
             f"match_{self.match.matchID}",
@@ -618,25 +580,19 @@ class GameConsumer(AsyncWebsocketConsumer):
         return {
             "id": user.userID,
             "username": user.username,
-            "avatarID": user.avatarID
+            # Add other relevant user data
         }
 
     async def player_join(self, event):
         await self.send_json({
             "e": "PLAYER_JOIN",
-            "d": {
-                "user": event['user'],
-                "side": event['side']
-            }
-    })
+            "d": event['user']
+        })
 
     async def player_leave(self, event):
         await self.send_json({
             "e": "PLAYER_LEAVE",
-            "d": {
-                "user": event['user'],
-                "side": event['side']
-            }
+            "d": event['user']
         })
 
     async def game_start_sequence(self, event):
