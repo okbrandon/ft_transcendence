@@ -39,7 +39,7 @@ export const SubtitleSection = styled.div`
 
 	p {
 		font-size: 1rem;
-		color: rgba(255, 255, 255, 0.65);  /* More subtle text */
+		color: rgba(255, 255, 255, 0.65);
 		margin: 0;
 	}
 `;
@@ -77,7 +77,8 @@ export const SkinImage = styled.img`
 `;
 
 export const SkinName = styled.h3`
-	font-size: 1.5rem;
+	font-size: 1.2rem;
+	font-family: 'Orbitron', sans-serif;
 	margin-bottom: 0.5rem;
 	text-transform: uppercase;
 `;
@@ -88,7 +89,7 @@ export const SkinPrice = styled.p`
 `;
 
 export const BuyButton = styled.button`
-	background: linear-gradient(145deg, #5e35b1, #7e57c2); /* Purple gradient for consistency */
+	background: linear-gradient(145deg, #5e35b1, #7e57c2);
 	border: none;
 	border-radius: 30px;
 	padding: 0.8rem 1.8rem;
@@ -99,7 +100,7 @@ export const BuyButton = styled.button`
 	box-shadow: 0px 4px 15px rgba(164, 69, 178, 0.4);
 
 	&:hover {
-		background: linear-gradient(145deg, #7e57c2, #9575cd); /* Brighter on hover */
+		background: linear-gradient(145deg, #7e57c2, #9575cd);
 		box-shadow: 0px 6px 20px rgba(164, 69, 178, 0.6);
 	}
 

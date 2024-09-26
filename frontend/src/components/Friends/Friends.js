@@ -36,22 +36,6 @@ const Friends = () => {
 		setIsRefresh(false);
 	}, [setIsRefresh, isRefresh]);
 
-	// useEffect(() => {
-	// 	if (friends && updateUserStatus) {
-	// 		console.log(updateUserStatus);
-	// 		setFriends(prev => prev.map(f => {
-	// 			if (f.username === updateUserStatus.username) {
-	// 				return {
-	// 					...f,
-	// 					status: updateUserStatus.status,
-	// 				};
-	// 			}
-	// 			return f;
-	// 		}));
-	// 		setUpdateUserStatus(null);
-	// 	}
-	// }, [updateUserStatus, setUpdateUserStatus, friends]);
-
 	if (!friends || !requests) {
 		return (
 			<PageContainer>

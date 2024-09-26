@@ -1,5 +1,7 @@
 # TODO
 ## today
+- Friends: popup
+- Game: send invite
 - Profile: `users/@me/stats` -> win / loss / ratio
 - Friends: add (websocket)
 

@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-	AvailableTournamentsSection,
 	AvailableTournamentsContainer,
+	AvailableTournamentsSection,
 	SearchBar,
-	TournamentList,
+	SearchContainer,
+	Title,
 	TournamentCard,
-	JoinButton,
+	TournamentList,
+	BackButton
 } from "../styles/Tournament/AvailableTournaments.styled";
-import { BackButton } from "../styles/Tournament/Tournament.styled";
+import PongButton from "../../../styles/shared/PongButton.styled";
 
 const initialTournaments = [
 	{ id: 1, name: "Summer Cup", players: "5/8" },
@@ -27,26 +29,38 @@ const AvailableTournaments = ({ setOptions }) => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [tournaments, setTournaments] = useState(initialTournaments);
 
+	// Filter tournaments based on search input
 	const filteredTournaments = tournaments.filter((tournament) =>
 		tournament.name.toLowerCase().includes(searchQuery.toLowerCase())
 	);
 
+	const handleJoinTournament = (tournamentName) => {
+		// Logic to handle joining a tournament (e.g., API call)
+		// After joining, you can redirect the user to a confirmation page or tournament room
+		navigate("/tournament-room");
+	};
+
 	return (
 		<AvailableTournamentsSection>
-			<BackButton onClick={() => setOptions('')}><i className="bi bi-arrow-left"/></BackButton>
-			<AvailableTournamentsContainer>
+			<Title>Available Tournaments</Title>
+			<SearchContainer>
+				<BackButton onClick={() => navigate(-1)}><i class="bi bi-arrow-left"/></BackButton>
 				<SearchBar
 					type="text"
 					placeholder="Search for a tournament..."
 					value={searchQuery}
 					onChange={(e) => setSearchQuery(e.target.value)}
 				/>
+			</SearchContainer>
+			<AvailableTournamentsContainer>
 				<TournamentList>
 					{filteredTournaments.map((tournament) => (
-						<TournamentCard key={tournament.id} onClick={() => navigate('/tournament-room')}>
+						<TournamentCard key={tournament.id}>
 							<h3>{tournament.name}</h3>
 							<p>Players: {tournament.players}</p>
-							<JoinButton>Join</JoinButton>
+							<PongButton onClick={() => handleJoinTournament(tournament.name)}>
+								Join
+							</PongButton>
 						</TournamentCard>
 					))}
 				</TournamentList>

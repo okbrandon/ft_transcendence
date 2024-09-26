@@ -1,61 +1,119 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Spinner from "react-bootstrap/Spinner";
 import {
 	ButtonContainer,
-	InviteButton,
+	FriendItem,
+	FriendProfilePicture,
 	JoinTournamentContainer,
 	KickButton,
+	ModalContainer,
+	ModalOverlay,
 	PageContainer,
 	PlayerCard,
 	PlayerList,
-	StartTournamentButton,
 	WaitingMessage,
 } from "../styles/Tournament/JoinTournament.styled";
-import { BackButton } from "../styles/Tournament/Tournament.styled";
+import PongButton from "../../../styles/shared/PongButton.styled";
+import { RelationContext } from "../../../context/RelationContext";
+import { GetActiveFriends } from "../../../api/friends";
 
 const players = ["Player 1", "Player 2", "Player 3", "Player 4", "Player 5", "Player 6", "Player 7"];
 
 const JoinTournament = () => {
 	const navigate = useNavigate();
-	const isStartDisabled = players.length < 8;
+	const { isRefresh, setIsRefresh } = useContext(RelationContext);
+	const [invite, setInvite] = useState(false);
+	const [activeFriends, setActiveFriends] = useState([]);
+	const [isStartDisabled, setIsStartDisabled] = useState(true);
 
-	const handleKickPlayer = (playerName) => {
+	useEffect(() => {
+		setIsStartDisabled(players.length < 8);
+	}, [setIsStartDisabled]);
+
+	useEffect(() => {
+		const fetchFriends = async () => {
+			try {
+				const friendsResponse = await GetActiveFriends();
+				setActiveFriends(friendsResponse);
+			} catch (err) {
+				console.error(err.response?.data?.error || "An error occurred");
+			}
+		}
+		fetchFriends();
+		setIsRefresh(false);
+	}, [setIsRefresh, isRefresh]);
+
+	const handleKickPlayer = playerName => {
 		console.log(`Kicking ${playerName}`);
 	};
 
+	const handleInvite = () => {
+		console.log("Inviting players...");
+		setInvite(true);
+	};
+
+	const handleFriendSelect = friendId => {
+		if (activeFriends.includes(friendId)) {
+			setActiveFriends((prevSelected) => prevSelected.filter((id) => id !== friendId));
+		} else {
+			setActiveFriends((prevSelected) => [...prevSelected, friendId]);
+		}
+	};
+
 	return (
-		<PageContainer>
-			<JoinTournamentContainer>
-				<BackButton onClick={() => navigate(-1)}>
-					<i className="bi bi-arrow-left"/>
-				</BackButton>
+		<>
+			<PageContainer>
 				<h1>Tournament</h1>
 				<h2>someone's room</h2>
-				<PlayerList>
-					{players.map((player, index) => (
-						<PlayerCard key={index}>
-							{player}
-							<KickButton onClick={() => handleKickPlayer(player)}>✖</KickButton>
-						</PlayerCard>
-					))}
-				</PlayerList>
-				<ButtonContainer>
-					<InviteButton>Invite Players</InviteButton>
-					<StartTournamentButton>Start</StartTournamentButton>
-				</ButtonContainer>
-				<WaitingMessage>
-					{isStartDisabled ? (
-						<>
-							<p>Waiting for more players to join...</p>
-							<Spinner animation="border" />
-						</>
-					) : (
-						<p>Ready to start!</p>
-					)}
-				</WaitingMessage>
-			</JoinTournamentContainer>
-		</PageContainer>
+				<JoinTournamentContainer>
+					<PlayerList>
+						{players.map((player, index) => (
+							<PlayerCard key={index}>
+								{player}
+								<KickButton onClick={() => handleKickPlayer(player)}>✖</KickButton>
+							</PlayerCard>
+						))}
+					</PlayerList>
+					<ButtonContainer>
+						<PongButton type="button" $width="150px" onClick={() => navigate(-1)}>Back</PongButton>
+						<PongButton type="button" $width="150px" onClick={handleInvite}>Invite</PongButton>
+						<PongButton type="button" $width="150px" disabled={isStartDisabled}>Start</PongButton>
+					</ButtonContainer>
+					<WaitingMessage>
+						{isStartDisabled ? (
+							<>
+								<p>Waiting for more players to join...</p>
+								<Spinner animation="border" />
+							</>
+						) : (
+							<p>Ready to start!</p>
+						)}
+					</WaitingMessage>
+				</JoinTournamentContainer>
+			</PageContainer>
+			{invite && (
+				<ModalOverlay>
+					<ModalContainer>
+						<h2>Invite Friends</h2>
+						{activeFriends.map((friend) => (
+							<FriendItem key={friend.userID}>
+								<FriendProfilePicture src={friend.avatarID} alt={`${friend.displayName}'s avatar`} />
+								{friend.displayName}
+							</FriendItem>
+						))}
+						<ButtonContainer>
+							<PongButton type="button" $width="150px" onClick={() => setInvite(false)}>
+								Cancel
+							</PongButton>
+							<PongButton type="button" $width="150px">
+								Invite
+							</PongButton>
+						</ButtonContainer>
+					</ModalContainer>
+				</ModalOverlay>
+			)}
+		</>
 	);
 };
 
