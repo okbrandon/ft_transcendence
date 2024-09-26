@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import {
 	ErrorMessage,
 	Form,
+	FormControlContainer,
 	FormInput,
 	SectionHeading,
 	SubSectionHeading,
@@ -27,6 +28,8 @@ const Security = () => {
 	const [success, setSuccess] = useState('');
 	const [has2FA, setHas2FA] = useState(false);
 	const [showTwoFactorAuth, setShowTwoFactorAuth] = useState(false);
+	const [showPassword, setShowPassword] = useState(false);
+	const [showCfPassword, setShowCfPassword] = useState(false);
 	const [error, setError] = useState('');
 
 	useEffect(() => {
@@ -69,7 +72,7 @@ const Security = () => {
 			setShowTwoFactorAuth(true);
 		} else {
 			setLoading(true);
-			API.patch('/users/@me/profile', submissionData)
+			API.patch('users/@me/profile', submissionData)
 				.then(() => {
 					setSuccess('Security updated successfully');
 					setError('');
@@ -98,23 +101,29 @@ const Security = () => {
 				<SectionHeading>Security</SectionHeading>
 				<SubSectionHeading>Sign in</SubSectionHeading>
 				<label htmlFor="password">Password</label>
-				<FormInput
-					type="password"
-					id="password"
-					placeholder="Change Password"
-					value={formData.password}
-					onChange={handleChange}
-					autoComplete="off"
-				/>
+				<FormControlContainer>
+					<FormInput
+						type={showPassword ? 'text' : 'password'}
+						id="password"
+						placeholder="Change Password"
+						value={formData.password}
+						onChange={handleChange}
+						autoComplete="off"
+					/>
+					{showPassword ? <i className="bi bi-eye-fill" onClick={() => setShowPassword(!showPassword)}/> : <i className="bi bi-eye" onClick={() => setShowPassword(!showPassword)}/>}
+				</FormControlContainer>
 				<label htmlFor="cfPassword">Confirm Password</label>
-				<FormInput
-					type="password"
-					id="cfPassword"
-					placeholder="Confirm New Password"
-					value={cfPassword}
-					onChange={(e) => setCfPassword(e.target.value)}
-					autoComplete="off"
-				/>
+				<FormControlContainer>
+					<FormInput
+						type={showCfPassword ? 'text' : 'password'}
+						id="cfPassword"
+						placeholder="Confirm New Password"
+						value={cfPassword}
+						onChange={(e) => setCfPassword(e.target.value)}
+						autoComplete="off"
+					/>
+					{showCfPassword ? <i className="bi bi-eye-fill" onClick={() => setShowCfPassword(!showCfPassword)}/> : <i className="bi bi-eye" onClick={() => setShowCfPassword(!showCfPassword)}/>}
+				</FormControlContainer>
 				<SubSectionHeading>Contact Information</SubSectionHeading>
 				<label htmlFor="email">Email</label>
 				<FormInput

@@ -20,9 +20,10 @@ const SignIn = () => {
 	const { setIsLoggedIn } = useContext(AuthContext);
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
-	const [error, setError] = useState('');
 	const [isTwoFactorAuth, setIsTwoFactorAuth] = useState(false);
 	const [availablePlatforms, setAvailablePlatforms] = useState(null);
+	const [showPassword, setShowPassword] = useState(false);
+	const [error, setError] = useState('');
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
@@ -85,7 +86,7 @@ const SignIn = () => {
 						<FormContainer.Group className="mb-3">
 							<FormContainer.Control
 								id="password"
-								type="password"
+								type={showPassword ? 'text' : 'password'}
 								placeholder=" "
 								value={password}
 								onChange={(e) => setPassword(e.target.value)}
@@ -93,6 +94,7 @@ const SignIn = () => {
 								autoComplete='current-password'
 							/>
 							<span>PASSWORD</span>
+							{showPassword ? <i className="bi bi-eye-fill" onClick={() => setShowPassword(!showPassword)}/> : <i className="bi bi-eye" onClick={() => setShowPassword(!showPassword)}/>}
 						</FormContainer.Group>
 						<p>Not Signed Up ? <Link to="/signup">Sign Up</Link></p>
 						{error && <ErrorMessage>{error}</ErrorMessage>}

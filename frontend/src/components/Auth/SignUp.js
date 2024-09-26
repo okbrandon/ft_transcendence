@@ -14,6 +14,8 @@ const SignUp = () => {
 		lang: 'en',
 	});
 	const [cfPassword, setCfPassword] = useState('');
+	const [showPassword, setShowPassword] = useState(false);
+	const [showCfPassword, setShowCfPassword] = useState(false);
 	const [error, setError] = useState('');
 
 	const handleChange = (e) => {
@@ -82,7 +84,7 @@ const SignUp = () => {
 				<FormContainer.Group className="mb-3">
 					<FormContainer.Control
 						id="password"
-						type="password"
+						type={showPassword ? 'text' : 'password'}
 						placeholder=" "
 						value={formData.password}
 						onChange={handleChange}
@@ -90,11 +92,12 @@ const SignUp = () => {
 						autoComplete='new-password'
 					/>
 					<span>PASSWORD</span>
+					{showPassword ? <i className="bi bi-eye-fill" onClick={() => setShowPassword(!showPassword)}/> : <i className="bi bi-eye" onClick={() => setShowPassword(!showPassword)}/>}
 				</FormContainer.Group>
 				<FormContainer.Group className="mb-3">
 					<FormContainer.Control
 						id="cfpassword"
-						type="password"
+						type={showCfPassword ? 'text' : 'password'}
 						placeholder=" "
 						value={cfPassword}
 						onChange={(e) => setCfPassword(e.target.value)}
@@ -102,6 +105,7 @@ const SignUp = () => {
 						autoComplete='new-password'
 					/>
 					<span>CONFIRM</span>
+					{showCfPassword ? <i className="bi bi-eye-fill" onClick={() => setShowCfPassword(!showCfPassword)}/> : <i className="bi bi-eye" onClick={() => setShowCfPassword(!showCfPassword)}/>}
 				</FormContainer.Group>
 				<p>Already Signed Up ? <Link to="/login">Sign In</Link></p>
 				{error && <ErrorMessage>{error}</ErrorMessage>}

@@ -47,6 +47,16 @@ export const FormContainer = styled(Form)`
 		width: 100%;
 		position: relative;
 		margin: 10px 0;
+
+		& > i {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			color: #fff;
+			font-size: 1.2rem;
+			z-index: 2;
+			cursor: pointer;
+		}
 	}
 
 	.mb-3 input {

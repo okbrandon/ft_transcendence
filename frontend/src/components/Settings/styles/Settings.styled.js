@@ -128,6 +128,20 @@ export const SubSectionHeading = styled.h3`
 	margin-top: 3rem;
 `;
 
+export const FormControlContainer = styled.div`
+	position: relative;
+
+	& > i {
+		position: absolute;
+		top: 10px;
+		right: 15px;
+		color: #fff;
+		font-size: 1.5rem;
+		z-index: 2;
+		cursor: pointer;
+	}
+`;
+
 export const FormInput = styled.input`
 	width: 100%;
 	padding: 1rem;
