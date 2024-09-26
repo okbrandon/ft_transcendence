@@ -14,6 +14,67 @@ const DirectMessageContainer = styled.div`
 	border-radius: 10px 10px 0 0;
 `;
 
+export const Username = styled.span`
+	cursor: pointer;
+	index: 1000;
+	transition: all 0.3s ease;
+
+	&:hover {
+		text-decoration: underline;
+	}
+
+	&:active {
+		color: #6a0dad;
+	}
+`;
+
+export const Dropdown = styled.div`
+	position: absolute;
+	width: 40%;
+	top: 100%;
+	left: 0;
+	background-color: black;
+	border-radius: 0 0 5px 0;
+	box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+	display: ${({ $isOpen }) => $isOpen ? 'block' : 'none'};
+	z-index: 1000;
+`;
+
+export const DropdownItem = styled.button`
+	display: block;
+	width: 100%;
+	padding: 10px;
+	text-align: left;
+	background: none;
+	border: none;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+	font-size: 0.9rem;
+	color: #fff;
+
+	&[data-action="profile"] {
+		&:hover {
+			background-color: #6a0dad;
+			color: #fff;
+			font-weight: bold;
+		}
+	}
+	&[data-action="invite"] {
+		&:hover {
+			background-color: #9AE66E;
+			color: #fff;
+			font-weight: bold;
+		}
+	}
+	&[data-action="block"] {
+		&:hover {
+			background-color: #EE4266;
+			color: #fff;
+			font-weight: bold;
+		}
+	}
+`;
+
 export const ChatMessages = styled.div`
 	height: 500px;
 	max-height: calc(100% - 100px);

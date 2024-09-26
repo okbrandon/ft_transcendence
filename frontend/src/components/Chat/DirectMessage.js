@@ -6,6 +6,9 @@ import { RelationContext } from '../../context/RelationContext.js';
 
 import DirectMessageContainer, {
 	ChatMessages,
+	Username,
+	Dropdown,
+	DropdownItem,
 	NewConversationMessage,
 	SenderBubble,
 	HostBubble,
@@ -50,8 +53,32 @@ export const DirectMessage = ({
 	const [content, setContent] = useState('');
 	const { sendMessage } = useContext(RelationContext);
 	const messagesEndRef = useRef(null);
+	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
 	const realConvo = conversations.find(c => c.conversationID === conversationID);
+
+	const toggleDropdown = (event) => {
+		event.stopPropagation();
+		setIsDropdownOpen(!isDropdownOpen);
+	}
+
+	const handleDropdownAction = (action) => {
+		console.log(action);
+		setIsDropdownOpen(false);
+	};
+
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (isDropdownOpen && !event.target.closest('.dropdown-container')) {
+				setIsDropdownOpen(false);
+			}
+		};
+
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, [isDropdownOpen]);
 
 	useEffect(() => {
 		if (messagesEndRef.current) {
@@ -74,7 +101,12 @@ export const DirectMessage = ({
 	return (
 		<DirectMessageContainer $isOpen={isOpen} $isMinimized={isMinimized}>
 			<Header onClick={toggleMinimization}>
-				{username}
+				<Username onClick={toggleDropdown}>{username}</Username>
+				<Dropdown $isOpen={isDropdownOpen}>
+					<DropdownItem data-action="profile" onClick={() => handleDropdownAction('profile')}>Profile</DropdownItem>
+					<DropdownItem data-action="invite" onClick={() => handleDropdownAction('invite')}>Invite</DropdownItem>
+					<DropdownItem data-action="block" onClick={() => handleDropdownAction('block')}>Block</DropdownItem>
+				</Dropdown>
 				<ActionButtonContainer>
 					<Arrow ArrowAnimate={!isMinimized} />
 					<CloseButton variant='white' onClick={onClose} />
