@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect, useRef } from 'react';
 import { Header } from './styles/Chat/ChatContainer.styled.js';
 import CloseButton from 'react-bootstrap/CloseButton';
 import Arrow from './tools/Arrow.js';
+import { SendButton } from './tools/SendButton.js';
 import { RelationContext } from '../../context/RelationContext.js';
 import API from '../../api/api.js';
 import ConfirmationModal from './tools/ConfirmationModal.js';
@@ -77,7 +78,6 @@ export const DirectMessage = ({
 			console.error('You cannot block yourself');
 			return;
 		}
-
 
 		API.put('users/@me/relationships', { user: other.userID, type: 2 })
 			.then(() => {
@@ -164,6 +164,9 @@ export const DirectMessage = ({
 								}
 							}}
 						/>
+						<SendButton onClick={handleMessage} disabled={content.trim() === ''}>
+							<i className="bi bi-send-fill" />
+						</SendButton>
 					</ChatInputContainer>
 				</>
 			)}

@@ -89,18 +89,22 @@ export const ChatMessages = styled.div`
 `;
 
 export const ChatInputContainer = styled.div`
+	display: flex;
+	align-items: center;
 	padding: 10px;
 	background-color: #fff;
 	border-top: 1px solid #ddd;
-	display: ${({ $isMinimized }) => ($isMinimized ? 'none' : 'block')};
-	transition: display 0.3s ease;
+	display: ${({ $isMinimized }) => ($isMinimized ? 'none' : 'flex')};
+	transition: all 0.3s ease;
 `;
 
 export const ChatInput = styled.input`
-	width: 100%;
+	flex: 1;
 	padding: 10px;
 	border: 1px solid #ddd;
 	border-radius: 4px;
+	margin-right: 10px;
+	width: 100%;
 `;
 
 export const ActionButtonContainer = styled.div`

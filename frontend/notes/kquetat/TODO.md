@@ -8,17 +8,14 @@
 			- dropdown to select block.
 				- add a notification to user, to confirm the blocking of the user selected.
 				- if person is blocked:
-					- the blocked user cannot see the conversation anymore.
+					- the blocked user cannot see the conversation anymore. (must double check)
 					- (optional): custom message to say that user was blocked.
 						- (optional): another custom message to the user that blocked, 'You blocked that user'.
-
-- SendButton:
-	- add an extra button for mouse to send.
 
 - Search friends features:
 	- Fix the feature.
 		- Map through the list of friends.
-	- Implement the Invite button,
+	- Implement the Invite button, (waiting for gameserver)
 	- Block button,
 	- Profile button,
 
