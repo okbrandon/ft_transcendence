@@ -419,9 +419,9 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         # Initialize match state for this match
         if match.matchID not in self.active_matches:
             self.active_matches[match.matchID] = {
-                'playerA': {'id': match.playerA['id'], 'paddle_y': 375},
-                'playerB': {'id': match.playerB['id'] if match.playerB else None, 'paddle_y': 375},
-                'ball': {'x': 600, 'y': 375, 'dx': 6, 'dy': 6},
+                'playerA': {'id': match.playerA['id'], 'paddle_y': 315},
+                'playerB': {'id': match.playerB['id'] if match.playerB else None, 'paddle_y': 315},
+                'ball': {'x': 587.5, 'y': 362.5, 'dx': 6, 'dy': 6},
                 'scores': {match.playerA['id']: 0}
             }
             logger.info(f"[MatchConsumer] New match state initialized for match: {match.matchID}")
@@ -475,10 +475,12 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         match_state = self.active_matches[self.match.matchID]
         player_key = 'playerA' if match_state['playerA']['id'] == self.user.userID else 'playerB'
         
+        paddle_speed = 10  # Appropriate paddle speed (adjust as needed)
+        
         if direction == 'up':
-            match_state[player_key]['paddle_y'] = max(0, match_state[player_key]['paddle_y'] - 15)
+            match_state[player_key]['paddle_y'] = max(0, match_state[player_key]['paddle_y'] - paddle_speed)
         elif direction == 'down':
-            match_state[player_key]['paddle_y'] = min(750, match_state[player_key]['paddle_y'] + 15)
+            match_state[player_key]['paddle_y'] = min(630, match_state[player_key]['paddle_y'] + paddle_speed)
         
         logger.debug(f"[MatchConsumer] Paddle moved: {player_key} - {direction}")
         await self.send_match_update()
@@ -586,6 +588,9 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
     async def run_match_loop(self, match_id):
         TERRAIN_WIDTH = 1200
         TERRAIN_HEIGHT = 750
+        PADDLE_WIDTH = 20
+        PADDLE_HEIGHT = 120
+        BALL_SIZE = 25
         
         while match_id in self.active_matches:
             match_state = self.active_matches[match_id]
@@ -595,21 +600,27 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             match_state['ball']['y'] += match_state['ball']['dy']
             
             # Check for collisions with top and bottom walls
-            if match_state['ball']['y'] <= 0 or match_state['ball']['y'] >= TERRAIN_HEIGHT:
+            if match_state['ball']['y'] <= 0 or match_state['ball']['y'] + BALL_SIZE >= TERRAIN_HEIGHT:
                 match_state['ball']['dy'] *= -1
             
             # Check for collisions with paddles
-            if match_state['ball']['x'] <= 60 and abs(match_state['ball']['y'] - match_state['playerA']['paddle_y']) < 75:
+            if (match_state['ball']['x'] <= PADDLE_WIDTH and 
+                match_state['ball']['y'] + BALL_SIZE >= match_state['playerA']['paddle_y'] and 
+                match_state['ball']['y'] <= match_state['playerA']['paddle_y'] + PADDLE_HEIGHT):
                 match_state['ball']['dx'] *= -1
-            elif match_state['ball']['x'] >= TERRAIN_WIDTH - 60 and abs(match_state['ball']['y'] - match_state['playerB']['paddle_y']) < 75:
+                await self.send_paddle_hit(match_state['playerA'])
+            elif (match_state['ball']['x'] + BALL_SIZE >= TERRAIN_WIDTH - PADDLE_WIDTH and 
+                  match_state['ball']['y'] + BALL_SIZE >= match_state['playerB']['paddle_y'] and 
+                  match_state['ball']['y'] <= match_state['playerB']['paddle_y'] + PADDLE_HEIGHT):
                 match_state['ball']['dx'] *= -1
+                await self.send_paddle_hit(match_state['playerB'])
             
             # Check for scoring
             if match_state['ball']['x'] <= 0:
                 match_state['scores'][match_state['playerB']['id']] += 1
                 self.reset_ball(match_state)
                 logger.info(f"[MatchConsumer] Player B scored in match: {match_id}")
-            elif match_state['ball']['x'] >= TERRAIN_WIDTH:
+            elif match_state['ball']['x'] + BALL_SIZE >= TERRAIN_WIDTH:
                 match_state['scores'][match_state['playerA']['id']] += 1
                 self.reset_ball(match_state)
                 logger.info(f"[MatchConsumer] Player A scored in match: {match_id}")
@@ -624,9 +635,25 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             await self.send_match_update()
             await asyncio.sleep(0.033)  # ~30 FPS
 
+    async def send_paddle_hit(self, player):
+        await self.channel_layer.group_send(
+            f"match_{self.match.matchID}",
+            {
+                "type": "paddle.hit",
+                "player": player
+            }
+        )
+
+    async def paddle_hit(self, event):
+        await self.send_json({
+            "e": "PADDLE_HIT",
+            "d": {"player": event["player"]}
+        })
+        logger.info(f"[MatchConsumer] Paddle hit event sent for player: {event['player']['id']}")
+
     def reset_ball(self, match_state):
-        dx = random.choice([-6, 6])
-        dy = random.choice([-6, 6])
+        dx = random.choice([-8, 8])  # Increased ball speed slightly
+        dy = random.choice([-8, 8])
         match_state['ball'] = {'x': 600, 'y': 375, 'dx': dx, 'dy': dy}
 
     async def end_match(self, match_id, winner_id):

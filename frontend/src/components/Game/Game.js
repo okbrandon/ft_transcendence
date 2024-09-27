@@ -221,8 +221,8 @@ const Game = () => {
 								<Score>{matchState.scores[matchState.playerB.id]}</Score>
 							</ScoreContainer>
 						)}
-						<PongPaddle $side="left" $paddleTop={matchState.playerA.paddle_y} />
-						<PongPaddle $side="right" $paddleTop={matchState.playerB.paddle_y} />
+						<PongPaddle $side="left" $leftPaddleTop={matchState.playerA.paddle_y} />
+						<PongPaddle $side="right" $rightPaddleTop={matchState.playerB.paddle_y} />
 						<PongBall x={matchState.ball.x} y={matchState.ball.y} />
 						<GameSeparator />
 					</>
