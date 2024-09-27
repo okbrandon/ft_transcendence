@@ -227,6 +227,7 @@ class UserSettingsMe(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class UserRelationshipsMe(APIView):
+
     def get(self, request, *args, **kwargs):
         me = request.user
         relationships = Relationship.objects.filter(userA=me.userID) | Relationship.objects.filter(userB=me.userID)
@@ -291,7 +292,7 @@ class UserRelationshipsMe(APIView):
                 if existing_relationship.status == 0 and existing_relationship.userB == me.userID:
                     existing_relationship.status = 1
                     existing_relationship.save()
-                    self.notify_chat_websocket(existing_relationship)
+                    self.notify_chat_websocket(existing_relationship, status="accepted")
                     return Response({"status": "Friend request accepted"}, status=status.HTTP_200_OK)
                 else:
                     return Response({"error": "Cannot directly set friendship status"}, status=status.HTTP_400_BAD_REQUEST)
@@ -303,7 +304,7 @@ class UserRelationshipsMe(APIView):
                 userB=target_user_id,
                 status=0
             )
-            self.notify_chat_websocket(relationship)
+            self.notify_chat_websocket(relationship, status="pending")
             return Response({"status": "Friend request sent"}, status=status.HTTP_200_OK)
 
         return Response({"error": "Invalid operation"}, status=status.HTTP_400_BAD_REQUEST)
@@ -317,29 +318,39 @@ class UserRelationshipsMe(APIView):
             relationshipID=relationshipID
         )
 
+        if relationship.status == 0:
+            self.notify_chat_websocket(relationship, status="rejected")
+
         relationship.delete()
 
         return Response({"status": "Relationship deleted"}, status=status.HTTP_200_OK)
 
-    def notify_chat_websocket(self, relationship):
+    def notify_chat_websocket(self, relationship, status):
         channel_layer = get_channel_layer()
-        group_name = f"chat_{relationship.userB}" if relationship.status == 0 else f"chat_{relationship.userA}"
+
+        if status == "accepted" or status == "rejected":
+            group_name = f"chat_{relationship.userA}"
+        elif status == "pending":
+            group_name = f"chat_{relationship.userB}"
+        else:
+            return
 
         try:
             async_to_sync(channel_layer.group_send)(
                 group_name,
                 {
                     "type": "friend_request",
-                    "status": "pending" if relationship.status == 0 else "accepted",
+                    "status": status,
                     "data": {
                         "type": "relationship",
                         "relationshipID": relationship.relationshipID,
-                        "from": relationship.userA if relationship.status == 0 else relationship.userB,
+                        "userA": relationship.userA,
+                        "userB": relationship.userB
                     }
                 }
             )
         except Exception as _:
-            logger.error(f"Failed to send friend request notification. User {relationship.userB} might be offline.")
+            logger.error(f"Failed to send friend request notification. Group: {group_name}")
 
 
 class UserMatchesMe(APIView):
