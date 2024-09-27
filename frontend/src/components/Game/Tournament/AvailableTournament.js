@@ -44,7 +44,7 @@ const AvailableTournaments = ({ setOptions }) => {
 		<AvailableTournamentsSection>
 			<Title>Available Tournaments</Title>
 			<SearchContainer>
-				<BackButton onClick={() => navigate(-1)}><i class="bi bi-arrow-left"/></BackButton>
+				<BackButton onClick={() => navigate(-1)}><i className="bi bi-arrow-left"/></BackButton>
 				<SearchBar
 					type="text"
 					placeholder="Search for a tournament..."

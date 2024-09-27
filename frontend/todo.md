@@ -1,6 +1,7 @@
 # TODO
 ## today
 - Friends: popup
+- Friends: put the friends/requests/blocked users in the relationContext ?
 - Game: send invite
 - Profile: `users/@me/stats` -> win / loss / ratio
 - Friends: add (websocket)

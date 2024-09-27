@@ -1,7 +1,14 @@
 import React from "react";
 import API from "../../api/api";
 import PongButton from "../../styles/shared/PongButton.styled";
-import { Actions, ListCard, ListContainer, NoRelation, ProfileAvatar, ProfileInfo, ProfileName } from "./styles/Friends.styled";
+import {
+	Actions,
+	ListCard,
+	ListContainer,
+	NoRelation,
+	ProfileAvatar,
+	ProfileInfo
+} from "./styles/Friends.styled";
 import { useNavigate } from "react-router-dom";
 
 const RequestsList = ({ requests, setRequests, setFriends }) => {
@@ -39,7 +46,7 @@ const RequestsList = ({ requests, setRequests, setFriends }) => {
 					<ListCard key={key}>
 						<ProfileInfo onClick={() => handleProfile(request.username)}>
 								<ProfileAvatar src={request.avatarID} alt={`${request.displayName}'s avatar`}/>
-								<ProfileName>{request.displayName}</ProfileName>
+								{request.displayName}
 						</ProfileInfo>
 						{request.is === 'sender' ? (
 							<Actions>

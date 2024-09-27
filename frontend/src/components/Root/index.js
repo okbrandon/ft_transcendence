@@ -3,8 +3,8 @@ import { Outlet, useLocation } from 'react-router-dom';
 import NavBar from '../Navigation/Navigation';
 import Footer from '../Footer/Footer';
 import { AuthContext } from '../../context/AuthContext';
-import Chat from '../Chat/Chat';
 import RelationProvider from '../../context/RelationContext';
+import ConnectedRoot from './ConnectedRoot';
 
 const Root = () => {
 	const location = useLocation();
@@ -27,8 +27,7 @@ const Root = () => {
 					<main>
 						{ isLoggedIn ? (
 							<RelationProvider>
-								<Outlet/>
-								<Chat/>
+								<ConnectedRoot/>
 							</RelationProvider>
 						) : <Outlet/> }
 					</main>

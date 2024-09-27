@@ -7,11 +7,11 @@ const Notification = forwardRef((_, ref) => {
 	useImperativeHandle(ref, () => ({
 		addNotification(type, message) {
 			const id = Date.now(); // Unique ID for each notification
-			setNotifications((prev) => [...prev, { id, type, message, isVisible: true }]);
+			setNotifications(prev => [...prev, { id, type, message, isVisible: true }]);
 
 			// After 4.5 seconds, start hiding the notification (so slideOut animation plays)
 			setTimeout(() => {
-				setNotifications((prev) =>
+				setNotifications(prev =>
 				prev.map((notification) =>
 					notification.id === id ? { ...notification, isVisible: false } : notification
 				)
@@ -20,7 +20,7 @@ const Notification = forwardRef((_, ref) => {
 
 			// After 5 seconds, remove the notification from the DOM
 			setTimeout(() => {
-				setNotifications((prev) => prev.filter((notification) => notification.id !== id));
+				setNotifications(prev => prev.filter((notification) => notification.id !== id));
 			}, 5000);
 		}
 	  }));

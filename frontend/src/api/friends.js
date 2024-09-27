@@ -3,7 +3,7 @@ import API from "./api";
 import logger from "./logger";
 import { formatUserData } from "./user";
 
-export const GetUserFromRelation = async (profileUsername) => {
+export const GetUserFromRelation = async profileUsername => {
 	try {
 		logger('Getting user from relation...');
 		const res = await API.get('users/@me/relationships');
@@ -53,6 +53,7 @@ export const GetActiveFriends = async () => {
 				return { ...friend, relationID: relation.relationshipID };
 			})
 			.filter(friend => !!friend.status.online);
+		logger(friends);
 		return friends;
 	} catch (err) {
 		console.error(err.response?.data?.error || 'An error occurred');

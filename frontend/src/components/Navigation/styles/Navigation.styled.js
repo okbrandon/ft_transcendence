@@ -27,6 +27,21 @@ export const NavItemsContainer = styled.div`
 	${({ $gap }) => $gap && `gap: ${$gap}`};
 `;
 
+export const FriendsNavLinkContainer = styled.div`
+	position: relative;
+	display: flex;
+	align-items: center;
+`;
+
+export const RequestPopUp = styled.div`
+	position: absolute;
+	top: 0;
+	right: 0;
+	background: #ff0000;
+	width: 20px;
+	height: 20px;
+`;
+
 export const StyledNavLink = styled(NavLink)`
 	color: #fff;
 	font-size: 16px;

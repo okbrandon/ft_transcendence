@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import MainBar from './main/MainBar';
 import About from './content/About';
@@ -10,6 +10,7 @@ import DisplaySkin from './content/DisplaySkin';
 import { GetUserFromRelation } from '../../api/friends';
 import { GetUserByUsername } from '../../api/user';
 import Notification from '../Notification/Notification';
+import { RelationContext } from '../../context/RelationContext';
 
 const matchArray = [
 	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Brandon"}, scores: {playerA: 9, playerB: 10}, startedAt: "2021-09-01T12:28:01Z", finishedAt: "2021-09-01T12:30:38Z"},
@@ -25,6 +26,7 @@ const matchArray = [
 const Profile = () => {
 	const navigate = useNavigate();
 	const { username } = useParams();
+	const { isRefresh, setIsRefresh } = useContext(RelationContext);
 	const [profileUser, setProfileUser] = useState(null);
 	const [relation, setRelation] = useState(null);
 	const userID = localStorage.getItem('userID');
@@ -43,7 +45,8 @@ const Profile = () => {
 				console.error(err?.response?.data?.error || 'An error occurred.');
 				navigate('/404');
 			});
-	}, [username, navigate]);
+		if (isRefresh) setIsRefresh(false);
+	}, [isRefresh, setIsRefresh, username, navigate]);
 
 	useEffect(() => {
 		if (profileUser && relation && relation.length && relation[0].status === 2 && relation[0].target.userID === userID && profileUser.userID !== userID) {

@@ -25,7 +25,7 @@ const SignIn = () => {
 	const [showPassword, setShowPassword] = useState(false);
 	const [error, setError] = useState('');
 
-	const handleSubmit = (event) => {
+	const handleSubmit = event => {
 		event.preventDefault();
 		if (!username || !password) {
 			setError('Please enter a username and a password.');
@@ -46,7 +46,7 @@ const SignIn = () => {
 		}
 	};
 
-	const handleFortyTwo = (event) => {
+	const handleFortyTwo = event => {
 		event.preventDefault();
 		window.location.href = `http://localhost:8888/api/v1/auth/42/login`;
 	};

@@ -2,6 +2,7 @@ import React, { createContext, useEffect, useRef, useState } from "react";
 import API from '../api/api';
 import { useLocation } from "react-router-dom";
 import logger from "../api/logger";
+import { formatUserData } from "../api/user";
 
 const WS_CHAT_URL = 'ws://localhost:8888/ws/chat/?token=';
 const WS_STATUS_URL = 'ws://localhost:8888/ws/status/?token=';
@@ -142,6 +143,7 @@ const RelationProvider = ({ children }) => {
 					]
 				}
 			]);
+	const [requestUser, setRequestUser] = useState(null);
 	const [isRefresh, setIsRefresh] = useState(false);
 
 	useEffect(() => {
@@ -149,21 +151,25 @@ const RelationProvider = ({ children }) => {
 		socketChat.current.onopen = () => {
 			logger('WebSocket for Chat connection opened');
 		};
-		socketChat.current.onmessage = (event) => {
-			const data = JSON.parse(event.data);
-			if (data.type === 'conversation_update') {
+		socketChat.current.onmessage = event => {
+			const response = JSON.parse(event.data);
+			if (response.type === 'conversation_update') {
 				API.get('chat/conversations')
-					.then((response) => {
+					.then(response => {
 						setConversations(response.data.conversations);
 					})
-					.catch((error) => {
+					.catch(error => {
 						console.error('Failed to update conversations:', error);
 					});
-			} else if (data.type === 'friend_request') {
+			} else if (response.type === 'friend_request') {
 				setIsRefresh(true);
+				setRequestUser(formatUserData({
+					...response.data.from,
+					status: response.status
+				}));
 			}
 		};
-		socketChat.current.onerror = (error) => {
+		socketChat.current.onerror = error => {
 			console.error('WebSocket for Chat encountered an error:', error);
 		};
 
@@ -191,7 +197,7 @@ const RelationProvider = ({ children }) => {
 				setIsRefresh(true);
 			}
 		};
-		socketStatus.current.onerror = (error) => {
+		socketStatus.current.onerror = error => {
 			console.error('WebSocket for Status encountered an error:', error);
 		};
 
@@ -210,6 +216,8 @@ const RelationProvider = ({ children }) => {
 	return (
 		<RelationContext.Provider value={{
 			conversations,
+			requestUser,
+			setRequestUser,
 			isRefresh,
 			setIsRefresh,
 		}}>

@@ -10,7 +10,6 @@ import {
 	ProfileAvatar,
 	ProfileInfo,
 	ProfileInfoContainer,
-	ProfileName,
 	ProfileStatus,
 } from "./styles/Friends.styled";
 import API from "../../api/api";
@@ -52,7 +51,7 @@ const FriendsList = ({ friends, setFriends }) => {
 							<ProfileStatus $status={friend.status?.online || false}/>
 							<ProfileAvatar src={friend.avatarID} alt={`${friend.displayName}'s avatar`}/>
 							<ProfileInfoContainer>
-								<ProfileName>{friend.displayName}</ProfileName>
+								{friend.displayName}
 								<ProfileActivity>{setActivityDescription(friend.status?.activity)}</ProfileActivity>
 							</ProfileInfoContainer>
 						</ProfileInfo>

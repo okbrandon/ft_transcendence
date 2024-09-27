@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import ProfileDropdown from './ProfileDropdown';
 import SearchBar from './SearchBar';
 import { TitleLink } from '../../styles/shared/Title.styled';
@@ -6,7 +6,9 @@ import {
 	NavContainer,
 	NavItemsContainer,
 	StyledNavLink,
-	ConnectButton
+	ConnectButton,
+	FriendsNavLinkContainer,
+	RequestPopUp
 } from './styles/Navigation.styled';
 import { AuthContext } from '../../context/AuthContext';
 import Language from './LanguageDropdown';
@@ -15,6 +17,20 @@ import API from '../../api/api';
 const NavBar = () => {
 	const { isLoggedIn, setUser } = useContext(AuthContext);
 	const [language, setLanguage] = useState("en");
+	const [requests, setRequests] = useState([]);
+
+	// useEffect(() => {
+	// 	if (isLoggedIn) {
+	// 		GetRequests()
+	// 			.then(users => {
+	// 				setRequests(users);
+	// 			})
+	// 			.catch(err => {
+	// 				console.error(err.response?.data?.error || 'An error occurred');
+	// 			});
+	// 	}
+	// 	setIsRefresh(false);
+	// }, [isRefresh, setIsRefresh, isLoggedIn]);
 
 	const handleChangeLoggedIn = (e) => {
 		setLanguage(e.target.value);
@@ -53,7 +69,10 @@ const NavBar = () => {
 						<NavItemsContainer $gap='100px'>
 							<TitleLink to="/">PONG</TitleLink>
 							<NavItemsContainer $gap='100px'>
-								<StyledNavLink to="friends">FRIENDS</StyledNavLink>
+								<FriendsNavLinkContainer>
+									<StyledNavLink to="friends">FRIENDS</StyledNavLink>
+									{requests.length && <RequestPopUp>{requests.length}</RequestPopUp>}
+								</FriendsNavLinkContainer>
 								<StyledNavLink to="/">LEADERBOARD</StyledNavLink>
 								<StyledNavLink to="shop">SHOP</StyledNavLink>
 								<StyledNavLink to="playmenu">PLAY</StyledNavLink>

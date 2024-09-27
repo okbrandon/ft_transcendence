@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Spinner from "react-bootstrap/Spinner";
 import {
+	ActiveFriendContainer,
 	ButtonContainer,
 	FriendItem,
 	FriendProfilePicture,
@@ -96,12 +97,18 @@ const JoinTournament = () => {
 				<ModalOverlay>
 					<ModalContainer>
 						<h2>Invite Friends</h2>
-						{activeFriends.map((friend) => (
-							<FriendItem key={friend.userID}>
-								<FriendProfilePicture src={friend.avatarID} alt={`${friend.displayName}'s avatar`} />
-								{friend.displayName}
-							</FriendItem>
-						))}
+						<ActiveFriendContainer>
+							{activeFriends.length ? (
+								activeFriends.map((friend) => (
+									<FriendItem key={friend.userID}>
+										<FriendProfilePicture src={friend.avatarID} alt={`${friend.displayName}'s avatar`} />
+										{friend.displayName}
+									</FriendItem>
+								))
+							) : (
+								<p>No active friends available to invite</p>
+							)}
+						</ActiveFriendContainer>
 						<ButtonContainer>
 							<PongButton type="button" $width="150px" onClick={() => setInvite(false)}>
 								Cancel

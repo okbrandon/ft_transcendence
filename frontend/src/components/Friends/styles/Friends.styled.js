@@ -138,11 +138,6 @@ export const ProfileInfoContainer = styled.div`
 	margin-left: 10px;
 `;
 
-export const ProfileName = styled.h3`
-	font-size: 1.3rem;
-	font-family: "Roboto", sans-serif;
-`;
-
 export const ProfileActivity = styled.p`
 	font-size: 1rem;
 	font-family: "Roboto", sans-serif;
@@ -155,7 +150,6 @@ export const Actions = styled.div`
 `;
 
 export const NoRelation = styled.div`
-	position: absolute;
 	width: 100%;
 	font-size: 1.2rem;
 	color: #cccccc;

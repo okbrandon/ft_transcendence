@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProfilePicture from './ProfilePicture';
 import MainStats from './MainStats';
@@ -11,8 +11,13 @@ import logger from '../../../api/logger';
 const MainBar = ({ profileUser, matchArray, relation }) => {
 	const navigate = useNavigate();
 	const { user } = useContext(AuthContext);
-	const [disableAddFriend, setDisableAddFriend] = useState(!!(relation.length && relation[0].status !== 0));
+	const [disableAddFriend, setDisableAddFriend] = useState(!!relation.length);
 	const [disableBlockUser, setDisableBlockUser] = useState(!!(relation.length && relation[0].status === 2));
+
+	useEffect(() => {
+		setDisableAddFriend(!!relation.length);
+		setDisableBlockUser(!!(relation.length && relation[0].status === 2));
+	}, [relation]);
 
 	const handleAddFriend = () => {
 		if (relation.length && relation[0].status === 0) {
@@ -31,7 +36,7 @@ const MainBar = ({ profileUser, matchArray, relation }) => {
 					setDisableAddFriend(true);
 				})
 				.catch(err => {
-					console.error(err.response.data.error);
+					console.error(err.response?.data?.error || 'An error occurred.');
 				});
 		}
 	};
