@@ -336,6 +336,16 @@ class UserRelationshipsMe(APIView):
             return
 
         try:
+            from_user = User.objects.get(userID=relationship.userA)
+        except User.DoesNotExist:
+            return
+
+        try:
+            to_user = User.objects.get(userID=relationship.userB)
+        except User.DoesNotExist:
+            return
+
+        try:
             async_to_sync(channel_layer.group_send)(
                 group_name,
                 {
@@ -344,8 +354,8 @@ class UserRelationshipsMe(APIView):
                     "data": {
                         "type": "relationship",
                         "relationshipID": relationship.relationshipID,
-                        "userA": relationship.userA,
-                        "userB": relationship.userB
+                        "from": get_safe_profile(UserSerializer(from_user).data, me=False),
+                        "to": get_safe_profile(UserSerializer(to_user).data, me=False)
                     }
                 }
             )
