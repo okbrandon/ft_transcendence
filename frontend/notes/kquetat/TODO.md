@@ -77,3 +77,10 @@
 ## LeaderBoard
 
 - endpoint:
+	- leaderboards/daily
+	- leaderboards/weekly
+	- leaderboards/lifetime
+
+with the param `stats` to get `gamesPlayed`, `gamesWon` or `gamesLost`
+e.g. like GET leaderboards/daily/?stats=gamesPlayed
+you can spam the HTTP request, no need to cache, it handles cache by itself
