@@ -89,6 +89,7 @@ export const ProfileImage = styled.img.attrs({
 		width: '40px',
 		height: '40px',
 		borderRadius: '50%',
+		objectFit: 'cover'
 	},
 })``;
 

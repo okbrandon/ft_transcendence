@@ -59,9 +59,9 @@ const Game = () => {
 	useEffect(() => {
 		if (readyState === ReadyState.OPEN && helloReceived) {
 			reconnectAttempts.current = 0;
-			sendMessage(JSON.stringify({ 
-				e: 'IDENTIFY', 
-				d: { token: localStorage.getItem('token') } 
+			sendMessage(JSON.stringify({
+				e: 'IDENTIFY',
+				d: { token: localStorage.getItem('token') }
 			}));
 			if (heartbeatIntervalTime) {
 				heartbeatInterval.current = setInterval(() => {
@@ -121,6 +121,8 @@ const Game = () => {
 				case 'HEARTBEAT_ACK':
 					setHeartbeatAckCount(prevCount => prevCount + 1);
 					break;
+				case 'PADDLE_HIT':
+					break;
 				default:
 					console.log('Unhandled event:', data);
 			}
@@ -160,7 +162,7 @@ const Game = () => {
 					{playerSide === 'left' ? (
 						player ? (
 							<>
-								<ProfileImage src={`/images/avatars/${player.avatarID}.png`} alt='Profile Picture'/>
+								<ProfileImage src={player.avatarID} alt='Profile Picture'/>
 								<ProfileName>{player.username}</ProfileName>
 							</>
 						) : (
@@ -172,7 +174,7 @@ const Game = () => {
 					) : (
 						opponent ? (
 							<>
-								<ProfileImage src={`/images/avatars/${opponent.avatarID}.png`} alt='Profile Picture'/>
+								<ProfileImage src={opponent.avatarID} alt='Profile Picture'/>
 								<ProfileName>{opponent.username}</ProfileName>
 							</>
 						) : (
@@ -188,7 +190,7 @@ const Game = () => {
 					{playerSide === 'right' ? (
 						player ? (
 							<>
-								<ProfileImage src={`/images/avatars/${player.avatarID}.png`} alt='Profile Picture'/>
+								<ProfileImage src={player.avatarID} alt='Profile Picture'/>
 								<ProfileName>{player.username}</ProfileName>
 							</>
 						) : (
@@ -200,7 +202,7 @@ const Game = () => {
 					) : (
 						opponent ? (
 							<>
-								<ProfileImage src={`/images/avatars/${opponent.avatarID}.png`} alt='Profile Picture'/>
+								<ProfileImage src={opponent.avatarID} alt='Profile Picture'/>
 								<ProfileName>{opponent.username}</ProfileName>
 							</>
 						) : (
