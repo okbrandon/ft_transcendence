@@ -45,7 +45,7 @@ class Purchase(models.Model):
 class User(AbstractUser):
     userID = models.CharField(max_length=48, unique=True)
     username = models.CharField(max_length = 16, unique=True)
-    displayName = models.CharField(max_length = 16, null = True)
+    displayName = models.CharField(max_length = 64, null = True)
     email = models.CharField(max_length = 64)
     mfaToken = models.CharField(max_length = 128, null = True)
     lang = models.CharField(max_length = 6)

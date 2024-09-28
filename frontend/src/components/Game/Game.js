@@ -32,7 +32,7 @@ const Game = () => {
 	const [heartbeatAckCount, setHeartbeatAckCount] = useState(0);
 	const [matchmakingStarted, setMatchmakingStarted] = useState(false);
 
-	const { sendMessage, lastMessage, readyState } = useWebSocket(`ws://localhost:8888/ws/match`, {
+	const { sendMessage, lastMessage, readyState } = useWebSocket(`/ws/match`, {
 		onClose: (event) => {
 			if (event.code === 1006) {
 				handleReconnect();
@@ -85,7 +85,7 @@ const Game = () => {
 			}));
 			setMatchmakingStarted(true);
 		}
-	}, [heartbeatAckCount, matchmakingStarted, sendMessage]);
+	}, [heartbeatAckCount, matchmakingStarted]);
 
 	useEffect(() => {
 		if (lastMessage !== null) {
@@ -125,7 +125,7 @@ const Game = () => {
 					console.log('Unhandled event:', data);
 			}
 		}
-	}, [lastMessage, navigate, player]);
+	}, [lastMessage]);
 
 	const handlePaddleMove = useCallback((direction) => {
 		sendMessage(JSON.stringify({
@@ -151,7 +151,7 @@ const Game = () => {
 		return () => {
 			window.removeEventListener('keydown', handleKeydown);
 		};
-	}, [navigate, handlePaddleMove, sendMessage]);
+	}, [handlePaddleMove]);
 
     return (
         <PageContainer>
