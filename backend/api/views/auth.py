@@ -36,6 +36,9 @@ class AuthRegister(APIView):
 
         if User.objects.filter(email=data['email']).exists():
             return Response({"error": "Email is already in use"}, status=status.HTTP_409_CONFLICT)
+        
+        if re.search(r'42$', data['username']):
+            return Response({"error": "Username cannot end with '42'"}, status=status.HTTP_400_BAD_REQUEST)
 
         skip_email_verification = os.environ.get('SKIP_EMAIL_VERIFICATION', '').lower() == 'true'
 
@@ -69,7 +72,7 @@ class AuthRegister(APIView):
         username, email, password, lang = data['username'], data['email'], data['password'], data['lang']
 
         if not validate_username(username):
-            raise ValidationError("Invalid username. It must be 4-16 characters long and alphanumeric.")
+            raise ValidationError("Invalid username. It must be 4-16 characters long and alphanumeric and cannot end with '42'.")
         if not validate_email(email):
             raise ValidationError("Invalid email address.")
         if not validate_password(password):

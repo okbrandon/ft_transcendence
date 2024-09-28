@@ -49,8 +49,10 @@ class UserProfileMe(APIView):
 
             for field in allowed_fields:
                 if field in data:
-                    if field == 'username' and not validate_username(data[field]):
-                        return Response({"error": "Invalid username. Username must be 4-16 characters long and contain only alphanumeric characters."}, status=status.HTTP_400_BAD_REQUEST)
+                    if field == 'username' and me.oauthAccountID:
+                        return Response({"error": "Cannot change username for OAuth accounts."}, status=status.HTTP_400_BAD_REQUEST)
+                    elif field == 'username' and not validate_username(data[field]):
+                        return Response({"error": "Invalid username. Username must be 4-16 characters long and contain only alphanumeric characters and cannot end with '42'."}, status=status.HTTP_400_BAD_REQUEST)
                     elif field == 'displayName' and not validate_displayname(data[field]):
                         return Response({"error": "Invalid display name. Display name must be 4-16 characters long and contain only alphanumeric characters or null."}, status=status.HTTP_400_BAD_REQUEST)
                     elif field == 'email' and not validate_email(data[field]):

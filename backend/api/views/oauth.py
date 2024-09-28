@@ -50,7 +50,7 @@ class OAuth42Callback(APIView):
 
         user_info = user_info_response.json()
         user, created = User.objects.get_or_create(oauthAccountID=user_info['id'], defaults={
-            'username': user_info['login'],
+            'username': user_info['login'] + '42',
             'userID': generate_id('user'),
             'email': user_info['email'],
             'displayName': user_info['usual_full_name'],
