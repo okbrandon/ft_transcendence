@@ -40,6 +40,10 @@ export const RequestPopUp = styled.div`
 	background: #ff0000;
 	width: 20px;
 	height: 20px;
+	border-radius: 50%;
+	text-align: center;
+	font-size: 0.8rem;
+	font-weight: 700;
 `;
 
 export const StyledNavLink = styled(NavLink)`

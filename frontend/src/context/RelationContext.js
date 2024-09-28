@@ -3,6 +3,7 @@ import API from '../api/api';
 import { useLocation } from "react-router-dom";
 import logger from "../api/logger";
 import { formatUserData } from "../api/user";
+import { GetFriends, GetRequests } from "../api/friends";
 
 const WS_CHAT_URL = 'ws://localhost:8888/ws/chat/?token=';
 const WS_STATUS_URL = 'ws://localhost:8888/ws/status/?token=';
@@ -143,8 +144,26 @@ const RelationProvider = ({ children }) => {
 					]
 				}
 			]);
-	const [requestUser, setRequestUser] = useState(null);
-	const [isRefresh, setIsRefresh] = useState(false);
+	const [notificationUser, setNotificationUser] = useState(null);
+	const [requests, setRequests] = useState([]);
+	const [friends, setFriends] = useState([]);
+
+	const fetchFriendsAndRequests = async () => {
+		try {
+			const [friendsResponse, requestsResponse] = await Promise.all([
+				GetFriends(),
+				GetRequests(),
+			]);
+			setFriends(friendsResponse);
+			setRequests(requestsResponse);
+		} catch (err) {
+			console.error(err.response?.data?.error || 'An error occurred');
+		}
+	};
+
+	useEffect(() => {
+		fetchFriendsAndRequests();
+	}, []);
 
 	useEffect(() => {
 		socketChat.current = new WebSocket(WS_CHAT_URL + localStorage.getItem('token'));
@@ -162,8 +181,8 @@ const RelationProvider = ({ children }) => {
 						console.error('Failed to update conversations:', error);
 					});
 			} else if (response.type === 'friend_request') {
-				setIsRefresh(true);
-				setRequestUser(formatUserData({
+				fetchFriendsAndRequests();
+				setNotificationUser(formatUserData({
 					...response.data.from,
 					status: response.status
 				}));
@@ -194,7 +213,7 @@ const RelationProvider = ({ children }) => {
 					activity: setActivity(pathnameRef.current)
 				}));
 			} else if (data.type === 'connection_event') {
-				setIsRefresh(true);
+				fetchFriendsAndRequests();
 			}
 		};
 		socketStatus.current.onerror = error => {
@@ -216,10 +235,12 @@ const RelationProvider = ({ children }) => {
 	return (
 		<RelationContext.Provider value={{
 			conversations,
-			requestUser,
-			setRequestUser,
-			isRefresh,
-			setIsRefresh,
+			notificationUser,
+			setNotificationUser,
+			friends,
+			setFriends,
+			requests,
+			setRequests,
 		}}>
 			{ children }
 		</RelationContext.Provider>

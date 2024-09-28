@@ -14,13 +14,16 @@ export const PageContainer = styled.div`
 		margin-top: 2rem;
 	}
 
+	.nav-tabs {
+		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	}
+
 	.nav-link {
 		background-color: rgba(0, 0, 0, 0.2);
 		color: #fff;
 		border: 1px solid #333;
 		border-radius: 5px;
 		margin-right: 5px;
-		margin-bottom: 1px;
 		transition: all 0.3s ease;
 		font-family: "Orbitron", sans-serif;
 		font-size: 1rem;

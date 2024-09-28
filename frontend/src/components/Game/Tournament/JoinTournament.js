@@ -23,7 +23,7 @@ const players = ["Player 1", "Player 2", "Player 3", "Player 4", "Player 5", "Pl
 
 const JoinTournament = () => {
 	const navigate = useNavigate();
-	const { isRefresh, setIsRefresh } = useContext(RelationContext);
+	const { requests } = useContext(RelationContext);
 	const [invite, setInvite] = useState(false);
 	const [activeFriends, setActiveFriends] = useState([]);
 	const [isStartDisabled, setIsStartDisabled] = useState(true);
@@ -42,8 +42,7 @@ const JoinTournament = () => {
 			}
 		}
 		fetchFriends();
-		setIsRefresh(false);
-	}, [setIsRefresh, isRefresh]);
+	}, [requests]);
 
 	const handleKickPlayer = playerName => {
 		console.log(`Kicking ${playerName}`);
@@ -54,13 +53,13 @@ const JoinTournament = () => {
 		setInvite(true);
 	};
 
-	const handleFriendSelect = friendId => {
-		if (activeFriends.includes(friendId)) {
-			setActiveFriends((prevSelected) => prevSelected.filter((id) => id !== friendId));
-		} else {
-			setActiveFriends((prevSelected) => [...prevSelected, friendId]);
-		}
-	};
+	// const handleFriendSelect = friendId => {
+	// 	if (activeFriends.includes(friendId)) {
+	// 		setActiveFriends((prevSelected) => prevSelected.filter((id) => id !== friendId));
+	// 	} else {
+	// 		setActiveFriends((prevSelected) => [...prevSelected, friendId]);
+	// 	}
+	// };
 
 	return (
 		<>

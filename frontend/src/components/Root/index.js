@@ -5,6 +5,7 @@ import Footer from '../Footer/Footer';
 import { AuthContext } from '../../context/AuthContext';
 import RelationProvider from '../../context/RelationContext';
 import ConnectedRoot from './ConnectedRoot';
+import ConnectedNavBar from '../Navigation/ConnectedNavigation';
 
 const Root = () => {
 	const location = useLocation();
@@ -23,15 +24,23 @@ const Root = () => {
 		<>
 			{showPersistentUI ? (
 				<>
-					<NavBar/>
-					<main>
-						{ isLoggedIn ? (
-							<RelationProvider>
+					{isLoggedIn ? (
+						<RelationProvider>
+							<ConnectedNavBar/>
+							<main>
 								<ConnectedRoot/>
-							</RelationProvider>
-						) : <Outlet/> }
-					</main>
-					<Footer/>
+								<Outlet/>
+							</main>
+						</RelationProvider>
+					) : (
+						<>
+							<NavBar/>
+							<main>
+								<Outlet/>
+							</main>
+							<Footer/>
+						</>
+					)}
 				</>
 			) : (
 				<main>

@@ -26,7 +26,7 @@ const matchArray = [
 const Profile = () => {
 	const navigate = useNavigate();
 	const { username } = useParams();
-	const { isRefresh, setIsRefresh } = useContext(RelationContext);
+	const { requests } = useContext(RelationContext);
 	const [profileUser, setProfileUser] = useState(null);
 	const [relation, setRelation] = useState(null);
 	const userID = localStorage.getItem('userID');
@@ -45,8 +45,7 @@ const Profile = () => {
 				console.error(err?.response?.data?.error || 'An error occurred.');
 				navigate('/404');
 			});
-		if (isRefresh) setIsRefresh(false);
-	}, [isRefresh, setIsRefresh, username, navigate]);
+	}, [requests, username, navigate]);
 
 	useEffect(() => {
 		if (profileUser && relation && relation.length && relation[0].status === 2 && relation[0].target.userID === userID && profileUser.userID !== userID) {
