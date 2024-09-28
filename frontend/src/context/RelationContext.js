@@ -3,8 +3,8 @@ import API from '../api/api';
 import { useLocation } from "react-router-dom";
 import logger from "../api/logger";
 
-const WS_CHAT_URL = 'ws://localhost:8888/ws/chat/?token=';
-const WS_STATUS_URL = 'ws://localhost:8888/ws/status/?token=';
+const WS_CHAT_URL = '/ws/chat/?token=';
+const WS_STATUS_URL = '/ws/status/?token=';
 
 export const RelationContext = createContext({
 	conversations: [],
