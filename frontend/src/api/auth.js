@@ -10,6 +10,6 @@ export const ApiLogin = async (username, password, otp) => {
 };
 
 export const ApiSignup = async (formData) => {
-	await axios.post(`http://localhost:8888/api/v1/auth/register`, { ...formData, lang: 'en' });
+	await axios.post(`/api/v1/auth/register`, { ...formData, lang: 'en' });
 	logger('Signup successful');
 };
