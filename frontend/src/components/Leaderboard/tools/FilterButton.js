@@ -11,6 +11,7 @@ const FilterButton = () => {
 				<NavDropdown.Item eventKey="4.1">Top Win</NavDropdown.Item>
 				<NavDropdown.Item eventKey="4.2">Top Loss</NavDropdown.Item>
 			</NavDropdown>
+			{/* adding daily weekly lifetime */}
 		</FilterButtonContainer>
 	);
 };
