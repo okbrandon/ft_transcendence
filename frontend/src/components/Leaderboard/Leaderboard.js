@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import PlayerCard from './PlayerCard';
 import FilterButton from './tools/FilterButton';
 import ScoreTable from './ScoreTable';

@@ -1,21 +1,46 @@
 import styled from 'styled-components';
 
 export const ScoreTableStyled = styled.table`
-	border-collapse: collapse;
 	width: 100%;
-	margin-top: 20px;
-	border-radius: 1em;
-	overflow: hidden;
+	border-collapse: collapse;
+	border-spacing: 0;
+	color: #fff;
+	font-size: 18px;
 
-	th, td {
-		border: 1px solid #bcbcbc;
-		padding: 8px;
-		text-align: center;
+	& thead {
+		background: rgb(10, 10, 10);
+		height: 60px;
+		display: table;
+		width: 100%;
+		table-layout: fixed;
 	}
 
-	th {
-		background-color: grey;
-		color: white;
-		text-align: center;
+	& tbody {
+		display: block;
+		height: 500px;
+		overflow-y: auto;
+		width: 100%;
+		margin-top: 5px;
+	}
+
+	& tbody tr {
+		display: table;
+		width: 100%;
+		table-layout: fixed;
+	}
+
+	& td {
+		padding: 16px;
+		color: rgba(255, 255, 255, 0.85);
+		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+		font-size: 16px;
+	}
+
+	& tbody > tr:nth-child(even) {
+		background: linear-gradient(90deg, rgba(40, 40, 40, 0.8) 0%, rgba(20, 20, 20, 0.6) 100%);
+	}
+
+	& tbody > tr:nth-child(odd) {
+		background: linear-gradient(90deg, rgba(20, 20, 20, 0.8) 0%, rgba(40, 40, 40, 0.6) 100%);
 	}
 `;

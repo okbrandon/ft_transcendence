@@ -1,16 +1,4 @@
-import styled, { keyframes } from 'styled-components';
-
-const glowing = keyframes`
-	0% {
-		box-shadow: 0 0 10px 0px #7A1CAC;
-	}
-	50% {
-		box-shadow: 0 0 20px 10px #7A1CAC;
-	}
-	100% {
-		box-shadow: 0 0 10px 0px #7A1CAC;
-	}
-`;
+import styled  from 'styled-components';
 
 export const PlayerCardContainer = styled.div`
 	display: flex;
@@ -18,14 +6,14 @@ export const PlayerCardContainer = styled.div`
 	width: 450px;
 	height: 270px;
 	border: 1px solid black;
-	background: linear-gradient(180deg, #7A1CAC 0%, #2E073F	 100%);
+	background: linear-gradient(90deg, #7A1CAC 0%, #2E073F	 100%);
 	border-radius: 10px;
 	margin-top: 50px;
 	margin-right: 20px;
 	transition: transform 0.3s;
 
 	&:hover {
-		transform: scale(1.05);
+		transform: scale(1.02);
 
 		&::after {
 			content: '';
@@ -33,10 +21,9 @@ export const PlayerCardContainer = styled.div`
 			width: 100%;
 			height: 100%;
 			border-radius: 10px;
-			background: linear-gradient(180deg, #7A1CAC 0%, #2E073F	 100%);
+			background: linear-gradient(90deg, #7A1CAC 0%, #2E073F	 100%);
 			z-index: -1;
 			filter: blur(5px);
-			animation: ${glowing} 2s linear infinite;
 			opacity: .5;
 			transition: opacity .3s ease-in-out;
 		}

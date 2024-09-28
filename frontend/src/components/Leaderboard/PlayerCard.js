@@ -36,12 +36,6 @@ const PlayerCard = ({ playerID }) => {
 				<UserStats score={'90'} position={'2nd'}/>
 			</PlayerStatsContainer>
 		</PlayerCardContainer>
-
-		// 2. Player img profile
-		// 3. Player name
-		// 4. Player nb win
-		// 5. player nb loss
-		// 5. Player position
 	);
 };
 

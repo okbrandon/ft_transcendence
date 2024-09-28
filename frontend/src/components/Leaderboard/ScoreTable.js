@@ -3,8 +3,6 @@ import {
 	ScoreTableStyled,
 } from './styles/ScoreTable.styled';
 
-import API from '../../../src/api/api';
-
 const ScoreTable = () => {
 	const players = [
 		{ name: 'Hanmin', wins: 100 },
