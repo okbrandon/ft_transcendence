@@ -7,7 +7,7 @@ export const LanguageDropdownButton = styled.select`
 	background: rgba(0, 0, 0, 1);
 	color: #fff;
 	font-size: 0.9rem;
-	font-family: 'Orbitron', sans-serif;
+	font-family: "Poppins", sans-serif;
 	transition: background 0.3s ease, border 0.3s ease;
 	margin-left: 10px;
 

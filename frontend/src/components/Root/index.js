@@ -31,6 +31,7 @@ const Root = () => {
 								<ConnectedRoot/>
 								<Outlet/>
 							</main>
+							<Footer/>
 						</RelationProvider>
 					) : (
 						<>
