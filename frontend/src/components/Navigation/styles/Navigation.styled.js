@@ -166,12 +166,11 @@ export const ProfileDropdownButton = styled(Dropdown)`
 		align-items: center;
 		justify-content: center;
 		padding: 8px 12px;
-		transition: color 0.3s ease, text-shadow 0.3s ease, transform 0.3s ease;
+		transition: color 0.3s ease, text-shadow 0.3s ease;
 
 		&:hover {
 			color: #ffffff;
 			text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.6);
-			transform: scale(1.05);
 		}
 
 		&:focus {

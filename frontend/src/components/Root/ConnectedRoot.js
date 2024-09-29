@@ -19,6 +19,11 @@ const ConnectedRoot = () => {
 					`info`,
 					`${notificationUser.displayName} rejected your friend request.`
 				);
+			} else if (notificationUser.status === 'accepted') {
+				notificationRef.current.addNotification(
+					`info`,
+					`${notificationUser.displayName} accepted your friend request.`
+				);
 			}
 			setNotificationUser(null);
 		}
