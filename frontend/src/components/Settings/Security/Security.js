@@ -94,6 +94,7 @@ const Security = () => {
 				});
 		}
 	};
+	console.log(error.includes('Phone number'));
 
 	return (
 		<>
@@ -108,6 +109,7 @@ const Security = () => {
 						placeholder="Change Password"
 						value={formData.password}
 						onChange={handleChange}
+						className={error.includes('Password') ? 'is-invalid' : ''}
 						autoComplete="off"
 					/>
 					{showPassword ? <i className="bi bi-eye-fill" onClick={() => setShowPassword(!showPassword)}/> : <i className="bi bi-eye" onClick={() => setShowPassword(!showPassword)}/>}
@@ -120,6 +122,7 @@ const Security = () => {
 						placeholder="Confirm New Password"
 						value={cfPassword}
 						onChange={(e) => setCfPassword(e.target.value)}
+						className={error.includes('Passwords') ? 'is-invalid' : ''}
 						autoComplete="off"
 					/>
 					{showCfPassword ? <i className="bi bi-eye-fill" onClick={() => setShowCfPassword(!showCfPassword)}/> : <i className="bi bi-eye" onClick={() => setShowCfPassword(!showCfPassword)}/>}
@@ -132,6 +135,7 @@ const Security = () => {
 					placeholder="Change Email"
 					value={formData.email}
 					onChange={handleChange}
+					className={error.includes('Email') ? 'is-invalid' : ''}
 					autoComplete="email"
 				/>
 				<label htmlFor="phone_number">Phone number</label>
@@ -141,6 +145,7 @@ const Security = () => {
 					placeholder="Add Phone Number"
 					value={formData.phone_number}
 					onChange={handleChange}
+					className={error.includes('Phone number') ? 'is-invalid' : ''}
 					autoComplete="tel"
 				/>
 				{success && <SuccessMessage>{success}</SuccessMessage>}

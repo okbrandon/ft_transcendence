@@ -158,6 +158,10 @@ export const FormInput = styled.input`
 		border-color: rgba(164, 69, 178, 0.7);
 		box-shadow: 0 0 10px rgba(164, 69, 178, 0.5);
 	}
+
+	&.is-invalid {
+		background-color: rgba(255, 0, 0, 0.1);
+	}
 `;
 
 export const BioContainer = styled.div`

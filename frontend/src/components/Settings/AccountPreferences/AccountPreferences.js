@@ -104,6 +104,7 @@ const AccountPreferences = () => {
 				placeholder="Username"
 				value={formData.username}
 				onChange={handleChange}
+				className={error.includes("Username") ? 'is-invalid' : ''}
 				autoComplete='off'
 			/>
 			<label htmlFor="displayName">Display Name</label>
@@ -114,6 +115,7 @@ const AccountPreferences = () => {
 				placeholder="Display Name"
 				value={formData.displayName || ''}
 				onChange={handleChange}
+				className={error.includes("Display Name") ? 'is-invalid' : ''}
 			/>
 			<label htmlFor="bio">Bio</label>
 			<BioContainer>
@@ -124,6 +126,7 @@ const AccountPreferences = () => {
 					rows="4"
 					cols="50"
 					onChange={handleChange}
+					className={error.includes("Bio") ? 'is-invalid' : ''}
 				/>
 				<p>{bioByteLength} / 280</p>
 			</BioContainer>
