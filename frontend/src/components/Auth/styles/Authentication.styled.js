@@ -23,7 +23,7 @@ export const FormContainer = styled(Form)`
 	gap: 20px;
 	border-radius: 15px;
 	width: 600px;
-	padding: 50px 50px;
+	padding: 50px;
 	margin-top: 80px;
 	font-family: 'Inter', sans-serif;
 	background: transparent;

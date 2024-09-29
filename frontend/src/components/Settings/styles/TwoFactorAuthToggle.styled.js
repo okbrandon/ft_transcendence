@@ -1,6 +1,5 @@
 import styled from "styled-components";
 
-// ToggleContainer is the main wrapper
 export const ToggleContainer = styled.div`
 	display: flex;
 	align-items: center;
@@ -8,14 +7,12 @@ export const ToggleContainer = styled.div`
 	margin: 1rem 0;
 `;
 
-// ToggleLabel is for optional text next to the toggle
 export const ToggleLabel = styled.span`
 	font-size: 1rem;
 	margin-right: 10px;
 	color: #fff;
 `;
 
-// ToggleSwitch is the actual toggle switch
 export const ToggleSwitch = styled.label`
 	position: relative;
 	display: inline-block;
@@ -37,7 +34,6 @@ export const ToggleSwitch = styled.label`
 	}
 `;
 
-// Slider is the sliding part of the toggle switch
 export const Slider = styled.span`
 	position: absolute;
 	cursor: pointer;
@@ -62,7 +58,6 @@ export const Slider = styled.span`
 	}
 `;
 
-// Container for the 2FA setup section
 export const TwoFAContainer = styled.div`
 	display: flex;
 	flex-direction: column;
@@ -76,7 +71,6 @@ export const TwoFAContainer = styled.div`
 	margin: 0 auto;
 `;
 
-// Styled paragraph text
 export const TwoFAText = styled.p`
 	color: rgba(255, 255, 255, 0.9);
 	font-family: 'Inter', sans-serif;
@@ -85,7 +79,6 @@ export const TwoFAText = styled.p`
 	text-align: center;
 `;
 
-// QRCode container
 export const QRCodeWrapper = styled.div`
 	margin-bottom: 1.5rem;
 	background-color: #fff;

@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import API from '../../../api/api';
-import logger from '../../../api/logger';
-import OTPInputComponent from '../../Auth/OTPInput';
-import { ErrorMessage } from '../../Auth/styles/Authentication.styled';
-import { AvailablePlatformsContainer, PlatformButton } from '../../Auth/styles/TwoFactorAuth.styled';
-import { GetUser } from '../../../api/user';
-import { Backdrop, FormContainer } from '../styles/TwoFactorAuthSecurity.styled';
-import PongButton from '../../../styles/shared/PongButton.styled';
+import React, { useEffect, useState } from "react";
+import { Backdrop, FormContainer } from "../styles/TwoFactorAuthSecurity.styled";
+import OTPInputComponent from "../../Auth/OTPInput";
+import API from "../../../api/api";
+import logger from "../../../api/logger";
+import { ErrorMessage } from "../../Auth/styles/Authentication.styled";
+import { AvailablePlatformsContainer, PlatformButton } from "../../Auth/styles/TwoFactorAuth.styled";
+import PongButton from "../../../styles/shared/PongButton.styled";
 
-const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactorAuth }) => {
+const TwoFactorAuthDeactivate = ({ setShow2FA, setShowQRCode, setIs2FAEnabled }) => {
 	const [availablePlatforms, setAvailablePlatforms] = useState([]);
 	const [authCode, setAuthCode] = useState('');
 	const [disableVerify, setDisableVerify] = useState(true);
@@ -33,36 +32,22 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactor
 				logger('2FA: Request failed');
 				setError(err.response?.data?.error || 'An error occurred');
 			});
-	};
+	}
 
 	const handleSubmit = e => {
 		e.preventDefault();
 		setDisableVerify(true);
 		setError('');
 
-		const submissionData = { ...formData };
-
-		API.patch('users/@me/profile', { ...submissionData, otp: authCode })
+		API.post('auth/totp/delete', { otp: authCode })
 			.then(() => {
-				logger('2FA: Success');
-				setSuccess('Security updated successfully');
-				GetUser()
-					.then(res => {
-						setUser(res.data);
-						logger('User data refetched and updated in context:', res.data);
-					})
-					.catch(err => {
-						setError(err.response.data.error);
-						setSuccess('');
-					});
-				setShowTwoFactorAuth(false);
+				setShowQRCode(false);
+				setIs2FAEnabled(false);
+				setShow2FA(false);
+				setError('');
 			})
 			.catch(err => {
-				setError(err.response.data.error);
-				setSuccess('');
-			})
-			.finally(() => {
-				setDisableVerify(false);
+				setError(err.response?.data?.error || 'An error occurred');
 			});
 	};
 
@@ -84,8 +69,8 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactor
 							type="button"
 							onClick={() => handlePlatform(platform)}
 						>
-							{platform === "email" && <i className="bi bi-envelope-fill"/>}
-							{platform === "sms" && <i className="bi bi-chat-left-text-fill"/>}
+							{platform === 'email' && <i className="bi bi-envelope-fill"/>}
+							{platform === 'sms' && <i className="bi bi-chat-left-text-fill"/>}
 						</PlatformButton>
 					)) : (
 						<p>No Available Platforms...</p>
@@ -96,7 +81,7 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactor
 					Verify
 				</PongButton>
 
-				<PongButton type="button" onClick={() => setShowTwoFactorAuth(false)}>
+				<PongButton type="button" onClick={() => setShow2FA(false)}>
 					Back
 				</PongButton>
 			</FormContainer>
@@ -104,4 +89,4 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactor
 	);
 };
 
-export default TwoFactorAuthSecurity;
+export default TwoFactorAuthDeactivate;

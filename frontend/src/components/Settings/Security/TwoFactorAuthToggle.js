@@ -7,20 +7,22 @@ import {
 	ToggleSwitch,
 	TwoFAContainer,
 	TwoFAText,
-} from "../styles/TwoFactorAuth.styled";
+} from "../styles/TwoFactorAuthToggle.styled";
 import QRCode from "react-qr-code";
 import API from "../../../api/api";
 import { ErrorMessage } from "../styles/Settings.styled";
+import TwoFactorAuthDeactivate from "./TwoFactorAuthDeactivate";
 
-const TwoFactorAuth = ({ user }) => {
+const TwoFactorAuthToggle = () => {
 	const [is2FAEnabled, setIs2FAEnabled] = useState(false);
+	const [show2FA, setShow2FA] = useState(false);
 	const [qrCodeToken, setQrCodeToken] = useState('');
-	const [showQRCode, setShowQRCode] = useState(user.mfaToken ? true : false);
+	const [showQRCode, setShowQRCode] = useState(false);
 	const [error, setError] = useState('');
 
 	useEffect(() => {
 		API.get('auth/totp')
-			.then((res) => {
+			.then(res => {
 				setIs2FAEnabled(res.data.has_otp);
 			})
 			.catch(err => {
@@ -30,27 +32,16 @@ const TwoFactorAuth = ({ user }) => {
 
 	const handleToggle = () => {
 		if (is2FAEnabled) {
-			const enteredCode = window.prompt('Please enter your current 2FA code to disable it:'); // change this
-			if (enteredCode) {
-				API.post('auth/totp/delete', { otp: enteredCode })
-					.then(() => {
-						setShowQRCode(false);
-						setIs2FAEnabled(false);
-						setError('');
-					})
-					.catch((err) => {
-						setError(err.response.data.error);
-					});
-			}
+			setShow2FA(true);
 		} else {
 			API.post('auth/totp/enable')
-				.then((res) => {
+				.then(res => {
 					setQrCodeToken(res.data.token);
 					setShowQRCode(true);
 					setIs2FAEnabled(true);
 					setError('');
 				})
-				.catch((err) => {
+				.catch(err => {
 					setError(err.response.data.error);
 				});
 		}
@@ -79,10 +70,10 @@ const TwoFactorAuth = ({ user }) => {
 					</QRCodeWrapper>
 				</TwoFAContainer>
 			)}
-
+			{show2FA && <TwoFactorAuthDeactivate setShow2FA={setShow2FA} setShowQRCode={setShowQRCode} setIs2FAEnabled={setIs2FAEnabled}/>}
 			{error && <ErrorMessage>{error}</ErrorMessage>}
 		</>
 	);
 };
 
-export default TwoFactorAuth;
+export default TwoFactorAuthToggle;

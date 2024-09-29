@@ -12,7 +12,7 @@ import API from "../../../api/api";
 import { checkSecurityRestrictions } from "../../../scripts/restrictions";
 import { AuthContext } from "../../../context/AuthContext";
 import { GetUser } from "../../../api/user";
-import TwoFactorAuth from "./TwoFactorAuth";
+import TwoFactorAuthToggle from "./TwoFactorAuthToggle";
 import TwoFactorAuthPassword from "./TwoFactorAuthSecurity";
 import PongButton from "../../../styles/shared/PongButton.styled";
 
@@ -42,7 +42,7 @@ const Security = () => {
 			})
 	}, []);
 
-	const handleChange = (e) => {
+	const handleChange = e => {
 		const { id, value } = e.target;
 
 		setFormData(data => ({
@@ -51,16 +51,13 @@ const Security = () => {
 		}));
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = e => {
 		e.preventDefault();
 
 		const submissionData = { ...formData };
 
 		if (!submissionData.password) {
 			delete submissionData.password;
-		}
-		if (!submissionData.phone_number) {
-			delete submissionData.phone_number;
 		}
 
 		const errorMessage = checkSecurityRestrictions(submissionData, cfPassword);
@@ -94,7 +91,6 @@ const Security = () => {
 				});
 		}
 	};
-	console.log(error.includes('Phone number'));
 
 	return (
 		<>
@@ -155,7 +151,7 @@ const Security = () => {
 				</PongButton>
 			</Form>
 			<SubSectionHeading>Two-Factor Authentication</SubSectionHeading>
-			<TwoFactorAuth user={user} handleChange={handleChange}/>
+			<TwoFactorAuthToggle user={user} handleChange={handleChange}/>
 			{showTwoFactorAuth && (
 				<TwoFactorAuthPassword
 					formData={formData}

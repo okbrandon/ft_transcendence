@@ -1,5 +1,7 @@
 # TODO
 ## today
+- Fake Captcha: doing it
+- Rename all the 2fa components
 - Game: send invite
 - Profile: `users/@me/stats` -> win / loss / ratio
 

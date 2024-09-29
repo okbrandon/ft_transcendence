@@ -10,7 +10,7 @@ import {
 	FortyTwoButton
 } from './styles/Authentication.styled';
 import { AuthContext } from '../../context/AuthContext';
-import TwoFactorAuth from './TwoFactorAuthSignIn';
+import TwoFactorAuthSignIn from './TwoFactorAuthSignIn';
 import Notification from '../Notification/Notification';
 
 const SignIn = () => {
@@ -103,7 +103,7 @@ const SignIn = () => {
 					<Notification ref={notificationRef}/>
 				</>
 			) : (
-				<TwoFactorAuth
+				<TwoFactorAuthSignIn
 					username={username}
 					password={password}
 					setIsTwoFactorAuth={setIsTwoFactorAuth}
