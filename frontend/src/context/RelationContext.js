@@ -235,12 +235,15 @@ const RelationProvider = ({ children }) => {
 	return (
 		<RelationContext.Provider value={{
 			conversations,
+			setConversations,
 			notificationUser,
 			setNotificationUser,
 			friends,
 			setFriends,
 			requests,
 			setRequests,
+			socketChat,
+			socketStatus,
 		}}>
 			{ children }
 		</RelationContext.Provider>

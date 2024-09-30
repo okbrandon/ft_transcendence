@@ -48,7 +48,7 @@ const ImageSettings = ({ user, setFormData, handleChange }) => {
 
 	return (
 		<>
-			<SubSectionHeading> Profile Image</SubSectionHeading>
+			<SubSectionHeading>Profile Image & Background</SubSectionHeading>
 			<ImageUploadContainer>
 					<ImageUploadLabel htmlFor="profile-picture">Profile Picture:</ImageUploadLabel>
 					<ImageUploadInput
