@@ -1,18 +1,36 @@
-import React from 'react';
-import NavDropdown from 'react-bootstrap/NavDropdown';
+import React, { useState } from 'react';
 import {
-	FilterButtonContainer,
-} from '../styles/tools/FilterButton.styled';
+	WinLossContainer,
+	ToggleButton,
+	ButtonText
+} from '../styles/tools/WinLoss.styled';
+// import TimeFrameSelector from './TimeFrameSelector';
+import { ButtonsFilterContainer } from '../styles/Leaderboard.styled';
 
 const FilterButton = () => {
+	// const [isWin, setIsWin] = useState(true);
+	// const [timeFrame, setTimeFrame] = useState('lifetime');
+
+	// const handleToggle = () => {
+	// 	setIsWin(!isWin);
+	// };
+
+	// const handleTimeFrameChange = (newTimeFrame) => {
+	// 	setTimeFrame(newTimeFrame);
+	// };
+
 	return (
-		<FilterButtonContainer>
-			<NavDropdown title="Top Win" id="nav-dropdown" menuVariant='dark'>
-				<NavDropdown.Item eventKey="4.1">Top Win</NavDropdown.Item>
-				<NavDropdown.Item eventKey="4.2">Top Loss</NavDropdown.Item>
-			</NavDropdown>
-			{/* adding daily weekly lifetime */}
-		</FilterButtonContainer>
+		<ButtonsFilterContainer>
+			<WinLossContainer>
+				{/* <ToggleButton $isWin={isWin} onClick={handleToggle}>
+					<ButtonText>Top {isWin ? 'Win' : 'Loss'}</ButtonText> */}
+				{/* </ToggleButton> */}
+			</WinLossContainer>
+			{/* <TimeFrameSelector
+				timeFrame={timeFrame}
+				onTimeFrameChange={handleTimeFrameChange}
+			/> */}
+		</ButtonsFilterContainer>
 	);
 };
 

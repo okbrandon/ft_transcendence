@@ -22,7 +22,7 @@ const NavBar = () => {
 							<TitleLink to="/">PONG</TitleLink>
 							<NavItemsContainer $gap='100px'>
 								<StyledNavLink to="friends">FRIENDS</StyledNavLink>
-								<StyledNavLink to="/">LEADERBOARD</StyledNavLink>
+								<StyledNavLink to="leaderboard">LEADERBOARD</StyledNavLink>
 								<StyledNavLink to="shop">SHOP</StyledNavLink>
 								<StyledNavLink to="playmenu">PLAY</StyledNavLink>
 							</NavItemsContainer>

@@ -73,7 +73,8 @@
 
 
 
-## LeaderBoard
+## LeaderBoard:
+
 - TODO (today):
 	- Implement Back in leaderboard for stats.
 	- Modify styling of the leaderboard table.
@@ -85,10 +86,34 @@
 
 
 - endpoint:
-	- leaderboards/daily
-	- leaderboards/weekly
-	- leaderboards/lifetime
+	- leaderboards/`daily`
+	- leaderboards/`weekly`
+	- leaderboards/`lifetime`
 
 with the param `stats` to get `gamesPlayed`, `gamesWon` or `gamesLost`
 e.g. like GET leaderboards/daily/?stats=gamesPlayed
 you can spam the HTTP request, no need to cache, it handles cache by itself
+
+```
+{
+	|----- GET leaderboards/`daily/`?stats=`gamesPlayed`
+						   /`weekly/`      `gamesWon`
+						   /`lifetime/`    `gamesLost`
+
+
+
+Structure:
+
+	'userID': user['userID'],
+			'stats': {
+				'gamesPlayed': played,
+				'gamesWon': wins,
+				'gamesLost': losses
+			},
+			'period': {
+				'type': period_type[period_type.index(period)] if period in period_type else 'lifetime',
+				'from': start_date,
+				'to': now
+			}
+}
+```
