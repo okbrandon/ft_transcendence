@@ -162,7 +162,7 @@ const Game = () => {
 					{playerSide === 'left' ? (
 						player ? (
 							<>
-								<ProfileImage src={player.avatarID} alt='Profile Picture'/>
+								<ProfileImage src={player.avatarID === 'default' || !player.avatarID ? '/images/default-profile.png' : player.avatarID} alt='Profile Picture'/>
 								<ProfileName>{player.username}</ProfileName>
 							</>
 						) : (
@@ -174,7 +174,7 @@ const Game = () => {
 					) : (
 						opponent ? (
 							<>
-								<ProfileImage src={opponent.avatarID} alt='Profile Picture'/>
+								<ProfileImage src={opponent.avatarID === 'default' || !opponent.avatarID ? '/images/default-profile.png' : opponent.avatarID} alt='Profile Picture'/>
 								<ProfileName>{opponent.username}</ProfileName>
 							</>
 						) : (
@@ -190,7 +190,7 @@ const Game = () => {
 					{playerSide === 'right' ? (
 						player ? (
 							<>
-								<ProfileImage src={player.avatarID} alt='Profile Picture'/>
+								<ProfileImage src={player.avatarID === 'default' || !player.avatarID ? '/images/default-profile.png' : player.avatarID} alt='Profile Picture'/>
 								<ProfileName>{player.username}</ProfileName>
 							</>
 						) : (
@@ -202,7 +202,7 @@ const Game = () => {
 					) : (
 						opponent ? (
 							<>
-								<ProfileImage src={opponent.avatarID} alt='Profile Picture'/>
+								<ProfileImage src={opponent.avatarID === 'default' || !opponent.avatarID ? '/images/default-profile.png' : opponent.avatarID} alt='Profile Picture'/>
 								<ProfileName>{opponent.username}</ProfileName>
 							</>
 						) : (
