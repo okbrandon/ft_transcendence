@@ -57,7 +57,7 @@ const OTPInputComponent = ({ setAuthCode, setDisableVerify }) => {
 						onChange={(e) => handleChange(e.target.value, index)}
 						onPaste={handlePaste}
 						ref={(el) => (inputRefs.current[index] = el)}
-						autoFocus
+						autoFocus={index === 0}
 					/>
 					{index === 2 && <Hyphen>-</Hyphen>}
 				</React.Fragment>
