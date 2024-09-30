@@ -50,8 +50,10 @@ SIMPLE_JWT = {
     "BLACKLIST_TOKEN_CHECKS": ["rest_framework_simplejwt.token_blacklist.models.BlacklistedToken"],
 }
 
+HOST_NAME = os.getenv("HOST_NAME")
+BASE_URL = os.getenv("BASE_URL").replace("HOST_NAME", HOST_NAME)
 OAUTH2_CLIENT_ID = os.getenv("OAUTH2_CLIENT_ID")
-OAUTH2_CLIENT_SECRET = os.getenv("OAUTH2_CLIENT_SECRET")
+OAUTH2_CLIENT_SECRET = os.getenv("OAUTH2_CLIENT_SECRET").replace("HOST_NAME", HOST_NAME)
 OAUTH2_REDIRECT_URI = os.getenv("OAUTH2_REDIRECT_URI")
 OAUTH2_AUTHORIZATION_URL = 'https://api.intra.42.fr/oauth/authorize'
 OAUTH2_TOKEN_URL = 'https://api.intra.42.fr/oauth/token'
@@ -99,7 +101,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    os.getenv('BASE_URL'),
+    BASE_URL,
 ]
 
 ROOT_URLCONF = 'backend.urls'
