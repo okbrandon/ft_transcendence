@@ -12,15 +12,6 @@ export const RelationContext = createContext({
 	conversations: [],
 });
 
-const setActivity = location => {
-	if (location === '/vs-ai' || location === '/vs-player') {
-		return 'QUEUEING';
-	} else if (location === '/game') {
-		return 'PLAYING_VS_AI';
-	}
-	return 'HOME';
-};
-
 const RelationProvider = ({ children }) => {
 	const location = useLocation();
 	const socketStatus = useRef(null);
@@ -159,6 +150,15 @@ const RelationProvider = ({ children }) => {
 		} catch (err) {
 			console.error(err.response?.data?.error || 'An error occurred');
 		}
+	};
+
+	const setActivity = location => {
+		if (location === '/vs-ai' || location === '/vs-player') {
+			return 'QUEUEING';
+		} else if (location === '/game') {
+			return 'PLAYING_VS_AI';
+		}
+		return 'HOME';
 	};
 
 	useEffect(() => {
