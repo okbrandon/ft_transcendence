@@ -53,7 +53,6 @@ class OAuth42Callback(APIView):
             'username': user_info['login'] + '42',
             'userID': generate_id('user'),
             'email': user_info['email'],
-            'displayName': user_info['usual_full_name'],
             'avatarID': user_info['image']['link'] if 'image' in user_info else None,
             'lang': 'en',
             'oauthAccountID': user_info['id'],
