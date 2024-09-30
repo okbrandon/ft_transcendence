@@ -5,8 +5,8 @@ import {
 	ImageUploadContainer,
 	ImageUploadInput,
 	ImageUploadLabel,
-} from '../styles/UploadImage.styled';
-import { ErrorMessage } from '../styles/Settings.styled';
+} from '../styles/ProfileImage.styled';
+import { ErrorMessage, SubSectionHeading } from '../styles/Settings.styled';
 import { GetImage } from '../../../api/user';
 import PongButton from '../../../styles/shared/PongButton.styled';
 
@@ -25,12 +25,12 @@ const ImageSettings = ({ user, setFormData, handleChange }) => {
 		}
 
 		GetImage(file)
-			.then((image) => {
+			.then(image => {
 				setError('');
 				handleChange({ target: { id: type, value: image } });
 				setImage(image);
 			})
-			.catch((err) => {
+			.catch(err => {
 				setError(err);
 			});
 	};
@@ -47,6 +47,7 @@ const ImageSettings = ({ user, setFormData, handleChange }) => {
 
 	return (
 		<>
+			<SubSectionHeading> Profile Image</SubSectionHeading>
 			<ImageUploadContainer>
 					<ImageUploadLabel htmlFor="profile-picture">Profile Picture:</ImageUploadLabel>
 					<ImageUploadInput

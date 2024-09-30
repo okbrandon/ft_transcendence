@@ -58,7 +58,7 @@ export const Slider = styled.span`
 	}
 `;
 
-export const TwoFAContainer = styled.div`
+export const QRCodeContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -71,7 +71,7 @@ export const TwoFAContainer = styled.div`
 	margin: 0 auto;
 `;
 
-export const TwoFAText = styled.p`
+export const QRCodeText = styled.p`
 	color: rgba(255, 255, 255, 0.9);
 	font-family: 'Inter', sans-serif;
 	margin-bottom: 1.5rem;

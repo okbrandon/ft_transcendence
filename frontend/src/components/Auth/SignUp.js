@@ -17,7 +17,7 @@ const SignUp = () => {
 	const [cfPassword, setCfPassword] = useState('');
 	const [showPassword, setShowPassword] = useState(false);
 	const [showCfPassword, setShowCfPassword] = useState(false);
-	const [showFakeCaptcha, setShowFakeCaptcha] = useState(true); // changed here
+	const [showFakeCaptcha, setShowFakeCaptcha] = useState(false); // changed here
 	const [error, setError] = useState('');
 
 	const handleChange = (e) => {

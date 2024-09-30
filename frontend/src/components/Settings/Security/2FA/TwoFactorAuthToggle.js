@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
+import QRCode from "react-qr-code";
+import TwoFactorAuthDeactivate from "./TwoFactorAuthDeactivate";
+import API from "../../../../api/api";
 import {
 	QRCodeWrapper,
 	Slider,
 	ToggleContainer,
 	ToggleLabel,
 	ToggleSwitch,
-	TwoFAContainer,
-	TwoFAText,
-} from "../styles/TwoFactorAuthToggle.styled";
-import QRCode from "react-qr-code";
-import API from "../../../api/api";
-import { ErrorMessage } from "../styles/Settings.styled";
-import TwoFactorAuthDeactivate from "./TwoFactorAuthDeactivate";
+	QRCodeContainer,
+	QRCodeText,
+} from "../../styles/TwoFactorAuthToggle.styled";
+import { ErrorMessage, SubSectionHeading } from "../../styles/Settings.styled";
 
 const TwoFactorAuthToggle = () => {
 	const [is2FAEnabled, setIs2FAEnabled] = useState(false);
@@ -49,6 +49,7 @@ const TwoFactorAuthToggle = () => {
 
 	return (
 		<>
+			<SubSectionHeading>Two-Factor Authentication</SubSectionHeading>
 			<ToggleContainer>
 				<ToggleLabel>{is2FAEnabled ? 'Disable 2FA' : 'Enable 2FA'}</ToggleLabel>
 				<ToggleSwitch>
@@ -63,14 +64,20 @@ const TwoFactorAuthToggle = () => {
 			</ToggleContainer>
 
 			{showQRCode && (
-				<TwoFAContainer>
-					<TwoFAText>Scan this QR code with your authentication app:</TwoFAText>
+				<QRCodeContainer>
+					<QRCodeText>Scan this QR code with your authentication app:</QRCodeText>
 					<QRCodeWrapper>
 						<QRCode value={`otpauth://totp/Pong%20Account?secret=${qrCodeToken}&issuer=Pong`}/>
 					</QRCodeWrapper>
-				</TwoFAContainer>
+				</QRCodeContainer>
 			)}
-			{show2FA && <TwoFactorAuthDeactivate setShow2FA={setShow2FA} setShowQRCode={setShowQRCode} setIs2FAEnabled={setIs2FAEnabled}/>}
+
+			{show2FA &&
+				<TwoFactorAuthDeactivate
+					setShow2FA={setShow2FA}
+					setShowQRCode={setShowQRCode}
+					setIs2FAEnabled={setIs2FAEnabled}
+				/>}
 			{error && <ErrorMessage>{error}</ErrorMessage>}
 		</>
 	);

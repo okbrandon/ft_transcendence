@@ -1,8 +1,7 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
 	ErrorMessage,
 	Form,
-	FormControlContainer,
 	FormInput,
 	SectionHeading,
 	SubSectionHeading,
@@ -10,14 +9,14 @@ import {
 } from "../styles/Settings.styled";
 import API from "../../../api/api";
 import { checkSecurityRestrictions } from "../../../scripts/restrictions";
-import { AuthContext } from "../../../context/AuthContext";
 import { GetUser } from "../../../api/user";
-import TwoFactorAuthToggle from "./TwoFactorAuthToggle";
-import TwoFactorAuthPassword from "./TwoFactorAuthSecurity";
+import TwoFactorAuthToggle from "./2FA/TwoFactorAuthToggle";
+import TwoFactorAuthSecurity from "./2FA/TwoFactorAuthSecurity";
 import PongButton from "../../../styles/shared/PongButton.styled";
+import SignIn from "./SignIn";
+import ContactInformation from "./ContactInformation";
 
-const Security = () => {
-	const { user, setUser } = useContext(AuthContext);
+const Security = ({ user, setUser }) => {
 	const [formData, setFormData] = useState({
 		email: user.email,
 		phone_number: user.phone_number || '',
@@ -28,8 +27,6 @@ const Security = () => {
 	const [success, setSuccess] = useState('');
 	const [has2FA, setHas2FA] = useState(false);
 	const [showTwoFactorAuth, setShowTwoFactorAuth] = useState(false);
-	const [showPassword, setShowPassword] = useState(false);
-	const [showCfPassword, setShowCfPassword] = useState(false);
 	const [error, setError] = useState('');
 
 	useEffect(() => {
@@ -96,53 +93,17 @@ const Security = () => {
 		<>
 			<Form onSubmit={handleSubmit}>
 				<SectionHeading>Security</SectionHeading>
-				<SubSectionHeading>Sign in</SubSectionHeading>
-				<label htmlFor="password">Password</label>
-				<FormControlContainer>
-					<FormInput
-						type={showPassword ? 'text' : 'password'}
-						id="password"
-						placeholder="Change Password"
-						value={formData.password}
-						onChange={handleChange}
-						className={error.includes('Password') ? 'is-invalid' : ''}
-						autoComplete="off"
-					/>
-					{showPassword ? <i className="bi bi-eye-fill" onClick={() => setShowPassword(!showPassword)}/> : <i className="bi bi-eye" onClick={() => setShowPassword(!showPassword)}/>}
-				</FormControlContainer>
-				<label htmlFor="cfPassword">Confirm Password</label>
-				<FormControlContainer>
-					<FormInput
-						type={showCfPassword ? 'text' : 'password'}
-						id="cfPassword"
-						placeholder="Confirm New Password"
-						value={cfPassword}
-						onChange={(e) => setCfPassword(e.target.value)}
-						className={error.includes('Passwords') ? 'is-invalid' : ''}
-						autoComplete="off"
-					/>
-					{showCfPassword ? <i className="bi bi-eye-fill" onClick={() => setShowCfPassword(!showCfPassword)}/> : <i className="bi bi-eye" onClick={() => setShowCfPassword(!showCfPassword)}/>}
-				</FormControlContainer>
-				<SubSectionHeading>Contact Information</SubSectionHeading>
-				<label htmlFor="email">Email</label>
-				<FormInput
-					type="email"
-					id="email"
-					placeholder="Change Email"
-					value={formData.email}
-					onChange={handleChange}
-					className={error.includes('Email') ? 'is-invalid' : ''}
-					autoComplete="email"
+				<SignIn
+					error={error}
+					cfPassword={cfPassword}
+					setCfPassword={setCfPassword}
+					formData={formData}
+					handleChange={handleChange}
 				/>
-				<label htmlFor="phone_number">Phone number</label>
-				<FormInput
-					type="tel"
-					id="phone_number"
-					placeholder="Add Phone Number"
-					value={formData.phone_number}
-					onChange={handleChange}
-					className={error.includes('Phone number') ? 'is-invalid' : ''}
-					autoComplete="tel"
+				<ContactInformation
+					error={error}
+					formData={formData}
+					handleChange={handleChange}
 				/>
 				{success && <SuccessMessage>{success}</SuccessMessage>}
 				{error && <ErrorMessage>{error}</ErrorMessage>}
@@ -150,10 +111,9 @@ const Security = () => {
 					{loading ? 'Saving...' : 'Save Changes'}
 				</PongButton>
 			</Form>
-			<SubSectionHeading>Two-Factor Authentication</SubSectionHeading>
 			<TwoFactorAuthToggle user={user} handleChange={handleChange}/>
 			{showTwoFactorAuth && (
-				<TwoFactorAuthPassword
+				<TwoFactorAuthSecurity
 					formData={formData}
 					setUser={setUser}
 					setSuccess={setSuccess}

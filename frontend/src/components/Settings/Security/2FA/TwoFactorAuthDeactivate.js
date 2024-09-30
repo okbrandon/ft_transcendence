@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Backdrop, FormContainer } from "../styles/TwoFactorAuthSecurity.styled";
-import OTPInputComponent from "../../Auth/OTPInput";
-import API from "../../../api/api";
-import logger from "../../../api/logger";
-import { ErrorMessage } from "../../Auth/styles/Authentication.styled";
-import { AvailablePlatformsContainer, PlatformButton } from "../../Auth/styles/TwoFactorAuth.styled";
-import PongButton from "../../../styles/shared/PongButton.styled";
+import { Backdrop, FormContainer } from "../../styles/TwoFactorAuth.styled";
+import OTPInputComponent from "../../../Auth/OTPInput";
+import API from "../../../../api/api";
+import logger from "../../../../api/logger";
+import { ErrorMessage } from "../../../Auth/styles/Authentication.styled";
+import { AvailablePlatformsContainer, PlatformButton } from "../../../Auth/styles/TwoFactorAuth.styled";
+import PongButton from "../../../../styles/shared/PongButton.styled";
 
 const TwoFactorAuthDeactivate = ({ setShow2FA, setShowQRCode, setIs2FAEnabled }) => {
 	const [availablePlatforms, setAvailablePlatforms] = useState([]);
