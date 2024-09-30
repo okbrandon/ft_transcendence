@@ -49,12 +49,20 @@ class UserProfileMe(APIView):
 
             for field in allowed_fields:
                 if field in data:
-                    if field == 'username' and not validate_username(data[field]):
-                        return Response({"error": "Invalid username. Username must be 4-16 characters long and contain only alphanumeric characters."}, status=status.HTTP_400_BAD_REQUEST)
+                    if field == 'username' and me.oauthAccountID:
+                        return Response({"error": "Cannot change username for OAuth accounts."}, status=status.HTTP_400_BAD_REQUEST)
+                    elif field == 'username':
+                        if not validate_username(data[field]):
+                            return Response({"error": "Invalid username. Username must be 4-16 characters long and contain only alphanumeric characters and cannot end with '42'."}, status=status.HTTP_400_BAD_REQUEST)
+                        if User.objects.filter(username=data[field]).exclude(id=me.id).exists():
+                            return Response({"error": "Username is already taken"}, status=status.HTTP_409_CONFLICT)
                     elif field == 'displayName' and not validate_displayname(data[field]):
                         return Response({"error": "Invalid display name. Display name must be 4-16 characters long and contain only alphanumeric characters or null."}, status=status.HTTP_400_BAD_REQUEST)
-                    elif field == 'email' and not validate_email(data[field]):
-                        return Response({"error": "Invalid email. Email must be a valid format and no longer than 64 characters."}, status=status.HTTP_400_BAD_REQUEST)
+                    elif field == 'email':
+                        if not validate_email(data[field]):
+                            return Response({"error": "Invalid email. Email must be a valid format and no longer than 64 characters."}, status=status.HTTP_400_BAD_REQUEST)
+                        if User.objects.filter(email=data[field]).exclude(id=me.id).exists():
+                            return Response({"error": "Email is already in use"}, status=status.HTTP_409_CONFLICT)
                     elif field == 'lang' and not validate_lang(data[field]):
                         return Response({"error": "Invalid language. Supported languages are 'en', 'fr', and 'es'."}, status=status.HTTP_400_BAD_REQUEST)
                     elif field in ['avatarID', 'bannerID'] and not validate_image(data[field]):
