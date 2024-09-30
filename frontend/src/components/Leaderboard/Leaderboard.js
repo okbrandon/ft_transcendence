@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import FilterButton from './tools/FilterButton';
 import ScoreTable from './ScoreTable';
+import Podium from './Podium';
 import {
 	GetLeaderboardLifetime,
 	GetLeaderboardDaily,
@@ -10,6 +11,7 @@ import {
 import {
 	WrapContainer,
 	LeaderboardContainer,
+	BackgroundContainer,
 	TimeFrameButton,
 	TimeFrameContainer
 } from './styles/Leaderboard.styled';
@@ -44,25 +46,28 @@ const Leaderboard = () => {
 	return (
 		<WrapContainer>
 			<TimeFrameContainer>
-				<TimeFrameButton
-					onClick={() => handleTimeFrameChange('lifetime')}
-					$isActive={timeFrame === 'lifetime'}
-				>
-					Lifetime
-				</TimeFrameButton>
-				<TimeFrameButton
-					onClick={() => handleTimeFrameChange('daily')}
-					$isActive={timeFrame === 'daily'}
-				>
-					Daily
-				</TimeFrameButton>
-				<TimeFrameButton
-					onClick={() => handleTimeFrameChange('weekly')}
-					$isActive={timeFrame === 'weekly'}
-				>
-					Weekly
-				</TimeFrameButton>
+				<BackgroundContainer>
+					<TimeFrameButton
+						onClick={() => handleTimeFrameChange('lifetime')}
+						$isActive={timeFrame === 'lifetime'}
+					>
+						Lifetime
+					</TimeFrameButton>
+					<TimeFrameButton
+						onClick={() => handleTimeFrameChange('daily')}
+						$isActive={timeFrame === 'daily'}
+					>
+						Daily
+					</TimeFrameButton>
+					<TimeFrameButton
+						onClick={() => handleTimeFrameChange('weekly')}
+						$isActive={timeFrame === 'weekly'}
+					>
+						Weekly
+					</TimeFrameButton>
+				</BackgroundContainer>
 			</TimeFrameContainer>
+			<Podium leaderboardData={leaderboardData}/>
 			<LeaderboardContainer>
 				<FilterButton />
 				<ScoreTable data={leaderboardData} />

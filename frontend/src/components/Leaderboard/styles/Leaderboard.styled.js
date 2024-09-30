@@ -28,7 +28,16 @@ export const ButtonsFilterContainer = styled.div`
 export const TimeFrameContainer = styled.div`
 	display: flex;
 	justify-content: center;
-	margin-bottom: 20px;
+	margin-bottom: 0 20px 20px 20px;
+`;
+
+export const BackgroundContainer = styled.div`
+	display: flex;
+	justify-content: center;
+	background-color: #f0f0f0;
+	background-color: rgb(255, 255, 255, 0.1);
+	border-radius: 5px;
+	padding: 5px 10px 5px 10px;
 `;
 
 export const TimeFrameButton = styled.button`
@@ -36,12 +45,14 @@ export const TimeFrameButton = styled.button`
 	margin: 0 5px;
 	border: none;
 	border-radius: 5px;
-	background-color: ${props => props.$isActive ? '#4CAF50' : '#f0f0f0'};
-	color: ${props => props.$isActive ? 'white' : 'black'};
+	background-color: ${props => props.$isActive ? 'rgb(255, 255, 255, 0.2)' : 'rgb(255, 255, 255, 0.1)'};
+	color: #fff;
 	cursor: pointer;
 	transition: background-color 0.3s ease;
+	font-size: 1rem;
+	font-weight: 500;
 
 	&:hover {
-		background-color: ${props => props.$isActive ? '#45a049' : '#e0e0e0'};
+		background-color: ${props => props.$isActive ? 'rgb(255, 255, 255, 0.2)' : 'rgb(255, 255, 255, 0.1)'};
 	}
 `;
