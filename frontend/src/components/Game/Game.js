@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import {
 	GameContainer,
@@ -23,6 +23,7 @@ const Game = () => {
 	const [opponent, setOpponent] = useState(null);
 	const [player, setPlayer] = useState(null);
 	const [matchBegun, setMatchBegun] = useState(false);
+	const [keyPressed, setKeyPressed] = useState(null);
 
 	const heartbeatInterval = useRef(null);
 	const reconnectAttempts = useRef(0);
@@ -85,7 +86,7 @@ const Game = () => {
 			}));
 			setMatchmakingStarted(true);
 		}
-	}, [heartbeatAckCount, matchmakingStarted]);
+	}, [sendMessage, heartbeatAckCount, matchmakingStarted]);
 
 	useEffect(() => {
 		if (lastMessage !== null) {
@@ -139,21 +140,45 @@ const Game = () => {
 	useEffect(() => {
 		const handleKeydown = (event) => {
 			if (event.key === 'ArrowUp') {
-				handlePaddleMove('up');
+				setKeyPressed('up');
 			} else if (event.key === 'ArrowDown') {
-				handlePaddleMove('down');
+				setKeyPressed('down');
 			} else if (event.key === 'q') {
 				sendMessage(JSON.stringify({ e: 'PLAYER_QUIT' }));
 				navigate('/');
 			}
 		};
 
+		const handleKeyup = (event) => {
+			if (event.key === 'ArrowUp') {
+				if (keyPressed === 'up') {
+					setKeyPressed(null);
+				}
+			} else if (event.key === 'ArrowDown') {
+				if (keyPressed === 'down') {
+					setKeyPressed(null);
+				}
+			}
+		};
+
 		window.addEventListener('keydown', handleKeydown);
+		window.addEventListener('keyup', handleKeyup);
 
 		return () => {
 			window.removeEventListener('keydown', handleKeydown);
+			window.removeEventListener('keyup', handleKeyup);
 		};
-	}, [handlePaddleMove]);
+	}, [keyPressed]);
+
+	useEffect(() => {
+		if (keyPressed) {
+			if (keyPressed === 'up') {
+				handlePaddleMove('up');
+			} else if (keyPressed === 'down') {
+				handlePaddleMove('down');
+			}
+		}
+	}, [matchState]);
 
     return (
         <PageContainer>
