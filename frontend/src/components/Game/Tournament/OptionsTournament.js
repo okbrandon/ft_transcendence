@@ -2,7 +2,6 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import {
 	OptionButton,
-	OptionDescription,
 	TournamentOptionsContainer
 } from "../styles/Tournament/Tournament.styled";
 
@@ -14,11 +13,11 @@ const OptionsTournament = ({ setOptions }) => {
 			<h1>Select an Option</h1>
 			<OptionButton onClick={() => setOptions('create')}>
 				Create a Tournament
-				<OptionDescription>Start and host a new tournament.</OptionDescription>
+				<p>Start and host a new tournament.</p>
 			</OptionButton>
 			<OptionButton onClick={() => setOptions('join')}>
 				Join a Tournament
-				<OptionDescription>Enter an existing tournament.</OptionDescription>
+				<p>Enter an existing tournament.</p>
 			</OptionButton>
 			<OptionButton onClick={() => navigate('/playmenu')}>
 				<i className="bi bi-arrow-left"/> Back

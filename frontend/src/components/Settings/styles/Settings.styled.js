@@ -128,6 +128,20 @@ export const SubSectionHeading = styled.h3`
 	margin-top: 3rem;
 `;
 
+export const FormControlContainer = styled.div`
+	position: relative;
+
+	& > i {
+		position: absolute;
+		top: 10px;
+		right: 15px;
+		color: #fff;
+		font-size: 1.5rem;
+		z-index: 2;
+		cursor: pointer;
+	}
+`;
+
 export const FormInput = styled.input`
 	width: 100%;
 	padding: 1rem;
@@ -143,6 +157,10 @@ export const FormInput = styled.input`
 		outline: none;
 		border-color: rgba(164, 69, 178, 0.7);
 		box-shadow: 0 0 10px rgba(164, 69, 178, 0.5);
+	}
+
+	&.is-invalid {
+		background-color: rgba(255, 0, 0, 0.1);
 	}
 `;
 
@@ -176,37 +194,14 @@ export const TextArea = styled.textarea`
 	}
 `;
 
-export const LanguageDropdown = styled.select`
-	padding: 1rem;
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	border-radius: 5px;
-	background-color: rgba(25, 25, 25, 0.5);
-	color: #fff;
-	margin-bottom: 3.5rem;
-	font-size: 1rem;
-	width: 100%;
-`;
-
-export const ErrorMessage = styled.p`
-  color: #721c24;
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
-  padding: 10px;
-  border-radius: 4px;
-  margin-bottom: 15px;
-  font-size: 14px;
-  text-align: center;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-`;
-
 export const SuccessMessage = styled.p`
-  color: #155724;
-  background-color: #d4edda;
-  border: 1px solid #c3e6cb;
-  padding: 10px;
-  border-radius: 4px;
-  margin-bottom: 15px;
-  font-size: 14px;
-  text-align: center;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+	color: #155724;
+	background-color: #d4edda;
+	border: 1px solid #c3e6cb;
+	padding: 10px;
+	border-radius: 4px;
+	margin-bottom: 15px;
+	font-size: 14px;
+	text-align: center;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 `;

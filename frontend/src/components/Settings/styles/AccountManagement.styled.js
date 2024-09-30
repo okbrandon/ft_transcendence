@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const DeleteAccountContainer = styled.div`
+export const AccountManagementContainer = styled.div`
 	width: 100%;
 	display: flex;
 	flex-direction: column;
@@ -10,7 +10,7 @@ export const DeleteAccountContainer = styled.div`
 	gap: 5px;
 `;
 
-export const DeleteAccountButton = styled.button`
+export const AccountManagementButton = styled.button`
 	padding: 1rem 2rem;
 	border: 2px solid rgba(255, 50, 50, 0.4);
 	border-radius: 15px;
@@ -35,7 +35,7 @@ export const DeleteAccountButton = styled.button`
 	}
 `;
 
-export const DeleteAccountText = styled.p`
+export const AccountManagementText = styled.p`
 	color: rgba(255, 255, 255, 0.7);
 	font-family: 'Poppins', sans-serif;
 	font-size: 1rem;

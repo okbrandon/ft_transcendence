@@ -23,7 +23,7 @@ export const FormContainer = styled(Form)`
 	gap: 20px;
 	border-radius: 15px;
 	width: 600px;
-	padding: 50px 50px;
+	padding: 50px;
 	margin-top: 80px;
 	font-family: 'Inter', sans-serif;
 	background: transparent;
@@ -47,6 +47,16 @@ export const FormContainer = styled(Form)`
 		width: 100%;
 		position: relative;
 		margin: 10px 0;
+
+		& > i {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			color: #fff;
+			font-size: 1.2rem;
+			z-index: 2;
+			cursor: pointer;
+		}
 	}
 
 	.mb-3 input {
@@ -117,6 +127,33 @@ export const FormContainer = styled(Form)`
 	}
 `;
 
+export const LanguageDropdownButton = styled.select`
+	padding: 0.3rem 0.4rem;
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	border-radius: 8px;
+	background: rgba(0, 0, 0, 1);
+	color: #fff;
+	font-size: 0.9rem;
+	font-family: 'Orbitron', sans-serif;
+	transition: background 0.3s ease, border 0.3s ease;
+
+	&:hover {
+        background: rgba(75, 0, 130, 0.6);
+        cursor: pointer;
+        border: 1px solid rgba(164, 69, 178, 0.6);
+    }
+
+    &:focus {
+        outline: none;
+    }
+
+    option {
+        background-color: rgba(25, 25, 25, 1);
+        color: #fff;
+        padding: 10px;
+    }
+`;
+
 export const FortyTwoButton = styled(Button)`
 	font-size: 1rem;
 	font-weight: 600;
@@ -133,16 +170,6 @@ export const FortyTwoButton = styled(Button)`
 		height: 17px;
 		margin-right: 10px;
 	}
-`;
-
-export const ErrorMessage = styled.p`
-	color: #ff4d4f;
-	background-color: rgba(255, 77, 79, 0.1);
-	border: 1px solid rgba(255, 77, 79, 0.2);
-	padding: 1rem;
-	border-radius: 5px;
-	margin-bottom: 1.5rem;
-	font-size: 1rem;
 `;
 
 export const Input = styled.input`

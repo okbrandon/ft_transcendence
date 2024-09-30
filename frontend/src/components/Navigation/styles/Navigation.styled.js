@@ -27,6 +27,25 @@ export const NavItemsContainer = styled.div`
 	${({ $gap }) => $gap && `gap: ${$gap}`};
 `;
 
+export const FriendsNavLinkContainer = styled.div`
+	position: relative;
+	display: flex;
+	align-items: center;
+`;
+
+export const RequestPopUp = styled.div`
+	position: absolute;
+	top: 0;
+	right: 0;
+	background: #ff0000;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	text-align: center;
+	font-size: 0.8rem;
+	font-weight: 700;
+`;
+
 export const StyledNavLink = styled(NavLink)`
 	color: #fff;
 	font-size: 16px;
@@ -135,6 +154,8 @@ const fadeIn = keyframes`
 `;
 
 export const ProfileDropdownButton = styled(Dropdown)`
+	margin-left: 30px;
+
 	& .btn-primary {
 		color: #fff;
 		background: none;
@@ -145,12 +166,11 @@ export const ProfileDropdownButton = styled(Dropdown)`
 		align-items: center;
 		justify-content: center;
 		padding: 8px 12px;
-		transition: color 0.3s ease, text-shadow 0.3s ease, transform 0.3s ease;
+		transition: color 0.3s ease, text-shadow 0.3s ease;
 
 		&:hover {
 			color: #ffffff;
 			text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.6);
-			transform: scale(1.05);
 		}
 
 		&:focus {

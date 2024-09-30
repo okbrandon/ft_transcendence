@@ -2,9 +2,10 @@ import styled from "styled-components";
 
 export const PlayMenuContainer = styled.div`
 	display: flex;
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	gap: 2rem;
+	gap: 5rem;
 	height: 100vh;
 	width: 100%;
 	padding: 2rem;
@@ -15,35 +16,50 @@ export const PlayMenuContainer = styled.div`
 	background-position: center;
 `;
 
-export const PlayMenuCard = styled.div`
+export const Title = styled.h1`
+	font-size: 3rem;
+	font-family: 'Orbitron', sans-serif;
+	margin-bottom: 2rem;
+	text-transform: uppercase;
+	letter-spacing: 5px;
+	background: linear-gradient(135deg, #ff00ff, #00ffff);
+	background-clip: text;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	text-shadow:
+		0 0 10px rgba(255, 255, 255, 0.6),
+		0 0 15px rgba(128, 0, 128, 0.4),
+		0 0 20px rgba(75, 0, 130, 0.3);
+`;
+
+export const ModesContainer = styled.div`
+	display: flex;
+	gap: 5rem;
+`;
+
+export const ModeCard = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	border: 2px solid rgba(255, 255, 255, 0.2);
-	border-radius: 15px;
-	width: 300px;
-	height: 300px;
-	background: #111;
-	box-shadow: 0 8px 16px rgba(164, 69, 178, 0.5), 0 0 10px rgba(59, 130, 246, 0.3);
+	border-radius: 20px;
+	width: 280px;
+	height: 280px;
+	background: #1a1a1a;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 8px rgba(59, 130, 246, 0.2);
 	transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
 	user-select: none;
 
 	&:hover {
-		background-color: #222;
-		transform: translateY(-10px);
-		box-shadow: 0 12px 24px rgba(164, 69, 178, 0.7), 0 0 20px rgba(59, 130, 246, 0.5);
+		transform: translateY(-6px);
+		box-shadow: 0 8px 16px rgba(164, 69, 178, 0.4), 0 0 12px rgba(59, 130, 246, 0.4);
 		cursor: pointer;
 	}
 
 	h1 {
 		text-transform: uppercase;
-		letter-spacing: 8px;
-		color: #fff;
-		font-size: 1.5rem;
-		background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(164, 69, 178, 0.7));
-		background-clip: text;
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
+		letter-spacing: 5px;
+		font-size: 1.6rem;
+		color: rgba(255, 255, 255, 0.7);
 	}
 `;

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import API from '../../../api/api';
-import logger from '../../../api/logger';
-import OTPInputComponent from '../../Auth/OTPInput';
-import { ErrorMessage } from '../../Auth/styles/Authentication.styled';
-import { AvailablePlatformsContainer, PlatformButton } from '../../Auth/styles/TwoFactorAuth.styled';
-import { GetUser } from '../../../api/user';
-import { Backdrop, FormContainer } from '../styles/TwoFactorAuthSecurity.styled';
-import PongButton from '../../../styles/shared/PongButton.styled';
+import API from '../../../../api/api';
+import logger from '../../../../api/logger';
+import { GetUser } from '../../../../api/user';
+import OTPInputComponent from '../../../Auth/OTPInput';
+import { AvailablePlatformsContainer, PlatformButton } from '../../../Auth/styles/TwoFactorAuth.styled';
+import { Backdrop, FormContainer } from '../../styles/TwoFactorAuth.styled';
+import PongButton from '../../../../styles/shared/PongButton.styled';
+import ErrorMessage from '../../../../styles/shared/ErrorMessage.styled';
 
 const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactorAuth }) => {
 	const [availablePlatforms, setAvailablePlatforms] = useState([]);
@@ -24,31 +24,26 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactor
 			});
 	}, []);
 
-	const handlePlatform = (platform) => {
+	const handlePlatform = platform => {
 		API.post('auth/totp/request', { platform })
 			.then(() => {
 				logger('2FA: Request sent');
 			})
 			.catch(err => {
 				logger('2FA: Request failed');
-				setError(err.response.data.error);
+				setError(err.response?.data?.error || 'An error occurred');
 			});
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = e => {
 		e.preventDefault();
 		setDisableVerify(true);
 		setError('');
 
 		const submissionData = { ...formData };
 
-		if (!submissionData.phone_number) {
-			delete submissionData.phone_number;
-		}
-
-		setDisableVerify(true);
 		API.patch('users/@me/profile', { ...submissionData, otp: authCode })
-			.then(res => {
+			.then(() => {
 				logger('2FA: Success');
 				setSuccess('Security updated successfully');
 				GetUser()
@@ -83,7 +78,7 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactor
 				{error && <ErrorMessage>{error}</ErrorMessage>}
 
 				<AvailablePlatformsContainer>
-					{availablePlatforms ? availablePlatforms.filter(platform => platform !== 'app').map((platform) => (
+					{availablePlatforms ? availablePlatforms.filter(platform => platform !== 'app').map(platform => (
 						<PlatformButton
 							key={platform}
 							type="button"

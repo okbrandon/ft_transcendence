@@ -14,13 +14,16 @@ export const PageContainer = styled.div`
 		margin-top: 2rem;
 	}
 
+	.nav-tabs {
+		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	}
+
 	.nav-link {
 		background-color: rgba(0, 0, 0, 0.2);
 		color: #fff;
 		border: 1px solid #333;
 		border-radius: 5px;
 		margin-right: 5px;
-		margin-bottom: 1px;
 		transition: all 0.3s ease;
 		font-family: "Orbitron", sans-serif;
 		font-size: 1rem;
@@ -131,10 +134,17 @@ export const ProfileStatus = styled.span`
 	box-shadow: 0 0 10px ${({ $status }) => ($status === "online" ? "#00ff88" : "#ff5555")};
 `;
 
-export const ProfileName = styled.h3`
-	font-size: 1.3rem;
+export const ProfileInfoContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	margin-top: 20px;
+	margin-left: 10px;
+`;
+
+export const ProfileActivity = styled.p`
+	font-size: 1rem;
 	font-family: "Roboto", sans-serif;
-	padding: 0.5rem 0.5rem;
+	color: rgba(255, 255, 255, 0.5);
 `;
 
 export const Actions = styled.div`
@@ -143,7 +153,6 @@ export const Actions = styled.div`
 `;
 
 export const NoRelation = styled.div`
-	position: absolute;
 	width: 100%;
 	font-size: 1.2rem;
 	color: #cccccc;

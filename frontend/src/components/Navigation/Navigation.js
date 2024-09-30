@@ -1,44 +1,37 @@
-import React, { useContext } from 'react';
-import ProfileDropdown from './ProfileDropdown';
-import SearchBar from './SearchBar';
+import React, { useState } from 'react';
 import { TitleLink } from '../../styles/shared/Title.styled';
 import {
 	NavContainer,
 	NavItemsContainer,
-	StyledNavLink,
-	ConnectButton
+	ConnectButton,
 } from './styles/Navigation.styled';
-import { AuthContext } from '../../context/AuthContext';
+import Language from './LanguageDropdown';
 
 const NavBar = () => {
-	const { isLoggedIn } = useContext(AuthContext);
+	const [language, setLanguage] = useState("en");
+
+	const setLocalStorageLanguage = lang => {
+		if (lang === 'en') {
+			return 'en-US';
+		} else if (lang === 'es') {
+			return 'es-ES';
+		} else if (lang === 'fr') {
+			return 'fr-FR';
+		}
+	};
+
+	const handleChangeLoggedOut = (e) => {
+		setLanguage(e.target.value);
+		localStorage.setItem('i18nextLng', setLocalStorageLanguage(e.target.value));
+	};
 
 	return (
 		<NavContainer>
-			{
-				isLoggedIn ? (
-					<>
-						<NavItemsContainer $gap='100px'>
-							<TitleLink to="/">PONG</TitleLink>
-							<NavItemsContainer $gap='100px'>
-								<StyledNavLink to="friends">FRIENDS</StyledNavLink>
-								<StyledNavLink to="/">LEADERBOARD</StyledNavLink>
-								<StyledNavLink to="shop">SHOP</StyledNavLink>
-								<StyledNavLink to="playmenu">PLAY</StyledNavLink>
-							</NavItemsContainer>
-						</NavItemsContainer>
-						<NavItemsContainer $gap='50px'>
-							<SearchBar/>
-							<ProfileDropdown/>
-						</NavItemsContainer>
-					</>
-				) : (
-					<>
-						<TitleLink to="/">PONG</TitleLink>
-						<ConnectButton to="/login">CONNECT</ConnectButton>
-					</>
-				)
-			}
+			<TitleLink to="/">PONG</TitleLink>
+			<NavItemsContainer>
+				<ConnectButton to="/login">CONNECT</ConnectButton>
+				<Language handleChange={handleChangeLoggedOut} language={language}/>
+			</NavItemsContainer>
 		</NavContainer>
 	);
 };

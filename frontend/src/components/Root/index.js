@@ -3,8 +3,9 @@ import { Outlet, useLocation } from 'react-router-dom';
 import NavBar from '../Navigation/Navigation';
 import Footer from '../Footer/Footer';
 import { AuthContext } from '../../context/AuthContext';
-import Chat from '../Chat/Chat';
 import RelationProvider from '../../context/RelationContext';
+import ConnectedRoot from './ConnectedRoot';
+import ConnectedNavBar from '../Navigation/ConnectedNavigation';
 
 const Root = () => {
 	const location = useLocation();
@@ -23,16 +24,24 @@ const Root = () => {
 		<>
 			{showPersistentUI ? (
 				<>
-					<NavBar/>
-					<main>
-						{ isLoggedIn ? (
-							<RelationProvider>
+					{isLoggedIn ? (
+						<RelationProvider>
+							<ConnectedNavBar/>
+							<main>
+								<ConnectedRoot/>
 								<Outlet/>
-								<Chat/>
-							</RelationProvider>
-						) : <Outlet/> }
-					</main>
-					<Footer/>
+							</main>
+							<Footer/>
+						</RelationProvider>
+					) : (
+						<>
+							<NavBar/>
+							<main>
+								<Outlet/>
+							</main>
+							<Footer/>
+						</>
+					)}
 				</>
 			) : (
 				<main>
