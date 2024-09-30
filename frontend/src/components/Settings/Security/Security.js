@@ -1,20 +1,18 @@
 import React, { useState, useEffect } from "react";
-import {
-	ErrorMessage,
-	Form,
-	FormInput,
-	SectionHeading,
-	SubSectionHeading,
-	SuccessMessage
-} from "../styles/Settings.styled";
 import API from "../../../api/api";
-import { checkSecurityRestrictions } from "../../../scripts/restrictions";
 import { GetUser } from "../../../api/user";
+import { checkSecurityRestrictions } from "../../../scripts/restrictions";
 import TwoFactorAuthToggle from "./2FA/TwoFactorAuthToggle";
 import TwoFactorAuthSecurity from "./2FA/TwoFactorAuthSecurity";
-import PongButton from "../../../styles/shared/PongButton.styled";
-import SignIn from "./SignIn";
 import ContactInformation from "./ContactInformation";
+import SignIn from "./SignIn";
+import {
+	Form,
+	SectionHeading,
+	SuccessMessage
+} from "../styles/Settings.styled";
+import PongButton from "../../../styles/shared/PongButton.styled";
+import ErrorMessage from "../../../styles/shared/ErrorMessage.styled";
 
 const Security = ({ user, setUser }) => {
 	const [formData, setFormData] = useState({

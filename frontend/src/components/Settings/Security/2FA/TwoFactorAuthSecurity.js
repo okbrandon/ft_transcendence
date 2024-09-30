@@ -3,10 +3,10 @@ import API from '../../../../api/api';
 import logger from '../../../../api/logger';
 import { GetUser } from '../../../../api/user';
 import OTPInputComponent from '../../../Auth/OTPInput';
-import { ErrorMessage } from '../../../Auth/styles/Authentication.styled';
 import { AvailablePlatformsContainer, PlatformButton } from '../../../Auth/styles/TwoFactorAuth.styled';
 import { Backdrop, FormContainer } from '../../styles/TwoFactorAuth.styled';
 import PongButton from '../../../../styles/shared/PongButton.styled';
+import ErrorMessage from '../../../../styles/shared/ErrorMessage.styled';
 
 const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactorAuth }) => {
 	const [availablePlatforms, setAvailablePlatforms] = useState([]);

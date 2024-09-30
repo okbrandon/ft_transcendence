@@ -6,9 +6,10 @@ import {
 	ImageUploadInput,
 	ImageUploadLabel,
 } from '../styles/ProfileImage.styled';
-import { ErrorMessage, SubSectionHeading } from '../styles/Settings.styled';
+import { SubSectionHeading } from '../styles/Settings.styled';
 import { GetImage } from '../../../api/user';
 import PongButton from '../../../styles/shared/PongButton.styled';
+import ErrorMessage from '../../../styles/shared/ErrorMessage.styled';
 
 const ImageSettings = ({ user, setFormData, handleChange }) => {
 	const [profileImage, setProfileImage] = useState(user.avatarID);

@@ -4,14 +4,12 @@ import axios from "axios";
 import { ApiLogin } from "../../api/auth";
 import logger from "../../api/logger";
 import { AuthContext } from "../../context/AuthContext";
+import Notification from "../Notification/Notification";
 import OTPInputComponent from "./OTPInput";
-import {
-	FormContainer,
-	ErrorMessage
-} from "./styles/Authentication.styled";
+import { FormContainer } from "./styles/Authentication.styled";
 import { AvailablePlatformsContainer, PlatformButton } from "./styles/TwoFactorAuth.styled";
 import PongButton from "../../styles/shared/PongButton.styled";
-import Notification from "../Notification/Notification";
+import ErrorMessage from "../../styles/shared/ErrorMessage.styled";
 
 const TwoFactorAuthSignIn = ({ username, password, setIsTwoFactorAuth, availablePlatforms }) => {
 	const navigate = useNavigate();

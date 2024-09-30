@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 export const FakeCaptchaContainer = styled.div`
 	display: flex;
@@ -27,4 +27,27 @@ export const FakeCaptchaContainer = styled.div`
 		font-size: 13px;
 		z-index: 2;
 	}
+`;
+
+export const FakeCaptchaInput = styled.div`
+	font-size: 1.5rem;
+	margin-bottom: 10px;
+	font-family: 'monospace';
+	letter-spacing: 0.1rem;
+`;
+
+export const HiddenInput = styled.input`
+	opacity: 0;
+	position: absolute;
+`;
+
+export const blink = keyframes`
+	to {
+		visibility: hidden;
+	}
+`;
+
+export const Cursor = styled.span`
+	border-right: 2px solid white;
+	animation: ${blink} 1s steps(2, start) infinite;
 `;

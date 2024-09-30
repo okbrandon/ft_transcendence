@@ -6,12 +6,12 @@ import API from '../../../api/api';
 import { GetUser } from '../../../api/user';
 import { checkAccountPreferencesRestrictions } from '../../../scripts/restrictions';
 import {
-	ErrorMessage,
 	Form,
 	SectionHeading,
 	SuccessMessage,
 } from '../styles/Settings.styled';
 import PongButton from '../../../styles/shared/PongButton.styled';
+import ErrorMessage from '../../../styles/shared/ErrorMessage.styled';
 
 const AccountPreferences = ({ user, setUser }) => {
 	const [formData, setFormData] = useState({

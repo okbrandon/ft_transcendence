@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import { ApiSignup } from '../../api/auth';
-import { AuthenticationSection, ErrorMessage, FormContainer, LanguageDropdownButton } from './styles/Authentication.styled';
+import { AuthenticationSection, FormContainer, LanguageDropdownButton } from './styles/Authentication.styled';
 import { checkSignUpRestrictions } from '../../scripts/restrictions';
 import FakeCaptcha from './FakeCaptcha';
+import ErrorMessage from '../../styles/shared/ErrorMessage.styled';
 
 const SignUp = () => {
-	const navigate = useNavigate();
 	const [formData, setFormData] = useState({
 		username: '',
 		email: '',
@@ -17,7 +17,7 @@ const SignUp = () => {
 	const [cfPassword, setCfPassword] = useState('');
 	const [showPassword, setShowPassword] = useState(false);
 	const [showCfPassword, setShowCfPassword] = useState(false);
-	const [showFakeCaptcha, setShowFakeCaptcha] = useState(false); // changed here
+	const [showFakeCaptcha, setShowFakeCaptcha] = useState(false);
 	const [error, setError] = useState('');
 
 	const handleChange = (e) => {
@@ -37,7 +37,6 @@ const SignUp = () => {
 		} else {
 			ApiSignup(formData)
 				.then(() => {
-					// navigate('/login/send-email-notification');
 					setShowFakeCaptcha(true);
 				})
 				.catch((error) => {
@@ -96,7 +95,11 @@ const SignUp = () => {
 							autoComplete='new-password'
 						/>
 						<span>PASSWORD</span>
-						{showPassword ? <i className="bi bi-eye-fill" onClick={() => setShowPassword(!showPassword)}/> : <i className="bi bi-eye" onClick={() => setShowPassword(!showPassword)}/>}
+						{showPassword ? (
+							<i className="bi bi-eye-fill" onClick={() => setShowPassword(!showPassword)}/>
+						) : (
+							<i className="bi bi-eye" onClick={() => setShowPassword(!showPassword)}/>
+						)}
 					</FormContainer.Group>
 					<FormContainer.Group className="mb-3">
 						<FormContainer.Control
@@ -109,7 +112,11 @@ const SignUp = () => {
 							autoComplete='new-password'
 						/>
 						<span>CONFIRM</span>
-						{showCfPassword ? <i className="bi bi-eye-fill" onClick={() => setShowCfPassword(!showCfPassword)}/> : <i className="bi bi-eye" onClick={() => setShowCfPassword(!showCfPassword)}/>}
+						{showCfPassword ? (
+							<i className="bi bi-eye-fill" onClick={() => setShowCfPassword(!showCfPassword)}/>
+						) : (
+							<i className="bi bi-eye" onClick={() => setShowCfPassword(!showCfPassword)}/>
+						)}
 					</FormContainer.Group>
 					<p>Already Signed Up ? <Link to="/login">Sign In</Link></p>
 					{error && <ErrorMessage>{error}</ErrorMessage>}

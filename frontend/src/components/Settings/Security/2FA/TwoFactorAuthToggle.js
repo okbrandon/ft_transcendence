@@ -11,7 +11,8 @@ import {
 	QRCodeContainer,
 	QRCodeText,
 } from "../../styles/TwoFactorAuthToggle.styled";
-import { ErrorMessage, SubSectionHeading } from "../../styles/Settings.styled";
+import { SubSectionHeading } from "../../styles/Settings.styled";
+import ErrorMessage from "../../../../styles/shared/ErrorMessage.styled";
 
 const TwoFactorAuthToggle = () => {
 	const [is2FAEnabled, setIs2FAEnabled] = useState(false);

@@ -5,13 +5,13 @@ import Button from 'react-bootstrap/Button';
 import { ApiLogin } from '../../api/auth';
 import {
 	AuthenticationSection,
-	ErrorMessage,
 	FormContainer,
 	FortyTwoButton
 } from './styles/Authentication.styled';
 import { AuthContext } from '../../context/AuthContext';
 import TwoFactorAuthSignIn from './TwoFactorAuthSignIn';
 import Notification from '../Notification/Notification';
+import ErrorMessage from '../../styles/shared/ErrorMessage.styled';
 
 const SignIn = () => {
 	const navigate = useNavigate();
