@@ -29,7 +29,7 @@ const NavBar = () => {
 		<NavContainer>
 			<TitleLink to="/">PONG</TitleLink>
 			<NavItemsContainer>
-				<ConnectButton to="/login">CONNECT</ConnectButton>
+				<ConnectButton to="/signin">CONNECT</ConnectButton>
 				<Language handleChange={handleChangeLoggedOut} language={language}/>
 			</NavItemsContainer>
 		</NavContainer>

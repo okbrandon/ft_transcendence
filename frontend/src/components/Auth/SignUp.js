@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import { ApiSignup } from '../../api/auth';
 import { AuthenticationSection, FormContainer, LanguageDropdownButton } from './styles/Authentication.styled';
@@ -118,7 +118,7 @@ const SignUp = () => {
 							<i className="bi bi-eye" onClick={() => setShowCfPassword(!showCfPassword)}/>
 						)}
 					</FormContainer.Group>
-					<p>Already Signed Up ? <Link to="/login">Sign In</Link></p>
+					<p>Already Signed Up ? <Link to="/signin">Sign In</Link></p>
 					{error && <ErrorMessage>{error}</ErrorMessage>}
 					<Button variant='light' type='submit'>Submit</Button>
 				</FormContainer>

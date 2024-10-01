@@ -32,7 +32,7 @@ const PrivateRoutes = () => {
 		setIsLoggedIn(isValidToken());
 	}, [setIsLoggedIn]);
 	return (
-		isLoggedIn ? <Outlet/> : <Navigate to="/login"/>
+		isLoggedIn ? <Outlet/> : <Navigate to="/signin"/>
 	);
 };
 
@@ -46,7 +46,7 @@ const Router = createBrowserRouter(createRoutesFromElements(
 	<>
 		<Route path="/" element={ <Root/> }>
 			<Route index element={ <Home/> }/>
-			<Route path="login/:fromSignUp?" element={ <SignIn/> }/>
+			<Route path="signin/:fromSignUp?" element={ <SignIn/> }/>
 			<Route path="signup" element={ <SignUp/> }/>
 			<Route element={ <PrivateRoutes/> }>
 				<Route path="friends" element={ <Friends/> }/>
