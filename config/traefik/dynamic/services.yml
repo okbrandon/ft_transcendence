@@ -3,30 +3,36 @@ http:
     frontend:
       rule: "PathPrefix(`/`)"
       service: frontend
+      entryPoints:
+        - websecure
+      tls:
+        insecureSkipVerify: true
     backend:
       rule: "PathPrefix(`/api`)"
       service: backend
+      entryPoints:
+        - web
+        - websecure
+      tls:
+        certResolver: myresolver
     backend-websocket:
       rule: "PathPrefix(`/ws`)"
       service: backend-websocket
-    gameserver:
-      rule: "PathPrefix(`/game`)"
-      service: gameserver
+      entryPoints:
+        - web
+        - websecure
+      tls:
+        certResolver: myresolver
 
   services:
     frontend:
       loadBalancer:
         servers:
-          - url: "http://frontend:3000"
+          - url: "https://frontend:3000"
     backend:
       loadBalancer:
         servers:
-          - url: "http://backend:8000"
-    backend-websocket:
-      loadBalancer:
-        servers:
-          - url: "http://backend:8000"
-    gameserver:
-      loadBalancer:
-        servers:
-          - url: "http://gameserver:8080"
+          - url: "https://backend:8443"
+
+  serversTransports:
+    insecureSkipVerify: true

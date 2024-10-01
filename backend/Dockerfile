@@ -44,7 +44,7 @@ COPY . .
 RUN apt-get update && apt-get install -y netcat
 COPY start.sh /app/start.sh
 
-EXPOSE 8000
+EXPOSE 8443
 
 # Runs server with Daphne
 CMD ["sh", "/app/start.sh"]

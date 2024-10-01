@@ -24,3 +24,5 @@ daphne
 channels
 Twisted[tls,http2]
 httpx
+django-extensions
+Werkzeug

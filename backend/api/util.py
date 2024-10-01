@@ -131,7 +131,7 @@ def get_safe_profile(data: dict, me: bool, many: bool = False):
 
 async def get_user_id_from_token(token):
     try:
-        url = "http://localhost:8000/api/v1/users/@me/profile"
+        url = "https://localhost:8443/api/v1/users/@me/profile"
         headers = {
             "Authorization": f"Bearer {token}"
         }

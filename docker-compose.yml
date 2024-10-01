@@ -2,23 +2,23 @@ services:
   traefik:
     image: traefik:v2.5
     restart: always
-    command:
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
-      - "--certificatesresolvers.myresolver.acme.email=me@evan.sh"
-      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
     ports:
-      - "8888:80"
-      - "8443:443"
+      - "8888:443"
+      - "8080:8080"  # Added for Traefik dashboard
     networks:
       - transcendence
     volumes:
       - ./config/traefik:/etc/traefik
       - ./data/letsencrypt:/letsencrypt
-
+      - ./certs:/certs
+    command:
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
+      - "--entrypoints.websecure.address=:443"
+      - "--providers.file.directory=/etc/traefik/dynamic"
+      - "--providers.file.watch=true"
+      - "--providers.docker=true"
+      - "--log.level=DEBUG"  # Added for more verbose logging
 
   postgres:
     image: postgres
@@ -33,29 +33,22 @@ services:
     build: ./frontend
     restart: always
     env_file: .env
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
-      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
     networks:
       - transcendence
+    volumes:
+      - ./certs:/certs
+    ports:
+      - 3000:3000
 
   backend:
     build: ./backend
     restart: always
     env_file: .env
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=PathPrefix(`/api`)"
-      - "traefik.http.services.backend.loadbalancer.server.port=8000"
-      - "traefik.http.routers.backend-websocket.rule=PathPrefix(`/ws`)"
-      - "traefik.http.routers.backend-websocket.entrypoints=websecure"
-      - "traefik.http.routers.backend-websocket.service=backend-websocket"
-      - "traefik.http.services.backend-websocket.loadbalancer.server.port=8000"
     networks:
       - transcendence
     volumes:
       - ./data/exports:/exports
+      - ./certs:/certs
 
   # gameserver:
   #   build: ./gameserver
@@ -76,6 +69,7 @@ services:
     env_file: .env
     volumes:
       - ./data/exports:/exports
+      - ./certs:/certs
     networks:
       - transcendence
 
@@ -85,6 +79,8 @@ services:
     env_file: .env
     networks:
       - transcendence
+    volumes:
+      - ./certs:/certs
 
 networks:
   transcendence:

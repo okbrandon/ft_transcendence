@@ -9,4 +9,4 @@ done
 python3 manage.py migrate
 
 # Start the server
-python3 manage.py runserver 0.0.0.0:9000
+python3 manage.py runserver_plus --cert-file /certs/server.crt --key-file /certs/server.key 0.0.0.0:9000

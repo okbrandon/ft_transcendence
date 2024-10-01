@@ -2,19 +2,13 @@ api:
   insecure: true
 
 entryPoints:
-  web:
-    address: ":80"
   websecure:
     address: ":443"
-
-certificatesResolvers:
-  myresolver:
-    acme:
-      email: me@evan.sh
-      storage: /letsencrypt/acme.json
-      tlsChallenge: {}
 
 providers:
   file:
     directory: "/etc/traefik/dynamic"
     watch: true
+
+serversTransport:
+  insecureSkipVerify: true

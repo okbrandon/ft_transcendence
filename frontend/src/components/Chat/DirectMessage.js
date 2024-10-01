@@ -20,7 +20,7 @@ const SendMessage = (content, conversationID) => {
 		content: content
 	};
 	// Send the message to the server WebSocket
-	sendMessage(JSON.stringify(message));
+	//sendMessage(JSON.stringify(message)); this is undefined uncomment me when im defined otherwise i break build step
 }
 
 export const DirectMessage = ( { convo, username, onClose, $isMinimized, toggleMinimization, arrowState }) => {
@@ -48,7 +48,8 @@ export const DirectMessage = ( { convo, username, onClose, $isMinimized, toggleM
 				<ChatInput
 					placeholder="Type a message..."
 					value={content}
-					onChange={e => setInput(e.target.value)} />
+					onChange={e => ({})} /> 
+					{/* was onChange={e => setInput(e.target.value)}, removed bcuz setInput was undefined and it broke build step /> */}
 			</ChatInputContainer>
 		</DirectMessageContainer>
 	);

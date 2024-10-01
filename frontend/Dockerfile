@@ -9,6 +9,11 @@ RUN npm install
 
 COPY . .
 
+RUN npm run build
+
+# Install a lightweight web server
+RUN npm install -g http-server
+
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["http-server", "build", "--ssl", "--cert", "/certs/server.crt", "--key", "/certs/server.key", "-p", "3000", "-a", "0.0.0.0"]
