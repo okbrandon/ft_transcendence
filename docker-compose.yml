@@ -1,24 +1,14 @@
 services:
-  traefik:
-    image: traefik:v2.5
+  nginx:
+    image: nginx:latest
     restart: always
     ports:
-      - "8888:443"
-      - "8080:8080"  # Added for Traefik dashboard
+      - "8443:443"
+    volumes:
+      - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certs:/certs:ro
     networks:
       - transcendence
-    volumes:
-      - ./config/traefik:/etc/traefik
-      - ./data/letsencrypt:/letsencrypt
-      - ./certs:/certs
-    command:
-      - "--api.insecure=true"
-      - "--api.dashboard=true"
-      - "--entrypoints.websecure.address=:443"
-      - "--providers.file.directory=/etc/traefik/dynamic"
-      - "--providers.file.watch=true"
-      - "--providers.docker=true"
-      - "--log.level=DEBUG"  # Added for more verbose logging
 
   postgres:
     image: postgres
@@ -37,8 +27,6 @@ services:
       - transcendence
     volumes:
       - ./certs:/certs
-    ports:
-      - 3000:3000
 
   backend:
     build: ./backend
@@ -49,19 +37,6 @@ services:
     volumes:
       - ./data/exports:/exports
       - ./certs:/certs
-
-  # gameserver:
-  #   build: ./gameserver
-  #   restart: always
-  #   env_file: .env
-  #   labels:
-  #     - "traefik.enable=true"
-  #     - "traefik.http.routers.gameserver.rule=PathPrefix(`/ws`)"
-  #     - "traefik.http.services.gameserver.loadbalancer.server.port=8080"
-  #   ports:
-  #     - 8080:8080
-  #   networks:
-  #     - transcendence
 
   harvester:
     build: ./harvester
