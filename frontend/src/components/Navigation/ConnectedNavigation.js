@@ -13,19 +13,32 @@ import { TitleLink } from "../../styles/shared/Title.styled";
 import API from "../../api/api";
 import { AuthContext } from "../../context/AuthContext";
 import { RelationContext } from "../../context/RelationContext";
+import { useTranslation } from "react-i18next";
 
 const ConnectedNavBar = () => {
 	const { setUser } = useContext(AuthContext);
 	const { requests } = useContext(RelationContext);
 	const [language, setLanguage] = useState("en");
 	const [requestsLen, setRequestsLen] = useState(0);
+	const { i18n } = useTranslation();
 
 	useEffect(() => {
 		setRequestsLen(requests.length);
 	}, [requests]);
 
+	const getCorrectLanguageCode = lang => {
+		if (lang === 'en') {
+			return 'EN';
+		} else if (lang === 'es') {
+			return 'ES';
+		} else if (lang === 'fr') {
+			return 'FR';
+		}
+	};
+
 	const handleLanguage = event => {
 		setLanguage(event.target.value);
+		i18n.changeLanguage(getCorrectLanguageCode(event.target.value));
 		API.patch('users/@me/profile', { lang: event.target.value })
 			.then(() => {
 				setUser(prev => ({
