@@ -1,39 +1,35 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProfilePicture from './ProfilePicture';
 import MainStats from './MainStats';
-import { IconButton, IconsContainer, MainBarContainer, SectionContainer } from '../styles/main/MainBar.styled';
-import { AuthContext } from '../../../context/AuthContext';
-import 'react-circular-progressbar/dist/styles.css';
 import API from '../../../api/api';
-import logger from '../../../api/logger';
+import {
+	IconButton,
+	IconsContainer,
+	MainBarContainer,
+	SectionContainer
+} from '../styles/main/MainBar.styled';
+import 'react-circular-progressbar/dist/styles.css';
 
-const MainBar = ({ profileUser, matchArray, relation }) => {
+const MainBar = ({ profileUser, matchArray, relation, setIsRefetch }) => {
 	const navigate = useNavigate();
-	const { user } = useContext(AuthContext);
-	const [disableAddFriend, setDisableAddFriend] = useState(!!relation.length);
-	const [disableBlockUser, setDisableBlockUser] = useState(!!(relation.length && relation[0].status === 2));
-
-	useEffect(() => {
-		setDisableAddFriend(!!relation.length);
-		setDisableBlockUser(!!(relation.length && relation[0].status === 2));
-	}, [relation]);
+	const disableAddFriend = !!relation.length;
+	const disableBlockUser = !!(relation.length && relation[0].status === 2);
+	const userID = localStorage.getItem('userID');
 
 	const handleAddFriend = () => {
 		if (relation.length && relation[0].status === 0) {
 			API.put('users/@me/relationships', { user: profileUser.userID, type: 1 })
 				.then(() => {
-					logger('Friend request accepted from Profile page');
-					setDisableAddFriend(true);
+					setIsRefetch(true);
 				})
 				.catch(err => {
 					console.error(err.response?.data?.error || 'An error occurred.');
-				})
+				});
 		} else {
 			API.put('users/@me/relationships', { user: profileUser.userID, type: 0 })
 				.then(() => {
-					logger('Friend request sent');
-					setDisableAddFriend(true);
+					setIsRefetch(true);
 				})
 				.catch(err => {
 					console.error(err.response?.data?.error || 'An error occurred.');
@@ -44,9 +40,7 @@ const MainBar = ({ profileUser, matchArray, relation }) => {
 	const handleBlockUser = () => {
 		API.put('users/@me/relationships', { user: profileUser.userID, type: 2 })
 			.then(() => {
-				logger('User blocked');
-				setDisableAddFriend(true);
-				setDisableBlockUser(true);
+				setIsRefetch(true);
 			})
 			.catch(err => {
 				console.error(err.response?.data?.error || 'An error occurred.');
@@ -59,7 +53,7 @@ const MainBar = ({ profileUser, matchArray, relation }) => {
 				<MainStats matchArray={matchArray}/>
 				<ProfilePicture profileUser={profileUser}/>
 				{
-					user.username === profileUser.username ? (
+					userID === profileUser.userID ? (
 						<IconsContainer>
 							<IconButton type="button">
 								<i className="bi bi-gear-fill" onClick={() => navigate('/settings')}/>

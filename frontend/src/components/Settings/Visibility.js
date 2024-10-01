@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { GetBlockedUsers } from "../../api/friends";
+import React, { useContext, useEffect, useState } from "react";
+import API from "../../api/api";
 import {
 	Form,
 	SectionHeading,
@@ -12,30 +12,19 @@ import {
 	BlockedUserName,
 } from "./styles/Visibility.styled";
 import Loader from "../../styles/shared/Loader.styled";
-import API from "../../api/api";
-import logger from "../../api/logger";
 import PongButton from "../../styles/shared/PongButton.styled";
+import { RelationContext } from "../../context/RelationContext";
 
 const Visibility = () => {
-	const [blockedUsers, setBlockedUsers] = useState(null);
+	const { blockedUsers, setIsRefetch } = useContext(RelationContext);
 
-	useEffect(() => {
-		GetBlockedUsers()
-			.then(users => {
-				setBlockedUsers(users.filter(user => user.is === 'target'));
-			});
-	}, []);
-
-	if (!blockedUsers) {
-		return <Loader/>;
-	}
+	if (!blockedUsers) return <Loader/>;
 
 	const handleUnblock = (e, relationID) => {
 		e.preventDefault();
 		API.delete(`users/@me/relationships/${relationID}`)
 			.then(() => {
-				logger('User unblocked');
-				setBlockedUsers(blockedUsers.filter(user => user.relationID !== relationID));
+				setIsRefetch(true);
 			})
 			.catch(err => {
 				console.error(err.response.data.error);

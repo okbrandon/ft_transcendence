@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import API from "../../api/api";
 import PongButton from "../../styles/shared/PongButton.styled";
 import {
 	Actions,
@@ -12,7 +13,6 @@ import {
 	ProfileInfoContainer,
 	ProfileStatus,
 } from "./styles/Friends.styled";
-import API from "../../api/api";
 
 const setActivityDescription = activity => {
 	if (activity === "QUEUEING") {
@@ -25,7 +25,7 @@ const setActivityDescription = activity => {
 	return "Touching grass...";
 }
 
-const FriendsList = ({ friends, setFriends }) => {
+const FriendsList = ({ friends, setIsRefetch }) => {
 	const navigate = useNavigate();
 
 	const handleProfile = username => {
@@ -35,7 +35,7 @@ const FriendsList = ({ friends, setFriends }) => {
 	const handleRemove = relationID => {
 		API.delete(`users/@me/relationships/${relationID}`)
 			.then(() => {
-				setFriends(friends.filter(friend => friend.relationID !== relationID));
+				setIsRefetch(true);
 			})
 			.catch(err => {
 				console.error(err.response?.data?.error || 'An error occurred');

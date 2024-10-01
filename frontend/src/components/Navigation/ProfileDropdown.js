@@ -8,13 +8,15 @@ import { RelationContext } from '../../context/RelationContext';
 const ProfileDropdown = () => {
 	const navigate = useNavigate();
 	const { setIsLoggedIn, user, setUser } = useContext(AuthContext);
-	const { setConversations, setFriends, setRequests } = useContext(RelationContext);
+	const { setConversations, setRelations, setFriends, setRequests, setBlockedUsers } = useContext(RelationContext);
 
 	const handleLogout = () => {
 		setIsLoggedIn(false);
 		setUser(null);
+		setRelations([]);
 		setFriends([]);
 		setRequests([]);
+		setBlockedUsers([]);
 		setConversations([]);
 		localStorage.removeItem('token');
 		localStorage.removeItem('refresh');

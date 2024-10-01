@@ -3,7 +3,7 @@ import API from '../api/api';
 import { useLocation } from "react-router-dom";
 import logger from "../api/logger";
 import { formatUserData } from "../api/user";
-import { GetFriends, GetRequests } from "../api/friends";
+import { GetBlockedUsers, GetFriends, GetRequests } from "../scripts/relation";
 
 const WS_CHAT_URL = 'http://localhost:8888/ws/chat/?token=';
 const WS_STATUS_URL = 'http://localhost:8888/ws/status/?token=';
@@ -136,21 +136,11 @@ const RelationProvider = ({ children }) => {
 				}
 			]);
 	const [notificationUser, setNotificationUser] = useState(null);
-	const [requests, setRequests] = useState([]);
+	const [relations, setRelations] = useState([]);
 	const [friends, setFriends] = useState([]);
-
-	const fetchFriendsAndRequests = async () => {
-		try {
-			const [friendsResponse, requestsResponse] = await Promise.all([
-				GetFriends(),
-				GetRequests(),
-			]);
-			setFriends(friendsResponse);
-			setRequests(requestsResponse);
-		} catch (err) {
-			console.error(err.response?.data?.error || 'An error occurred');
-		}
-	};
+	const [requests, setRequests] = useState([]);
+	const [blockedUsers, setBlockedUsers] = useState([]);
+	const [isRefetch, setIsRefetch] = useState(false);
 
 	const setActivity = location => {
 		if (location === '/vs-ai' || location === '/vs-player') {
@@ -162,8 +152,20 @@ const RelationProvider = ({ children }) => {
 	};
 
 	useEffect(() => {
-		fetchFriendsAndRequests();
-	}, []);
+		API.get('users/@me/relationships')
+			.then(relationships => {
+				setRelations(relationships.data);
+				setFriends(GetFriends(relationships.data));
+				setRequests(GetRequests(relationships.data));
+				setBlockedUsers(GetBlockedUsers(relationships.data));
+			})
+			.catch(err => {
+				console.error(err?.response?.data?.error || 'An error occurred.');
+			})
+			.finally(() => {
+				setIsRefetch(false);
+			})
+	}, [isRefetch]);
 
 	useEffect(() => {
 		socketChat.current = new WebSocket(WS_CHAT_URL + localStorage.getItem('token'));
@@ -181,7 +183,7 @@ const RelationProvider = ({ children }) => {
 						console.error('Failed to update conversations:', error);
 					});
 			} else if (response.type === 'friend_request') {
-				fetchFriendsAndRequests();
+				setIsRefetch(true);
 				setNotificationUser(formatUserData({
 					...response.data.from,
 					status: response.status
@@ -213,7 +215,7 @@ const RelationProvider = ({ children }) => {
 					activity: setActivity(pathnameRef.current)
 				}));
 			} else if (data.type === 'connection_event') {
-				fetchFriendsAndRequests();
+				setIsRefetch(true);
 			}
 		};
 		socketStatus.current.onerror = error => {
@@ -236,12 +238,17 @@ const RelationProvider = ({ children }) => {
 		<RelationContext.Provider value={{
 			conversations,
 			setConversations,
-			notificationUser,
-			setNotificationUser,
-			friends,
-			setFriends,
-			requests,
-			setRequests,
+			notificationUser,		// get the notification
+			setNotificationUser,	// set the notification
+			relations,				// get the relations
+			setRelations,			// change the relations
+			friends,				// get the friends
+			setFriends,				// change the friends
+			requests,				// get the requests users
+			setRequests,			// change the requests
+			blockedUsers,			// get the blocked users
+			setBlockedUsers,		// change the blocked users
+			setIsRefetch,			// refetch the relations when set to true
 		}}>
 			{ children }
 		</RelationContext.Provider>

@@ -17,13 +17,12 @@ import {
 } from "../styles/Tournament/JoinTournament.styled";
 import PongButton from "../../../styles/shared/PongButton.styled";
 import { RelationContext } from "../../../context/RelationContext";
-import { GetActiveFriends } from "../../../api/friends";
 
 const players = ["Player 1", "Player 2", "Player 3", "Player 4", "Player 5", "Player 6", "Player 7"];
 
 const JoinTournament = () => {
 	const navigate = useNavigate();
-	const { requests } = useContext(RelationContext);
+	const { friends } = useContext(RelationContext);
 	const [invite, setInvite] = useState(false);
 	const [activeFriends, setActiveFriends] = useState([]);
 	const [isStartDisabled, setIsStartDisabled] = useState(true);
@@ -33,16 +32,8 @@ const JoinTournament = () => {
 	}, [setIsStartDisabled]);
 
 	useEffect(() => {
-		const fetchFriends = async () => {
-			try {
-				const friendsResponse = await GetActiveFriends();
-				setActiveFriends(friendsResponse);
-			} catch (err) {
-				console.error(err.response?.data?.error || "An error occurred");
-			}
-		}
-		fetchFriends();
-	}, [requests]);
+		setActiveFriends(friends.filter(friend => !!friend.status.online));
+	}, [friends]);
 
 	const handleKickPlayer = playerName => {
 		console.log(`Kicking ${playerName}`);

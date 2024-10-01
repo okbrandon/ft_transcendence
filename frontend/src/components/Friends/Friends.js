@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import RequestsList from "./RequestsList";
@@ -13,12 +13,7 @@ import { RelationContext } from "../../context/RelationContext";
 
 const Friends = () => {
 	const [searchTerm, setSearchTerm] = useState("");
-	const [requestsLen, setRequestsLen] = useState(0);
-	const { friends, requests, setFriends, setRequests } = useContext(RelationContext);
-
-	useEffect(() => {
-		setRequestsLen(requests.length);
-	}, [requests]);
+	const { friends, requests, setIsRefetch } = useContext(RelationContext);
 
 	if (!friends || !requests) {
 		return (
@@ -49,10 +44,10 @@ const Friends = () => {
 				className="mb-3"
 			>
 				<Tab eventKey="friends" title="Friends">
-					<FriendsList friends={filteredFriends} setFriends={setFriends}/>
+					<FriendsList friends={filteredFriends} setIsRefetch={setIsRefetch}/>
 				</Tab>
 				<Tab eventKey="requests" title="Requests">
-					<RequestsList requests={requests} setRequests={setRequests} setFriends={setFriends}/>
+					<RequestsList requests={requests} setIsRefetch={setIsRefetch}/>
 				</Tab>
 			</Tabs>
 		</PageContainer>

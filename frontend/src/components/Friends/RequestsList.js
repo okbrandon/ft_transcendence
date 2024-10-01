@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import API from "../../api/api";
 import PongButton from "../../styles/shared/PongButton.styled";
 import {
@@ -9,16 +10,14 @@ import {
 	ProfileAvatar,
 	ProfileInfo
 } from "./styles/Friends.styled";
-import { useNavigate } from "react-router-dom";
 
-const RequestsList = ({ requests, setRequests, setFriends }) => {
+const RequestsList = ({ requests, setIsRefetch }) => {
 	const navigate = useNavigate();
 
 	const handleAccept = (focusedRequest) => {
 		API.put('users/@me/relationships', { user: focusedRequest.userID, type: 1 })
 			.then(() => {
-				setFriends(prev => ([...prev, focusedRequest]));
-				setRequests(prev => prev.filter((request) => request.username !== focusedRequest.username));
+				setIsRefetch(true);
 			})
 			.catch(err => {
 				console.error(err.response.data.error);
@@ -28,7 +27,7 @@ const RequestsList = ({ requests, setRequests, setFriends }) => {
 	const handleDecline = (id) => {
 		API.delete(`users/@me/relationships/${id}`)
 			.then(() => {
-				setRequests(requests.filter(request => request.relationID !== id));
+				setIsRefetch(true);
 			})
 			.catch(err => {
 				console.error(err.response.data.error);
