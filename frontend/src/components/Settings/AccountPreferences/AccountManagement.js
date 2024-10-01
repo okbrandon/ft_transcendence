@@ -28,6 +28,7 @@ const AccountManagement = () => {
 			});
 		setIsModalOpen(false);
 	};
+
 	return (
 		<>
 			<SubSectionHeading>Account Management</SubSectionHeading>
