@@ -3,16 +3,21 @@ import { useNavigate } from 'react-router-dom';
 import Dropdown from 'react-bootstrap/Dropdown';
 import { ProfileDropdownButton } from './styles/Navigation.styled';
 import { AuthContext } from '../../context/AuthContext';
+import { RelationContext } from '../../context/RelationContext';
 
 const ProfileDropdown = () => {
 	const navigate = useNavigate();
-	const { setIsLoggedIn, user } = useContext(AuthContext);
+	const { setIsLoggedIn, user, setUser } = useContext(AuthContext);
+	const { setConversations, setFriends, setRequests } = useContext(RelationContext);
 
 	const handleLogout = () => {
 		setIsLoggedIn(false);
+		setUser(null);
+		setFriends([]);
+		setRequests([]);
+		setConversations([]);
 		localStorage.removeItem('token');
 		localStorage.removeItem('refresh');
-		navigate('/');
 	};
 
 	return (

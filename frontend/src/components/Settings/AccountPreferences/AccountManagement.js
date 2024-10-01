@@ -21,13 +21,14 @@ const AccountManagement = () => {
 			.then(() => {
 				localStorage.removeItem('token');
 				localStorage.removeItem('refresh');
-				navigate('/login');
+				navigate('/signin');
 			})
 			.catch((err) => {
 				console.error(err);
 			});
 		setIsModalOpen(false);
 	};
+
 	return (
 		<>
 			<SubSectionHeading>Account Management</SubSectionHeading>

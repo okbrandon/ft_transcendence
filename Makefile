@@ -35,7 +35,7 @@ up: intro ## Launch the project in the background
 logs: ## Show the logs of the project
 	@ $(DC) logs
 
-down: ## Stop the project
+down: intro ## Stop the project
 	@ $(DC) down
 
 clean: down ## Stop the project and remove all the stopped containers / unused networks / dangling images / unused build caches (docker system prune -f)

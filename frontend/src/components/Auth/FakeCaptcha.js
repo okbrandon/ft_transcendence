@@ -26,7 +26,7 @@ const FakeCaptcha = () => {
 	const handleSubmit = e => {
 		e.preventDefault();
 		if (inputValue === correctText) {
-			navigate('/login/send-email-notification');
+			navigate('/signin/send-email-notification');
 		} else {
 			setErrorMessage("Please type the exact phrase: 'I am not a robot'.");
 		}
@@ -60,6 +60,7 @@ const FakeCaptcha = () => {
 				{renderTypingFeedback()}
 			</FakeCaptchaInput>
 			<HiddenInput
+				id="fake-captcha"
 				type="text"
 				value={inputValue}
 				onChange={handleInputChange}

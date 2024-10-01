@@ -5,21 +5,12 @@ import logger from "../api/logger";
 import { formatUserData } from "../api/user";
 import { GetFriends, GetRequests } from "../api/friends";
 
-const WS_CHAT_URL = '/ws/chat/?token=';
-const WS_STATUS_URL = '/ws/status/?token=';
+const WS_CHAT_URL = 'http://localhost:8888/ws/chat/?token=';
+const WS_STATUS_URL = 'http://localhost:8888/ws/status/?token=';
 
 export const RelationContext = createContext({
 	conversations: [],
 });
-
-const setActivity = location => {
-	if (location === '/vs-ai' || location === '/vs-player') {
-		return 'QUEUEING';
-	} else if (location === '/game') {
-		return 'PLAYING_VS_AI';
-	}
-	return 'HOME';
-};
 
 const RelationProvider = ({ children }) => {
 	const location = useLocation();
@@ -161,6 +152,15 @@ const RelationProvider = ({ children }) => {
 		}
 	};
 
+	const setActivity = location => {
+		if (location === '/vs-ai' || location === '/vs-player') {
+			return 'QUEUEING';
+		} else if (location === '/game') {
+			return 'PLAYING_VS_AI';
+		}
+		return 'HOME';
+	};
+
 	useEffect(() => {
 		fetchFriendsAndRequests();
 	}, []);
@@ -193,7 +193,7 @@ const RelationProvider = ({ children }) => {
 		};
 
 		return () => {
-			if (socketChat.current) {
+			if (socketChat.current && socketChat.current.readyState === WebSocket.OPEN) {
 				socketChat.current.close();
 				logger('WebSocket for Chat closed');
 			}
@@ -221,7 +221,7 @@ const RelationProvider = ({ children }) => {
 		};
 
 		return () => {
-			if (socketStatus.current) {
+			if (socketStatus.current && socketStatus.current.readyState === WebSocket.OPEN) {
 				socketStatus.current.close();
 				logger('WebSocket for Status closed');
 			}
@@ -235,6 +235,7 @@ const RelationProvider = ({ children }) => {
 	return (
 		<RelationContext.Provider value={{
 			conversations,
+			setConversations,
 			notificationUser,
 			setNotificationUser,
 			friends,

@@ -35,7 +35,7 @@ const SignIn = () => {
 					setIsLoggedIn(true);
 					navigate('/');
 				})
-				.catch((err) => {
+				.catch(err => {
 					if (err.status === 400 && err.response.data.error.includes('OTP')) {
 						setAvailablePlatforms(err.response.data.available_platforms);
 						setIsTwoFactorAuth(true);
@@ -48,7 +48,7 @@ const SignIn = () => {
 
 	const handleFortyTwo = event => {
 		event.preventDefault();
-		window.location.href = `/api/v1/auth/42/login`;
+		window.location.href = `http://localhost:8888/api/v1/auth/42/login`;
 	};
 
 	useEffect(() => {
@@ -77,7 +77,7 @@ const SignIn = () => {
 								type="username"
 								placeholder=" "
 								value={username}
-								onChange={(e) => setUsername(e.target.value)}
+								onChange={e => setUsername(e.target.value)}
 								isInvalid={error && error.includes('username')}
 								autoComplete='username'
 							/>
@@ -89,7 +89,7 @@ const SignIn = () => {
 								type={showPassword ? 'text' : 'password'}
 								placeholder=" "
 								value={password}
-								onChange={(e) => setPassword(e.target.value)}
+								onChange={e => setPassword(e.target.value)}
 								isInvalid={error && error.includes('password')}
 								autoComplete='current-password'
 							/>
