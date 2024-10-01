@@ -12,6 +12,7 @@ import { AuthContext } from '../../context/AuthContext';
 import TwoFactorAuthSignIn from './TwoFactorAuthSignIn';
 import Notification from '../Notification/Notification';
 import ErrorMessage from '../../styles/shared/ErrorMessage.styled';
+import { useTranslation } from 'react-i18next';
 
 const SignIn = () => {
 	const navigate = useNavigate();
@@ -24,11 +25,12 @@ const SignIn = () => {
 	const [availablePlatforms, setAvailablePlatforms] = useState(null);
 	const [showPassword, setShowPassword] = useState(false);
 	const [error, setError] = useState('');
+	const { t } = useTranslation();
 
 	const handleSubmit = event => {
 		event.preventDefault();
 		if (!username || !password) {
-			setError('Please enter a username and a password.');
+			setError(t('auth.signIn.errorMessage'));
 		} else {
 			ApiLogin(username, password)
 				.then(() => {
@@ -55,7 +57,7 @@ const SignIn = () => {
 		if (fromSignUp && notificationRef.current) {
 			notificationRef.current.addNotification(
 				'success',
-				'Please check your email to verify your account.'
+				t('auth.signIn.successMessage')
 			);
 		}
 	}, [fromSignUp]);
@@ -65,12 +67,12 @@ const SignIn = () => {
 			{!isTwoFactorAuth ? (
 				<>
 					<FormContainer onSubmit={handleSubmit}>
-						<h1>Sign In</h1>
+						<h1>{t('auth.signIn.title')}</h1>
 						<FortyTwoButton variant='light' onClick={handleFortyTwo}>
 							<Image src='/images/42_Logo.png' alt='42 Logo'/>
-							SignIn with 42
+							{t('auth.signIn.fortyTwoProvider')}
 						</FortyTwoButton>
-						<p>- Or -</p>
+						<p>{t('auth.signIn.providerDivider')}</p>
 						<FormContainer.Group className="mb-3">
 							<FormContainer.Control
 								id="username"
@@ -78,10 +80,10 @@ const SignIn = () => {
 								placeholder=" "
 								value={username}
 								onChange={e => setUsername(e.target.value)}
-								isInvalid={error && error.includes('username')}
+								isInvalid={error && error.includes(t('restrictions.username.errorKeyword'))}
 								autoComplete='username'
 							/>
-							<span>USERNAME</span>
+							<span>{t('auth.signIn.usernameTitle')}</span>
 						</FormContainer.Group>
 						<FormContainer.Group className="mb-3">
 							<FormContainer.Control
@@ -90,15 +92,15 @@ const SignIn = () => {
 								placeholder=" "
 								value={password}
 								onChange={e => setPassword(e.target.value)}
-								isInvalid={error && error.includes('password')}
+								isInvalid={error && error.includes(t('restrictions.password.errorKeyword'))}
 								autoComplete='current-password'
 							/>
-							<span>PASSWORD</span>
+							<span>{t('auth.signIn.passwordTitle')}</span>
 							{showPassword ? <i className="bi bi-eye-fill" onClick={() => setShowPassword(!showPassword)}/> : <i className="bi bi-eye" onClick={() => setShowPassword(!showPassword)}/>}
 						</FormContainer.Group>
-						<p>Not Signed Up ? <Link to="/signup">Sign Up</Link></p>
+						<p>{t('auth.signIn.notRegistered')}<Link to="/signup">{t('auth.signIn.registerButton')}</Link></p>
 						{error && <ErrorMessage>{error}</ErrorMessage>}
-						<Button variant='light' type='submit'>Submit</Button>
+						<Button variant='light' type='submit'>{t('auth.signIn.loginButton')}</Button>
 					</FormContainer>
 					<Notification ref={notificationRef}/>
 				</>

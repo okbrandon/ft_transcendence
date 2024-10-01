@@ -7,9 +7,11 @@ import {
 	VerificationTitle
 } from './styles/Verify.styled';
 import Loader from '../../styles/shared/Loader.styled';
+import { useTranslation } from 'react-i18next';
 
 const Verify = () => {
 	const location = useLocation();
+	const { t } = useTranslation();
 
 	useEffect(() => {
 		const params = new URLSearchParams(location.search);
@@ -30,8 +32,8 @@ const Verify = () => {
 
 	return (
 		<VerificationContainer>
-			<VerificationTitle>Verifying your email...</VerificationTitle>
-			<VerificationMessage>Please wait while we complete your email verification.</VerificationMessage>
+			<VerificationTitle>{t('auth.callback.email.title')}</VerificationTitle>
+			<VerificationMessage>{t('auth.callback.email.subTitle')}</VerificationMessage>
 			<Loader/>
 		</VerificationContainer>
 	);

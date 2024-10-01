@@ -2,9 +2,11 @@ import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { CallbackContainer, CallbackMessage, CallbackTitle } from './styles/Callback.styled';
 import Loader from '../../styles/shared/Loader.styled';
+import { useTranslation } from 'react-i18next';
 
 const Callback = () => {
 	const location = useLocation();
+	const { t } = useTranslation();
 
 	useEffect(() => {
 		const params = new URLSearchParams(location.search);
@@ -22,8 +24,8 @@ const Callback = () => {
 
 	return (
 		<CallbackContainer>
-			<CallbackTitle>Logging you in...</CallbackTitle>
-			<CallbackMessage>Please wait while we log you in.</CallbackMessage>
+			<CallbackTitle>{t('auth.callback.logIn.title')}</CallbackTitle>
+			<CallbackMessage>{t('auth.callback.logIn.subTitle')}</CallbackMessage>
 			<Loader/>
 		</CallbackContainer>
 	);

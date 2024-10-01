@@ -1,0 +1,32 @@
+http:
+  routers:
+    frontend:
+      rule: "PathPrefix(`/`)"
+      service: frontend
+    backend:
+      rule: "PathPrefix(`/api`)"
+      service: backend
+    backend-websocket:
+      rule: "PathPrefix(`/ws`)"
+      service: backend-websocket
+    gameserver:
+      rule: "PathPrefix(`/game`)"
+      service: gameserver
+
+  services:
+    frontend:
+      loadBalancer:
+        servers:
+          - url: "https://frontend:3000"
+    backend:
+      loadBalancer:
+        servers:
+          - url: "https://backend:8443"
+    backend-websocket:
+      loadBalancer:
+        servers:
+          - url: "https://backend:844e3"
+    gameserver:
+      loadBalancer:
+        servers:
+          - url: "http://gameserver:8080"

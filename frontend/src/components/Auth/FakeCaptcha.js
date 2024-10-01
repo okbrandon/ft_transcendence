@@ -8,14 +8,16 @@ import {
 } from "./styles/FakeCaptcha.styled";
 import PongButton from "../../styles/shared/PongButton.styled";
 import ErrorMessage from "../../styles/shared/ErrorMessage.styled";
+import { useTranslation } from "react-i18next";
 
 const FakeCaptcha = () => {
-	const correctText = "I am not a robot";
 	const navigate = useNavigate();
 	const inputRef = useRef(null);
 	const [inputValue, setInputValue] = useState("");
 	const [errorMessage, setErrorMessage] = useState("");
 	const [cursorIndex, setCursorIndex] = useState(0);
+	const { t } = useTranslation();
+	const correctText = t('auth.fakeCaptcha.phrase');
 
 	const handleInputChange = e => {
 		const value = e.target.value;
@@ -28,7 +30,7 @@ const FakeCaptcha = () => {
 		if (inputValue === correctText) {
 			navigate('/signin/send-email-notification');
 		} else {
-			setErrorMessage("Please type the exact phrase: 'I am not a robot'.");
+			setErrorMessage(t('auth.fakeCaptcha.errorMessage'));
 		}
 		inputRef.current.focus();
 	};
@@ -54,8 +56,8 @@ const FakeCaptcha = () => {
 
 	return (
 		<FakeCaptchaContainer>
-			<h1>Are you a robot?</h1>
-			<p>Type the following text to prove you're not a robot:</p>
+			<h1>{t('auth.fakeCaptcha.title')}</h1>
+			<p>{t('auth.fakeCaptcha.subTitle')}</p>
 			<FakeCaptchaInput>
 				{renderTypingFeedback()}
 			</FakeCaptchaInput>
@@ -69,7 +71,7 @@ const FakeCaptcha = () => {
 				autoFocus
 			/>
 			{errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-			<PongButton onClick={e => handleSubmit(e)}>Submit</PongButton>
+			<PongButton onClick={e => handleSubmit(e)}>{t('auth.fakeCaptcha.submitButton')}</PongButton>
 		</FakeCaptchaContainer>
 	);
 };

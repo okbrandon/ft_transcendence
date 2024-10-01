@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import API from "../../../api/api";
 import { GetUser } from "../../../api/user";
-import { checkSecurityRestrictions } from "../../../scripts/restrictions";
 import TwoFactorAuthToggle from "./2FA/TwoFactorAuthToggle";
 import TwoFactorAuthSecurity from "./2FA/TwoFactorAuthSecurity";
 import ContactInformation from "./ContactInformation";
@@ -13,6 +12,7 @@ import {
 } from "../styles/Settings.styled";
 import PongButton from "../../../styles/shared/PongButton.styled";
 import ErrorMessage from "../../../styles/shared/ErrorMessage.styled";
+import { useTranslation } from "react-i18next";
 
 const Security = ({ user, setUser }) => {
 	const [formData, setFormData] = useState({
@@ -26,6 +26,7 @@ const Security = ({ user, setUser }) => {
 	const [has2FA, setHas2FA] = useState(false);
 	const [showTwoFactorAuth, setShowTwoFactorAuth] = useState(false);
 	const [error, setError] = useState('');
+	const { t } = useTranslation();
 
 	useEffect(() => {
 		API.get('auth/totp')
@@ -44,6 +45,36 @@ const Security = ({ user, setUser }) => {
 			...data,
 			[id]: value,
 		}));
+	};
+
+	const checkSecurityRestrictions = (data, cfPassword) => {
+		if (!data) {
+			return '';
+		}
+
+		if (data.password && (new TextEncoder().encode(data.password).length < 8 || new TextEncoder().encode(data.password).length > 72)) {
+			return t('restrictions.password.invalidLength');
+		} else if (data.password && !/[a-z]/.test(data.password)) {
+			return t('restrictions.password.missingLowercase');
+		} else if (data.password && !/[A-Z]/.test(data.password)) {
+			return t('restrictions.password.missingUppercase');
+		} else if  (data.password && !/\d/.test(data.password)) {
+			return t('restrictions.password.missingDigit');
+		} else if (data.password && !/[\W_]/.test(data.password)) {
+			return t('restrictions.password.missingSpecial');
+		} else if (data.password && data.password !== cfPassword) {
+			return t('restrictions.password.noMatch');
+		} else if (!data.email) {
+			return t('restrictions.email.required');
+		} else if (data.email.length > 64) {
+			return t('restrictions.email.invalidLength');
+		} else if (!/^[^@]+@[^@]+\.[^@]+$/.test(data.email)) {
+			return t('restrictions.email.invalidFormat');
+		} else if (data.phone_number && !/^\+[1-9]\d{1,14}$/.test(data.phone_number)) {
+			return t('restrictions.phoneNumber.invalidFormat');
+		}
+
+		return '';
 	};
 
 	const handleSubmit = e => {

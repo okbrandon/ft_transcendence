@@ -4,7 +4,6 @@ import AccountManagement from './AccountManagement';
 import ProfileInformation from './ProfileInformation';
 import API from '../../../api/api';
 import { GetUser } from '../../../api/user';
-import { checkAccountPreferencesRestrictions } from '../../../scripts/restrictions';
 import {
 	Form,
 	SectionHeading,
@@ -12,6 +11,7 @@ import {
 } from '../styles/Settings.styled';
 import PongButton from '../../../styles/shared/PongButton.styled';
 import ErrorMessage from '../../../styles/shared/ErrorMessage.styled';
+import { useTranslation } from 'react-i18next';
 
 const AccountPreferences = ({ user, setUser }) => {
 	const [formData, setFormData] = useState({
@@ -24,6 +24,7 @@ const AccountPreferences = ({ user, setUser }) => {
 	const [loading, setLoading] = useState(false);
 	const [success, setSuccess] = useState('');
 	const [error, setError] = useState('');
+	const { t } = useTranslation();
 
 	const handleChange = (e) => {
 		const { id, value } = e.target;
@@ -43,6 +44,26 @@ const AccountPreferences = ({ user, setUser }) => {
 				[id]: value,
 			}));
 		}
+	};
+
+	const checkAccountPreferencesRestrictions = data => {
+		if (!data) {
+			return '';
+		}
+
+		if (!data.username) { // username
+			return t('restrictions.username.required');
+		} else if (data.username.length < 4 || data.username.length > 16) {
+			return t('restrictions.username.invalidLength');
+		} else if (/[^a-zA-Z0-9]/.test(data.username)) {
+			return t('restrictions.username.invalidCharacters');
+		} else if (data.displayName && (data.displayName.length < 4 || data.displayName.length > 16)) {
+			return t('restrictions.displayName.invalidLength');
+		} else if (/[^a-zA-Z0-9]/.test(data.displayName)) {
+			return t('restrictions.displayName.invalidCharacters');
+		}
+
+		return '';
 	};
 
 	const handleSubmit = (e) => {
