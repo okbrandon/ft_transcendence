@@ -60,6 +60,7 @@ const FakeCaptcha = () => {
 				{renderTypingFeedback()}
 			</FakeCaptchaInput>
 			<HiddenInput
+				id="fake-captcha"
 				type="text"
 				value={inputValue}
 				onChange={handleInputChange}

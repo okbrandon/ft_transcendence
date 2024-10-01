@@ -8,23 +8,16 @@ import { RelationContext } from '../../context/RelationContext';
 const ProfileDropdown = () => {
 	const navigate = useNavigate();
 	const { setIsLoggedIn, user, setUser } = useContext(AuthContext);
-	const { socketChat, socketStatus, setConversations, setFriends, setRequests } = useContext(RelationContext);
+	const { setConversations, setFriends, setRequests } = useContext(RelationContext);
 
 	const handleLogout = () => {
 		setIsLoggedIn(false);
-		if (socketChat.current && socketChat.current.readyState === WebSocket.OPEN) {
-			socketChat.current.close();
-		}
-		if (socketStatus.current && socketStatus.current.readyState === WebSocket.OPEN) {
-			socketStatus.current.close();
-		}
 		setUser(null);
 		setFriends([]);
 		setRequests([]);
 		setConversations([]);
 		localStorage.removeItem('token');
 		localStorage.removeItem('refresh');
-		navigate('/');
 	};
 
 	return (
