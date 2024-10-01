@@ -5,8 +5,8 @@ import logger from "../api/logger";
 import { formatUserData } from "../api/user";
 import { GetFriends, GetRequests } from "../api/friends";
 
-const WS_CHAT_URL = 'http://localhost:8888/ws/chat/?token=';
-const WS_STATUS_URL = 'http://localhost:8888/ws/status/?token=';
+const WS_CHAT_URL = '/ws/chat/?token=';
+const WS_STATUS_URL = '/ws/status/?token=';
 
 export const RelationContext = createContext({
 	conversations: [],

@@ -16,7 +16,7 @@ const Verify = () => {
 		const code = params.get('code');
 
 		if (code) {
-			axios.post(`http://localhost:8888/api/v1/verify`, { code })
+			axios.post(`/api/v1/verify`, { code })
 				.then(() => {
 					window.location.href = '/signin';
 				})
