@@ -3,15 +3,27 @@ http:
     frontend:
       rule: "PathPrefix(`/`)"
       service: frontend
+      entryPoints:
+        - web
+        - websecure
+      tls:
+        certResolver: myresolver
     backend:
       rule: "PathPrefix(`/api`)"
       service: backend
+      entryPoints:
+        - web
+        - websecure
+      tls:
+        certResolver: myresolver
     backend-websocket:
       rule: "PathPrefix(`/ws`)"
       service: backend-websocket
-    gameserver:
-      rule: "PathPrefix(`/game`)"
-      service: gameserver
+      entryPoints:
+        - web
+        - websecure
+      tls:
+        certResolver: myresolver
 
   services:
     frontend:

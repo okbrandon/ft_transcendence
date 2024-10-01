@@ -6,12 +6,19 @@ services:
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=me@evan.sh"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
     ports:
       - "8888:80"
+      - "8443:443"
     networks:
       - transcendence
     volumes:
       - ./config/traefik:/etc/traefik
+      - ./data/letsencrypt:/letsencrypt
+
 
   postgres:
     image: postgres
