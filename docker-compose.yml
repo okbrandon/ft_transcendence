@@ -3,10 +3,11 @@ services:
     image: nginx:latest
     restart: always
     ports:
-      - "8443:443"
+      - "8888:443"
     volumes:
       - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./certs:/certs:ro
+      - ./frontend/build:/app:ro
     networks:
       - transcendence
 
