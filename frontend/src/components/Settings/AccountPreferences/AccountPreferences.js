@@ -68,12 +68,12 @@ const AccountPreferences = ({ user, setUser }) => {
 							setUser(user);
 						})
 						.catch(err => {
-							setError(err.response?.data?.error || 'An error occurred');
+							setError(err?.response?.data?.error || 'An error occurred.');
 							setSuccess('');
 						});
 				})
 				.catch(err => {
-					setError(err.response?.data?.error || 'An error occurred');
+					setError(err?.response?.data?.error || 'An error occurred.');
 					setSuccess('');
 				})
 				.finally(() => {

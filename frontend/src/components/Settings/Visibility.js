@@ -16,7 +16,7 @@ import PongButton from "../../styles/shared/PongButton.styled";
 import { RelationContext } from "../../context/RelationContext";
 
 const Visibility = () => {
-	const { blockedUsers, setIsRefetch } = useContext(RelationContext);
+	const { blockedUsers, setIsRefetch, setSendNotification } = useContext(RelationContext);
 
 	if (!blockedUsers) return <Loader/>;
 
@@ -24,10 +24,11 @@ const Visibility = () => {
 		e.preventDefault();
 		API.delete(`users/@me/relationships/${relationID}`)
 			.then(() => {
+				setSendNotification({ type: 'success', message: 'User unblocked' });
 				setIsRefetch(true);
 			})
 			.catch(err => {
-				console.error(err.response.data.error);
+				setSendNotification({ type: 'error', message: `${err?.response?.data?.error || 'An error occurred.'}` });
 			});
 	};
 

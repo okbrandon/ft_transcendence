@@ -5,7 +5,7 @@ import { RelationContext } from "../../context/RelationContext";
 
 const ConnectedRoot = () => {
 	const notificationRef = useRef(null);
-	const { notificationUser, setNotificationUser } = useContext(RelationContext);
+	const { notificationUser, setNotificationUser, sendNotification, setSendNotification } = useContext(RelationContext);
 
 	useEffect(() => {
 		if (notificationUser) {
@@ -27,7 +27,14 @@ const ConnectedRoot = () => {
 			}
 			setNotificationUser(null);
 		}
-	}, [notificationUser, setNotificationUser]);
+		if (sendNotification) {
+			notificationRef.current.addNotification(
+				`${sendNotification.type}`,
+				`${sendNotification.message}`
+			);
+			setSendNotification(null);
+		}
+	}, [notificationUser, setNotificationUser, sendNotification, setSendNotification]);
 
 	return (
 		<>

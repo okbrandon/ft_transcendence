@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import QRCode from "react-qr-code";
 import TwoFactorAuthDeactivate from "./TwoFactorAuthDeactivate";
 import API from "../../../../api/api";
@@ -13,6 +13,7 @@ import {
 } from "../../styles/TwoFactorAuthToggle.styled";
 import { SubSectionHeading } from "../../styles/Settings.styled";
 import ErrorMessage from "../../../../styles/shared/ErrorMessage.styled";
+import { RelationContext } from "../../../../context/RelationContext";
 
 const TwoFactorAuthToggle = () => {
 	const [is2FAEnabled, setIs2FAEnabled] = useState(false);
@@ -20,6 +21,7 @@ const TwoFactorAuthToggle = () => {
 	const [qrCodeToken, setQrCodeToken] = useState('');
 	const [showQRCode, setShowQRCode] = useState(false);
 	const [error, setError] = useState('');
+	const { setSendNotification } = useContext(RelationContext);
 
 	useEffect(() => {
 		API.get('auth/totp')
@@ -27,9 +29,9 @@ const TwoFactorAuthToggle = () => {
 				setIs2FAEnabled(res.data.has_otp);
 			})
 			.catch(err => {
-				console.error(err);
+				setSendNotification({ type: 'error', message: `${err?.response?.data?.error || 'An error occurred'}` });
 			});
-	}, []);
+	}, [setSendNotification]);
 
 	const handleToggle = () => {
 		if (is2FAEnabled) {
@@ -43,7 +45,7 @@ const TwoFactorAuthToggle = () => {
 					setError('');
 				})
 				.catch(err => {
-					setError(err.response.data.error);
+					setSendNotification({ type: 'error', message: `${err?.response?.data?.error || 'An error occurred'}` });
 				});
 		}
 	};

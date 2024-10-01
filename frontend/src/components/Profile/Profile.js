@@ -26,7 +26,7 @@ const matchArray = [
 const Profile = () => {
 	const navigate = useNavigate();
 	const { username } = useParams();
-	const { relations, setIsRefetch } = useContext(RelationContext);
+	const { relations, setIsRefetch, setSendNotification } = useContext(RelationContext);
 	const [profileUser, setProfileUser] = useState(null);
 	const [relation, setRelation] = useState(null);
 	const [isBlocked, setIsBlocked] = useState(false);
@@ -48,11 +48,11 @@ const Profile = () => {
 					setRelation(relationData);
 				})
 				.catch(err => {
-					console.error(err?.response?.data?.error || 'An error occurred.');
+					setSendNotification({ type: 'error', message: `${err?.response?.data?.error || 'An error occurred.'}` });
 					navigate('/404');
 			});
 		}
-	}, [relations, username, navigate]);
+	}, [relations, username, navigate, setSendNotification]);
 
 	useEffect(() => {
 		if (relation) {
@@ -64,7 +64,7 @@ const Profile = () => {
 		if (isBlocked) {
 			notificationRef.current.addNotification(
 				'error',
-				`An error occured.`
+				'An error occured.'
 			);
 		}
 	}, [isBlocked]);
@@ -93,6 +93,7 @@ const Profile = () => {
 							matchArray={matchArray}
 							relation={relation}
 							setIsRefetch={setIsRefetch}
+							setSendNotification={setSendNotification}
 						/>
 						<About
 							profileUser={profileUser}

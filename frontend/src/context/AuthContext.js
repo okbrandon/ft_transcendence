@@ -17,7 +17,7 @@ const AuthProvider = ({ children }) => {
 					localStorage.setItem('userID', user.userID);
 				})
 				.catch(err => {
-					console.error(err.response?.data?.error || 'An error occurred');
+					console.error(err?.response?.data?.error || 'An error occurred');
 				})
 				.finally(() => {
 					setLoading(false);

@@ -11,7 +11,7 @@ import {
 } from '../styles/main/MainBar.styled';
 import 'react-circular-progressbar/dist/styles.css';
 
-const MainBar = ({ profileUser, matchArray, relation, setIsRefetch }) => {
+const MainBar = ({ profileUser, matchArray, relation, setIsRefetch, setSendNotification }) => {
 	const navigate = useNavigate();
 	const disableAddFriend = !!relation.length;
 	const disableBlockUser = !!(relation.length && relation[0].status === 2);
@@ -21,18 +21,20 @@ const MainBar = ({ profileUser, matchArray, relation, setIsRefetch }) => {
 		if (relation.length && relation[0].status === 0) {
 			API.put('users/@me/relationships', { user: profileUser.userID, type: 1 })
 				.then(() => {
+					setSendNotification({ type: 'success', message: 'Friend request sent.' });
 					setIsRefetch(true);
 				})
 				.catch(err => {
-					console.error(err.response?.data?.error || 'An error occurred.');
+					setSendNotification({ type: 'error', message: `${err?.response?.data?.error || 'An error occurred.'}` });
 				});
 		} else {
 			API.put('users/@me/relationships', { user: profileUser.userID, type: 0 })
 				.then(() => {
+					setSendNotification({ type: 'success', message: 'Friend request sent.' });
 					setIsRefetch(true);
 				})
 				.catch(err => {
-					console.error(err.response?.data?.error || 'An error occurred.');
+					setSendNotification({ type: 'error', message: `${err?.response?.data?.error || 'An error occurred.'}` });
 				});
 		}
 	};
@@ -40,10 +42,11 @@ const MainBar = ({ profileUser, matchArray, relation, setIsRefetch }) => {
 	const handleBlockUser = () => {
 		API.put('users/@me/relationships', { user: profileUser.userID, type: 2 })
 			.then(() => {
+				setSendNotification({ type: 'warning', message: 'User blocked.' });
 				setIsRefetch(true);
 			})
 			.catch(err => {
-				console.error(err.response?.data?.error || 'An error occurred.');
+				setSendNotification({ type: 'error', message: `${err?.response?.data?.error || 'An error occurred.'}` });
 			});
 	}
 

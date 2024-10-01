@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import {
 	ImagePreview,
 	ImagePreviewContainer,
@@ -10,6 +10,7 @@ import { SubSectionHeading } from '../styles/Settings.styled';
 import { GetImage } from '../../../api/user';
 import PongButton from '../../../styles/shared/PongButton.styled';
 import ErrorMessage from '../../../styles/shared/ErrorMessage.styled';
+import { RelationContext } from '../../../context/RelationContext';
 
 const ImageSettings = ({ user, setFormData, handleChange }) => {
 	const [profileImage, setProfileImage] = useState(user.avatarID);
@@ -17,6 +18,7 @@ const ImageSettings = ({ user, setFormData, handleChange }) => {
 	const [error, setError] = useState('');
 	const profilePictureRef = useRef(null);
 	const bannerPictureRef = useRef(null);
+	const { setSendNotification } = useContext(RelationContext);
 
 	const handleImageChange = (event, type, setImage) => {
 		const file = event.target.files[0];
@@ -32,7 +34,7 @@ const ImageSettings = ({ user, setFormData, handleChange }) => {
 				setImage(image);
 			})
 			.catch(err => {
-				setError(err);
+				setSendNotification({ type: 'error', message: `${err?.response?.data?.error || 'An error occurred'}` });
 			});
 	};
 

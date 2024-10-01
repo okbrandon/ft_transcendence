@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import API from '../../../../api/api';
 import logger from '../../../../api/logger';
 import { GetUser } from '../../../../api/user';
@@ -7,12 +7,14 @@ import { AvailablePlatformsContainer, PlatformButton } from '../../../Auth/style
 import { Backdrop, FormContainer } from '../../styles/TwoFactorAuth.styled';
 import PongButton from '../../../../styles/shared/PongButton.styled';
 import ErrorMessage from '../../../../styles/shared/ErrorMessage.styled';
+import { RelationContext } from '../../../../context/RelationContext';
 
 const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactorAuth }) => {
 	const [availablePlatforms, setAvailablePlatforms] = useState([]);
 	const [authCode, setAuthCode] = useState('');
 	const [disableVerify, setDisableVerify] = useState(true);
 	const [error, setError] = useState('');
+	const { setSendNotification } = useContext(RelationContext);
 
 	useEffect(() => {
 		API.get('auth/totp/platform_availability')
@@ -20,18 +22,17 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactor
 				setAvailablePlatforms(res.data.available_platforms);
 			})
 			.catch(err => {
-				setError(err.response.data.error);
+				setSendNotification({ type: 'error', message: `${err?.response?.data?.error || 'An error occurred'}` });
 			});
-	}, []);
+	}, [setSendNotification]);
 
 	const handlePlatform = platform => {
 		API.post('auth/totp/request', { platform })
 			.then(() => {
-				logger('2FA: Request sent');
+				setSendNotification({ type: 'success', message: 'Request sent' });
 			})
 			.catch(err => {
-				logger('2FA: Request failed');
-				setError(err.response?.data?.error || 'An error occurred');
+				setSendNotification({ type: 'error', message: `${err?.response?.data?.error || 'An error occurred'}` });
 			});
 	};
 

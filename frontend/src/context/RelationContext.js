@@ -136,6 +136,7 @@ const RelationProvider = ({ children }) => {
 				}
 			]);
 	const [notificationUser, setNotificationUser] = useState(null);
+	const [sendNotification, setSendNotification] = useState(null);
 	const [relations, setRelations] = useState([]);
 	const [friends, setFriends] = useState([]);
 	const [requests, setRequests] = useState([]);
@@ -240,6 +241,8 @@ const RelationProvider = ({ children }) => {
 			setConversations,
 			notificationUser,		// get the notification
 			setNotificationUser,	// set the notification
+			sendNotification,		// get the send notification
+			setSendNotification,	// set the send notification
 			relations,				// get the relations
 			setRelations,			// change the relations
 			friends,				// get the friends

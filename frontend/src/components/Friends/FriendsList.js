@@ -25,7 +25,7 @@ const setActivityDescription = activity => {
 	return "Touching grass...";
 }
 
-const FriendsList = ({ friends, setIsRefetch }) => {
+const FriendsList = ({ friends, setIsRefetch, setSendNotification }) => {
 	const navigate = useNavigate();
 
 	const handleProfile = username => {
@@ -35,10 +35,11 @@ const FriendsList = ({ friends, setIsRefetch }) => {
 	const handleRemove = relationID => {
 		API.delete(`users/@me/relationships/${relationID}`)
 			.then(() => {
+				setSendNotification({ type: "success", message: "Friend removed" });
 				setIsRefetch(true);
 			})
 			.catch(err => {
-				console.error(err.response?.data?.error || 'An error occurred');
+				setSendNotification({ type: "error", message: `${err?.response?.data?.error || "An error occurred."}` });
 			});
 	};
 

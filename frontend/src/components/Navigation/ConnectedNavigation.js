@@ -16,7 +16,7 @@ import { RelationContext } from "../../context/RelationContext";
 
 const ConnectedNavBar = () => {
 	const { setUser } = useContext(AuthContext);
-	const { requests } = useContext(RelationContext);
+	const { requests, setSendNotification } = useContext(RelationContext);
 	const [language, setLanguage] = useState("en");
 	const [requestsLen, setRequestsLen] = useState(0);
 
@@ -34,7 +34,7 @@ const ConnectedNavBar = () => {
 				}))
 			})
 			.catch(err => {
-				console.error(err.response?.data?.error || 'An error occurred');
+				setSendNotification({ type: 'error', message: `${err?.response?.data?.error || 'An error occurred.'}` });
 			});
 	};
 

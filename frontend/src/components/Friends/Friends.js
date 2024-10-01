@@ -13,7 +13,7 @@ import { RelationContext } from "../../context/RelationContext";
 
 const Friends = () => {
 	const [searchTerm, setSearchTerm] = useState("");
-	const { friends, requests, setIsRefetch } = useContext(RelationContext);
+	const { friends, requests, setIsRefetch, setSendNotification } = useContext(RelationContext);
 
 	if (!friends || !requests) {
 		return (
@@ -44,10 +44,17 @@ const Friends = () => {
 				className="mb-3"
 			>
 				<Tab eventKey="friends" title="Friends">
-					<FriendsList friends={filteredFriends} setIsRefetch={setIsRefetch}/>
+					<FriendsList
+						friends={filteredFriends}
+						setIsRefetch={setIsRefetch}
+						setSendNotification={setSendNotification}
+					/>
 				</Tab>
 				<Tab eventKey="requests" title="Requests">
-					<RequestsList requests={requests} setIsRefetch={setIsRefetch}/>
+					<RequestsList
+						requests={requests}
+						setIsRefetch={setIsRefetch}
+					/>
 				</Tab>
 			</Tabs>
 		</PageContainer>

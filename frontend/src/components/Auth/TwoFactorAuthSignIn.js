@@ -37,8 +37,7 @@ const TwoFactorAuthSignIn = ({ username, password, setIsTwoFactorAuth, available
 				logger('2FA: Request sent');
 			})
 			.catch(err => {
-				logger('2FA: Request failed');
-				setError(err.response.data.error);
+				setError(err?.response?.data?.error || 'An error occurred');
 			});
 	};
 
@@ -52,8 +51,8 @@ const TwoFactorAuthSignIn = ({ username, password, setIsTwoFactorAuth, available
 				setIsLoggedIn(true);
 				navigate("/");
 			})
-			.catch((err) => {
-				setError(err.response.data.error);
+			.catch(err => {
+				setError(err?.response?.data?.error || 'An error occurred');
 			});
 	};
 

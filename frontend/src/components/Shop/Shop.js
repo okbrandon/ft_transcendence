@@ -27,11 +27,11 @@ const Shop = () => {
 	const [purchasedSkins, setPurchasedSkins] = useState([]);
 	const { user, loading } = useContext(AuthContext);
 
-	const handlePurchase = (skin) => {
+	const handlePurchase = skin => {
 		if (user.money >= skin.price) {
 			API.patch(`/users/@me/profile`, { money: user.money - skin.price })
 				.then(() => console.log('User bought a skin'))
-				.catch((err) => console.error(err));
+				.catch(err => console.error(err));
 			setPurchasedSkins([...purchasedSkins, skin.id]);
 			alert(`You purchased ${skin.name}!`);
 		} else {

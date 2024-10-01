@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../api/api";
 import PongButton from "../../styles/shared/PongButton.styled";
@@ -10,17 +10,19 @@ import {
 	ProfileAvatar,
 	ProfileInfo
 } from "./styles/Friends.styled";
+import { RelationContext } from "../../context/RelationContext";
 
 const RequestsList = ({ requests, setIsRefetch }) => {
 	const navigate = useNavigate();
+	const { setSendNotification } = useContext(RelationContext);
 
-	const handleAccept = (focusedRequest) => {
+	const handleAccept = focusedRequest => {
 		API.put('users/@me/relationships', { user: focusedRequest.userID, type: 1 })
 			.then(() => {
 				setIsRefetch(true);
 			})
 			.catch(err => {
-				console.error(err.response.data.error);
+				setSendNotification({ type: 'error', message: `${err?.response?.data?.error || 'An error occurred.'}` });
 			});
 	};
 
@@ -30,7 +32,7 @@ const RequestsList = ({ requests, setIsRefetch }) => {
 				setIsRefetch(true);
 			})
 			.catch(err => {
-				console.error(err.response.data.error);
+				setSendNotification({ type: 'error', message: `${err?.response?.data?.error || 'An error occurred.'}` });
 			});
 	};
 
