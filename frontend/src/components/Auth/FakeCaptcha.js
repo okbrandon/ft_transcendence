@@ -33,6 +33,10 @@ const FakeCaptcha = () => {
 		inputRef.current.focus();
 	};
 
+	const handleKeyDown = e => {
+		if (e.key === 'Enter') handleSubmit(e);
+	};
+
 	const renderTypingFeedback = () => {
 		return correctText.split("").map((char, index) => {
 			let color;
@@ -64,6 +68,7 @@ const FakeCaptcha = () => {
 				type="text"
 				value={inputValue}
 				onChange={handleInputChange}
+				onKeyDown={handleKeyDown}
 				maxLength={correctText.length}
 				ref={inputRef}
 				autoFocus
