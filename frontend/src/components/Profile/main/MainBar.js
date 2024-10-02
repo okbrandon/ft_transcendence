@@ -58,8 +58,8 @@ const MainBar = ({ profileUser, matchArray, relation, setIsRefetch, setSendNotif
 				{
 					userID === profileUser.userID ? (
 						<IconsContainer>
-							<IconButton type="button">
-								<i className="bi bi-gear-fill" onClick={() => navigate('/settings')}/>
+							<IconButton type="button" onClick={() => navigate('/settings')}>
+								<i className="bi bi-gear-fill"/>
 							</IconButton>
 						</IconsContainer>
 					) : (
