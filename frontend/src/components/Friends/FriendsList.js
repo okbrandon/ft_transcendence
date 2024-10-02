@@ -15,20 +15,20 @@ import {
 } from "./styles/Friends.styled";
 import { useNotification } from "../../context/NotificationContext";
 
-const setActivityDescription = activity => {
-	if (activity === "QUEUEING") {
-		return "In queue";
-	} else if (activity === "PLAYING_VS_AI") {
-		return "Playing vs AI";
-	} else if (activity === "HOME") {
-		return "In lobby";
-	}
-	return "Touching grass...";
-}
-
 const FriendsList = ({ friends, setIsRefetch }) => {
 	const navigate = useNavigate();
 	const { addNotification } = useNotification();
+
+	const setActivityDescription = activity => {
+		if (activity === "QUEUEING") {
+			return "In queue";
+		} else if (activity === "PLAYING_VS_AI") {
+			return "Playing vs AI";
+		} else if (activity === "HOME") {
+			return "In lobby";
+		}
+		return "Touching grass...";
+	};
 
 	const handleProfile = username => {
 		navigate(`/profile/${username}`)

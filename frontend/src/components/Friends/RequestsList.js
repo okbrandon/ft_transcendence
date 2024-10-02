@@ -26,7 +26,7 @@ const RequestsList = ({ requests, setIsRefetch }) => {
 			});
 	};
 
-	const handleDecline = (id) => {
+	const handleDecline = id => {
 		API.delete(`users/@me/relationships/${id}`)
 			.then(() => {
 				setIsRefetch(true);

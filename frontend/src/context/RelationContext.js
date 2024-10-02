@@ -195,7 +195,7 @@ const RelationProvider = ({ children }) => {
 					addNotification('info', `${user.displayName} rejected your friend request.`);
 				} else if (user.status === 'accepted') {
 					addNotification('info', `${user.displayName} accepted your friend request.`);
-				}
+				};
 			}
 		};
 		socketChat.current.onerror = error => {
@@ -216,13 +216,13 @@ const RelationProvider = ({ children }) => {
 			logger('WebSocket for Status connection opened');
 		};
 		socketStatus.current.onmessage = event => {
-			const data = JSON.parse(event.data);
-			if (data.type === 'heartbeat') {
+			const response = JSON.parse(event.data);
+			if (response.type === 'heartbeat') {
 				socketStatus.current.send(JSON.stringify({
 					type: 'heartbeat',
 					activity: setActivity(pathnameRef.current)
 				}));
-			} else if (data.type === 'connection_event') {
+			} else if (response.type === 'connection_event') {
 				setIsRefetch(true);
 			}
 		};

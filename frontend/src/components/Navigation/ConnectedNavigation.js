@@ -24,7 +24,7 @@ const ConnectedNavBar = () => {
 	const userID = localStorage.getItem("userID");
 
 	useEffect(() => {
-		setRequestsLen(relations.filter(relation => relation.target.userID === userID).length);
+		setRequestsLen(relations.filter(relation => relation.status === 0 && relation.target.userID === userID).length);
 	}, [relations, userID]);
 
 	const handleLanguage = event => {

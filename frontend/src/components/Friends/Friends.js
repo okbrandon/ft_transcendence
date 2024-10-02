@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import RequestsList from "./RequestsList";
@@ -14,6 +14,10 @@ import { RelationContext } from "../../context/RelationContext";
 const Friends = () => {
 	const [searchTerm, setSearchTerm] = useState("");
 	const { friends, requests, setIsRefetch } = useContext(RelationContext);
+
+	useEffect(() => {
+		setIsRefetch(true);
+	}, [setIsRefetch]);
 
 	if (!friends || !requests) {
 		return (
