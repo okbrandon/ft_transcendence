@@ -1,6 +1,4 @@
 # TODO
-- Friends: when user remove friend we still see the user (Brandon ?)
-- Authentication: Refont container
 - Playmenu: add 4th button for local games
 - ThreeJS: Look up ThreeJS
 - Game: send invite
