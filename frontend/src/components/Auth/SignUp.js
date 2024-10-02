@@ -115,7 +115,13 @@ const SignUp = () => {
 					{error && <ErrorMessage>{error}</ErrorMessage>}
 					<Button variant='light' type='submit'>Submit</Button>
 				</FormContainer>
-			) : <FakeCaptcha formData={formData}/>}
+			) : (
+				<FakeCaptcha
+					formData={formData}
+					setShowFakeCaptcha={setShowFakeCaptcha}
+					setErrorSignUp={setError}
+				/>
+			)}
 		</AuthenticationSection>
 	);
 };

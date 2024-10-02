@@ -11,7 +11,7 @@ import PongButton from "../../styles/shared/PongButton.styled";
 import ErrorMessage from "../../styles/shared/ErrorMessage.styled";
 import { useNotification } from "../../context/NotificationContext";
 
-const FakeCaptcha = ({ formData }) => {
+const FakeCaptcha = ({ formData, setShowFakeCaptcha, setErrorSignUp }) => {
 	const correctText = "I am not a robot";
 	const navigate = useNavigate();
 	const { addNotification } = useNotification();
@@ -35,7 +35,8 @@ const FakeCaptcha = ({ formData }) => {
 					navigate("/signin");
 				})
 				.catch(err => {
-					setErrorMessage(err?.response?.data?.message || 'An error occurred. Please try again.');
+					setErrorSignUp(err?.response?.data?.error || "An error occurred. Please try again.");
+					setShowFakeCaptcha(false);
 				});
 		} else {
 			setErrorMessage("Please type the exact phrase: 'I am not a robot'.");
