@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 import logger from "../api/logger";
 import { formatUserData } from "../api/user";
 import { GetBlockedUsers, GetFriends, GetRequests } from "../scripts/relation";
+import { useNotification } from "./NotificationContext";
 
 const WS_CHAT_URL = 'http://localhost:8888/ws/chat/?token=';
 const WS_STATUS_URL = 'http://localhost:8888/ws/status/?token=';
@@ -14,6 +15,7 @@ export const RelationContext = createContext({
 
 const RelationProvider = ({ children }) => {
 	const location = useLocation();
+	const { addNotification } = useNotification();
 	const socketStatus = useRef(null);
 	const socketChat = useRef(null);
 	const pathnameRef = useRef(location.pathname);
@@ -135,8 +137,6 @@ const RelationProvider = ({ children }) => {
 					]
 				}
 			]);
-	const [notificationUser, setNotificationUser] = useState(null);
-	const [sendNotification, setSendNotification] = useState(null);
 	const [relations, setRelations] = useState([]);
 	const [friends, setFriends] = useState([]);
 	const [requests, setRequests] = useState([]);
@@ -184,11 +184,18 @@ const RelationProvider = ({ children }) => {
 						console.error('Failed to update conversations:', error);
 					});
 			} else if (response.type === 'friend_request') {
-				setIsRefetch(true);
-				setNotificationUser(formatUserData({
+				const user = formatUserData({
 					...response.data.from,
 					status: response.status
-				}));
+				});
+				setIsRefetch(true);
+				if (user.status === 'pending') {
+					addNotification('info', `You have a friend request from ${user.displayName}.`);
+				} else if (user.status === 'rejected') {
+					addNotification('info', `${user.displayName} rejected your friend request.`);
+				} else if (user.status === 'accepted') {
+					addNotification('info', `${user.displayName} accepted your friend request.`);
+				}
 			}
 		};
 		socketChat.current.onerror = error => {
@@ -201,7 +208,7 @@ const RelationProvider = ({ children }) => {
 				logger('WebSocket for Chat closed');
 			}
 		};
-	}, []);
+	}, [addNotification]);
 
 	useEffect(() => {
 		socketStatus.current = new WebSocket(WS_STATUS_URL + localStorage.getItem('token'));
@@ -239,10 +246,6 @@ const RelationProvider = ({ children }) => {
 		<RelationContext.Provider value={{
 			conversations,
 			setConversations,
-			notificationUser,		// get the notification
-			setNotificationUser,	// set the notification
-			sendNotification,		// get the send notification
-			setSendNotification,	// set the send notification
 			relations,				// get the relations
 			setRelations,			// change the relations
 			friends,				// get the friends

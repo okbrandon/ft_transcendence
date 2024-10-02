@@ -4,13 +4,14 @@ import MainBar from './main/MainBar';
 import About from './content/About';
 import MatchHistory from './content/MatchHistory';
 import Winrate from './content/Winrate';
-import { ProfileContainer, UserContainer, UserProfileBanner } from './styles/Profile.styled';
-import Loader from '../../styles/shared/Loader.styled';
 import DisplaySkin from './content/DisplaySkin';
 import { GetUserByUsername } from '../../api/user';
 import Notification from '../Notification/Notification';
 import { RelationContext } from '../../context/RelationContext';
 import { GetUserFromRelation } from '../../scripts/relation';
+import { useNotification } from '../../context/NotificationContext';
+import { ProfileContainer, UserContainer, UserProfileBanner } from './styles/Profile.styled';
+import Loader from '../../styles/shared/Loader.styled';
 
 const matchArray = [
 	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Brandon"}, scores: {playerA: 9, playerB: 10}, startedAt: "2021-09-01T12:28:01Z", finishedAt: "2021-09-01T12:30:38Z"},
@@ -26,7 +27,8 @@ const matchArray = [
 const Profile = () => {
 	const navigate = useNavigate();
 	const { username } = useParams();
-	const { relations, setIsRefetch, setSendNotification } = useContext(RelationContext);
+	const { addNotification } = useNotification();
+	const { relations, setIsRefetch } = useContext(RelationContext);
 	const [profileUser, setProfileUser] = useState(null);
 	const [relation, setRelation] = useState(null);
 	const [isBlocked, setIsBlocked] = useState(false);
@@ -48,11 +50,11 @@ const Profile = () => {
 					setRelation(relationData);
 				})
 				.catch(err => {
-					setSendNotification({ type: 'error', message: `${err?.response?.data?.error || 'An error occurred.'}` });
+					addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 					navigate('/404');
 			});
 		}
-	}, [relations, username, navigate, setSendNotification]);
+	}, [relations, username, navigate, addNotification]);
 
 	useEffect(() => {
 		if (relation) {
@@ -62,12 +64,9 @@ const Profile = () => {
 
 	useEffect(() => {
 		if (isBlocked) {
-			notificationRef.current.addNotification(
-				'error',
-				'An error occured.'
-			);
+			addNotification('error', 'An error occurred.');
 		}
-	}, [isBlocked]);
+	}, [isBlocked, addNotification]);
 
 	if (!profileUser || !relation) {
 		return (
@@ -93,7 +92,6 @@ const Profile = () => {
 							matchArray={matchArray}
 							relation={relation}
 							setIsRefetch={setIsRefetch}
-							setSendNotification={setSendNotification}
 						/>
 						<About
 							profileUser={profileUser}

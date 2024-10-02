@@ -1,14 +1,14 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Form, SectionHeading, SubSectionHeading } from "./styles/Settings.styled";
 import API from "../../api/api";
 import { InfoParagraph } from "./styles/Privacy.styled";
 import PongButton from "../../styles/shared/PongButton.styled";
-import { RelationContext } from "../../context/RelationContext";
+import { useNotification } from "../../context/NotificationContext";
 
 const Privacy = () => {
 	const [isHarvesting, setIsHarvesting] = useState(false);
 	const [isDataReady, setIsDataReady] = useState(false);
-	const { setSendNotification } = useContext(RelationContext);
+	const { addNotification } = useNotification();
 
 	useEffect(() => {
 		API.get('users/@me/harvest')
@@ -42,10 +42,10 @@ const Privacy = () => {
 				window.URL.revokeObjectURL(blobUrl);
 				console.log('Data harvested');
 				setIsHarvesting(true);
-				setSendNotification({ type: 'success', message: 'Download started' });
+				addNotification('success', 'Download started');
 			})
 			.catch(err => {
-				setSendNotification({ type: 'error', message: `${err?.response?.data?.error || 'An error occurred'}` });
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred'}`);
 			});
 	};
 
@@ -53,10 +53,10 @@ const Privacy = () => {
 		e.preventDefault();
 		API.post('users/@me/harvest')
 			.then(() => {
-				setSendNotification({ type: 'success', message: 'Data harvesting scheduled' });
+				addNotification('success', 'Data harvesting scheduled');
 			})
 			.catch(err => {
-				setSendNotification({ type: 'error', message: `${err?.response?.data?.error || 'An error occurred'}` });
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred'}`);
 			});
 	};
 

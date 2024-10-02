@@ -13,16 +13,19 @@ import { TitleLink } from "../../styles/shared/Title.styled";
 import API from "../../api/api";
 import { AuthContext } from "../../context/AuthContext";
 import { RelationContext } from "../../context/RelationContext";
+import { useNotification } from "../../context/NotificationContext";
 
 const ConnectedNavBar = () => {
+	const { addNotification } = useNotification();
 	const { setUser } = useContext(AuthContext);
-	const { requests, setSendNotification } = useContext(RelationContext);
+	const { relations } = useContext(RelationContext);
 	const [language, setLanguage] = useState("en");
 	const [requestsLen, setRequestsLen] = useState(0);
+	const userID = localStorage.getItem("userID");
 
 	useEffect(() => {
-		setRequestsLen(requests.length);
-	}, [requests]);
+		setRequestsLen(relations.filter(relation => relation.target.userID === userID).length);
+	}, [relations, userID]);
 
 	const handleLanguage = event => {
 		setLanguage(event.target.value);
@@ -34,7 +37,7 @@ const ConnectedNavBar = () => {
 				}))
 			})
 			.catch(err => {
-				setSendNotification({ type: 'error', message: `${err?.response?.data?.error || 'An error occurred.'}` });
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 			});
 	};
 

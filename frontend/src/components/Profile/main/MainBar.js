@@ -10,9 +10,11 @@ import {
 	SectionContainer
 } from '../styles/main/MainBar.styled';
 import 'react-circular-progressbar/dist/styles.css';
+import { useNotification } from '../../../context/NotificationContext';
 
-const MainBar = ({ profileUser, matchArray, relation, setIsRefetch, setSendNotification }) => {
+const MainBar = ({ profileUser, matchArray, relation, setIsRefetch }) => {
 	const navigate = useNavigate();
+	const { addNotification } = useNotification();
 	const disableAddFriend = !!relation.length;
 	const disableBlockUser = !!(relation.length && relation[0].status === 2);
 	const userID = localStorage.getItem('userID');
@@ -21,20 +23,20 @@ const MainBar = ({ profileUser, matchArray, relation, setIsRefetch, setSendNotif
 		if (relation.length && relation[0].status === 0) {
 			API.put('users/@me/relationships', { user: profileUser.userID, type: 1 })
 				.then(() => {
-					setSendNotification({ type: 'success', message: 'Friend request sent.' });
+					addNotification('success', 'Friend request sent.');
 					setIsRefetch(true);
 				})
 				.catch(err => {
-					setSendNotification({ type: 'error', message: `${err?.response?.data?.error || 'An error occurred.'}` });
+					addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 				});
 		} else {
 			API.put('users/@me/relationships', { user: profileUser.userID, type: 0 })
 				.then(() => {
-					setSendNotification({ type: 'success', message: 'Friend request sent.' });
+					addNotification('success', 'Friend request sent.');
 					setIsRefetch(true);
 				})
 				.catch(err => {
-					setSendNotification({ type: 'error', message: `${err?.response?.data?.error || 'An error occurred.'}` });
+					addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 				});
 		}
 	};
@@ -42,11 +44,11 @@ const MainBar = ({ profileUser, matchArray, relation, setIsRefetch, setSendNotif
 	const handleBlockUser = () => {
 		API.put('users/@me/relationships', { user: profileUser.userID, type: 2 })
 			.then(() => {
-				setSendNotification({ type: 'warning', message: 'User blocked.' });
+				addNotification('warning', 'User blocked.');
 				setIsRefetch(true);
 			})
 			.catch(err => {
-				setSendNotification({ type: 'error', message: `${err?.response?.data?.error || 'An error occurred.'}` });
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 			});
 	}
 

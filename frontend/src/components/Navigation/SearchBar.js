@@ -1,14 +1,14 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import FormControl from 'react-bootstrap/FormControl';
 import debounce from 'lodash/debounce';
 import SearchList from './SearchList';
 import { SearchBarContainer } from './styles/Navigation.styled';
 import { GetUsers } from '../../api/user';
-import { RelationContext } from '../../context/RelationContext';
+import { useNotification } from '../../context/NotificationContext';
 
 const SearchBar = () => {
 	const [input, setInput] = useState('');
-	const { setSendNotification } = useContext(RelationContext);
+	const { addNotification } = useNotification();
 	const [results, setResults] = useState(null);
 	const searchBarRef = useRef(null);
 
@@ -33,7 +33,7 @@ const SearchBar = () => {
 						setResults(users);
 					})
 					.catch(err => {
-						setSendNotification({ type: 'error', message: `${err?.response?.data?.error || 'An error occurred.'}` });
+						addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 					});
 			} else {
 				setResults(null);
@@ -45,7 +45,7 @@ const SearchBar = () => {
 		return () => {
 			debouncedSearch.cancel();
 		};
-	}, [input, setSendNotification]);
+	}, [input, addNotification]);
 
 	const handleInput = event => {
 		setInput(event.target.value);

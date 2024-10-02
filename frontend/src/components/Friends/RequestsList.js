@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../api/api";
 import PongButton from "../../styles/shared/PongButton.styled";
@@ -10,11 +10,11 @@ import {
 	ProfileAvatar,
 	ProfileInfo
 } from "./styles/Friends.styled";
-import { RelationContext } from "../../context/RelationContext";
+import { useNotification } from "../../context/NotificationContext";
 
 const RequestsList = ({ requests, setIsRefetch }) => {
 	const navigate = useNavigate();
-	const { setSendNotification } = useContext(RelationContext);
+	const { addNotification } = useNotification();
 
 	const handleAccept = focusedRequest => {
 		API.put('users/@me/relationships', { user: focusedRequest.userID, type: 1 })
@@ -22,7 +22,7 @@ const RequestsList = ({ requests, setIsRefetch }) => {
 				setIsRefetch(true);
 			})
 			.catch(err => {
-				setSendNotification({ type: 'error', message: `${err?.response?.data?.error || 'An error occurred.'}` });
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 			});
 	};
 
@@ -32,7 +32,7 @@ const RequestsList = ({ requests, setIsRefetch }) => {
 				setIsRefetch(true);
 			})
 			.catch(err => {
-				setSendNotification({ type: 'error', message: `${err?.response?.data?.error || 'An error occurred.'}` });
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 			});
 	};
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import API from "../../../api/api";
 import { GetUser } from "../../../api/user";
 import { checkSecurityRestrictions } from "../../../scripts/restrictions";
@@ -13,9 +13,10 @@ import {
 } from "../styles/Settings.styled";
 import PongButton from "../../../styles/shared/PongButton.styled";
 import ErrorMessage from "../../../styles/shared/ErrorMessage.styled";
-import { RelationContext } from "../../../context/RelationContext";
+import { useNotification } from "../../../context/NotificationContext";
 
 const Security = ({ user, setUser }) => {
+	const { addNotification } = useNotification();
 	const [formData, setFormData] = useState({
 		email: user.email,
 		phone_number: user.phone_number || '',
@@ -27,7 +28,6 @@ const Security = ({ user, setUser }) => {
 	const [has2FA, setHas2FA] = useState(false);
 	const [showTwoFactorAuth, setShowTwoFactorAuth] = useState(false);
 	const [error, setError] = useState('');
-	const { setSendNotification } = useContext(RelationContext);
 
 	useEffect(() => {
 		API.get('auth/totp')
@@ -35,9 +35,9 @@ const Security = ({ user, setUser }) => {
 				setHas2FA(res.data.has_otp);
 			})
 			.catch(err => {
-				setSendNotification({ type: 'error', message: `${err?.response?.data?.error || 'An error occurred'}` });
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred'}`);
 			})
-	}, [setSendNotification]);
+	}, [addNotification]);
 
 	const handleChange = e => {
 		const { id, value } = e.target;

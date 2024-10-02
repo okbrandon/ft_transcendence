@@ -9,10 +9,12 @@ import {
 } from "./styles/FakeCaptcha.styled";
 import PongButton from "../../styles/shared/PongButton.styled";
 import ErrorMessage from "../../styles/shared/ErrorMessage.styled";
+import { useNotification } from "../../context/NotificationContext";
 
 const FakeCaptcha = ({ formData }) => {
 	const correctText = "I am not a robot";
 	const navigate = useNavigate();
+	const { addNotification } = useNotification();
 	const inputRef = useRef(null);
 	const [inputValue, setInputValue] = useState("");
 	const [errorMessage, setErrorMessage] = useState("");
@@ -29,7 +31,8 @@ const FakeCaptcha = ({ formData }) => {
 		if (inputValue === correctText) {
 			ApiSignup(formData)
 				.then(() => {
-					navigate("/signin/send-email-notification");
+					addNotification('success', 'Account created successfully. Please verify your email.');
+					navigate("/signin");
 				})
 				.catch(err => {
 					setErrorMessage(err?.response?.data?.message || 'An error occurred. Please try again.');

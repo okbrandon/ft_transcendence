@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../../../api/api';
 import {
@@ -11,12 +11,12 @@ import {
 	ModalButton
 } from '../styles/AccountManagement.styled';
 import { SubSectionHeading } from '../styles/Settings.styled';
-import { RelationContext } from '../../../context/RelationContext';
+import { useNotification } from '../../../context/NotificationContext';
 
 const AccountManagement = () => {
 	const navigate = useNavigate();
+	const { addNotification } = useNotification();
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const { setSendNotification } = useContext(RelationContext);
 
 	const handleConfirmDelete = () => {
 		API.delete('users/@me/profile')
@@ -26,7 +26,7 @@ const AccountManagement = () => {
 				navigate('/signin');
 			})
 			.catch(err => {
-				setSendNotification({ type: 'error', message: `${err?.response?.data?.error || 'An error occurred.'}` });
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 			});
 		setIsModalOpen(false);
 	};

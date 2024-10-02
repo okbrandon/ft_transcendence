@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import API from "../../api/api";
 import {
 	Form,
@@ -14,9 +14,11 @@ import {
 import Loader from "../../styles/shared/Loader.styled";
 import PongButton from "../../styles/shared/PongButton.styled";
 import { RelationContext } from "../../context/RelationContext";
+import { useNotification } from "../../context/NotificationContext";
 
 const Visibility = () => {
-	const { blockedUsers, setIsRefetch, setSendNotification } = useContext(RelationContext);
+	const { blockedUsers, setIsRefetch } = useContext(RelationContext);
+	const { addNotification } = useNotification();
 
 	if (!blockedUsers) return <Loader/>;
 
@@ -24,11 +26,11 @@ const Visibility = () => {
 		e.preventDefault();
 		API.delete(`users/@me/relationships/${relationID}`)
 			.then(() => {
-				setSendNotification({ type: 'success', message: 'User unblocked' });
+				addNotification('success', 'User unblocked');
 				setIsRefetch(true);
 			})
 			.catch(err => {
-				setSendNotification({ type: 'error', message: `${err?.response?.data?.error || 'An error occurred.'}` });
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 			});
 	};
 

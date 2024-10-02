@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import NavBar from '../Navigation/Navigation';
+import Chat from '../Chat/Chat';
 import Footer from '../Footer/Footer';
 import { AuthContext } from '../../context/AuthContext';
 import RelationProvider from '../../context/RelationContext';
-import ConnectedRoot from './ConnectedRoot';
 import ConnectedNavBar from '../Navigation/ConnectedNavigation';
 
 const Root = () => {
@@ -28,7 +28,7 @@ const Root = () => {
 						<RelationProvider>
 							<ConnectedNavBar/>
 							<main>
-								<ConnectedRoot/>
+								<Chat/>
 								<Outlet/>
 							</main>
 							<Footer/>
