@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ApiSignup } from "../../api/auth";
 import {
 	Cursor,
 	FakeCaptchaContainer,
@@ -9,7 +10,7 @@ import {
 import PongButton from "../../styles/shared/PongButton.styled";
 import ErrorMessage from "../../styles/shared/ErrorMessage.styled";
 
-const FakeCaptcha = () => {
+const FakeCaptcha = ({ formData }) => {
 	const correctText = "I am not a robot";
 	const navigate = useNavigate();
 	const inputRef = useRef(null);
@@ -26,7 +27,13 @@ const FakeCaptcha = () => {
 	const handleSubmit = e => {
 		e.preventDefault();
 		if (inputValue === correctText) {
-			navigate('/signin/send-email-notification');
+			ApiSignup(formData)
+				.then(() => {
+					navigate("/signin/send-email-notification");
+				})
+				.catch(err => {
+					setErrorMessage(err?.response?.data?.message || 'An error occurred. Please try again.');
+				});
 		} else {
 			setErrorMessage("Please type the exact phrase: 'I am not a robot'.");
 		}

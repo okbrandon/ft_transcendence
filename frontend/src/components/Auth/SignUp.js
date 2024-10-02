@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
-import { ApiSignup } from '../../api/auth';
 import { AuthenticationSection, FormContainer, LanguageDropdownButton } from './styles/Authentication.styled';
 import { checkSignUpRestrictions } from '../../scripts/restrictions';
 import FakeCaptcha from './FakeCaptcha';
@@ -20,7 +19,7 @@ const SignUp = () => {
 	const [showFakeCaptcha, setShowFakeCaptcha] = useState(false);
 	const [error, setError] = useState('');
 
-	const handleChange = (e) => {
+	const handleChange = e => {
 		const { id, value } = e.target;
 
 		setFormData(prevData => ({
@@ -29,19 +28,13 @@ const SignUp = () => {
 		}));
 	};
 
-	const handleSubmit = (event) => {
+	const handleSubmit = event => {
 		event.preventDefault();
 		const errorMessage = checkSignUpRestrictions(formData, cfPassword);
 		if (errorMessage) {
 			setError(errorMessage);
 		} else {
-			ApiSignup(formData)
-				.then(() => {
-					setShowFakeCaptcha(true);
-				})
-				.catch((error) => {
-					setError(error.response.data.error);
-				});
+			setShowFakeCaptcha(true);
 		}
 	};
 
@@ -122,7 +115,7 @@ const SignUp = () => {
 					{error && <ErrorMessage>{error}</ErrorMessage>}
 					<Button variant='light' type='submit'>Submit</Button>
 				</FormContainer>
-			) : <FakeCaptcha/>}
+			) : <FakeCaptcha formData={formData}/>}
 		</AuthenticationSection>
 	);
 };
