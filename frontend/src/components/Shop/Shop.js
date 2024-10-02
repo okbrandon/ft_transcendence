@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import {
 	ShopContainer,
 	CoinsDisplay,
@@ -11,7 +11,7 @@ import {
     Header,
 	SubtitleSection,
 } from "./styles/Shop.styled";
-import { AuthContext } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import API from "../../api/api";
 import Loader from "../../styles/shared/Loader.styled";
 
@@ -25,7 +25,7 @@ const skins = [
 
 const Shop = () => {
 	const [purchasedSkins, setPurchasedSkins] = useState([]);
-	const { user, loading } = useContext(AuthContext);
+	const { user, loading } = useAuth();
 
 	const handlePurchase = skin => {
 		if (user.money >= skin.price) {

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {
 	createBrowserRouter,
 	createRoutesFromElements,
@@ -23,10 +23,10 @@ import JoinTournament from '../components/Game/Tournament/JoinTournament';
 import Friends from '../components/Friends/Friends';
 import PageNotFound from '../components/PageNotFound/PageNotFound';
 import Settings from '../components/Settings/Settings';
-import { AuthContext } from '../context/AuthContext';
+import { useAuth } from '../context/AuthContext';
 
 const PrivateRoutes = () => {
-	const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+	const { isLoggedIn, setIsLoggedIn } = useAuth();
 
 	useEffect(() => {
 		setIsLoggedIn(isValidToken());
@@ -44,7 +44,7 @@ const GameRoutes = () => {
 };
 
 const AuthenticationRoutes = () => {
-	const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+	const { isLoggedIn, setIsLoggedIn } = useAuth();
 
 	useEffect(() => {
 		setIsLoggedIn(isValidToken());

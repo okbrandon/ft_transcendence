@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useRef, useState } from "react";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import API from '../api/api';
 import { useLocation } from "react-router-dom";
 import logger from "../api/logger";
@@ -260,5 +260,7 @@ const RelationProvider = ({ children }) => {
 		</RelationContext.Provider>
 	);
 };
+
+export const useRelation = () => useContext(RelationContext);
 
 export default RelationProvider;

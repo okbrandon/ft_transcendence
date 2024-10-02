@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Image from 'react-bootstrap/Image';
 import Button from 'react-bootstrap/Button';
@@ -8,13 +8,13 @@ import {
 	FormContainer,
 	FortyTwoButton
 } from './styles/Authentication.styled';
-import { AuthContext } from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import TwoFactorAuthSignIn from './TwoFactorAuthSignIn';
 import ErrorMessage from '../../styles/shared/ErrorMessage.styled';
 
 const SignIn = () => {
 	const navigate = useNavigate();
-	const { setIsLoggedIn } = useContext(AuthContext);
+	const { setIsLoggedIn } = useAuth();
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [isTwoFactorAuth, setIsTwoFactorAuth] = useState(false);

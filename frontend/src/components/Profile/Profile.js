@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useContext } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import MainBar from './main/MainBar';
 import About from './content/About';
@@ -7,7 +7,7 @@ import Winrate from './content/Winrate';
 import DisplaySkin from './content/DisplaySkin';
 import { GetUserByUsername } from '../../api/user';
 import Notification from '../Notification/Notification';
-import { RelationContext } from '../../context/RelationContext';
+import { useRelation } from '../../context/RelationContext';
 import { GetUserFromRelation } from '../../scripts/relation';
 import { useNotification } from '../../context/NotificationContext';
 import { ProfileContainer, UserContainer, UserProfileBanner } from './styles/Profile.styled';
@@ -28,7 +28,7 @@ const Profile = () => {
 	const navigate = useNavigate();
 	const { username } = useParams();
 	const { addNotification } = useNotification();
-	const { relations, setIsRefetch } = useContext(RelationContext);
+	const { relations, setIsRefetch } = useRelation();
 	const [profileUser, setProfileUser] = useState(null);
 	const [relation, setRelation] = useState(null);
 	const [isBlocked, setIsBlocked] = useState(false);

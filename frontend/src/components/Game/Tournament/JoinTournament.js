@@ -1,6 +1,7 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Spinner from "react-bootstrap/Spinner";
+import { useRelation } from "../../../context/RelationContext";
 import {
 	ActiveFriendContainer,
 	ButtonContainer,
@@ -16,13 +17,12 @@ import {
 	WaitingMessage,
 } from "../styles/Tournament/JoinTournament.styled";
 import PongButton from "../../../styles/shared/PongButton.styled";
-import { RelationContext } from "../../../context/RelationContext";
 
 const players = ["Player 1", "Player 2", "Player 3", "Player 4", "Player 5", "Player 6", "Player 7"];
 
 const JoinTournament = () => {
 	const navigate = useNavigate();
-	const { friends } = useContext(RelationContext);
+	const { friends } = useRelation();
 	const [invite, setInvite] = useState(false);
 	const [activeFriends, setActiveFriends] = useState([]);
 	const [isStartDisabled, setIsStartDisabled] = useState(true);

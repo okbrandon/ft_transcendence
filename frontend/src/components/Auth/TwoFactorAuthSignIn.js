@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ApiLogin } from "../../api/auth";
 import logger from "../../api/logger";
-import { AuthContext } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import OTPInputComponent from "./OTPInput";
 import { FormContainer } from "./styles/Authentication.styled";
 import { AvailablePlatformsContainer, PlatformButton } from "./styles/TwoFactorAuth.styled";
@@ -14,7 +14,7 @@ import { useNotification } from "../../context/NotificationContext";
 const TwoFactorAuthSignIn = ({ username, password, setIsTwoFactorAuth, availablePlatforms }) => {
 	const navigate = useNavigate();
 	const { addNotification } = useNotification();
-	const { setIsLoggedIn } = useContext(AuthContext);
+	const { setIsLoggedIn } = useAuth();
 	const [authCode, setAuthCode] = useState("");
 	const [disableVerify, setDisableVerify] = useState(!authCode);
 	const [otpSent, setOtpSent] = useState(false);

@@ -1,14 +1,14 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Dropdown from 'react-bootstrap/Dropdown';
+import { useAuth } from '../../context/AuthContext';
+import { useRelation } from '../../context/RelationContext';
 import { ProfileDropdownButton } from './styles/Navigation.styled';
-import { AuthContext } from '../../context/AuthContext';
-import { RelationContext } from '../../context/RelationContext';
 
 const ProfileDropdown = () => {
 	const navigate = useNavigate();
-	const { setIsLoggedIn, user, setUser } = useContext(AuthContext);
-	const { setConversations, setRelations, setFriends, setRequests, setBlockedUsers } = useContext(RelationContext);
+	const { setIsLoggedIn, user, setUser } = useAuth();
+	const { setConversations, setRelations, setFriends, setRequests, setBlockedUsers } = useRelation();
 
 	const handleLogout = () => {
 		setIsLoggedIn(false);

@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { isValidToken } from '../api/api';
 import { GetUser } from '../api/user';
 
@@ -39,5 +39,7 @@ const AuthProvider = ({ children }) => {
 		</AuthContext.Provider>
 	);
 };
+
+export const useAuth = () => useContext(AuthContext);
 
 export default AuthProvider;

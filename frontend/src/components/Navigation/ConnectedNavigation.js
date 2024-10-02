@@ -1,7 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ProfileDropdown from "./ProfileDropdown";
 import LanguageDropdown from "./LanguageDropdown";
 import SearchBar from "./SearchBar";
+import API from "../../api/api";
+import { useAuth } from "../../context/AuthContext";
+import { useRelation } from "../../context/RelationContext";
+import { useNotification } from "../../context/NotificationContext";
 import {
 	FriendsNavLinkContainer,
 	NavContainer,
@@ -10,15 +14,11 @@ import {
 	StyledNavLink,
 } from "./styles/Navigation.styled";
 import { TitleLink } from "../../styles/shared/Title.styled";
-import API from "../../api/api";
-import { AuthContext } from "../../context/AuthContext";
-import { RelationContext } from "../../context/RelationContext";
-import { useNotification } from "../../context/NotificationContext";
 
 const ConnectedNavBar = () => {
 	const { addNotification } = useNotification();
-	const { setUser } = useContext(AuthContext);
-	const { relations } = useContext(RelationContext);
+	const { setUser } = useAuth();
+	const { relations } = useRelation();
 	const [language, setLanguage] = useState("en");
 	const [requestsLen, setRequestsLen] = useState(0);
 	const userID = localStorage.getItem("userID");

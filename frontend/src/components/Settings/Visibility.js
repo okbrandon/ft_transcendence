@@ -1,5 +1,7 @@
-import React, { useContext } from "react";
+import React from "react";
 import API from "../../api/api";
+import { useRelation } from "../../context/RelationContext";
+import { useNotification } from "../../context/NotificationContext";
 import {
 	Form,
 	SectionHeading,
@@ -13,11 +15,9 @@ import {
 } from "./styles/Visibility.styled";
 import Loader from "../../styles/shared/Loader.styled";
 import PongButton from "../../styles/shared/PongButton.styled";
-import { RelationContext } from "../../context/RelationContext";
-import { useNotification } from "../../context/NotificationContext";
 
 const Visibility = () => {
-	const { blockedUsers, setIsRefetch } = useContext(RelationContext);
+	const { blockedUsers, setIsRefetch } = useRelation();
 	const { addNotification } = useNotification();
 
 	if (!blockedUsers) return <Loader/>;

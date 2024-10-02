@@ -23,9 +23,7 @@ const NotificationProvider = ({ children }) => {
 	}, []);
 
 	return (
-		<NotificationContext.Provider value={{
-			addNotification,
-		}}>
+		<NotificationContext.Provider value={{ addNotification }}>
 			{children}
 			<Notification notifications={notifications}/>
 		</NotificationContext.Provider>
