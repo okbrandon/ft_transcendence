@@ -1,7 +1,7 @@
 # --
 # Building the React app.
 # --
-FROM node:20.15.1-alpine3.19 as build
+FROM node:20.15.1-alpine3.19 AS build
 
 WORKDIR /app
 
@@ -27,7 +27,7 @@ RUN npm run build
 # --
 # Setup the NGINX Server to serve the React app
 # --
-FROM nginx:1.27.1-alpine as production
+FROM nginx:1.27.1-alpine AS production
 
 # Generate SSL certifications inside /certs if not already present
 RUN mkdir -p /certs && \
