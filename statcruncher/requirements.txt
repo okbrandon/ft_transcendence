@@ -4,3 +4,4 @@ djangorestframework==3.15.1
 django-extensions
 Werkzeug
 pyOpenSSL
+gunicorn
