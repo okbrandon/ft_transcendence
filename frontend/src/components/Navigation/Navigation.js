@@ -9,22 +9,12 @@ import Language from './LanguageDropdown';
 import { useTranslation } from 'react-i18next';
 
 const NavBar = () => {
-	const [language, setLanguage] = useState("en");
+	const [language, setLanguage] = useState(localStorage.getItem('i18nextLng') || 'en');
 	const { t, i18n } = useTranslation();
-
-	const getCorrectLanguageCode = lang => {
-		if (lang === 'en') {
-			return 'EN';
-		} else if (lang === 'es') {
-			return 'ES';
-		} else if (lang === 'fr') {
-			return 'FR';
-		}
-	};
 
 	const handleChangeLoggedOut = (e) => {
 		setLanguage(e.target.value);
-		i18n.changeLanguage(getCorrectLanguageCode(e.target.value));
+		i18n.changeLanguage(e.target.value);
 	};
 
 	return (

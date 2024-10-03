@@ -12,7 +12,7 @@ const SignUp = () => {
 		username: '',
 		email: '',
 		password: '',
-		lang: 'en',
+		lang: 'EN',
 	});
 	const [cfPassword, setCfPassword] = useState('');
 	const [showPassword, setShowPassword] = useState(false);
@@ -93,9 +93,9 @@ const SignUp = () => {
 						onChange={handleChange}
 						autoComplete='off'
 					>
-						<option value="en">🇬🇧 English</option>
-						<option value="es">🇪🇸 Español</option>
-						<option value="fr">🇫🇷 Français</option>
+						<option value="EN">🇬🇧 English</option>
+						<option value="ES">🇪🇸 Español</option>
+						<option value="FR">🇫🇷 Français</option>
 					</LanguageDropdownButton>
 					<FormContainer.Group className="mb-3">
 						<FormContainer.Control

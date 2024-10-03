@@ -9,9 +9,9 @@ const LanguageDropdown = ({ handleChange, language }) => {
 			onChange={handleChange}
 			autoComplete="off"
 		>
-			<option value="en">🇬🇧 en</option>
-			<option value="es">🇪🇸 es</option>
-			<option value="fr">🇫🇷 fr</option>
+			<option value="EN">🇬🇧 en</option>
+			<option value="ES">🇪🇸 es</option>
+			<option value="FR">🇫🇷 fr</option>
 		</LanguageDropdownButton>
 	);
 };
