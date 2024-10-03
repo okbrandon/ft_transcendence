@@ -1,5 +1,19 @@
 import styled from "styled-components";
 
+export const StyledCanvas = styled.canvas.attrs({
+	style: {
+		position: 'relative',
+		border: '3px solid rgba(255, 255, 255, 0.2)',
+		borderRadius: '20px',
+		width: '1200px',
+		height: '750px',
+		background: 'radial-gradient(circle, rgba(20, 20, 20, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%)',
+		boxShadow: '0 0 20px rgba(164, 69, 178, 0.7), 0 0 30px rgba(59, 130, 246, 0.4)',
+		overflow: 'hidden',
+		margin: '0 auto',
+	}
+})``;
+
 export const PageContainer = styled.div.attrs({
 	style: {
 		display: 'flex',

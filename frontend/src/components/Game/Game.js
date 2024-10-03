@@ -56,7 +56,7 @@ const Game = () => {
 		}
 	}, [navigate]);
 
-	useEffect(() => {
+	useEffect(() => { // send token to the server to identify the player and start the heartbeat
 		if (readyState === ReadyState.OPEN && helloReceived) {
 			reconnectAttempts.current = 0;
 			sendMessage(JSON.stringify({
@@ -77,7 +77,7 @@ const Game = () => {
 		};
 	}, [readyState, sendHeartbeat, sendMessage, helloReceived, heartbeatIntervalTime]);
 
-	useEffect(() => {
+	useEffect(() => { // to not send a message sooner than the connection
 		if (heartbeatAckCount >= 2 && !matchmakingStarted) {
 			sendMessage(JSON.stringify({
 				e: 'MATCHMAKE_REQUEST',
@@ -91,37 +91,37 @@ const Game = () => {
 		if (lastMessage !== null) {
 			const data = JSON.parse(lastMessage.data);
 			switch (data.e) {
-				case 'HELLO':
+				case 'HELLO': // server sends HELLO event after client connects
 					setHelloReceived(true);
 					setHeartbeatIntervalTime(data.d.heartbeat_interval);
 					break;
-				case 'READY':
+				case 'READY': // server sends READY event after client identifies
 					setPlayer(data.d);
 					break;
-				case 'MATCH_JOIN':
+				case 'MATCH_JOIN': // server sends MATCH_JOIN event after client joins a match
 					setPlayerSide(data.d.side);
 					setOpponent(data.d.opponent);
 					break;
-				case 'PLAYER_JOIN':
+				case 'PLAYER_JOIN': // when you are the first player to join a match so you don't have an opponent yet
 					if (data.d.userID !== player.userID) {
 						setOpponent(data.d);
 					}
 					break;
-				case 'MATCH_BEGIN':
+				case 'MATCH_BEGIN': // server sends MATCH_BEGIN event when the match starts
 					setMatchState(data.d);
 					setMatchBegun(true);
 					break;
-				case 'MATCH_UPDATE':
+				case 'MATCH_UPDATE': // spams -> paddle position, ball position, scores...
 					setMatchState(data.d);
 					break;
-				case 'MATCH_END':
+				case 'MATCH_END': // server sends MATCH_END event when the match ends
 					alert(data.d.won ? 'You won!' : 'You lost!');
 					navigate('/');
 					break;
-				case 'HEARTBEAT_ACK':
+				case 'HEARTBEAT_ACK': // server sends HEARTBEAT_ACK event in response to HEARTBEAT
 					setHeartbeatAckCount(prevCount => prevCount + 1);
 					break;
-				case 'PADDLE_HIT':
+				case 'PADDLE_HIT': // server sends PADDLE_HIT event when the ball hits a paddle
 					break;
 				default:
 					console.log('Unhandled event:', data);
