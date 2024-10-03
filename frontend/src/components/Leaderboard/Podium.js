@@ -1,7 +1,6 @@
 import React from 'react';
 import {
 	PodiumContainer,
-	PodiumStep,
 	FirstPlace,
 	SecondPlace,
 	ThirdPlace,
@@ -11,6 +10,7 @@ import {
 	PlayerPrize,
 	PlayerAvatar,
 	PodiumPosition,
+	PodiumImg,
 } from './styles/Podium.styled';
 
 const Podium = ({ leaderboardData }) => {
@@ -18,7 +18,6 @@ const Podium = ({ leaderboardData }) => {
 
 	return (
 		<PodiumContainer>
-			{/* Second Place */}
 			<SecondPlace>
 				<PlayerAvatar src={topThree[1]?.avatar} alt={topThree[1]?.name || 'N/A'} />
 				<PlayerInfo>
@@ -29,7 +28,6 @@ const Podium = ({ leaderboardData }) => {
 				<PodiumPosition>2nd</PodiumPosition>
 			</SecondPlace>
 
-			{/* First Place */}
 			<FirstPlace>
 				<PlayerAvatar src={topThree[0]?.avatar} alt={topThree[0]?.name || 'N/A'} />
 				<PlayerInfo>
@@ -40,7 +38,6 @@ const Podium = ({ leaderboardData }) => {
 				<PodiumPosition>1st</PodiumPosition>
 			</FirstPlace>
 
-			{/* Third Place */}
 			<ThirdPlace>
 				<PlayerAvatar src={topThree[2]?.avatar} alt={topThree[2]?.name || 'N/A'} />
 				<PlayerInfo>

@@ -4,10 +4,9 @@
 	- on:click:
 		- dropdown to invite user to game party. (waiting for gameserver)
 			- add a notification to user, to confirm that he wants to invite him.
-		- dropdown to select block.
-			- add a notification to user, to confirm the blocking of the user selected.
-			- if person is blocked:
-				- the blocked user cannot see the conversation anymore. (must double check)
+		- add a notification to user, to confirm the blocking of the user selected.
+		- if person is blocked:
+			- the blocked user cannot see the conversation anymore. (must double check)
 				- (optional): custom message to say that user was blocked.
 					- (optional): another custom message to the user that blocked, 'You blocked that user'.
 
@@ -76,14 +75,7 @@
 ## LeaderBoard:
 
 - TODO (today):
-	- Implement Back in leaderboard for stats.
-	- Modify styling of the leaderboard table.
-		- implement redirection to page of user when clicking on username.
-	- make card prettier.
-		- implement getUser.
-		- small overview of the stats of the user.
-
-
+	- 
 
 - endpoint:
 	- leaderboards/`daily`

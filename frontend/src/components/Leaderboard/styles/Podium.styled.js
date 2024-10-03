@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 
-// Podium container holding the three podium places
 export const PodiumContainer = styled.div`
 	display: flex;
 	align-items: flex-end;
@@ -8,64 +7,51 @@ export const PodiumContainer = styled.div`
 	height: 400px;
 	width: 100%;
 	margin-top: 20px;
-	gap: 15px;
-	perspective: 1000px; /* Adds 3D perspective */
+	gap: 120px;
+	perspective: 1000px;
 	margin-bottom: 50px;
 `;
 
-// Common styles for each podium step with 3D effect
-export const PodiumStep = styled.div`
-	width: 180px;
-	text-align: center;
-	border-radius: 15px;
-	background-color: #1b1e29;
+export const PodiumBase = styled.div`
+	position: relative;
+	width: 150px;
 	display: flex;
 	flex-direction: column;
+	justify-content: center;
 	align-items: center;
-	justify-content: flex-end;
-	padding: 15px;
-	transition: all 0.3s ease;
-	position: relative;
-
-	/* Adding shadows for depth */
-	box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3), 0px 4px 8px rgba(0, 0, 0, 0.1);
+	background-image:
+		linear-gradient(
+			to top,
+			rgba(0, 0, 0, 1) 0%,
+			rgba(0, 0, 0, 0) 100%
+		),
+		url(${props => props.imgSrc || '/images/podium.png'});
+	background-size: contain;
+	background-position: center;
+	background-repeat: no-repeat;
+	border-radius: 10px;
 	transform-style: preserve-3d;
-
-	/* Hover effect to enhance the 3D relief */
-	&:hover {
-		transform: translateY(-5px) translateZ(10px);
-		box-shadow: 0 20px 30px rgba(0, 0, 0, 0.4);
-	}
+	height: ${props => props.height || '200px'};
+	width: ${props => props.width || '150px'};
 `;
 
-// First place - gold, tallest, with enhanced 3D shadow
-export const FirstPlace = styled(PodiumStep)`
-	height: 300px;
+export const FirstPlace = styled(PodiumBase)`
+	height: 330px;	/* Tallest podium */
 	order: 2;
-	background-color: #ffdb4d;
-	transform: translateZ(20px); /* Makes first place more prominent */
-	box-shadow: 0px 15px 30px rgba(255, 223, 0, 0.5), 0px 8px 16px rgba(0, 0, 0, 0.2);
 `;
 
-// Second place - silver, with slight 3D effect
-export const SecondPlace = styled(PodiumStep)`
-	height: 250px;
+// Second place
+export const SecondPlace = styled(PodiumBase)`
+	height: 290px;	/* Slightly shorter than the first */
 	order: 1;
-	background-color: #c0c0c0;
-	transform: translateZ(10px); /* Slightly lower 3D elevation */
-	box-shadow: 0px 12px 24px rgba(192, 192, 192, 0.4), 0px 6px 12px rgba(0, 0, 0, 0.1);
 `;
 
-// Third place - bronze, least prominent but still 3D
-export const ThirdPlace = styled(PodiumStep)`
-	height: 200px;
+// Third place
+export const ThirdPlace = styled(PodiumBase)`
+	height: 280px;	/* Shortest podium */
 	order: 3;
-	background-color: #cd7f32;
-	transform: translateZ(5px); /* Smallest elevation for third place */
-	box-shadow: 0px 10px 20px rgba(205, 127, 50, 0.4), 0px 5px 10px rgba(0, 0, 0, 0.1);
 `;
 
-// Player info section with 3D effect
 export const PlayerInfo = styled.div`
 	text-align: center;
 	color: #fff;
@@ -73,7 +59,6 @@ export const PlayerInfo = styled.div`
 	transform: translateZ(5px); /* Moves the info slightly forward */
 `;
 
-// Avatar image for the player with a border for clarity
 export const PlayerAvatar = styled.img`
 	width: 80px;
 	height: 80px;
@@ -83,7 +68,6 @@ export const PlayerAvatar = styled.img`
 	transform: translateZ(10px); /* Elevates the avatar to enhance prominence */
 `;
 
-// Player name styling with 3D effect
 export const PlayerName = styled.h3`
 	margin: 0;
 	font-size: 1.2em;
@@ -91,7 +75,6 @@ export const PlayerName = styled.h3`
 	transform: translateZ(5px); /* Moves the name slightly forward */
 `;
 
-// Player score styling
 export const PlayerScore = styled.p`
 	margin: 5px 0;
 	font-size: 1em;
@@ -100,7 +83,6 @@ export const PlayerScore = styled.p`
 	transform: translateZ(5px); /* Moves the score slightly forward */
 `;
 
-// Player prize styling
 export const PlayerPrize = styled.p`
 	margin: 5px 0;
 	font-size: 0.9em;
@@ -109,14 +91,13 @@ export const PlayerPrize = styled.p`
 	transform: translateZ(5px); /* Moves the prize slightly forward */
 `;
 
-// Podium position at the bottom of each podium with a 3D relief effect
 export const PodiumPosition = styled.div`
 	position: absolute;
 	bottom: -25px;
 	font-size: 1.5em;
 	font-weight: bold;
 	color: #fff;
-	background-color: #2c2f3b;
+	background-color: #ffcc00;
 	padding: 5px 10px;
 	border-radius: 5px;
 	transform: translateZ(5px); /* Moves the position label slightly forward */
