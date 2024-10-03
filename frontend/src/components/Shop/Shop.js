@@ -14,6 +14,7 @@ import {
 import { AuthContext } from "../../context/AuthContext";
 import API from "../../api/api";
 import Loader from "../../styles/shared/Loader.styled";
+import { useTranslation } from "react-i18next";
 
 const skins = [
 	{ id: 1, name: "Red", price: 100, img: "/images/skins/red.jpeg" },
@@ -26,6 +27,7 @@ const skins = [
 const Shop = () => {
 	const [purchasedSkins, setPurchasedSkins] = useState([]);
 	const { user, loading } = useContext(AuthContext);
+	const { t } = useTranslation();
 
 	const handlePurchase = (skin) => {
 		if (user.money >= skin.price) {
@@ -33,9 +35,9 @@ const Shop = () => {
 				.then(() => console.log('User bought a skin'))
 				.catch((err) => console.error(err));
 			setPurchasedSkins([...purchasedSkins, skin.id]);
-			alert(`You purchased ${skin.name}!`);
+			alert(t('store.purchasedMessage', {skinName: `${skin.name}`}));
 		} else {
-			alert("Not enough coins!");
+			alert(t('store.insufficientFunds'));
 		}
 	};
 
@@ -50,23 +52,23 @@ const Shop = () => {
 	return (
 		<ShopContainer>
 			<Header>
-				<h1>SHOP</h1>
-				<CoinsDisplay>Coins: {user.money} 🪙</CoinsDisplay>
+				<h1>{t('store.title')}</h1>
+				<CoinsDisplay>{t('store.currentBalance', {balance: `${user.money}`})}</CoinsDisplay>
 			</Header>
 			<SubtitleSection>
-				<p>Paddle skins to personalize your game. Select one that suits your style!</p>
+				<p>{t('store.subTitle')}</p>
 			</SubtitleSection>
 			<SkinsGrid>
 				{skins.map((skin) => (
 					<SkinCard key={skin.id}>
 						<SkinImage src={skin.img} alt={skin.name} />
 						<SkinName>{skin.name}</SkinName>
-						<SkinPrice>{skin.price} 🪙</SkinPrice>
+						<SkinPrice>{skin.price} {t('store.currency.icon')}</SkinPrice>
 						<BuyButton
 							disabled={purchasedSkins.includes(skin.id)}
 							onClick={() => handlePurchase(skin)}
 						>
-							{purchasedSkins.includes(skin.id) ? "Purchased" : "Buy"}
+							{purchasedSkins.includes(skin.id) ? t('store.ownedLabel') : t('store.buyButton')}
 						</BuyButton>
 					</SkinCard>
 				))}

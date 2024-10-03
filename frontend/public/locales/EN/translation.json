@@ -130,5 +130,96 @@
 		"title": "404",
 		"subTitle": "Oops! The page you were looking for isn't here.",
 		"backButton": "Return Home"
+	},
+	"profile": {
+		"about": {
+			"title": "ABOUT",
+			"bio": {
+				"notSet": "Nothing interesting here."
+			},
+			"balance": {
+				"title": "Balance"
+			},
+			"activity": {
+				"title": "Activity"
+			}
+		},
+		"skinDisplay": {
+			"title": "SKIN DISPLAY"
+		},
+		"matchHistory": {
+			"title": "MATCH HISTORY",
+			"table": {
+				"opponent": "Opponent",
+				"duration": "Duration",
+				"scores": "Score",
+				"results": "Result",
+				"date": "Date",
+				"victoryLabel": "Victory",
+				"defeatLabel": "Defeat"
+			},
+			"noResults": "No match history found."
+		},
+		"winRate": {
+			"title": "WINRATE",
+			"lifetime": {
+				"title": "All Time"
+			},
+			"lastFive": {
+				"title": "Last 5 Games"
+			}
+		},
+		"stats": {
+			"features": {
+				"first": {
+					"title": "RANKING"
+				},
+				"second": {
+					"title": "WINS"
+				},
+				"third": {
+					"title": "RATIO"
+				}
+			},
+			"donut": {
+				"labels": {
+					"first": "Wins",
+					"second": "Losses"
+				}
+			},
+			"line": {
+				"title": "Games played",
+				"subTitle": "Matches played per month",
+				"categories": {
+					"months": {
+						"january": "Jan",
+						"february": "Feb",
+						"march": "Mar",
+						"april": "Apr",
+						"may": "May",
+						"june": "Jun",
+						"july": "Jul",
+						"august": "Aug",
+						"september": "Sep",
+						"october": "Oct",
+						"november": "Nov",
+						"december": "Dec"
+					}
+				}
+			}
+		}
+	},
+	"store": {
+		"title": "SHOP",
+		"subTitle": "Paddle skins to personalize your game. Select one that suits your style!",
+		"currency": {
+			"type": "coins",
+			"icon": "🪙"
+		},
+		"currentBalance": "You have {{balance}} 🪙",
+		"purchasedMessage": "You purchased {{skinName}}!",
+		"insufficientFunds": "Not enough coins!",
+		"ownedLabel": "OWNED",
+		"buyButton": "BUY"
 	}
 }

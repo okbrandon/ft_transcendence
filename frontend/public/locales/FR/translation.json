@@ -130,5 +130,96 @@
 		"title": "404",
 		"subTitle": "Oops ! La page que vous recherchez n'est pas ici.",
 		"backButton": "Retour à l'accueil"
+	},
+	"profile": {
+		"about": {
+			"title": "À PROPOS",
+			"bio": {
+				"notSet": "Rien d'intéressant ici."
+			},
+			"balance": {
+				"title": "Solde"
+			},
+			"activity": {
+				"title": "Activité"
+			}
+		},
+		"skinDisplay": {
+			"title": "AFFICHAGE DES SKINS"
+		},
+		"matchHistory": {
+			"title": "HISTORIQUE DES MATCHS",
+			"table": {
+				"opponent": "Adversaire",
+				"duration": "Durée",
+				"scores": "Score",
+				"results": "Résultat",
+				"date": "Date",
+				"victoryLabel": "Victoire",
+				"defeatLabel": "Défaite"
+			},
+			"noResults": "Aucun historique de match trouvé."
+		},
+		"winRate": {
+			"title": "TAUX DE VICTOIRE",
+			"lifetime": {
+				"title": "Tout le temps"
+			},
+			"lastFive": {
+				"title": "5 Derniers Jeux"
+			}
+		},
+		"stats": {
+			"features": {
+				"first": {
+					"title": "CLASSEMENT"
+				},
+				"second": {
+					"title": "VICTOIRES"
+				},
+				"third": {
+					"title": "RATIO"
+				}
+			},
+			"donut": {
+				"labels": {
+					"first": "Victoires",
+					"second": "Défaites"
+				}
+			},
+			"line": {
+				"title": "Parties jouées",
+				"subTitle": "Matchs joués par mois",
+				"categories": {
+					"months": {
+						"january": "Jan",
+						"february": "Fév",
+						"march": "Mar",
+						"april": "Avr",
+						"may": "Mai",
+						"june": "Juin",
+						"july": "Juil",
+						"august": "Août",
+						"september": "Sept",
+						"october": "Oct",
+						"november": "Nov",
+						"december": "Déc"
+					}
+				}
+			}
+		}
+	},
+	"store": {
+		"title": "BOUTIQUE",
+		"subTitle": "Skins de raquette pour personnaliser votre jeu. Choisissez celui qui correspond à votre style !",
+		"currency": {
+			"type": "pièces",
+			"icon": "🪙"
+		},
+		"currentBalance": "Vous avez {{balance}} 🪙",
+		"purchasedMessage": "Vous avez acheté {{skinName}} !",
+		"insufficientFunds": "Pas assez de pièces !",
+		"ownedLabel": "ACQUIS",
+		"buyButton": "ACHETER"
 	}
 }

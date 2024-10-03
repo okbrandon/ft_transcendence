@@ -2,12 +2,14 @@ import React from "react";
 import ReactApexChart from "react-apexcharts";
 import { calculateTotalDefeats, calculateTotalWins } from "../../../scripts/match";
 import { DonutStatsContainer } from "../styles/Stats.styled";
+import { useTranslation } from "react-i18next";
 
 const DonutStats = ({ matchArray }) => {
+	const { t } = useTranslation();
 	const series = [calculateTotalWins(matchArray), calculateTotalDefeats(matchArray)];
 	const options = {
 		dataLabels: { enabled: true, style: { fontSize: '15px' } },
-		labels: ['Wins', 'Losses'],
+		labels: [t('profile.stats.donut.labels.first'), t('profile.stats.donut.labels.second')],
 		stroke: { width: 0 },
 		legend: { show: false },
 		fill: { colors: ['#8BD742', '#F74D52'] },

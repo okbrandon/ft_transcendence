@@ -130,5 +130,96 @@
 		"title": "404",
 		"subTitle": "¡Ups! La página que buscabas no está aquí.",
 		"backButton": "Volver a Inicio"
+	},
+	"profile": {
+		"about": {
+			"title": "ACERCA DE",
+			"bio": {
+				"notSet": "Nada interesante aquí."
+			},
+			"balance": {
+				"title": "Saldo"
+			},
+			"activity": {
+				"title": "Actividad"
+			}
+		},
+		"skinDisplay": {
+			"title": "MOSTRAR SKIN"
+		},
+		"matchHistory": {
+			"title": "HISTORIAL DE PARTIDAS",
+			"table": {
+				"opponent": "Oponente",
+				"duration": "Duración",
+				"scores": "Puntuación",
+				"results": "Resultado",
+				"date": "Fecha",
+				"victoryLabel": "Victoria",
+				"defeatLabel": "Derrota"
+			},
+			"noResults": "No se encontró historial de partidas."
+		},
+		"winRate": {
+			"title": "PORCENTAJE DE VICTORIAS",
+			"lifetime": {
+				"title": "Total"
+			},
+			"lastFive": {
+				"title": "Últimas 5 Partidas"
+			}
+		},
+		"stats": {
+			"features": {
+				"first": {
+					"title": "RANKING"
+				},
+				"second": {
+					"title": "VICTORIAS"
+				},
+				"third": {
+					"title": "RATIO"
+				}
+			},
+			"donut": {
+				"labels": {
+					"first": "Victorias",
+					"second": "Derrotas"
+				}
+			},
+			"line": {
+				"title": "Partidas jugadas",
+				"subTitle": "Partidas jugadas por mes",
+				"categories": {
+					"months": {
+						"january": "Ene",
+						"february": "Feb",
+						"march": "Mar",
+						"april": "Abr",
+						"may": "May",
+						"june": "Jun",
+						"july": "Jul",
+						"august": "Ago",
+						"september": "Sep",
+						"october": "Oct",
+						"november": "Nov",
+						"december": "Dic"
+					}
+				}
+			}
+		}
+	},
+	"store": {
+		"title": "TIENDA",
+		"subTitle": "Skins de paletas para personalizar tu juego. ¡Selecciona una que se adapte a tu estilo!",
+		"currency": {
+			"type": "monedas",
+			"icon": "🪙"
+		},
+		"currentBalance": "Tienes {{balance}} 🪙",
+		"purchasedMessage": "¡Has comprado {{skinName}}!",
+		"insufficientFunds": "¡No tienes suficientes monedas!",
+		"ownedLabel": "ADQUIRIDO",
+		"buyButton": "COMPRAR"
 	}
 }

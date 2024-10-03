@@ -2,12 +2,18 @@ import React from "react";
 import ReactApexChart from "react-apexcharts";
 import { getNumberOfMatchesPerMonth } from "../../../scripts/match";
 import { LineStatsContainer } from "../styles/Stats.styled";
+import { useTranslation } from "react-i18next";
 
 const LineStats = ({ matchArray }) => {
+	const { t } = useTranslation();
 	const series = [{
-		name: 'Parties played',
+		name: t('profile.stats.line.title'),
 		data: getNumberOfMatchesPerMonth(matchArray),
 	}];
+	const months = [
+		'january', 'february', 'march', 'april', 'may', 'june',
+		'july', 'august', 'september', 'october', 'november', 'december'
+	];
 	const options = {
 		chart: {
 			type: 'line',
@@ -20,11 +26,11 @@ const LineStats = ({ matchArray }) => {
 			curve: 'smooth',
 		},
 		title: {
-			text: 'Matches played per month',
+			text: t('profile.stats.line.subTitle'),
 			align: 'left',
 		},
 		xaxis: {
-			categories: ['Jan', 'Feb', 'March', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+			categories: months.map(month => t(`profile.stats.line.categories.months.${month}`)),
 		},
 		colors: ['#fff'],
 	}
