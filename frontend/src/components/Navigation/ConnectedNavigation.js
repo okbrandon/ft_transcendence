@@ -20,7 +20,7 @@ const ConnectedNavBar = () => {
 	const { requests } = useContext(RelationContext);
 	const [language, setLanguage] = useState("en");
 	const [requestsLen, setRequestsLen] = useState(0);
-	const { i18n } = useTranslation();
+	const { t, i18n } = useTranslation();
 
 	useEffect(() => {
 		setRequestsLen(requests.length);
@@ -54,15 +54,15 @@ const ConnectedNavBar = () => {
 	return (
 		<NavContainer>
 			<NavItemsContainer $gap='100px'>
-				<TitleLink to='/'>PONG</TitleLink>
+				<TitleLink to='/'>{t('header.title')}</TitleLink>
 				<NavItemsContainer $gap='100px'>
 					<FriendsNavLinkContainer>
-						<StyledNavLink to="/friends">FRIENDS</StyledNavLink>
+						<StyledNavLink to="/friends">{t('header.friendsButton')}</StyledNavLink>
 						{!!requestsLen && <RequestPopUp>{requestsLen}</RequestPopUp>}
 					</FriendsNavLinkContainer>
-					<StyledNavLink to="/">LEADERBOARD</StyledNavLink>
-					<StyledNavLink to="shop">SHOP</StyledNavLink>
-					<StyledNavLink to="playmenu">PLAY</StyledNavLink>
+					<StyledNavLink to="/">{t('header.leaderboardButton')}</StyledNavLink>
+					<StyledNavLink to="shop">{t('header.storeButton')}</StyledNavLink>
+					<StyledNavLink to="playmenu">{t('header.playButton')}</StyledNavLink>
 				</NavItemsContainer>
 			</NavItemsContainer>
 			<NavItemsContainer>

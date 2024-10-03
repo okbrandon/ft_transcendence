@@ -4,11 +4,13 @@ import debounce from 'lodash/debounce';
 import SearchList from './SearchList';
 import { SearchBarContainer } from './styles/Navigation.styled';
 import { GetUsers } from '../../api/user';
+import { useTranslation } from 'react-i18next';
 
 const SearchBar = () => {
 	const [input, setInput] = useState('');
 	const [results, setResults] = useState(null);
 	const searchBarRef = useRef(null);
+	const { t } = useTranslation();
 
 	const handleClickOutside = e => {
 		if (searchBarRef.current && !searchBarRef.current.contains(e.target)) {
@@ -61,7 +63,7 @@ const SearchBar = () => {
 			<FormControl
 				id="search"
 				type="text"
-				placeholder="Search"
+				placeholder={t('header.searchBar.placeholder')}
 				className="mr-sm-2"
 				value={input}
 				onChange={handleInput}

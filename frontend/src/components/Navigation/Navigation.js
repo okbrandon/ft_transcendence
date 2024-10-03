@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 
 const NavBar = () => {
 	const [language, setLanguage] = useState("en");
-	const { i18n } = useTranslation();
+	const { t, i18n } = useTranslation();
 
 	const getCorrectLanguageCode = lang => {
 		if (lang === 'en') {
@@ -29,9 +29,9 @@ const NavBar = () => {
 
 	return (
 		<NavContainer>
-			<TitleLink to="/">PONG</TitleLink>
+			<TitleLink to="/">{t('header.title')}</TitleLink>
 			<NavItemsContainer>
-				<ConnectButton to="/signin">CONNECT</ConnectButton>
+				<ConnectButton to="/signin">{t('header.connectButton')}</ConnectButton>
 				<Language handleChange={handleChangeLoggedOut} language={language}/>
 			</NavItemsContainer>
 		</NavContainer>

@@ -1,9 +1,11 @@
 import React from "react";
 import { SearchListContainer, SearchListItem, SearchListItemImage, SearchListItemText } from "./styles/SearchList.styled";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const SearchList = ({ results, setInput, setResults }) => {
 	const navigate = useNavigate();
+	const { t } = useTranslation();
 
 	const handleSelect = (username) => {
 		setInput('');
@@ -20,7 +22,7 @@ const SearchList = ({ results, setInput, setResults }) => {
 				</SearchListItem>
 			)) : (
 				<SearchListItem>
-					<SearchListItemText>No results found</SearchListItemText>
+					<SearchListItemText>{t('header.searchBar.noResults')}</SearchListItemText>
 				</SearchListItem>
 			)}
 		</SearchListContainer>

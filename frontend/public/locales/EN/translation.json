@@ -80,5 +80,29 @@
 			"invalidFormat": "Phone Number must be in E.164 format (e.g. +12345678901).",
 			"errorKeyword": "Phone Number"
 		}
+	},
+	"header": {
+		"title": "PONG",
+		"connectButton": "CONNECT",
+		"friendsButton": "FRIENDS",
+		"leaderboardButton": "LEADERBOARD",
+		"storeButton": "SHOP",
+		"playButton": "PLAY",
+		"profileButton": {
+			"title": "PROFILE",
+			"myProfile": "My Profile",
+			"settings": "Settings",
+			"logout": "Logout"
+		},
+		"searchBar": {
+			"placeholder": "Search for a user...",
+			"noResults": "No results found."
+		}
+	},
+	"footer": {
+		"title": "PONG",
+		"subTitle": "42 ft_transcendence",
+		"authors": "Made by <0>{{firstAuthor}}</0>, <1>{{secondAuthor}}</1>, <2>{{thirdAuthor}}</2>, and <3>{{fourthAuthor}}</3>",
+		"copyright": "PONG 2024"
 	}
 }
