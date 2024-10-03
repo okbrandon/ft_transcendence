@@ -104,5 +104,26 @@
 		"subTitle": "42 ft_transcendence",
 		"authors": "Hecho por <0>{{firstAuthor}}</0>, <1>{{secondAuthor}}</1>, <2>{{thirdAuthor}}</2> y <3>{{fourthAuthor}}</3>",
 		"copyright": "PONG 2024"
+	},
+	"home": {
+		"welcome": "¡Mueve tu raqueta!",
+		"playButton": "JUGAR AHORA",
+		"contributors": {
+			"title": "EQUIPO",
+			"subTitle": "Conoce al equipo detrás del proyecto"
+		},
+		"features": {
+			"first": "Multijugador",
+			"second": "Clasificación",
+			"third": "Skins",
+			"teaser": "...¡Y muchas más!"
+		},
+		"presentation": {
+			"title": "¡Bienvenido a Pong!",
+			"description": {
+				"firstParagraph": "Pong es un juego de arcade clásico que ha sido uno de los favoritos entre los jugadores durante décadas.",
+				"secondParagraph": "Ahora, puedes disfrutar de este juego atemporal aquí mismo en nuestra plataforma con características mejoradas, soporte multijugador y torneos en línea."
+			}
+		}
 	}
 }

@@ -6,9 +6,11 @@ import {
 	BannerSection,
 	PlayButton,
 } from "./styles/Banner.styled";
+import { useTranslation } from "react-i18next";
 
 const Banner = () => {
 	const navigate = useNavigate();
+	const { t } = useTranslation();
 
 	return (
 		<>
@@ -55,9 +57,9 @@ const Banner = () => {
 						$animationDuration={11}
 					/>
 				</BannerPaddlesContainer>
-				<h1>Wiggle your Paddle!</h1>
+				<h1>{t('home.welcome')}</h1>
 				<PlayButton variant="light" onClick={() => navigate("/game")}>
-					PLAY NOW
+					{t('home.playButton')}
 				</PlayButton>
 			</BannerSection>
 		</>

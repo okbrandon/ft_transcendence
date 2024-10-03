@@ -104,5 +104,26 @@
 		"subTitle": "42 ft_transcendence",
 		"authors": "Made by <0>{{firstAuthor}}</0>, <1>{{secondAuthor}}</1>, <2>{{thirdAuthor}}</2>, and <3>{{fourthAuthor}}</3>",
 		"copyright": "PONG 2024"
+	},
+	"home": {
+		"welcome": "Wiggle your Paddle!",
+		"playButton": "PLAY NOW",
+		"contributors": {
+			"title": "TEAM",
+			"subTitle": "Meet the team behind the project"
+		},
+		"features": {
+			"first": "Multiplayer",
+			"second": "Leaderboard",
+			"third": "Skins",
+			"teaser": "...And many more!"
+		},
+		"presentation": {
+			"title": "Welcome to Pong!",
+			"description": {
+				"firstParagraph": "Pong is a classic arcade game that has been a favorite among gamers for decades.",
+				"secondParagraph": "Now, you can enjoy this timeless game right here on our platform with enhanced features, multiplayer support, and online tournaments."
+			}
+		}
 	}
 }
