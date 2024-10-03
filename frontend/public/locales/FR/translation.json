@@ -125,5 +125,10 @@
 				"secondParagraph": "Maintenant, vous pouvez profiter de ce jeu intemporel ici même sur notre plateforme avec des fonctionnalités améliorées, un support multijoueur et des tournois en ligne."
 			}
 		}
+	},
+	"pageNotFound": {
+		"title": "404",
+		"subTitle": "Oops ! La page que vous recherchez n'est pas ici.",
+		"backButton": "Retour à l'accueil"
 	}
 }

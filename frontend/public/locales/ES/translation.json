@@ -125,5 +125,10 @@
 				"secondParagraph": "Ahora, puedes disfrutar de este juego atemporal aquí mismo en nuestra plataforma con características mejoradas, soporte multijugador y torneos en línea."
 			}
 		}
+	},
+	"pageNotFound": {
+		"title": "404",
+		"subTitle": "¡Ups! La página que buscabas no está aquí.",
+		"backButton": "Volver a Inicio"
 	}
 }
