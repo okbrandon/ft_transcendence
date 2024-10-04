@@ -22,10 +22,10 @@ const Podium = ({ leaderboardData }) => {
 			<SecondPlace>
 				<PlayerAvatar src={topThree[1]?.avatar} alt={topThree[1]?.name || 'N/A'} />
 				<PlayerInfo>
+					<PlayerName>{topThree[1]?.name || 'N/A'}</PlayerName>
 					<TrophyContainer>
 						<SecondPosition><i className="bi bi-trophy-fill" /></SecondPosition>
 					</TrophyContainer>
-					<PlayerName>{topThree[1]?.name || 'N/A'}</PlayerName>
 					<PlayerScore>{topThree[1]?.stats.gamesWon || 0} points</PlayerScore>
 				</PlayerInfo>
 			</SecondPlace>
@@ -33,10 +33,10 @@ const Podium = ({ leaderboardData }) => {
 			<FirstPlace>
 				<PlayerAvatar src={topThree[0]?.avatar} alt={topThree[0]?.name || 'N/A'} />
 				<PlayerInfo>
+					<PlayerName>{topThree[0]?.name || 'N/A'}</PlayerName>
 					<TrophyContainer>
 						<FirstPosition><i className="bi bi-trophy-fill" /></FirstPosition>
 					</TrophyContainer>
-					<PlayerName>{topThree[0]?.name || 'N/A'}</PlayerName>
 					<PlayerScore>{topThree[0]?.stats.gamesWon || 0} points</PlayerScore>
 				</PlayerInfo>
 			</FirstPlace>
@@ -44,10 +44,10 @@ const Podium = ({ leaderboardData }) => {
 			<ThirdPlace>
 				<PlayerAvatar src={topThree[2]?.avatar} alt={topThree[2]?.name || 'N/A'} />
 				<PlayerInfo>
+					<PlayerName>{topThree[2]?.name || 'N/A'}</PlayerName>
 					<TrophyContainer>
 						<ThirdPosition><i className="bi bi-trophy-fill" /></ThirdPosition>
 					</TrophyContainer>
-					<PlayerName>{topThree[2]?.name || 'N/A'}</PlayerName>
 					<PlayerScore>{topThree[2]?.stats.gamesWon || 0} points</PlayerScore>
 				</PlayerInfo>
 			</ThirdPlace>

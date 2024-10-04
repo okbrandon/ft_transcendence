@@ -6,10 +6,9 @@ export const PodiumContainer = styled.div`
 	justify-content: center;
 	height: 400px;
 	width: 100%;
-	margin-top: 20px;
+	margin-top: 60px;
 	gap: 120px;
 	perspective: 1000px;
-	margin-bottom: 50px;
 `;
 
 export const PodiumBase = styled.div`
@@ -50,10 +49,11 @@ export const ThirdPlace = styled(PodiumBase)`
 `;
 
 export const PlayerInfo = styled.div`
+	display: flex;
+	flex-direction: column;
 	text-align: center;
 	color: #fff;
-	margin-top: 10px;
-	transform: translateZ(5px);
+	gap: 40px;
 `;
 
 export const PlayerAvatar = styled.img`
@@ -61,21 +61,24 @@ export const PlayerAvatar = styled.img`
 	height: 80px;
 	border-radius: 25%;
 	border: 3px solid #3f3f3f;
-	margin-top: -250px;
+	margin-top: -170px;
+	margin-bottom: 20px;
+	box-shadow: 0 0 100px rgba(255, 255, 255, 0.7);
 `;
 
-export const PlayerName = styled.h3`
-	margin-top: 20px;
+export const PlayerName = styled.div`
 	font-size: 1.2em;
 	color: #fff;
 `;
 
-export const PlayerScore = styled.p`
-	margin: 5px 0;
+export const PlayerScore = styled.div`
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	font-size: 1em;
 	color: #e0e0e0;
 	font-weight: bold;
-	transform: translateZ(5px); /* Moves the score slightly forward */
+	margin-bottom: 100px;
 `;
 
 export const TrophyContainer = styled.div`
@@ -84,23 +87,24 @@ export const TrophyContainer = styled.div`
 	align-items: center;
 `;
 
-export const PodiumPosition = styled.div`
-	position: relative;
-	display: flex-end;
+export const Badge = styled.div`
+	display: flex;
 	justify-content: center;
 	align-items: center;
 	border-radius: 5px;
 	width: 40px;
+	height: 30px;
+	margin-bottom: 35px
 `;
 
-export const FirstPosition = styled(PodiumPosition)`
+export const FirstPosition = styled(Badge)`
 	background-color: #ffd700;
 `;
 
-export const SecondPosition = styled(PodiumPosition)`
+export const SecondPosition = styled(Badge)`
 	background-color: #c0c0c0;
 `;
 
-export const ThirdPosition = styled(PodiumPosition)`
+export const ThirdPosition = styled(Badge)`
 	background-color: #cd7f32;
 `;

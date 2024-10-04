@@ -23,7 +23,7 @@ const ScoreTable = ({ data }) => {
 			<tbody>
 				{topPlayers.map((player, index) => (
 					<tr key={index}>
-						<td>{index + 1}</td>
+						<td><i className="bi bi-trophy-fill" /> {index + 1}</td>
 						<td>{player.name}</td>
 						<td>{player.stats.gamesWon}</td>
 					</tr>
