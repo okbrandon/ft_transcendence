@@ -421,8 +421,8 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         # Initialize match state for this match
         if match.matchID not in self.active_matches:
             self.active_matches[match.matchID] = {
-                'playerA': {'id': match.playerA['id'], 'paddle_y': 375},
-                'playerB': {'id': match.playerB['id'] if match.playerB else None, 'paddle_y': 375},
+                'playerA': {'id': match.playerA['id'], 'paddle_y': 375, 'pos': 'A'},
+                'playerB': {'id': match.playerB['id'] if match.playerB else None, 'paddle_y': 375, 'pos': 'B'},
                 'ball': {'x': 600, 'y': 375, 'dx': 6, 'dy': 6},
                 'scores': {match.playerA['id']: 0}
             }

@@ -24,7 +24,6 @@ import Friends from '../components/Friends/Friends';
 import PageNotFound from '../components/PageNotFound/PageNotFound';
 import Settings from '../components/Settings/Settings';
 import { useAuth } from '../context/AuthContext';
-import Test from '../components/test';
 
 const PrivateRoutes = () => {
 	const { isLoggedIn, setIsLoggedIn } = useAuth();
@@ -78,7 +77,6 @@ const Router = createBrowserRouter(createRoutesFromElements(
 				<Route path="leaderboard" element={ <Leaderboard/> }/>
 			</Route>
 		</Route>
-		<Route path="test" element={ <Test/> }/>
 		<Route path="callback" element={ <Callback/> }/>
 		<Route path="verify" element={ <Verify/> }/>
 		<Route path="*" element={ <PageNotFound/> }/>
