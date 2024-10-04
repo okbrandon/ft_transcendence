@@ -39,13 +39,11 @@ export const FirstPlace = styled(PodiumBase)`
 	order: 2;
 `;
 
-// Second place
 export const SecondPlace = styled(PodiumBase)`
 	height: 280px;
 	order: 1;
 `;
 
-// Third place
 export const ThirdPlace = styled(PodiumBase)`
 	height: 250px;
 	order: 3;
@@ -67,10 +65,9 @@ export const PlayerAvatar = styled.img`
 `;
 
 export const PlayerName = styled.h3`
-	margin: 0;
+	margin-top: 20px;
 	font-size: 1.2em;
 	color: #fff;
-	transform: translateZ(5px); /* Moves the name slightly forward */
 `;
 
 export const PlayerScore = styled.p`
@@ -81,33 +78,29 @@ export const PlayerScore = styled.p`
 	transform: translateZ(5px); /* Moves the score slightly forward */
 `;
 
-export const PlayerPrize = styled.p`
-	margin: 5px 0;
-	font-size: 0.9em;
-	font-weight: bold;
-	transform: translateZ(5px); /* Moves the prize slightly forward */
+export const TrophyContainer = styled.div`
+	display: flex;
+	justify-content: center;
+	align-items: center;
 `;
 
 export const PodiumPosition = styled.div`
-	position: absolute;
-	bottom: -25px;
-	font-size: 1.5em;
-	font-weight: bold;
-	color: #fff;
-	padding: 5px 10px;
+	position: relative;
+	display: flex-end;
+	justify-content: center;
+	align-items: center;
 	border-radius: 5px;
-	transform: translateZ(5px); /* Moves the position label slightly forward */
-	box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
+	width: 40px;
 `;
 
-export const Firstposition = styled(PodiumPosition)`
+export const FirstPosition = styled(PodiumPosition)`
 	background-color: #ffd700;
 `;
 
-export const Secondposition = styled(PodiumPosition)`
+export const SecondPosition = styled(PodiumPosition)`
 	background-color: #c0c0c0;
 `;
 
-export const Thirdposition = styled(PodiumPosition)`
+export const ThirdPosition = styled(PodiumPosition)`
 	background-color: #cd7f32;
 `;
