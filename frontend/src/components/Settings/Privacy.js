@@ -4,10 +4,12 @@ import logger from "../../api/logger";
 import API from "../../api/api";
 import { InfoParagraph } from "./styles/Privacy.styled";
 import PongButton from "../../styles/shared/PongButton.styled";
+import { useTranslation } from "react-i18next";
 
 const Privacy = () => {
 	const [isHarvesting, setIsHarvesting] = useState(false);
 	const [isDataReady, setIsDataReady] = useState(false);
+	const { t } = useTranslation();
 
 	useEffect(() => {
 		API.get('/users/@me/harvest')
@@ -60,24 +62,24 @@ const Privacy = () => {
 
 	return (
 		<Form>
-			<SectionHeading>Data Privacy</SectionHeading>
-			<SubSectionHeading>Download Data</SubSectionHeading>
+			<SectionHeading>{t('settings.privacy.title')}</SectionHeading>
+			<SubSectionHeading>{t('settings.privacy.subSections.downloadData.title')}</SubSectionHeading>
 			<PongButton
 				onClick={handleHarvest}
 				$width="100%"
 				disabled={!isDataReady}
 			>
-				{isDataReady ? 'Download' : 'Data not ready'}
+				{isDataReady ? t('settings.privacy.subSections.downloadData.readyButton') : t('settings.privacy.subSections.downloadData.loadingButton')}
 			</PongButton>
-			<SubSectionHeading>Request Data Export</SubSectionHeading>
+			<SubSectionHeading>{t('settings.privacy.subSections.requestData.title')}</SubSectionHeading>
 			<PongButton
 				onClick={handleAskData}
 				$width="100%"
 				disabled={isHarvesting}
 			>
-				{isHarvesting ? "Data Harvesting Scheduled" : "Request Data Export"}
+				{isHarvesting ? t('settings.privacy.subSections.requestData.loadingButton') : t('settings.privacy.subSections.requestData.requestButton')}
 			</PongButton>
-			{(isHarvesting && !isDataReady) && <InfoParagraph>Come back in a few minutes while we prepare your data...</InfoParagraph>}
+			{(isHarvesting && !isDataReady) && <InfoParagraph>{t('settings.privacy.subTitle')}</InfoParagraph>}
 		</Form>
 	);
 };

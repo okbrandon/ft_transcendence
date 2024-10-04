@@ -224,5 +224,110 @@
 		"insufficientFunds": "Pas assez de pièces !",
 		"ownedLabel": "ACQUIS",
 		"buyButton": "ACHETER"
+	},
+	"settings": {
+		"accountPreferences": {
+			"title": "Préférences du compte",
+			"saveButton": "Enregistrer les modifications",
+			"loadingButton": "Enregistrement...",
+			"successMessage": "Modifications enregistrées avec succès.",
+			"subSections": {
+				"accountManagement": {
+					"title": "Gestion du compte",
+					"deleteButton": "Supprimer mon compte",
+					"deleteConfirmation": {
+						"title": "Supprimer votre compte",
+						"subTitle": "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.",
+						"cancelButton": "Annuler",
+						"deleteButton": "Oui, supprimer"
+					}
+				},
+				"profileImage": {
+					"title": "Image de profil et arrière-plan",
+					"profilePicture": {
+						"title": "Photo de profil",
+						"noImage": "Aucune image de profil sélectionnée",
+						"removeButton": "Supprimer l'image"
+					},
+					"backgroundImage": {
+						"title": "Image d'arrière-plan",
+						"noImage": "Aucune image d'arrière-plan sélectionnée",
+						"removeButton": "Supprimer l'image"
+					}
+				},
+				"profileInformation": {
+					"title": "Informations de profil",
+					"username": {
+						"title": "Nom d'utilisateur",
+						"placeholder": "Entrez votre nom d'utilisateur..."
+					},
+					"displayName": {
+						"title": "Nom d'affichage",
+						"placeholder": "Entrez votre nom d'affichage..."
+					},
+					"bio": {
+						"title": "Biographie",
+						"placeholder": "Parlez-nous de vous..."
+					}
+				}
+			}
+		},
+		"security": {
+			"title": "Sécurité",
+			"saveButton": "Enregistrer les modifications",
+			"loadingButton": "Enregistrement...",
+			"successMessage": "Modifications enregistrées avec succès.",
+			"subSections": {
+				"signIn": {
+					"title": "Connexion",
+					"password": {
+						"title": "Mot de passe",
+						"placeholder": "Changez votre mot de passe..."
+					},
+					"confirmPassword": {
+						"title": "Confirmer le mot de passe",
+						"placeholder": "Confirmez votre nouveau mot de passe..."
+					}
+				},
+				"contactInformation": {
+					"title": "Informations de contact",
+					"email": {
+						"title": "E-mail",
+						"placeholder": "Changez votre e-mail..."
+					},
+					"phoneNumber": {
+						"title": "Numéro de téléphone",
+						"placeholder": "Ajoutez un numéro de téléphone..."
+					}
+				}
+			}
+		},
+		"privacy": {
+			"title": "Confidentialité des données",
+			"subTitle": "Revenez dans quelques minutes pendant que nous préparons vos données...",
+			"subSections": {
+				"downloadData": {
+					"title": "Télécharger les données",
+					"readyButton": "Télécharger",
+					"loadingButton": "Données pas encore prêtes..."
+				},
+				"requestData": {
+					"title": "Demander l'exportation des données",
+					"requestButton": "Demander l'exportation",
+					"loadingButton": "Votre demande a été soumise..."
+				}
+			}
+		},
+		"visibility": {
+			"title": "Visibilité",
+			"subSections": {
+				"blockedUsers": {
+					"title": "Utilisateurs bloqués",
+					"noResults": "Aucun utilisateur bloqué trouvé.",
+					"unblockButton": "Débloquer"
+				}
+			}
+		},
+		"backButton": "Retour"
 	}
 }

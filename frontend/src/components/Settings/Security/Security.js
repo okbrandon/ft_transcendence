@@ -97,7 +97,7 @@ const Security = ({ user, setUser }) => {
 			setLoading(true);
 			API.patch('users/@me/profile', submissionData)
 				.then(() => {
-					setSuccess('Security updated successfully');
+					setSuccess(t('settings.security.successMessage'));
 					setError('');
 					GetUser()
 						.then(user => {
@@ -121,7 +121,7 @@ const Security = ({ user, setUser }) => {
 	return (
 		<>
 			<Form onSubmit={handleSubmit}>
-				<SectionHeading>Security</SectionHeading>
+				<SectionHeading>{t('settings.security.title')}</SectionHeading>
 				<SignIn
 					error={error}
 					cfPassword={cfPassword}
@@ -137,7 +137,7 @@ const Security = ({ user, setUser }) => {
 				{success && <SuccessMessage>{success}</SuccessMessage>}
 				{error && <ErrorMessage>{error}</ErrorMessage>}
 				<PongButton type="submit" disabled={loading}>
-					{loading ? 'Saving...' : 'Save Changes'}
+					{loading ? t('settings.security.loadingButton') : t('settings.security.saveButton')}
 				</PongButton>
 			</Form>
 			<TwoFactorAuthToggle user={user} handleChange={handleChange}/>

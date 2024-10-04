@@ -82,7 +82,7 @@ const AccountPreferences = ({ user, setUser }) => {
 			setLoading(true);
 			API.patch('/users/@me/profile', submissionData)
 				.then(() => {
-					setSuccess('Account Preferences updated successfully.');
+					setSuccess(t('settings.accountPreferences.successMessage'));
 					setError('');
 					GetUser()
 						.then(user => {
@@ -105,7 +105,7 @@ const AccountPreferences = ({ user, setUser }) => {
 
 	return (
 		<Form onSubmit={handleSubmit}>
-			<SectionHeading>Account Preferences</SectionHeading>
+			<SectionHeading>{t('settings.accountPreferences.title')}</SectionHeading>
 			<ProfileInformation
 				error={error}
 				bioByteLength={bioByteLength}
@@ -121,7 +121,7 @@ const AccountPreferences = ({ user, setUser }) => {
 			{success && <SuccessMessage>{success}</SuccessMessage>}
 			{error && <ErrorMessage>{error}</ErrorMessage>}
 			<PongButton type="submit" disabled={loading}>
-				{loading ? 'Saving...' : 'Save Changes'}
+				{loading ? t('settings.accountPreferences.loadingButton') : t('settings.accountPreferences.saveButton')}
 			</PongButton>
 		</Form>
 	);

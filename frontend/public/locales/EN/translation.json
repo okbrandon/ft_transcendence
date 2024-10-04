@@ -224,5 +224,110 @@
 		"insufficientFunds": "Not enough coins!",
 		"ownedLabel": "OWNED",
 		"buyButton": "BUY"
+	},
+	"settings": {
+		"accountPreferences": {
+			"title": "Account Preferences",
+			"saveButton": "Save Changes",
+			"loadingButton": "Saving...",
+			"successMessage": "Changes saved successfully.",
+			"subSections": {
+				"accountManagement": {
+					"title": "Account Management",
+					"deleteButton": "Delete my account",
+					"deleteConfirmation": {
+						"title": "Delete your account",
+						"subTitle": "Are you sure you want to delete your account? This action cannot be undone.",
+						"cancelButton": "Cancel",
+						"deleteButton": "Yes, delete"
+					}
+				},
+				"profileImage": {
+					"title": "Profile Image & Background",
+					"profilePicture": {
+						"title": "Profile Picture",
+						"noImage": "No profile image selected",
+						"removeButton": "Remove Image"
+					},
+					"backgroundImage": {
+						"title": "Background Image",
+						"noImage": "No background image selected",
+						"removeButton": "Remove Image"
+					}
+				},
+				"profileInformation": {
+					"title": "Profile Information",
+					"username": {
+						"title": "Username",
+						"placeholder": "Enter your username..."
+					},
+					"displayName": {
+						"title": "Display Name",
+						"placeholder": "Enter your display name..."
+					},
+					"bio": {
+						"title": "Bio",
+						"placeholder": "Tell us about yourself..."
+					}
+				}
+			}
+		},
+		"security": {
+			"title": "Security",
+			"saveButton": "Save Changes",
+			"loadingButton": "Saving...",
+			"successMessage": "Changes saved successfully.",
+			"subSections": {
+				"signIn": {
+					"title": "Sign In",
+					"password": {
+						"title": "Password",
+						"placeholder": "Change your password..."
+					},
+					"confirmPassword": {
+						"title": "Confirm Password",
+						"placeholder": "Confirm your new password..."
+					}
+				},
+				"contactInformation": {
+					"title": "Contact Information",
+					"email": {
+						"title": "Email",
+						"placeholder": "Change your email..."
+					},
+					"phoneNumber": {
+						"title": "Phone Number",
+						"placeholder": "Add a phone number..."
+					}
+				}
+			}
+		},
+		"privacy": {
+			"title": "Data Privacy",
+			"subTitle": "Come back in a few minutes while we prepare your data...",
+			"subSections": {
+				"downloadData": {
+					"title": "Download Data",
+					"readyButton": "Download",
+					"loadingButton": "Data not ready yet..."
+				},
+				"requestData": {
+					"title": "Request Data Export",
+					"requestButton": "Request Export",
+					"loadingButton": "Your request has been submitted..."
+				}
+			}
+		},
+		"visibility": {
+			"title": "Visibility",
+			"subSections": {
+				"blockedUsers": {
+					"title": "Blocked Users",
+					"noResults": "No blocked users found.",
+					"unblockButton": "Unblock"
+				}
+			}
+		},
+		"backButton": "Back"
 	}
 }

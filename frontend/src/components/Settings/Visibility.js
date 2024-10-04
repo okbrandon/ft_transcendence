@@ -15,9 +15,11 @@ import Loader from "../../styles/shared/Loader.styled";
 import API from "../../api/api";
 import logger from "../../api/logger";
 import PongButton from "../../styles/shared/PongButton.styled";
+import { useTranslation } from "react-i18next";
 
 const Visibility = () => {
 	const [blockedUsers, setBlockedUsers] = useState(null);
+	const { t } = useTranslation();
 
 	useEffect(() => {
 		GetBlockedUsers()
@@ -44,8 +46,8 @@ const Visibility = () => {
 
 	return (
 		<Form>
-			<SectionHeading>Visibility</SectionHeading>
-			<SubSectionHeading>Blocked Users</SubSectionHeading>
+			<SectionHeading>{t('settings.visibility.title')}</SectionHeading>
+			<SubSectionHeading>{t('settings.visibility.subSections.blockedUsers.title')}</SubSectionHeading>
 			{blockedUsers.length ? (
 				<BlockedUserList>
 					{blockedUsers.map((relation, id) => (
@@ -55,12 +57,12 @@ const Visibility = () => {
 								<BlockedUserName>{relation.displayName}</BlockedUserName>
 							</div>
 							<PongButton onClick={e => handleUnblock(e, relation.relationID)}>
-								Unblock
+								{t('settings.visibility.subSections.blockedUsers.unblockButton')}
 							</PongButton>
 						</BlockedUserItem>
 					))}
 				</BlockedUserList>
-			) : <p>No Blocked Users</p>}
+			) : <p>{t('settings.visibility.subSections.blockedUsers.noResults')}</p>}
 		</Form>
 	);
 };

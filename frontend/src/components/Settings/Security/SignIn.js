@@ -1,22 +1,24 @@
 import React, { useState } from "react";
 import { FormControlContainer, FormInput, SubSectionHeading } from "../styles/Settings.styled";
+import { useTranslation } from "react-i18next";
 
 const SignIn = ({ error, cfPassword, setCfPassword, formData, handleChange }) => {
 	const [showPassword, setShowPassword] = useState(false);
 	const [showCfPassword, setShowCfPassword] = useState(false);
+	const { t } = useTranslation();
 
 	return (
 		<>
-			<SubSectionHeading>Sign In</SubSectionHeading>
-			<label htmlFor="password">Password</label>
+			<SubSectionHeading>{t('settings.security.subSections.signIn.title')}</SubSectionHeading>
+			<label htmlFor="password">{t('settings.security.subSections.signIn.password.title')}</label>
 			<FormControlContainer>
 				<FormInput
 					type={showPassword ? "text" : "password"}
 					id="password"
-					placeholder="Change Password"
+					placeholder={t('settings.security.subSections.signIn.password.placeholder')}
 					value={formData.password}
 					onChange={handleChange}
-					className={error.includes("Password") ? "is-invalid" : ""}
+					className={error.includes(t('restrictions.password.errorKeyword')) ? "is-invalid" : ""}
 					autoComplete="off"
 				/>
 				{showPassword ? (
@@ -25,15 +27,15 @@ const SignIn = ({ error, cfPassword, setCfPassword, formData, handleChange }) =>
 					<i className="bi bi-eye" onClick={() => setShowPassword(!showPassword)} />
 				)}
 			</FormControlContainer>
-			<label htmlFor="cfPassword">Confirm Password</label>
+			<label htmlFor="cfPassword">{t('settings.security.subSections.signIn.confirmPassword.title')}</label>
 			<FormControlContainer>
 				<FormInput
 					type={showCfPassword ? "text" : "password"}
 					id="cfPassword"
-					placeholder="Confirm New Password"
+					placeholder={t('settings.security.subSections.signIn.confirmPassword.placeholder')}
 					value={cfPassword}
 					onChange={e => setCfPassword(e.target.value)}
-					className={error.includes("Passwords") ? "is-invalid" : ""}
+					className={error.includes(t('restrictions.password.errorKeyword')) ? "is-invalid" : ""}
 					autoComplete="off"
 				/>
 				{showCfPassword ? (

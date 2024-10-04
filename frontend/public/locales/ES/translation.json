@@ -224,5 +224,110 @@
 		"insufficientFunds": "¡No tienes suficientes monedas!",
 		"ownedLabel": "ADQUIRIDO",
 		"buyButton": "COMPRAR"
+	},
+	"settings": {
+		"accountPreferences": {
+			"title": "Preferencias de la cuenta",
+			"saveButton": "Guardar cambios",
+			"loadingButton": "Guardando...",
+			"successMessage": "Cambios guardados exitosamente.",
+			"subSections": {
+				"accountManagement": {
+					"title": "Gestión de la cuenta",
+					"deleteButton": "Eliminar mi cuenta",
+					"deleteConfirmation": {
+						"title": "Eliminar tu cuenta",
+						"subTitle": "¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.",
+						"cancelButton": "Cancelar",
+						"deleteButton": "Sí, eliminar"
+					}
+				},
+				"profileImage": {
+					"title": "Imagen de perfil y fondo",
+					"profilePicture": {
+						"title": "Imagen de perfil",
+						"noImage": "No se ha seleccionado una imagen de perfil",
+						"removeButton": "Eliminar imagen"
+					},
+					"backgroundImage": {
+						"title": "Imagen de fondo",
+						"noImage": "No se ha seleccionado una imagen de fondo",
+						"removeButton": "Eliminar imagen"
+					}
+				},
+				"profileInformation": {
+					"title": "Información de perfil",
+					"username": {
+						"title": "Nombre de usuario",
+						"placeholder": "Ingresa tu nombre de usuario..."
+					},
+					"displayName": {
+						"title": "Nombre de visualización",
+						"placeholder": "Ingresa tu nombre de visualización..."
+					},
+					"bio": {
+						"title": "Biografía",
+						"placeholder": "Cuéntanos sobre ti..."
+					}
+				}
+			}
+		},
+		"security": {
+			"title": "Seguridad",
+			"saveButton": "Guardar cambios",
+			"loadingButton": "Guardando...",
+			"successMessage": "Cambios guardados exitosamente.",
+			"subSections": {
+				"signIn": {
+					"title": "Inicio de sesión",
+					"password": {
+						"title": "Contraseña",
+						"placeholder": "Cambia tu contraseña..."
+					},
+					"confirmPassword": {
+						"title": "Confirmar contraseña",
+						"placeholder": "Confirma tu nueva contraseña..."
+					}
+				},
+				"contactInformation": {
+					"title": "Información de contacto",
+					"email": {
+						"title": "Correo electrónico",
+						"placeholder": "Cambia tu correo electrónico..."
+					},
+					"phoneNumber": {
+						"title": "Número de teléfono",
+						"placeholder": "Agrega un número de teléfono..."
+					}
+				}
+			}
+		},
+		"privacy": {
+			"title": "Privacidad de datos",
+			"subTitle": "Vuelve en unos minutos mientras preparamos tus datos...",
+			"subSections": {
+				"downloadData": {
+					"title": "Descargar datos",
+					"readyButton": "Descargar",
+					"loadingButton": "Los datos aún no están listos..."
+				},
+				"requestData": {
+					"title": "Solicitar exportación de datos",
+					"requestButton": "Solicitar exportación",
+					"loadingButton": "Tu solicitud ha sido enviada..."
+				}
+			}
+		},
+		"visibility": {
+			"title": "Visibilidad",
+			"subSections": {
+				"blockedUsers": {
+					"title": "Usuarios bloqueados",
+					"noResults": "No se encontraron usuarios bloqueados.",
+					"unblockButton": "Desbloquear"
+				}
+			}
+		},
+		"backButton": "Volver"
 	}
 }
