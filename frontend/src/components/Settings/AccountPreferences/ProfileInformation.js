@@ -7,7 +7,7 @@ const ProfileInformation = ({ error, bioByteLength, formData, handleChange }) =>
 			<SubSectionHeading>Profile Information</SubSectionHeading>
 			<label htmlFor="username">Username</label>
 			<FormInput
-				type="test"
+				type="text"
 				id="username"
 				placeholder="Username"
 				value={formData.username}
@@ -34,7 +34,6 @@ const ProfileInformation = ({ error, bioByteLength, formData, handleChange }) =>
 					rows="4"
 					cols="50"
 					onChange={handleChange}
-					className={error.includes("Bio") ? "is-invalid" : ""}
 				/>
 				<p>{bioByteLength} / 280</p>
 			</BioContainer>
