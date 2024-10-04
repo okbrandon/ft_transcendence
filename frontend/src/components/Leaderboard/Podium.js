@@ -9,8 +9,9 @@ import {
 	PlayerScore,
 	PlayerPrize,
 	PlayerAvatar,
-	PodiumPosition,
-	PodiumImg,
+	Firstposition,
+	Thirdposition,
+	Secondposition,
 } from './styles/Podium.styled';
 
 const Podium = ({ leaderboardData }) => {
@@ -19,33 +20,30 @@ const Podium = ({ leaderboardData }) => {
 	return (
 		<PodiumContainer>
 			<SecondPlace>
+				<Secondposition><i className="bi bi-trophy-fill" /></Secondposition>
 				<PlayerAvatar src={topThree[1]?.avatar} alt={topThree[1]?.name || 'N/A'} />
 				<PlayerInfo>
 					<PlayerName>{topThree[1]?.name || 'N/A'}</PlayerName>
 					<PlayerScore>{topThree[1]?.stats.gamesWon || 0} points</PlayerScore>
-					<PlayerPrize>{topThree[1]?.prize || 2500} Prize</PlayerPrize>
 				</PlayerInfo>
-				<PodiumPosition>2nd</PodiumPosition>
 			</SecondPlace>
 
 			<FirstPlace>
+				<Firstposition><i className="bi bi-trophy-fill" /></Firstposition>
 				<PlayerAvatar src={topThree[0]?.avatar} alt={topThree[0]?.name || 'N/A'} />
 				<PlayerInfo>
 					<PlayerName>{topThree[0]?.name || 'N/A'}</PlayerName>
 					<PlayerScore>{topThree[0]?.stats.gamesWon || 0} points</PlayerScore>
-					<PlayerPrize>{topThree[0]?.prize || 5000} Prize</PlayerPrize>
 				</PlayerInfo>
-				<PodiumPosition>1st</PodiumPosition>
 			</FirstPlace>
 
 			<ThirdPlace>
+				<Thirdposition><i className="bi bi-trophy-fill" /></Thirdposition>
 				<PlayerAvatar src={topThree[2]?.avatar} alt={topThree[2]?.name || 'N/A'} />
 				<PlayerInfo>
 					<PlayerName>{topThree[2]?.name || 'N/A'}</PlayerName>
 					<PlayerScore>{topThree[2]?.stats.gamesWon || 0} points</PlayerScore>
-					<PlayerPrize>{topThree[2]?.prize || 1500} Prize</PlayerPrize>
 				</PlayerInfo>
-				<PodiumPosition>3rd</PodiumPosition>
 			</ThirdPlace>
 		</PodiumContainer>
 	);
