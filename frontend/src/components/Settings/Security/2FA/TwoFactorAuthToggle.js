@@ -13,6 +13,7 @@ import {
 } from "../../styles/TwoFactorAuthToggle.styled";
 import { SubSectionHeading } from "../../styles/Settings.styled";
 import ErrorMessage from "../../../../styles/shared/ErrorMessage.styled";
+import { useTranslation } from "react-i18next";
 
 const TwoFactorAuthToggle = () => {
 	const [is2FAEnabled, setIs2FAEnabled] = useState(false);
@@ -20,6 +21,7 @@ const TwoFactorAuthToggle = () => {
 	const [qrCodeToken, setQrCodeToken] = useState('');
 	const [showQRCode, setShowQRCode] = useState(false);
 	const [error, setError] = useState('');
+	const { t } = useTranslation();
 
 	useEffect(() => {
 		API.get('auth/totp')
@@ -50,9 +52,9 @@ const TwoFactorAuthToggle = () => {
 
 	return (
 		<>
-			<SubSectionHeading>Two-Factor Authentication</SubSectionHeading>
+			<SubSectionHeading>{t('auth.twoFactor.title')}</SubSectionHeading>
 			<ToggleContainer>
-				<ToggleLabel>{is2FAEnabled ? 'Disable 2FA' : 'Enable 2FA'}</ToggleLabel>
+				<ToggleLabel>{is2FAEnabled ? t('auth.twoFactor.disableButton') : t('auth.twoFactor.enableButton')}</ToggleLabel>
 				<ToggleSwitch>
 				<input
 					type="checkbox"
@@ -66,7 +68,7 @@ const TwoFactorAuthToggle = () => {
 
 			{showQRCode && (
 				<QRCodeContainer>
-					<QRCodeText>Scan this QR code with your authentication app:</QRCodeText>
+					<QRCodeText>{t('auth.twoFactor.scanMessage')}</QRCodeText>
 					<QRCodeWrapper>
 						<QRCode value={`otpauth://totp/Pong%20Account?secret=${qrCodeToken}&issuer=Pong`}/>
 					</QRCodeWrapper>

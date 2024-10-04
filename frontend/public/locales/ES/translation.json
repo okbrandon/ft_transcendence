@@ -45,7 +45,10 @@
 			"noAvailablePlatform": "No hay plataformas disponibles para configurar OTP.",
 			"verifyButton": "Verificar",
 			"backButton": "Atrás",
-			"successMessage": "OTP se ha configurado en la plataforma elegida."
+			"successMessage": "OTP se ha configurado en la plataforma elegida.",
+			"disableButton": "Desactivar 2FA",
+			"enableButton": "Activar 2FA",
+			"scanMessage": "Escanea este código QR con tu aplicación de autenticación para configurar OTP."
 		}
 	},
 	"restrictions": {

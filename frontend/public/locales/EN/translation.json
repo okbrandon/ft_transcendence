@@ -45,7 +45,10 @@
 			"noAvailablePlatform": "No available platforms to set up OTP.",
 			"verifyButton": "Verify",
 			"backButton": "Back",
-			"successMessage": "OTP has been set to your chosen platform."
+			"successMessage": "OTP has been set to your chosen platform.",
+			"disableButton": "Disable 2FA",
+			"enableButton": "Enable 2FA",
+			"scanMessage": "Scan this QR code with your authenticator app to set up OTP."
 		}
 	},
 	"restrictions": {
