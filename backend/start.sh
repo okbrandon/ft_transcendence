@@ -9,4 +9,4 @@ done
 python manage.py migrate
 
 # Start server with SSL certificates
-daphne -b 0.0.0.0 -e ssl:8443:privateKey=/certs/server.key:certKey=/certs/server.crt backend.asgi:application
+exec daphne -b 0.0.0.0 -e ssl:8443:privateKey=/certs/server.key:certKey=/certs/server.crt backend.asgi:application

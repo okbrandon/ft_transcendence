@@ -9,4 +9,4 @@ done
 python3 manage.py migrate
 
 # Start the server
-gunicorn harvester.wsgi:application
+exec gunicorn harvester.wsgi:application
