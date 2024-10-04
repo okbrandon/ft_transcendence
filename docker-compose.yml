@@ -8,10 +8,21 @@ services:
     networks:
       - transcendence
 
+  certs:
+    build: ./certs
+    restart: on-failure
+    env_file: .env
+    volumes:
+      - certs_data:/certs
+    networks:
+      - transcendence
+
   frontend:
     build: ./frontend
     restart: always
     env_file: .env
+    depends_on:
+      - certs
     ports:
       - "8888:443"
     networks:
@@ -23,6 +34,9 @@ services:
     build: ./backend
     restart: always
     env_file: .env
+    depends_on:
+      - postgres
+      - certs
     networks:
       - transcendence
     volumes:
@@ -33,6 +47,8 @@ services:
     build: ./harvester
     restart: always
     env_file: .env
+    depends_on:
+      - postgres
     volumes:
       - exports_data:/exports
     networks:
@@ -42,6 +58,9 @@ services:
     build: ./statcruncher
     restart: always
     env_file: .env
+    depends_on:
+      - postgres
+      - certs
     networks:
       - transcendence
     volumes:
