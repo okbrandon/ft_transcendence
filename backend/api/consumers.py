@@ -477,7 +477,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         match_state = self.active_matches[self.match.matchID]
         player_key = 'playerA' if match_state['playerA']['id'] == self.user.userID else 'playerB'
 
-        paddle_speed = 0.15  # Appropriate paddle speed (adjust as needed)
+        paddle_speed = 1.5  # Appropriate paddle speed (adjust as needed)
 
         if direction == 'up':
             match_state[player_key]['paddle_y'] = min(690, match_state[player_key]['paddle_y'] + paddle_speed)

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { BallAttributes, PaddleAttributes, Particles } from './ShapeAttributes';
+import { BallAttributes, PaddleAttributes, Particles } from './gameShapes';
 
 const Lightning = scene => {
 	const ambientLight = new THREE.AmbientLight(0xffffff, 1);
@@ -32,7 +32,7 @@ const AddToScene = (scene, terrain, lights, paddle1, paddle2, ball) => {
 	scene.add(ball.current);
 }
 
-const GameScene = (canvas, paddle1, paddle2, ball, terrain, hit) => {
+const GameCanvas = (canvas, paddle1, paddle2, ball, terrain, hit) => {
 	const scene = new THREE.Scene();
 	const camera = new THREE.PerspectiveCamera(40, terrain.WIDTH / terrain.HEIGHT, 0.1, 1000);
 	camera.position.set(0, 0, 20.7);
@@ -76,4 +76,4 @@ const GameScene = (canvas, paddle1, paddle2, ball, terrain, hit) => {
 	return {renderer, camera};
 };
 
-export default GameScene;
+export default GameCanvas;
