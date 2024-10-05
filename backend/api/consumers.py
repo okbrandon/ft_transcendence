@@ -346,8 +346,6 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         logger.info(f"[{self.__class__.__name__}] Disconnecting with close code: {close_code}")
         if hasattr(self, 'heartbeat_task'):
             self.heartbeat_task.cancel()
-        if hasattr(self, 'match'):
-            await self.handle_player_quit()
         logger.info(f"[{self.__class__.__name__}] Disconnected, cleanup completed")
 
     async def receive_json(self, content):
@@ -489,11 +487,10 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
 
     async def handle_player_quit(self):
         logger.info(f"[{self.__class__.__name__}] Player {self.user.userID} quit the match {self.match.matchID}")
-        # Check if playerB is None and delete the match if so
-        if self.match.playerB is None:
-            await self.delete_match(self.match.matchID)
 
-        await self.end_match(self.match.matchID, self.user.userID)
+        if self.match.playerB is not None and self.match.playerA is not None:
+            await self.end_match(self.match.matchID, self.user.userID)
+
         if self.match.matchID in self.active_matches:
             del self.active_matches[self.match.matchID]
 
@@ -527,6 +524,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                 new_match = Match.objects.create(
                     matchID=generate_id("match"),
                     playerA={"id": self.user.userID, "platform": "web"},
+                    winnerID=None,
                     scores={},
                     finishedAt=None,
                     flags=0
@@ -538,6 +536,8 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                 matchID=generate_id("match"),
                 playerA={"id": self.user.userID, "platform": "web"},
                 playerB={"id": "ai", "platform": "server"},
+                winnerID=None,
+                finishedAt=None,
                 scores={},
                 flags=1 << 1  # AI flag
             )
@@ -668,6 +668,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
 
             self.match.winnerID = winner_id
             self.match.finishedAt = timezone.now()
+            self.match.scores = self.active_matches[match_id]['scores']
             await self.save_match()
             logger.info(f"[{self.__class__.__name__}] Match {match_id} ended. Winner: {winner_id}")
             return {
