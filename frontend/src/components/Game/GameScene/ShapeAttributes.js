@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 
-// Paddle geometry and material (rounded rectangles with shadows and gradient effect)
 const roundedRectShape = (width, height, radius) => {
 	const shape = new THREE.Shape();
 	const w = width / 2;
@@ -34,11 +33,91 @@ export const PaddleAttributes = terrain => {
 
 export const BallAttributes = terrain => {
 	const ballGeometry = new THREE.SphereGeometry(25 * terrain.SCALEX / 2, 32, 32);
-	const ballMaterial = new THREE.MeshPhongMaterial({
+	const ballMaterial = new THREE.MeshPhysicalMaterial({
 		color: 0xffffff,
-		specular: 0xffffff,
-		shininess: 100,
-		emissive: 0x555555,
+		emissive: 0xffffff,
+		emissiveIntensity: 100,
+		metalness: 0.1,
+		roughness: 0.2,
+		clearcoat: 1,
+		clearcoatRoughness: 0.05,
 	});
 	return {ballGeometry, ballMaterial};
 }
+
+const computeGeometry = () => {
+	const nb = 50;
+	const width = 38, depth = 25;
+	const positions = new Float32Array( nb * nb * 3 );
+	const colors = new Float32Array( nb * nb * 3 );
+
+	let k = 0;
+	for ( let i = 0; i < nb; i ++ ) {
+		for ( let j = 0; j < nb; j ++ ) {
+			const x = i * (width / nb) - width / 2;
+			const z = j * (depth / nb) - depth / 2;
+			const y = 0;
+			positions[ 3 * k + 0 ] = x;
+			positions[ 3 * k + 1 ] = y;
+			positions[ 3 * k + 2 ] = z;
+
+			const intensity = 0.3;
+			colors[ 3 * k + 0 ] = j / nb * intensity;
+			colors[ 3 * k + 1 ] = 0;
+			colors[ 3 * k + 2 ] = i / nb * intensity;
+			k++;
+		}
+	}
+	const geometry = new THREE.BufferGeometry();
+	geometry.setAttribute('position', new THREE.BufferAttribute( positions, 3 ));
+	geometry.setAttribute('color', new THREE.BufferAttribute( colors, 3 ));
+	geometry.computeBoundingBox();
+	return geometry;
+}
+
+export const Particles = scene => {
+	const geometry = computeGeometry();
+	const material = new THREE.PointsMaterial({ size: 0.15, vertexColors: true });
+	const mesh = new THREE.Points(geometry, material);
+	mesh.rotation.x = Math.PI / 2;
+	mesh.position.set(0, 0, -10);
+	scene.add(mesh);
+
+	let wave = { amplitude: 0, x: 0, y: 0, radius: 0, speed: 0.05 };
+
+	const animateWave = () => {
+		const positions = geometry.attributes.position.array;
+		const nb = 50;
+
+		for (let i = 0; i < nb; i++) {
+			for (let j = 0; j < nb; j++) {
+				const index = (i * nb + j) * 3;
+				const x = positions[index];
+				const y = positions[index + 2];
+
+				// Distance from wave origin
+				const distance = Math.sqrt((x - wave.x) ** 2 + (y - wave.y) ** 2);
+
+				// Ripple based on distance from the center and wave time
+				const rippleEffect = wave.amplitude * Math.sin(distance - wave.radius);
+
+				// Apply ripple height
+				if (distance < wave.radius) {
+					positions[index + 1] = rippleEffect;
+				} else {
+					positions[index + 1] = 0;
+				}
+			}
+		}
+
+		geometry.attributes.position.needsUpdate = true;
+
+		wave.radius += wave.speed;
+
+		if (wave.amplitude > 0.05) {
+			wave.amplitude *= 0.98;
+		}
+	};
+
+	return { mesh, animateWave, wave };
+};
