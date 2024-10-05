@@ -10,9 +10,11 @@ import {
 	ProfileInfo
 } from "./styles/Friends.styled";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const RequestsList = ({ requests, setRequests, setFriends }) => {
 	const navigate = useNavigate();
+	const { t } = useTranslation();
 
 	const handleAccept = (focusedRequest) => {
 		API.put('users/@me/relationships', { user: focusedRequest.userID, type: 1 })
@@ -50,18 +52,18 @@ const RequestsList = ({ requests, setRequests, setFriends }) => {
 						</ProfileInfo>
 						{request.is === 'sender' ? (
 							<Actions>
-								<PongButton onClick={() => handleAccept(request)}>Accept</PongButton>
-								<PongButton $backgroundColor='#ff5555' onClick={() => handleDecline(request.relationID)}>Decline</PongButton>
+								<PongButton onClick={() => handleAccept(request)}>{t('friends.subSections.friendRequests.acceptButton')}</PongButton>
+								<PongButton $backgroundColor='#ff5555' onClick={() => handleDecline(request.relationID)}>{t('friends.subSections.friendRequests.declineButton')}</PongButton>
 							</Actions>
 						) : (
 							<Actions>
-								<PongButton $backgroundColor='#ff5555' onClick={() => handleDecline(request.relationID)}>Cancel</PongButton>
+								<PongButton $backgroundColor='#ff5555' onClick={() => handleDecline(request.relationID)}>{t('friends.subSections.friendRequests.cancelButton')}</PongButton>
 							</Actions>
 						)}
 					</ListCard>
 				))
 			) : (
-				<NoRelation>No new friend requests</NoRelation>
+				<NoRelation>{t('friends.subSections.friendRequests.noResults')}</NoRelation>
 			)}
 		</ListContainer>
 	);

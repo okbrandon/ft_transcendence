@@ -329,5 +329,25 @@
 			}
 		},
 		"backButton": "Volver"
+	},
+	"friends": {
+		"title": "AMIGOS",
+		"placeholder": "Buscar un amigo...",
+		"subSections": {
+			"friendList": {
+				"title": "Amigos",
+				"inviteButton": "Desafiar",
+				"messageButton": "Mensaje",
+				"deleteButton": "Eliminar",
+				"noResults": "No se encontraron amigos."
+			},
+			"friendRequests": {
+				"title": "Solicitudes",
+				"acceptButton": "Aceptar",
+				"declineButton": "Rechazar",
+				"cancelButton": "Revocar",
+				"noResults": "No se encontraron solicitudes de amistad."
+			}
+		}
 	}
 }

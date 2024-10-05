@@ -13,6 +13,7 @@ import {
 	ProfileStatus,
 } from "./styles/Friends.styled";
 import API from "../../api/api";
+import { useTranslation } from "react-i18next";
 
 const setActivityDescription = activity => {
 	if (activity === "QUEUEING") {
@@ -27,6 +28,7 @@ const setActivityDescription = activity => {
 
 const FriendsList = ({ friends, setFriends }) => {
 	const navigate = useNavigate();
+	const { t } = useTranslation();
 
 	const handleProfile = username => {
 		navigate(`/profile/${username}`)
@@ -56,20 +58,20 @@ const FriendsList = ({ friends, setFriends }) => {
 							</ProfileInfoContainer>
 						</ProfileInfo>
 						<Actions>
-							<PongButton type="button">Invite</PongButton>
-							<PongButton type="button">Message</PongButton>
+							<PongButton type="button">{t('friends.subSections.friendList.inviteButton')}</PongButton>
+							<PongButton type="button">{t('friends.subSections.friendList.messageButton')}</PongButton>
 							<PongButton
 								type="button"
 								$backgroundColor="#ff5555"
 								onClick={() => handleRemove(friend.relationID)}
 							>
-								Remove
+								{t('friends.subSections.friendList.deleteButton')}
 							</PongButton>
 						</Actions>
 					</ListCard>
 				))
 			) : (
-				<NoRelation>No friends found</NoRelation>
+				<NoRelation>{t('friends.subSections.friendList.noResults')}</NoRelation>
 			)}
 		</ListContainer>
 	);

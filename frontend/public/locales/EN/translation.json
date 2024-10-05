@@ -329,5 +329,25 @@
 			}
 		},
 		"backButton": "Back"
+	},
+	"friends": {
+		"title": "FRIENDS",
+		"placeholder": "Search for a friend...",
+		"subSections": {
+			"friendList": {
+				"title": "Friends",
+				"inviteButton": "Challenge",
+				"messageButton": "Message",
+				"deleteButton": "Remove",
+				"noResults": "No friends found."
+			},
+			"friendRequests": {
+				"title": "Requests",
+				"acceptButton": "Accept",
+				"declineButton": "Decline",
+				"cancelButton": "Revoke",
+				"noResults": "No friend requests found."
+			}
+		}
 	}
 }
