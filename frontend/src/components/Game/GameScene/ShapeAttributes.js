@@ -19,13 +19,13 @@ const roundedRectShape = (width, height, radius) => {
 };
 
 export const PaddleAttributes = terrain => {
-	const paddleShape = roundedRectShape(20 * terrain.SCALEX, 120 * terrain.SCALEY, 0.1 * terrain.SCALEX);
-	const extrudeSettings = { depth: 0.1, bevelEnabled: false };
+	const paddleShape = roundedRectShape(20 * terrain.SCALEX, 120 * terrain.SCALEY, 10 * terrain.SCALEX);
+	const extrudeSettings = { depth: 0.5, bevelEnabled: false };
 	const paddleGeometry = new THREE.ExtrudeGeometry(paddleShape, extrudeSettings);
 	const paddleMaterial = new THREE.MeshPhongMaterial({
 		color: 0xffffff,
 		specular: 0xaaaaaa,
-		shininess: 50,
+		shininess: 100,
 		emissive: 0x333333,
 	});
 	return {paddleGeometry, paddleMaterial};

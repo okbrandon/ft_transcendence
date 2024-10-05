@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { BallAttributes, PaddleAttributes, Particles } from './ShapeAttributes';
 
 const Lightning = scene => {
-	const ambientLight = new THREE.AmbientLight(0xffffff, 10);
+	const ambientLight = new THREE.AmbientLight(0xffffff, 1);
 	scene.add(ambientLight);
 
 	const ballLight = new THREE.PointLight(0xffffff, 50, 50);
