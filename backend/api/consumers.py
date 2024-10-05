@@ -491,8 +491,14 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         if self.match.playerB is not None and self.match.playerA is not None:
             await self.end_match(self.match.matchID, self.user.userID)
 
-        if self.match.matchID in self.active_matches:
-            del self.active_matches[self.match.matchID]
+        if self.match.playerB is None or self.match.playerA is None:
+            if self.match.finishedAt is None:
+                await self.delete_match(self.match.matchID)
+
+            if self.match.matchID in self.active_matches:
+                logger.info(f"[{self.__class__.__name__}] Deleting match state for match: {self.match.matchID}")
+                del self.active_matches[self.match.matchID]
+
 
     @database_sync_to_async
     def delete_match(self, match_id):
@@ -515,7 +521,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
     def find_or_create_match(self, match_type):
         if match_type == '1v1':
             available_match = Match.objects.filter(playerB__isnull=True, flags=0).first()
-            if available_match:
+            if available_match and available_match.playerA['id'] != self.user.userID:
                 available_match.playerB = {"id": self.user.userID, "platform": "web"}
                 available_match.save()
                 logger.info(f"[{self.__class__.__name__}] Joined existing match: {available_match.matchID}")
