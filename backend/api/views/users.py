@@ -438,18 +438,18 @@ class Stats():
 
         matches = matches.annotate(
             win=models.Count(models.Case(
-                models.When(winnerID=user.userID, then=1),
-                output_field=models.IntegerField()
+                models.When(models.Q(winnerID=user.userID) & ~models.Q(winnerID__isnull=True), then=1),
+                output_field=models.PositiveIntegerField()
             )),
             loss=models.Count(models.Case(
-                models.When(~models.Q(winnerID=user.userID) & (models.Q(playerA__contains={'id': user.userID}) | models.Q(playerB__contains={'id': user.userID})), then=1),
-                output_field=models.IntegerField()
+                models.When(~models.Q(winnerID=user.userID) & ~models.Q(winnerID__isnull=True), then=1),
+                output_field=models.PositiveIntegerField()
             ))
         )
 
         games_played = matches.count()
-        games_won = matches.aggregate(total_wins=models.Count('win'))['total_wins']
-        games_lost = matches.aggregate(total_losses=models.Count('loss'))['total_losses']
+        games_won = matches.filter(win=1).count()
+        games_lost = matches.filter(loss=1).count()
 
         return {
             "userID": user.userID,
