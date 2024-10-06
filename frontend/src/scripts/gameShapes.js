@@ -119,5 +119,11 @@ export const Particles = scene => {
 		}
 	};
 
-	return { mesh, animateWave, wave };
+	const dispose = () => {
+		scene.remove(mesh);
+		geometry.dispose();
+		material.dispose();
+	};
+
+	return { animateWave, wave, dispose };
 };

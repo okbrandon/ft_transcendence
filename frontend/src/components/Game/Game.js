@@ -63,7 +63,6 @@ const Test = () => {
 
 	// Send IDENTIFY message on connection open
 	useEffect(() => {
-		console.log("identifying useEffect");
 		if (readyState === ReadyState.OPEN && heartbeatIntervalTime) {
 			reconnectAttempts.current = 0;
 			handleIdentify();
@@ -78,7 +77,6 @@ const Test = () => {
 
 	// Handle incoming messages
 	useEffect(() => {
-		console.log("incoming messages useEffect");
 		if (lastMessage) {
 			const data = JSON.parse(lastMessage.data);
 			switch (data.e) {

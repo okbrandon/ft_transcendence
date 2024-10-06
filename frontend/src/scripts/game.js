@@ -54,6 +54,8 @@ const GameCanvas = (canvas, paddle1, paddle2, ball, terrain, hit) => {
 		return { x: adjustedX, y: adjustedY };
 	}
 
+	let animationFrameId;
+
 	const animate = () => {
 		renderer.render(scene, camera);
 
@@ -66,14 +68,40 @@ const GameCanvas = (canvas, paddle1, paddle2, ball, terrain, hit) => {
 			particles.wave.radius = 5;
 			hit.current = null;
 		}
-		if (particles.wave.amplitude > 0) {
-			particles.animateWave();
-		}
-		requestAnimationFrame(animate);
+		if (particles.wave.amplitude > 0) particles.animateWave();
+		animationFrameId = requestAnimationFrame(animate);
 	};
 	animate();
 
-	return {renderer, camera};
+	const dispose = () => {
+		cancelAnimationFrame(animationFrameId);
+		if (paddle1.current) {
+			paddle1.current.geometry.dispose();
+			paddle1.current.material.dispose();
+			scene.remove(paddle1.current);
+		}
+		if (paddle2.current) {
+			paddle2.current.geometry.dispose();
+			paddle2.current.material.dispose();
+			scene.remove(paddle2.current);
+		}
+		if (ball.current) {
+			ball.current.geometry.dispose();
+			ball.current.material.dispose();
+			scene.remove(ball.current);
+		}
+
+		scene.remove(lights.ambientLight);
+		lights.ambientLight.dispose();
+		scene.remove(lights.ballLight);
+		lights.ballLight.dispose();
+
+		particles.dispose();
+
+		renderer.dispose();
+	}
+
+	return {renderer, camera, dispose};
 };
 
 export default GameCanvas;

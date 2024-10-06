@@ -62,6 +62,7 @@ const GameScene = ({ matchState, hitPos, sendMessage }) => {
 			animationFrameId = requestAnimationFrame(move);
 		};
 		move();
+
 		return () => cancelAnimationFrame(animationFrameId);
 	}, [keyPressed, handlePaddleMove]);
 
@@ -75,8 +76,8 @@ const GameScene = ({ matchState, hitPos, sendMessage }) => {
 
 	useEffect(() => {
 		if (!canvas.current) return;
-		console.log('Creating Game scene...');
-		const { renderer, camera } = GameCanvas(canvas.current, paddle1, paddle2, ball, terrain, hit);
+
+		const { renderer, camera, dispose } = GameCanvas(canvas.current, paddle1, paddle2, ball, terrain, hit);
 
 		const handleResize = () => {
 			renderer.setSize(terrain.WIDTH, terrain.HEIGHT);
@@ -88,7 +89,7 @@ const GameScene = ({ matchState, hitPos, sendMessage }) => {
 
 		return () => {
 			window.removeEventListener("resize", handleResize);
-			renderer.dispose();
+			dispose();
 		}
 	}, [terrain]);
 
