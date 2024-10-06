@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { PageContainer } from "./styles/Game.styled";
-import useWebSocket, { ReadyState } from "react-use-websocket";
 import { useNavigate } from "react-router-dom";
-import logger from "../../api/logger";
+import useWebSocket, { ReadyState } from "react-use-websocket";
 import GameProfiles from "./GameProfiles";
 import GameScene from "./GameScene";
+import { formatUserData } from "../../api/user";
+import logger from "../../api/logger";
+import { PageContainer } from "./styles/Game.styled";
 
-const Test = () => {
+const Game = () => {
 	const navigate = useNavigate();
 	const [gameState, setGameState] = useState({
 		matchState: null,
@@ -95,17 +96,17 @@ const Test = () => {
 					handleHeartbeatAck();
 					break;
 				case 'READY':
-					setGameState(prevState => ({ ...prevState, player: data.d }));
+					setGameState(prevState => ({ ...prevState, player: formatUserData(data.d) }));
 					break;
 				case 'MATCH_JOIN':
 					setGameState(prevState => ({
 						...prevState,
 						playerSide: data.d.side,
-						opponent: data.d.opponent
+						opponent: data.d.opponent ? formatUserData(data.d.opponent) : null
 					}));
 					break;
 				case 'PLAYER_JOIN':
-					if (data.d.userID !== gameState.player?.userID) setGameState(prevState => ({ ...prevState, opponent: data.d }));
+					if (data.d.userID !== gameState.player?.userID) setGameState(prevState => ({ ...prevState, opponent: formatUserData(data.d) }));
 					break;
 				case 'PADDLE_HIT':
 					setHitPos(data.d.player.pos);
@@ -132,4 +133,4 @@ const Test = () => {
 	)
 };
 
-export default Test;
+export default Game;
