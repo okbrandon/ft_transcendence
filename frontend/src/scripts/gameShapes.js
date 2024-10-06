@@ -127,3 +127,27 @@ export const Particles = scene => {
 
 	return { animateWave, wave, dispose };
 };
+
+export const DashedLine = (scene, terrain) => {
+	const lineMaterial = new THREE.LineDashedMaterial({
+		color: 0xffffff,
+		dashSize: 1,
+		gapSize: 1,
+	});
+	const points = [];
+	points.push(new THREE.Vector3(0, terrain.SCENEHEIGHT / 2, 0));
+	points.push(new THREE.Vector3(0, -terrain.SCENEHEIGHT / 2, 0));
+
+	const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+	const line = new THREE.Line(lineGeometry, lineMaterial);
+	line.computeLineDistances();
+	scene.add(line);
+
+	const dispose = () => {
+		scene.remove(line);
+		lineGeometry.dispose();
+		lineMaterial.dispose();
+	};
+
+	return { dispose };
+};

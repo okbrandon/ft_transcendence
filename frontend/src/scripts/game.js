@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { BallAttributes, PaddleAttributes, Particles } from './gameShapes';
+import { BallAttributes, PaddleAttributes, Particles, DashedLine } from './gameShapes';
 
 const Lightning = scene => {
 	const ambientLight = new THREE.AmbientLight(0xffffff, 1);
@@ -40,6 +40,7 @@ const GameCanvas = (canvas, paddle1, paddle2, ball, terrain, hit) => {
 
 	const lights = Lightning(scene);
 	const particles = Particles(scene);
+	const dashedLine = DashedLine(scene, terrain);
 
 	const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 	renderer.setSize(terrain.WIDTH, terrain.HEIGHT);
@@ -97,6 +98,8 @@ const GameCanvas = (canvas, paddle1, paddle2, ball, terrain, hit) => {
 		lights.ballLight.dispose();
 
 		particles.dispose();
+
+		dashedLine.dispose();
 
 		renderer.dispose();
 	}
