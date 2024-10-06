@@ -24,7 +24,6 @@ const Test = () => {
 
 	const { sendMessage, lastMessage, readyState } = useWebSocket('/ws/match', {
 		onClose: event => { if (event.code === 1006) handleReconnect() },
-		retryOnError: true,
 		shouldReconnect: () => true,
 	});
 
@@ -38,6 +37,7 @@ const Test = () => {
 		}
 	}, [navigate]);
 
+	// Send IDENTIFY message on connection open
 	useEffect(() => {
 		if (readyState === ReadyState.OPEN && heartbeatIntervalTime) {
 			reconnectAttempts.current = 0;
@@ -57,6 +57,7 @@ const Test = () => {
 		};
 	}, [readyState, heartbeatIntervalTime, sendMessage]);
 
+	// Handle incoming messages
 	useEffect(() => {
 		if (lastMessage) {
 			const data = JSON.parse(lastMessage.data);
