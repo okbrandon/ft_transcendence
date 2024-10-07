@@ -1,19 +1,24 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { GameSceneContainer, Score, ScoresContainer, StyledCanvas } from "./styles/Game.styled";
+import { GameSceneContainer, Score, ScoresContainer, StyledCanvas, Timer, TimerContainer } from "./styles/Game.styled";
 import GameCanvas from "../../scripts/game";
 import { useNavigate } from "react-router-dom";
 
-const GameScene = ({ matchState, hitPos, sendMessage }) => {
+const GameScene = ({ matchState, hitPos, sendMessage, activateTimer, setActivateTimer }) => {
 	const navigate = useNavigate();
+
 	const [keyPressed, setKeyPressed] = useState(null);
 	const [isHit, setIsHit] = useState(false);
+	const [timer, setTimer] = useState(5);
+
 	const [scoreA, setScoreA] = useState(0);
 	const [scoreB, setScoreB] = useState(0);
+
 	const canvas = useRef(null);
 	const paddle1 = useRef(null);
 	const paddle2 = useRef(null);
 	const ball = useRef(null);
 	const hit = useRef(null);
+	const intervalRef = useRef(null); // Store interval reference
 
 	const terrain = useMemo(() => ({
 		WIDTH: 1200,
@@ -23,6 +28,21 @@ const GameScene = ({ matchState, hitPos, sendMessage }) => {
 		SCALEX: 22 / 1200,
 		SCALEY: 15 / 750,
 	}), []);
+
+	useEffect(() => {
+		if (activateTimer && timer > 0) {
+			intervalRef.current = setInterval(() => {
+				setTimer(prev => prev - 1);
+			}, 1000);
+		}
+
+		if (timer === 0) {
+			setActivateTimer(false);
+			clearInterval(intervalRef.current);
+		}
+
+		return () => clearInterval(intervalRef.current);
+	}, [activateTimer, timer, setActivateTimer]);
 
 	const handlePaddleMove = useCallback(direction => {
 		if (!direction) return;
@@ -73,7 +93,6 @@ const GameScene = ({ matchState, hitPos, sendMessage }) => {
 		if (!hitPos) return;
 		hit.current = { x: (hitPos.x - 600) * terrain.SCALEX, y: (hitPos.y - 375) * terrain.SCALEY };
 		setIsHit(true);
-		console.log('hit');
 		const timeoutID = setTimeout(() => setIsHit(false), 500);
 		return () => clearTimeout(timeoutID);
 	}, [hitPos, terrain]);
@@ -123,6 +142,11 @@ const GameScene = ({ matchState, hitPos, sendMessage }) => {
 				<Score>{scoreA}</Score>
 				<Score>{scoreB}</Score>
 			</ScoresContainer>
+			{activateTimer && (
+				<TimerContainer>
+					<Timer>{timer}</Timer>
+				</TimerContainer>
+			)}
 		</GameSceneContainer>
 	);
 };

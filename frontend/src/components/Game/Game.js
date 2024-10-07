@@ -19,6 +19,8 @@ const Game = () => {
 	const [heartbeatIntervalTime, setHeartbeatIntervalTime] = useState(null);
 	const [hitPos, setHitPos] = useState(null);
 
+	const [activateTimer, setActivateTimer] = useState(false);
+
 	const heartbeatAckCount = useRef(0);
 	const heartbeatInterval = useRef(null);
 	const reconnectAttempts = useRef(0);
@@ -85,6 +87,9 @@ const Game = () => {
 					setHeartbeatIntervalTime(data.d.heartbeat_interval);
 					break;
 				case 'MATCH_BEGIN':
+					setActivateTimer(true);
+					setGameState(prevState => ({ ...prevState, matchState: data.d }));
+					break;
 				case 'MATCH_UPDATE':
 					setGameState(prevState => ({ ...prevState, matchState: data.d }));
 					break;
@@ -128,6 +133,8 @@ const Game = () => {
 				matchState={gameState.matchState}
 				hitPos={hitPos}
 				sendMessage={sendMessage}
+				activateTimer={activateTimer}
+				setActivateTimer={setActivateTimer}
 			/>
 		</PageContainer>
 	)

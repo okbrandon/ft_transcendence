@@ -60,7 +60,6 @@ export const ScoresContainer = styled.div`
 	gap: 120px;
 	font-family: 'Orbitron'	, sans-serif;
 	color: #fff;
-	z-index: 100000;
 `;
 
 export const Score = styled.div`
@@ -104,4 +103,24 @@ export const ProfileName = styled.h2`
 	font-family: 'Orbitron', sans-serif;
 	font-size: 2rem;
 	color: #fff;
+`;
+
+export const TimerContainer = styled.div`
+	position: absolute;
+	top: 0;
+	left: 0;
+	background-color: rgba(0, 0, 0, 0.7);
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 100;
+`;
+
+export const Timer = styled.div`
+	font-family: 'Orbitron', sans-serif;
+	font-size: 5rem;
+	color: #fff;
+	z-index: 100;
 `;
