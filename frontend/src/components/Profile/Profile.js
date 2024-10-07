@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import MainBar from './main/MainBar';
 import About from './content/About';
+import API from '../../api/api'
 import MatchHistory from './content/MatchHistory';
 import Winrate from './content/Winrate';
 import { ProfileContainer, UserContainer, UserProfileBanner } from './styles/Profile.styled';
@@ -28,9 +29,29 @@ const Profile = () => {
 	const { username } = useParams();
 	const { requests } = useContext(RelationContext);
 	const [profileUser, setProfileUser] = useState(null);
+	const [currentSkin, setCurrentSkin] = useState(null);
 	const [relation, setRelation] = useState(null);
 	const userID = localStorage.getItem('userID');
 	const notificationRef = useRef(null);
+
+	useEffect(() => {
+		let selectedSkinId;
+		API.get('/users/@me/settings')
+		  .then(response => {
+			selectedSkinId = response.data.selectedPaddleSkin;
+			if (selectedSkinId) {
+			  return API.get('/store/items');
+			}
+			return Promise.reject('No skin selected');
+		  })
+		  .then(response => {
+			const selectedSkin = response.data.find(item => item.itemID === selectedSkinId);
+			if (selectedSkin) {
+			  setCurrentSkin(selectedSkin.assetID);
+			}
+		  })
+		  .catch(error => console.error('Error fetching skin:', error));
+	}, []);
 
 	useEffect(() => {
 		GetUserByUsername(username)
@@ -77,7 +98,7 @@ const Profile = () => {
 					<UserContainer>
 						<MainBar profileUser={profileUser} matchArray={matchArray} relation={relation}/>
 						<About profileUser={profileUser} matchArray={matchArray}/>
-						<DisplaySkin profileUser={profileUser}/>
+						<DisplaySkin currentSkin={currentSkin}/>
 						<Winrate matchArray={matchArray}/>
 						<MatchHistory matchArray={matchArray}/>
 					</UserContainer>
