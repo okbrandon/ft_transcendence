@@ -9,4 +9,4 @@ done
 python3 manage.py migrate
 
 # Start the server
-python3 manage.py runserver 0.0.0.0:9000
+exec python3 manage.py runserver 0.0.0.0:9000

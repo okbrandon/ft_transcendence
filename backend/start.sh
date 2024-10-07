@@ -9,4 +9,4 @@ done
 python manage.py migrate
 
 # Start server
-daphne -b 0.0.0.0 -p 8000 backend.asgi:application
+exec daphne -b 0.0.0.0 -p 8000 backend.asgi:application
