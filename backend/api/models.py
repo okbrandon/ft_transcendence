@@ -59,6 +59,7 @@ class User(AbstractUser):
     flags = models.IntegerField(default = 0) # 1 << 0 = EMAIL_VERIFIED, 1 << 1 = IS_AI, 1 << 2 = ACCOUNT_DISABLED, 1<<3 = SCHEDULED_HARVESTING
     money = models.IntegerField(default = 0)
     status = models.JSONField(null=True) # ex: {"online": True, "activity": "PLAYING", "last_seen": "2021-01-01T00:00:00Z"}
+    xp = models.IntegerField(default = 0)
 
     # Override the groups and user_permissions to avoid field clashes
     groups = models.ManyToManyField(
