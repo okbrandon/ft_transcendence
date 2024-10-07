@@ -56,7 +56,7 @@ const SignIn = () => {
 						<h1>Sign In</h1>
 						<FortyTwoButton variant='light' onClick={handleFortyTwo}>
 							<Image src='/images/42_Logo.png' alt='42 Logo'/>
-							SignIn with 42
+							Sign In with 42
 						</FortyTwoButton>
 						<p>- Or -</p>
 						<FormContainer.Group className="mb-3">
