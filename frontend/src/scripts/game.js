@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { BallAttributes, PaddleAttributes, Particles, DashedLine } from './gameShapes';
+import { BallAttributes, PaddleAttributes, DashedLine } from './gameShapes';
+import { createParticleBurst, Particles } from './gameParticles';
 
 const Lightning = (scene, terrain) => {
 	const ambientLight = new THREE.AmbientLight(0xffffff, 2);
@@ -49,70 +50,6 @@ const AddToScene = (scene, terrain, lights, paddle1, paddle2, ball) => {
 	ball.current.castShadow = true;
 	scene.add(ball.current);
 }
-
-const createParticleBurst = (scene, position) => {
-	const particleCount = 20;
-	const particleGeometry = new THREE.BufferGeometry();
-	const positions = new Float32Array(particleCount * 3);
-	const velocities = new Float32Array(particleCount * 3);
-
-	for (let i = 0; i < particleCount; i++) {
-		positions[i * 3] = position.x;
-		positions[i * 3 + 1] = position.y;
-		positions[i * 3 + 2] = position.z;
-
-		velocities[i * 3] = (Math.random() - 0.5) * 2;
-		velocities[i * 3 + 1] = (Math.random() - 0.5) * 2;
-		velocities[i * 3 + 2] = (Math.random() - 0.5) * 2;
-	}
-
-	particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-	particleGeometry.setAttribute('velocity', new THREE.BufferAttribute(velocities, 3));
-
-	const particleMaterial = new THREE.PointsMaterial({
-		color: 0xffffff,
-		size: 0.1,
-		transparent: true,
-		opacity: 1.0,
-	});
-
-	const particles = new THREE.Points(particleGeometry, particleMaterial);
-	scene.add(particles);
-
-	let animationFrameId;
-
-	const animateBurst = () => {
-		const positions = particleGeometry.attributes.position.array;
-		const velocities = particleGeometry.attributes.velocity.array;
-
-		let allInvisible = true;
-
-		for (let i = 0; i < particleCount; i++) {
-			positions[i * 3] += velocities[i * 3] * 0.05;
-			positions[i * 3 + 1] += velocities[i * 3 + 1] * 0.05;
-			positions[i * 3 + 2] += velocities[i * 3 + 2] * 0.05;
-		}
-
-		particleMaterial.opacity *= 0.95;
-		particleGeometry.attributes.position.needsUpdate = true;
-
-		if (particleMaterial.opacity > 0.01) {
-			allInvisible = false;
-		}
-
-		if (!allInvisible) {
-			animationFrameId = requestAnimationFrame(animateBurst);
-		} else {
-			scene.remove(particles);
-			particleGeometry.dispose();
-			particleMaterial.dispose();
-
-			cancelAnimationFrame(animationFrameId);
-		}
-	};
-
-	animationFrameId = requestAnimationFrame(animateBurst);
-};
 
 const GameCanvas = (canvas, paddle1, paddle2, ball, terrain, hit) => {
 	const scene = new THREE.Scene();
