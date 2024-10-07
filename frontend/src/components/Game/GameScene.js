@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { GameContainer, Score, ScoresContainer, StyledCanvas } from "./styles/Game.styled";
+import { GameSceneContainer, Score, ScoresContainer, StyledCanvas } from "./styles/Game.styled";
 import GameCanvas from "../../scripts/game";
 import { useNavigate } from "react-router-dom";
 
@@ -111,15 +111,14 @@ const GameScene = ({ matchState, hitPos, sendMessage }) => {
 		);
 	}, [terrain, matchState]);
 
-
 	return (
-		<GameContainer>
+		<GameSceneContainer>
 			<StyledCanvas ref={canvas}/>
 			<ScoresContainer>
 				<Score>{scoreA}</Score>
 				<Score>{scoreB}</Score>
 			</ScoresContainer>
-		</GameContainer>
+		</GameSceneContainer>
 	);
 };
 

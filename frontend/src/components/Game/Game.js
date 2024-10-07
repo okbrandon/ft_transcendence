@@ -109,7 +109,6 @@ const Game = () => {
 					if (data.d.userID !== gameState.player?.userID) setGameState(prevState => ({ ...prevState, opponent: formatUserData(data.d) }));
 					break;
 				case 'PADDLE_HIT':
-					console.log(data.d.ball);
 					setHitPos(data.d.ball);
 					break;
 				default:

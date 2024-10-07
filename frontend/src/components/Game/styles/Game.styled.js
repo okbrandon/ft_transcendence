@@ -15,7 +15,7 @@ export const PageContainer = styled.div`
 	background-position: center;
 `;
 
-export const GameContainer = styled.div`
+export const GameSceneContainer = styled.div`
 	position: relative;
 	border: 3px solid rgba(255, 255, 255, 0.2);
 	border-radius: 20px;
