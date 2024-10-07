@@ -1,14 +1,33 @@
 import * as THREE from 'three';
 import { BallAttributes, PaddleAttributes, Particles, DashedLine } from './gameShapes';
 
-const Lightning = scene => {
-	const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+const Lightning = (scene, terrain) => {
+	const ambientLight = new THREE.AmbientLight(0xffffff, 2);
 	scene.add(ambientLight);
+	// Light intensity and distance configuration
+	const lightIntensity = 80;
+	const lightDistance = 150;
 
-	const ballLight = new THREE.PointLight(0xffffff, 50, 50);
-	ballLight.castShadow = true;
+	const lightColors = ['#FF6F91', '#6FFFE9', '#B983FF', '#FFD700'];
 
-	return { ambientLight, ballLight };
+	// Positions for the four corner lights
+	const cornerPositions = [
+		{ x: -terrain.SCENEWIDTH / 2, y: terrain.SCENEHEIGHT / 2, z: 15 },  // Top-left
+		{ x: terrain.SCENEWIDTH / 2, y: terrain.SCENEHEIGHT / 2, z: 15 },   // Top-right
+		{ x: -terrain.SCENEWIDTH / 2, y: -terrain.SCENEHEIGHT / 2, z: 15 }, // Bottom-left
+		{ x: terrain.SCENEWIDTH / 2, y: -terrain.SCENEHEIGHT / 2, z: 15 }   // Bottom-right
+	];
+
+	// Add 4 corner lights
+	const cornerLights = cornerPositions.map((position, index) => {
+		const pointLight = new THREE.PointLight(lightColors[index], lightIntensity, lightDistance);
+		pointLight.position.set(position.x, position.y, position.z);
+		pointLight.castShadow = true;
+		scene.add(pointLight);
+		return pointLight;
+	});
+
+	return { ambientLight, cornerLights };
 };
 
 const AddToScene = (scene, terrain, lights, paddle1, paddle2, ball) => {
@@ -28,7 +47,6 @@ const AddToScene = (scene, terrain, lights, paddle1, paddle2, ball) => {
 	ball.current = new THREE.Mesh(ballGeometry, ballMaterial);
 	ball.current.position.set(0, 0, 0);
 	ball.current.castShadow = true;
-	ball.current.add(lights.ballLight);
 	scene.add(ball.current);
 }
 
@@ -38,7 +56,7 @@ const GameCanvas = (canvas, paddle1, paddle2, ball, terrain, hit) => {
 	camera.position.set(0, 0, 20.7);
 	camera.lookAt(0, 0, 0);
 
-	const lights = Lightning(scene);
+	const lights = Lightning(scene, terrain);
 	const particles = Particles(scene);
 	const dashedLine = DashedLine(scene, terrain);
 
@@ -94,8 +112,10 @@ const GameCanvas = (canvas, paddle1, paddle2, ball, terrain, hit) => {
 
 		scene.remove(lights.ambientLight);
 		lights.ambientLight.dispose();
-		scene.remove(lights.ballLight);
-		lights.ballLight.dispose();
+		lights.cornerLights.forEach(light => {
+			scene.remove(light);
+			light.dispose();
+		});
 
 		particles.dispose();
 

@@ -611,13 +611,13 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                 match_state['ball']['y'] - BALL_RADIUS <= match_state['playerA']['paddle_y'] + PADDLE_HEIGHT and  # Ball's bottom is above paddle's bottom
                 match_state['ball']['y'] + BALL_RADIUS >= match_state['playerA']['paddle_y'] - PADDLE_HEIGHT):  # Ball's top is below paddle's top
                 match_state['ball']['dx'] *= -1
-                await self.send_paddle_hit(match_state['playerA'])
+                await self.send_paddle_hit(match_state['playerA'], match_state['ball'])
 
             elif (match_state['ball']['x'] + BALL_RADIUS >= TERRAIN_WIDTH - PADDLE_WIDTH and  # Right side of ball hits Player B's paddle
                 match_state['ball']['y'] - BALL_RADIUS <= match_state['playerB']['paddle_y'] + PADDLE_HEIGHT and  # Ball's bottom is above paddle's bottom
                 match_state['ball']['y'] + BALL_RADIUS >= match_state['playerB']['paddle_y'] - PADDLE_HEIGHT):  # Ball's top is below paddle's top
                 match_state['ball']['dx'] *= -1
-                await self.send_paddle_hit(match_state['playerB'])
+                await self.send_paddle_hit(match_state['playerB'], match_state['ball'])
 
             # Check for scoring
             if match_state['ball']['x'] <= 0:
@@ -639,19 +639,20 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             await self.send_match_update()
             await asyncio.sleep(1 / 120) # 120 FPS
 
-    async def send_paddle_hit(self, player):
+    async def send_paddle_hit(self, player, ball):
         await self.channel_layer.group_send(
             f"match_{self.match.matchID}",
             {
                 "type": "paddle.hit",
-                "player": player
+                "player": player,
+                "ball": ball
             }
         )
 
     async def paddle_hit(self, event):
         await self.send_json({
             "e": "PADDLE_HIT",
-            "d": {"player": event["player"]}
+            "d": {"player": event["player"], "ball": event["ball"]}
         })
         logger.info(f"[{self.__class__.__name__}] Paddle hit event sent for player: {event['player']['id']}")
 

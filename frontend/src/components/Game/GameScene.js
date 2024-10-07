@@ -70,11 +70,8 @@ const GameScene = ({ matchState, hitPos, sendMessage }) => {
 
 	useEffect(() => {
 		if (!hitPos) return;
-		hit.current = {
-			x: hitPos === 'A' ? paddle1.current.position.x : paddle2.current.position.x,
-			y: hitPos === 'A' ? paddle1.current.position.y : paddle2.current.position.y
-		}
-	}, [hitPos]);
+		hit.current = { x: (hitPos.x - 600) * terrain.SCALEX, y: (hitPos.y - 375) * terrain.SCALEY };
+	}, [hitPos, terrain]);
 
 	useEffect(() => {
 		if (!canvas.current) return;

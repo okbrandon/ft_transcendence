@@ -35,12 +35,6 @@ export const BallAttributes = terrain => {
 	const ballGeometry = new THREE.SphereGeometry(25 * terrain.SCALEX / 2, 32, 32);
 	const ballMaterial = new THREE.MeshPhysicalMaterial({
 		color: 0xffffff,
-		emissive: 0xffffff,
-		emissiveIntensity: 100,
-		metalness: 0.1,
-		roughness: 0.2,
-		clearcoat: 1,
-		clearcoatRoughness: 0.05,
 	});
 	return {ballGeometry, ballMaterial};
 }
@@ -61,7 +55,7 @@ const computeGeometry = () => {
 			positions[ 3 * k + 1 ] = y;
 			positions[ 3 * k + 2 ] = z;
 
-			const intensity = 0.3;
+			const intensity = 0.7;
 			colors[ 3 * k + 0 ] = j / nb * intensity;
 			colors[ 3 * k + 1 ] = 0;
 			colors[ 3 * k + 2 ] = i / nb * intensity;
