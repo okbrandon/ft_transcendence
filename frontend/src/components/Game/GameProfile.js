@@ -13,8 +13,8 @@ const GameProfile = ({ side, playerSide, player, opponent }) => {
 						</>
 					) : (
 						<>
-							<p>Waiting for player</p>
-							<Spinner animation="border"/>
+							Waiting for player
+							<Spinner animation="border" size="sm"/>
 						</>
 					)
 				) : (
@@ -25,8 +25,8 @@ const GameProfile = ({ side, playerSide, player, opponent }) => {
 						</>
 					) : (
 						<>
-							<p>Waiting for opponent</p>
-							<Spinner animation="border"/>
+							Waiting for opponent
+							<Spinner animation="border" size="sm"/>
 						</>
 					)
 				)}

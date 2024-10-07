@@ -121,9 +121,7 @@ const GameCanvas = (canvas, paddle1, paddle2, ball, terrain, hit) => {
 		});
 
 		particles.dispose();
-
 		dashedLine.dispose();
-
 		renderer.dispose();
 	}
 
