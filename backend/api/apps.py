@@ -15,8 +15,11 @@ def create_store_items(sender, **kwargs):
     from .models import StoreItem
 
     default_items = [
-        {"itemID": generate_id("item"), "name": "Basketball Ball Skin", "description": "Slam dunk in style with this vibrant basketball skin!", "price": 100},
-        {"itemID": generate_id("item"), "name": "Rainbow Paddle Skin", "description": "Add a splash of color to your pong game with this rainbow paddle!", "price": 200},
+        {"itemID": generate_id("item"), "name": "Red Paddle Skin", "assetID": "red.jpeg", "price": 100},
+        {"itemID": generate_id("item"), "name": "Neon Paddle Skin", "assetID": "neon.jpeg", "price": 150},
+        {"itemID": generate_id("item"), "name": "Galaxy Paddle Skin", "assetID": "galaxy.jpeg", "price": 250},
+        {"itemID": generate_id("item"), "name": "Luxury Paddle Skin", "assetID": "luxury.jpeg", "price": 300},
+        {"itemID": generate_id("item"), "name": "Pepe Paddle Skin", "assetID": "pepe.jpeg", "price": 1000},
     ]
 
     for item in default_items:
