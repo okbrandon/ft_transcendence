@@ -18,6 +18,8 @@ import Spinner from 'react-bootstrap/Spinner';
 
 const Game = () => {
 	const navigate = useNavigate();
+	const location = useLocation();
+	const gameMode = location.state?.mode;
 	const [matchState, setMatchState] = useState(null);
 	const [playerSide, setPlayerSide] = useState(null);
 	const [opponent, setOpponent] = useState(null);
@@ -82,7 +84,7 @@ const Game = () => {
 		if (heartbeatAckCount >= 2 && !matchmakingStarted) {
 			sendMessage(JSON.stringify({
 				e: 'MATCHMAKE_REQUEST',
-				d: { match_type: '1v1' }
+				d: { match_type: gameMode }
 			}));
 			setMatchmakingStarted(true);
 		}
