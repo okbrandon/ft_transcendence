@@ -336,7 +336,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         await self.accept()
         await self.send_json({
             "e": "HELLO",
-            "d": {"heartbeat_interval": 3000}
+            "d": {"heartbeat_interval": 300000}
         })
         self.last_heartbeat = time.time()
         self.heartbeat_task = asyncio.create_task(self.heartbeat_check())
@@ -363,6 +363,8 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             await self.handle_identify(data)
         elif event_type == 'MATCHMAKE_REQUEST':
             await self.handle_matchmake_request(data)
+        elif event_type == 'MATCHMAKE_FORCE_JOIN':
+            await self.handle_matchmake_force_join(data)
         elif event_type == 'PADDLE_MOVE':
             await self.handle_paddle_move(data)
         elif event_type == 'PLAYER_QUIT':
@@ -372,21 +374,27 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         while True:
             await asyncio.sleep(2)  # Check every 2 seconds
             current_time = time.time()
-            if current_time - self.last_heartbeat > 10:  # No heartbeat for 10 seconds
+            if current_time - self.last_heartbeat > 300:  # No heartbeat for 10 seconds
                 logger.warning(f"[{self.__class__.__name__}] No heartbeat received for 10 seconds, closing connection")
                 await self.close()
                 break
 
     async def handle_identify(self, data):
         token = data.get('token')
-        user_profile = await self.get_user_profile(token)
-        if user_profile:
-            self.user = await self.get_user_from_id(user_profile['userID'])
-            await self.send_json({"e": "READY", "d": user_profile})
-            logger.info(f"[{self.__class__.__name__}] User identified: {self.user.userID}")
+
+        if token != os.getenv('BOT_TOKEN'):
+            user_profile = await self.get_user_profile(token)
+            if user_profile:
+                self.user = await self.get_user_from_id(user_profile['userID'])
+                await self.send_json({"e": "READY", "d": user_profile})
+                logger.info(f"[{self.__class__.__name__}] User identified: {self.user.userID}")
+            else:
+                logger.warning(f"[{self.__class__.__name__}] Invalid token, closing connection")
+                await self.close()
         else:
-            logger.warning(f"[{self.__class__.__name__}] Invalid token, closing connection")
-            await self.close()
+            self.user = await self.get_user_from_id('user_ai')
+            await self.send_json({"e": "READY", "d": get_safe_profile(UserSerializer(self.user).data, me=True)})
+            logger.info(f"[{self.__class__.__name__}] AI identified: {self.user.userID}")
 
     async def get_user_profile(self, token):
         try:
@@ -450,6 +458,36 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             )
             await self.send_match_begin(match)
             logger.info(f"[{self.__class__.__name__}] Match {match.matchID} started with both players")
+
+    async def handle_matchmake_force_join(self, data):
+        match_id = data.get('match_id')
+        logger.info(f"[{self.__class__.__name__}] Force join request received for match: {match_id}")
+        match = await self.find_match_by_id(match_id)
+        self.match = match
+        await self.channel_layer.group_add(
+            f"match_{match.matchID}",
+            self.channel_name
+        )
+
+        user_data = UserSerializer(self.user).data
+
+        await self.send_json({
+            "e": "MATCH_JOIN",
+            "d": {
+                "match_id": match.matchID,
+                "side": "right",
+                "opponent": await self.get_opponent_info(match, self.user)
+            }
+        })
+
+        await self.channel_layer.group_send(
+            f"match_{match.matchID}",
+            {
+                "type": "player.join",
+                "player": get_safe_profile(user_data, me=False)
+            }
+        )
+        await self.send_match_begin(match)
 
     async def send_match_begin(self, match):
         match_state = self.active_matches[match.matchID]
@@ -518,6 +556,14 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             return None
 
     @database_sync_to_async
+    def find_match_by_id(self, match_id):
+        try:
+            return Match.objects.get(matchID=match_id)
+        except Match.DoesNotExist:
+            logger.error(f"[{self.__class__.__name__}] Match not found: {match_id}")
+            return None
+
+    @database_sync_to_async
     def find_or_create_match(self, match_type):
         if match_type == '1v1':
             available_match = Match.objects.filter(playerB__isnull=True, flags=0).first()
@@ -541,13 +587,14 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             new_match = Match.objects.create(
                 matchID=generate_id("match"),
                 playerA={"id": self.user.userID, "platform": "web"},
-                playerB={"id": "ai", "platform": "server"},
+                # playerB={"id": "ai", "platform": "server"},
                 winnerID=None,
                 finishedAt=None,
                 scores={},
                 flags=1 << 1  # AI flag
             )
             logger.info(f"[{self.__class__.__name__}] Created new AI match: {new_match.matchID}")
+            #TODO: post request to AI server to start game
             return new_match
 
     @database_sync_to_async

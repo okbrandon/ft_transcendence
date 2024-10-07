@@ -81,12 +81,14 @@ const Game = () => {
 	}, [readyState, sendHeartbeat, sendMessage, helloReceived, heartbeatIntervalTime]);
 
 	useEffect(() => {
-		if (heartbeatAckCount >= 2 && !matchmakingStarted) {
-			sendMessage(JSON.stringify({
-				e: 'MATCHMAKE_REQUEST',
-				d: { match_type: gameMode }
-			}));
-			setMatchmakingStarted(true);
+		if (heartbeatAckCount >= 0 && !matchmakingStarted) {
+			setTimeout(() => {
+				sendMessage(JSON.stringify({
+					e: 'MATCHMAKE_REQUEST',
+					d: { match_type: gameMode }
+				}));
+				setMatchmakingStarted(true);
+			}, 6000);
 		}
 	}, [sendMessage, heartbeatAckCount, matchmakingStarted]);
 
