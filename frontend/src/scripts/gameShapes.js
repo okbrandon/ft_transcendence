@@ -131,8 +131,8 @@ export const Particles = scene => {
 export const DashedLine = (scene, terrain) => {
 	const lineMaterial = new THREE.LineDashedMaterial({
 		color: 0xffffff,
-		dashSize: 1,
-		gapSize: 1,
+		dashSize: 0.5,
+		gapSize: 0.5,
 	});
 	const points = [];
 	points.push(new THREE.Vector3(0, terrain.SCENEHEIGHT / 2, 0));
