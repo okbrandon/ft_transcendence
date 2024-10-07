@@ -18,15 +18,22 @@ const roundedRectShape = (width, height, radius) => {
 	return shape;
 };
 
-export const PaddleAttributes = terrain => {
+export const PaddleAttributes = (terrain, textureUrl = undefined) => {
+	const textureLoader = new THREE.TextureLoader();
+	const paddleTexture = textureUrl ? textureLoader.load(textureUrl) : null;
+
 	const paddleShape = roundedRectShape(20 * terrain.SCALEX, 120 * terrain.SCALEY, 10 * terrain.SCALEX);
 	const extrudeSettings = { depth: 0.5, bevelEnabled: false };
 	const paddleGeometry = new THREE.ExtrudeGeometry(paddleShape, extrudeSettings);
 	const paddleMaterial = new THREE.MeshPhongMaterial({
-		color: 0xffffff,
+		map: paddleTexture,
+		color: !paddleTexture ? 0xffffff : undefined,
+		shininess: 150,
 		specular: 0xaaaaaa,
-		shininess: 100,
 		emissive: 0x333333,
+		emissiveIntensity: 0.5,
+		wireframe: false,
+		flatShading: false
 	});
 	return {paddleGeometry, paddleMaterial};
 }

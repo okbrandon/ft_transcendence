@@ -31,7 +31,7 @@ const Lightning = (scene, terrain) => {
 	return { ambientLight, cornerLights };
 };
 
-const AddToScene = (scene, terrain, lights, paddle1, paddle2, ball) => {
+const AddToScene = (scene, terrain, paddle1, paddle2, ball) => {
 	const { paddleGeometry, paddleMaterial } = PaddleAttributes(terrain);
 	const { ballGeometry, ballMaterial } = BallAttributes(terrain);
 
@@ -65,7 +65,7 @@ const GameCanvas = (canvas, paddle1, paddle2, ball, terrain, hit) => {
 	renderer.setSize(terrain.WIDTH, terrain.HEIGHT);
 	renderer.shadowMap.enabled = true;
 
-	AddToScene(scene, terrain, lights, paddle1, paddle2, ball);
+	AddToScene(scene, terrain, paddle1, paddle2, ball);
 
 	const mapToRipplePlane = (hitPosition, cameraZ, rippleZ) => {
 		const zRatio = (cameraZ - rippleZ) / cameraZ;
