@@ -30,7 +30,7 @@ class MakePurchase(APIView):
         if user.money < item.price:
             return Response({"error": "Insufficient funds"}, status=status.HTTP_400_BAD_REQUEST)
 
-        purchase = Purchase.objects.create(userID=user.userID, itemID=item, purchaseID=generate_id("purchase"))
+        purchase = Purchase.objects.create(userID=user.userID, itemID=itemID, purchaseID=generate_id("purchase"))
         user.money -= item.price
         user.save()
 
