@@ -15,9 +15,9 @@ from asgiref.sync import sync_to_async, async_to_sync
 from django.db.models import Q, Count
 from django.utils import timezone
 
-from .models import Conversation, User, Relationship, Match
+from .models import Conversation, User, Relationship, Match, UserSettings
 from .util import generate_id, get_safe_profile, get_user_id_from_token
-from .serializers import UserSerializer, MatchSerializer
+from .serializers import UserSerializer, MatchSerializer, UserSettingsSerializer
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -561,6 +561,9 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             opponent = User.objects.get(userID=opponent_id)
             opponent_data = UserSerializer(opponent).data
             safe_profile = get_safe_profile(opponent_data, me=False)
+            opponent_settings = UserSettings.objects.get(userID=opponent_id)
+            opponent_settings_data = UserSettingsSerializer(opponent_settings).data
+            safe_profile['paddle_skin'] = opponent_settings_data['selectedPaddleSkin']
             logger.info(f"[{self.__class__.__name__}] Opponent info retrieved for: {opponent_id}")
             return safe_profile
         except User.DoesNotExist:
