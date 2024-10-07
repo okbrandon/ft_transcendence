@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 const GameScene = ({ matchState, hitPos, sendMessage }) => {
 	const navigate = useNavigate();
 	const [keyPressed, setKeyPressed] = useState(null);
+	const [isHit, setIsHit] = useState(false);
 	const [scoreA, setScoreA] = useState(0);
 	const [scoreB, setScoreB] = useState(0);
 	const canvas = useRef(null);
@@ -71,6 +72,10 @@ const GameScene = ({ matchState, hitPos, sendMessage }) => {
 	useEffect(() => {
 		if (!hitPos) return;
 		hit.current = { x: (hitPos.x - 600) * terrain.SCALEX, y: (hitPos.y - 375) * terrain.SCALEY };
+		setIsHit(true);
+		console.log('hit');
+		const timeoutID = setTimeout(() => setIsHit(false), 500);
+		return () => clearTimeout(timeoutID);
 	}, [hitPos, terrain]);
 
 	useEffect(() => {
@@ -112,7 +117,7 @@ const GameScene = ({ matchState, hitPos, sendMessage }) => {
 	}, [terrain, matchState]);
 
 	return (
-		<GameSceneContainer>
+		<GameSceneContainer className={isHit ? "hit" : ""}>
 			<StyledCanvas ref={canvas}/>
 			<ScoresContainer>
 				<Score>{scoreA}</Score>

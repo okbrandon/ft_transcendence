@@ -24,6 +24,25 @@ export const GameSceneContainer = styled.div`
 	box-shadow: 0 0 20px rgba(164, 69, 178, 0.7), 0 0 30px rgba(59, 130, 246, 0.4);
 	overflow: hidden;
 	margin: 0 auto;
+
+	@keyframes borderHit {
+		0% {
+			border: 3px solid rgba(255, 255, 255, 0.5);
+			box-shadow: 0 0 20px rgba(164, 69, 178, 1), 0 0 30px rgba(59, 130, 246, 0.7);
+		}
+		50% {
+			border: 3px solid rgba(255, 255, 255, 0.3);
+			box-shadow: 0 0 20px rgba(164, 69, 178, 0.8), 0 0 30px rgba(59, 130, 246, 0.5);
+		}
+		100% {
+			border: 3px solid rgba(255, 255, 255, 0.2);
+			box-shadow: 0 0 20px rgba(164, 69, 178, 0.7), 0 0 30px rgba(59, 130, 246, 0.4);
+		}
+	}
+
+	&.hit {
+		animation: borderHit 0.5s ease-in-out;
+	}
 `;
 
 export const StyledCanvas = styled.canvas`
