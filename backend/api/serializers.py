@@ -25,7 +25,7 @@ class RelationshipSerializer(serializers.ModelSerializer):
 class StoreItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = StoreItem
-        fields = ["itemID", "name", "description", "price"]
+        fields = ["itemID", "name", "assetID", "price"]
 
 class VerificationCodeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -53,7 +53,7 @@ class TokenSerializer(serializers.ModelSerializer):
 class UserSettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserSettings
-        fields = ["userID", "theme", "colorblind"]
+        fields = ["userID", "selectedPaddleSkin"]
 
 class MessageSerializer(serializers.ModelSerializer):
     sender = UserSerializer()

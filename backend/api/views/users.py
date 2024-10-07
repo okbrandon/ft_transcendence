@@ -23,7 +23,7 @@ from channels.layers import get_channel_layer
 
 from asgiref.sync import async_to_sync
 
-from ..models import User, Match, Relationship, UserSettings
+from ..models import User, Match, Relationship, UserSettings, Purchase, StoreItem
 from ..serializers import UserSerializer, UserSettingsSerializer, MatchSerializer, RelationshipSerializer
 from ..util import send_otp_via_sms, send_data_package_ready_email, get_safe_profile, generate_id
 from ..validators import *
@@ -215,23 +215,32 @@ class UserHarvestMe(APIView):
 class UserSettingsMe(APIView):
     def get(self, request, *args, **kwargs):
         me = request.user
-        settings = UserSettings.objects.get(user=me)
+        settings, created = UserSettings.objects.get_or_create(userID=me)
         serializer = UserSettingsSerializer(settings)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request, *args, **kwargs):
         me = request.user
         data = request.data
-        allowed_fields = ['theme', 'colorblind']
-        updated_fields = {}
-        for field in allowed_fields:
-            if field in data:
-                updated_fields[field] = data[field]
-        for field, value in updated_fields.items():
-            setattr(me, field, value)
+        settings, created = UserSettings.objects.get_or_create(userID=me)
 
-        me.save()
-        serializer = UserSettingsSerializer(me)
+        if 'selectedPaddleSkin' in data:
+            new_skin_id = data['selectedPaddleSkin']
+            
+            # Check if the user has purchased the skin
+            if new_skin_id is not None:
+                try:
+                    skin_item = StoreItem.objects.get(itemID=new_skin_id)
+                    purchase = Purchase.objects.filter(userID=me.userID, itemID=skin_item.itemID).exists()
+                    if not purchase:
+                        return Response({"error": "You haven't purchased this paddle skin."}, status=status.HTTP_403_FORBIDDEN)
+                except StoreItem.DoesNotExist:
+                    return Response({"error": "Invalid paddle skin ID."}, status=status.HTTP_400_BAD_REQUEST)
+            
+            settings.selectedPaddleSkin = new_skin_id
+
+        settings.save()
+        serializer = UserSettingsSerializer(settings)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class UserRelationshipsMe(APIView):
