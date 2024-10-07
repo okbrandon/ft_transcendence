@@ -66,6 +66,16 @@ services:
     volumes:
       - certs_data:/certs
 
+  pongbot:
+    build: ./pongbot
+    restart: always
+    env_file: .env
+    depends_on:
+      - certs
+    networks:
+      - transcendence
+    volumes:
+      - certs_data:/certs
 networks:
   transcendence:
     driver: bridge
