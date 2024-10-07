@@ -33,7 +33,7 @@ up: intro ## Launch the project in the background
 	@ $(DC) up -d --build
 
 logs: intro ## Show the logs of the project
-	@ $(DC) logs
+	@ $(DC) logs -f
 
 logs-backend: intro ## Show the logs of the backend
 	@ docker logs ft_transcendence-backend-1
