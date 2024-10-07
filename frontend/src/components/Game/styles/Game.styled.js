@@ -1,17 +1,5 @@
 import styled from "styled-components";
 
-export const StyledCanvas = styled.canvas`
-	position: relative;
-	border: 3px solid rgba(255, 255, 255, 0.2);
-	border-radius: 20px;
-	width: 1200px;
-	height: 750px;
-	background: radial-gradient(circle, rgba(20, 20, 20, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%);
-	box-shadow: 0 0 20px rgba(164, 69, 178, 0.7), 0 0 30px rgba(59, 130, 246, 0.4);
-	overflow: hidden;
-	margin: 0 auto;
-`;
-
 export const PageContainer = styled.div`
 	display: flex;
 	position: relative;
@@ -25,6 +13,41 @@ export const PageContainer = styled.div`
 		linear-gradient(135deg, #000000 0%, #111111 100%);
 	background-size: cover;
 	background-position: center;
+`;
+
+export const GameContainer = styled.div`
+	position: relative;
+	border: 3px solid rgba(255, 255, 255, 0.2);
+	border-radius: 20px;
+	width: 1200px;
+	height: 750px;
+	box-shadow: 0 0 20px rgba(164, 69, 178, 0.7), 0 0 30px rgba(59, 130, 246, 0.4);
+	overflow: hidden;
+	margin: 0 auto;
+`;
+
+export const StyledCanvas = styled.canvas`
+	width: 100%;
+	height: 100%;
+`;
+
+export const ScoresContainer = styled.div`
+	position: absolute;
+	top: 10px;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 120px;
+	font-family: 'Orbitron'	, sans-serif;
+	color: #fff;
+	z-index: 100000;
+`;
+
+export const Score = styled.div`
+	font-size: 5rem;
+	font-weight: bold;
+	text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
 `;
 
 export const ProfilesContainer = styled.div`

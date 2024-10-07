@@ -1,11 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { StyledCanvas } from "./styles/Game.styled";
+import { GameContainer, Score, ScoresContainer, StyledCanvas } from "./styles/Game.styled";
 import GameCanvas from "../../scripts/game";
 import { useNavigate } from "react-router-dom";
 
 const GameScene = ({ matchState, hitPos, sendMessage }) => {
 	const navigate = useNavigate();
 	const [keyPressed, setKeyPressed] = useState(null);
+	const [scoreA, setScoreA] = useState(0);
+	const [scoreB, setScoreB] = useState(0);
 	const canvas = useRef(null);
 	const paddle1 = useRef(null);
 	const paddle2 = useRef(null);
@@ -95,6 +97,12 @@ const GameScene = ({ matchState, hitPos, sendMessage }) => {
 
 	useEffect(() => {
 		if (!matchState) return;
+		if (matchState.scores[`${matchState.playerA.id}`] !== scoreA) setScoreA(matchState.scores[`${matchState.playerA.id}`]);
+		if (matchState.scores[`${matchState.playerB.id}`] !== scoreB) setScoreB(matchState.scores[`${matchState.playerB.id}`]);
+	}, [matchState, scoreA, scoreB]);
+
+	useEffect(() => {
+		if (!matchState) return;
 
 		paddle1.current.position.y = (matchState.playerA.paddle_y - 375) * terrain.SCALEY;
 		paddle2.current.position.y = (matchState.playerB.paddle_y - 375) * terrain.SCALEY;
@@ -106,7 +114,16 @@ const GameScene = ({ matchState, hitPos, sendMessage }) => {
 		);
 	}, [terrain, matchState]);
 
-	return <StyledCanvas ref={canvas}/>;
+
+	return (
+		<GameContainer>
+			<StyledCanvas ref={canvas}/>
+			<ScoresContainer>
+				<Score>{scoreA}</Score>
+				<Score>{scoreB}</Score>
+			</ScoresContainer>
+		</GameContainer>
+	);
 };
 
 export default GameScene;
