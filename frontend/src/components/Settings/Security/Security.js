@@ -12,9 +12,11 @@ import {
 } from "../styles/Settings.styled";
 import PongButton from "../../../styles/shared/PongButton.styled";
 import ErrorMessage from "../../../styles/shared/ErrorMessage.styled";
+import { useNotification } from "../../../context/NotificationContext";
 import { useTranslation } from "react-i18next";
 
 const Security = ({ user, setUser }) => {
+	const { addNotification } = useNotification();
 	const [formData, setFormData] = useState({
 		email: user.email,
 		phone_number: user.phone_number || '',
@@ -34,9 +36,9 @@ const Security = ({ user, setUser }) => {
 				setHas2FA(res.data.has_otp);
 			})
 			.catch(err => {
-				console.error(err.response.data.error);
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred'}`);
 			})
-	}, []);
+	}, [addNotification]);
 
 	const handleChange = e => {
 		const { id, value } = e.target;
@@ -104,7 +106,7 @@ const Security = ({ user, setUser }) => {
 							setUser(user);
 						})
 						.catch(err => {
-							setError(err.response.data.error);
+							setError(err?.response?.data?.error || 'An error occurred');
 							setSuccess('');
 						});
 				})

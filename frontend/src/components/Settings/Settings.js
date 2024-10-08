@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AccountPreferences from './AccountPreferences/AccountPreferences';
 import Security from './Security/Security';
@@ -11,12 +11,12 @@ import {
 	SidebarBackButton,
 	SidebarButton,
 } from './styles/Settings.styled';
-import { AuthContext } from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import Loader from '../../styles/shared/Loader.styled';
 import { useTranslation } from 'react-i18next';
 
 const Settings = () => {
-	const { user, setUser, loading } = useContext(AuthContext);
+	const { user, setUser, loading } = useAuth();
 	const [activeSection, setActiveSection] = useState("account");
 	const navigate = useNavigate();
 	const { t } = useTranslation();

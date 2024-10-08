@@ -1,21 +1,21 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import axios from "axios";
+import { useNotification } from "../../context/NotificationContext";
 import { ApiLogin } from "../../api/auth";
 import logger from "../../api/logger";
-import { AuthContext } from "../../context/AuthContext";
-import Notification from "../Notification/Notification";
+import { useAuth } from "../../context/AuthContext";
 import OTPInputComponent from "./OTPInput";
 import { FormContainer } from "./styles/Authentication.styled";
 import { AvailablePlatformsContainer, PlatformButton } from "./styles/TwoFactorAuth.styled";
 import PongButton from "../../styles/shared/PongButton.styled";
 import ErrorMessage from "../../styles/shared/ErrorMessage.styled";
-import { useTranslation } from "react-i18next";
 
 const TwoFactorAuthSignIn = ({ username, password, setIsTwoFactorAuth, availablePlatforms }) => {
 	const navigate = useNavigate();
-	const notificationRef = useRef(null);
-	const { setIsLoggedIn } = useContext(AuthContext);
+	const { addNotification } = useNotification();
+	const { setIsLoggedIn } = useAuth();
 	const [authCode, setAuthCode] = useState("");
 	const [disableVerify, setDisableVerify] = useState(!authCode);
 	const [otpSent, setOtpSent] = useState(false);
@@ -23,28 +23,23 @@ const TwoFactorAuthSignIn = ({ username, password, setIsTwoFactorAuth, available
 	const { t } = useTranslation();
 
 	useEffect(() => {
-		if (otpSent && notificationRef.current) {
-			notificationRef.current.addNotification(
-				'info',
-				t('auth.twoFactor.successMessage')
-			);
+		if (otpSent) {
+			addNotification('info', t('auth.twoFactor.successMessage'));
 			setOtpSent(false);
 		}
-	}, [otpSent]);
+	}, [otpSent, addNotification, t]);
 
-	const handlePlatform = (platform) => {
+	const handlePlatform = platform => {
 		axios.post('/api/v1/auth/totp/request', { username, password, platform })
 			.then(() => {
 				setOtpSent(true);
-				logger('2FA: Request sent');
 			})
 			.catch(err => {
-				logger('2FA: Request failed');
-				setError(err.response.data.error);
+				setError(err?.response?.data?.error || 'An error occurred');
 			});
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = e => {
 		e.preventDefault();
 		setDisableVerify(true);
 		setError("");
@@ -54,8 +49,8 @@ const TwoFactorAuthSignIn = ({ username, password, setIsTwoFactorAuth, available
 				setIsLoggedIn(true);
 				navigate("/");
 			})
-			.catch((err) => {
-				setError(err.response.data.error);
+			.catch(err => {
+				setError(err?.response?.data?.error || 'An error occurred');
 			});
 	};
 
@@ -91,7 +86,6 @@ const TwoFactorAuthSignIn = ({ username, password, setIsTwoFactorAuth, available
 					{t('auth.twoFactor.backButton')}
 				</PongButton>
 			</FormContainer>
-			<Notification ref={notificationRef}/>
 		</>
 	);
 };

@@ -21,7 +21,7 @@ export const GetUser = async () => {
 		const user = formatUserData(res.data);
 		return user;
 	} catch (err) {
-		console.error(err.response?.data?.error || 'An error occurred');
+		console.error(err?.response?.data?.error || 'An error occurred');
 		return null;
 	}
 };
@@ -34,7 +34,7 @@ export const GetUserByUsername = async (id) => {
 		const user = formatUserData(res.data);
 		return user;
 	} catch (err) {
-		console.error(err.response?.data?.error || 'An error occurred');
+		console.error(err?.response?.data?.error || 'An error occurred');
 		return null;
 	}
 };
@@ -45,7 +45,7 @@ export const GetUsers = async (input) => {
 		const users = res.data.map(formatUserData);
 		return users;
 	} catch (err) {
-		console.error(err.response?.data?.error || 'An error occurred');
+		console.error(err?.response?.data?.error || 'An error occurred');
 		return [];
 	}
 }

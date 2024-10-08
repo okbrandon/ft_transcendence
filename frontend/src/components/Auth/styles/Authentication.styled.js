@@ -22,13 +22,13 @@ export const FormContainer = styled(Form)`
 	align-items: center;
 	gap: 20px;
 	border-radius: 15px;
-	width: 600px;
-	padding: 50px;
+	width: 700px;
+	padding: 80px 50px;
 	margin-top: 80px;
 	font-family: 'Inter', sans-serif;
 	background: transparent;
 	border: 1px solid rgba(255, 255, 255, 0.1);
-	box-shadow: 0 4px 15px rgba(164, 69, 178, 0.5), 0 0 10px rgba(59, 130, 246, 0.5);
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 
 	& > h1 {
 		font-family: 'Orbitron', sans-serif;

@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import API from "../../api/api";
 import PongButton from "../../styles/shared/PongButton.styled";
 import {
@@ -9,31 +10,31 @@ import {
 	ProfileAvatar,
 	ProfileInfo
 } from "./styles/Friends.styled";
-import { useNavigate } from "react-router-dom";
+import { useNotification } from "../../context/NotificationContext";
 import { useTranslation } from "react-i18next";
 
-const RequestsList = ({ requests, setRequests, setFriends }) => {
+const RequestsList = ({ requests, setIsRefetch }) => {
 	const navigate = useNavigate();
+	const { addNotification } = useNotification();
 	const { t } = useTranslation();
 
-	const handleAccept = (focusedRequest) => {
+	const handleAccept = focusedRequest => {
 		API.put('users/@me/relationships', { user: focusedRequest.userID, type: 1 })
 			.then(() => {
-				setFriends(prev => ([...prev, focusedRequest]));
-				setRequests(prev => prev.filter((request) => request.username !== focusedRequest.username));
+				setIsRefetch(true);
 			})
 			.catch(err => {
-				console.error(err.response.data.error);
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 			});
 	};
 
-	const handleDecline = (id) => {
+	const handleDecline = id => {
 		API.delete(`users/@me/relationships/${id}`)
 			.then(() => {
-				setRequests(requests.filter(request => request.relationID !== id));
+				setIsRefetch(true);
 			})
 			.catch(err => {
-				console.error(err.response.data.error);
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 			});
 	};
 

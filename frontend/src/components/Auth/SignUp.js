@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
-import { ApiSignup } from '../../api/auth';
 import { AuthenticationSection, FormContainer, LanguageDropdownButton } from './styles/Authentication.styled';
 import FakeCaptcha from './FakeCaptcha';
 import ErrorMessage from '../../styles/shared/ErrorMessage.styled';
@@ -21,7 +20,7 @@ const SignUp = () => {
 	const [error, setError] = useState('');
 	const { t } = useTranslation();
 
-	const handleChange = (e) => {
+	const handleChange = e => {
 		const { id, value } = e.target;
 
 		setFormData(prevData => ({
@@ -66,19 +65,13 @@ const SignUp = () => {
 		return '';
 	};
 
-	const handleSubmit = (event) => {
+	const handleSubmit = event => {
 		event.preventDefault();
 		const errorMessage = checkSignUpRestrictions(formData, cfPassword);
 		if (errorMessage) {
 			setError(errorMessage);
 		} else {
-			ApiSignup(formData)
-				.then(() => {
-					setShowFakeCaptcha(true);
-				})
-				.catch((error) => {
-					setError(error.response.data.error);
-				});
+			setShowFakeCaptcha(true);
 		}
 	};
 
@@ -144,7 +137,7 @@ const SignUp = () => {
 							type={showCfPassword ? 'text' : 'password'}
 							placeholder=" "
 							value={cfPassword}
-							onChange={(e) => setCfPassword(e.target.value)}
+							onChange={e => setCfPassword(e.target.value)}
 							isInvalid={error && error.includes(t('restrictions.password.errorKeyword'))}
 							autoComplete='new-password'
 						/>
@@ -159,7 +152,13 @@ const SignUp = () => {
 					{error && <ErrorMessage>{error}</ErrorMessage>}
 					<Button variant='light' type='submit'>{t('auth.signUp.registerButton')}</Button>
 				</FormContainer>
-			) : <FakeCaptcha/>}
+			) : (
+				<FakeCaptcha
+					formData={formData}
+					setShowFakeCaptcha={setShowFakeCaptcha}
+					setErrorSignUp={setError}
+				/>
+			)}
 		</AuthenticationSection>
 	);
 };

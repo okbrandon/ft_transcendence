@@ -37,7 +37,6 @@ const ProfileInformation = ({ error, bioByteLength, formData, handleChange }) =>
 					rows="4"
 					cols="50"
 					onChange={handleChange}
-					className={error.includes("Bio") ? "is-invalid" : ""}
 				/>
 				<p>{bioByteLength} / 280</p>
 			</BioContainer>

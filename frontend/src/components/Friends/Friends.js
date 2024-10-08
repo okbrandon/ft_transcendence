@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import RequestsList from "./RequestsList";
@@ -9,18 +9,17 @@ import {
 	SearchInput,
 } from "./styles/Friends.styled";
 import Loader from "../../styles/shared/Loader.styled";
-import { RelationContext } from "../../context/RelationContext";
+import { useRelation } from "../../context/RelationContext";
 import { useTranslation } from "react-i18next";
 
 const Friends = () => {
 	const [searchTerm, setSearchTerm] = useState("");
-	const [requestsLen, setRequestsLen] = useState(0);
-	const { friends, requests, setFriends, setRequests } = useContext(RelationContext);
+	const { friends, requests, setIsRefetch } = useRelation();
 	const { t } = useTranslation();
 
 	useEffect(() => {
-		setRequestsLen(requests.length);
-	}, [requests]);
+		setIsRefetch(true);
+	}, [setIsRefetch]);
 
 	if (!friends || !requests) {
 		return (
@@ -50,11 +49,17 @@ const Friends = () => {
 				defaultActiveKey="friends"
 				className="mb-3"
 			>
-				<Tab eventKey="friends" title={t('friends.subSections.friendList.title')}>
-					<FriendsList friends={filteredFriends} setFriends={setFriends}/>
+				<Tab eventKey="friends" title="Friends">
+					<FriendsList
+						friends={filteredFriends}
+						setIsRefetch={setIsRefetch}
+					/>
 				</Tab>
-				<Tab eventKey="requests" title={t('friends.subSections.friendRequests.title')}>
-					<RequestsList requests={requests} setRequests={setRequests} setFriends={setFriends}/>
+				<Tab eventKey="requests" title="Requests">
+					<RequestsList
+						requests={requests}
+						setIsRefetch={setIsRefetch}
+					/>
 				</Tab>
 			</Tabs>
 		</PageContainer>

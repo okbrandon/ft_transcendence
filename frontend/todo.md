@@ -1,12 +1,13 @@
 # TODO
-## today
-- Fake Captcha: doing it
-- Rename all the 2fa components
 - Game: send invite
 - Profile: `users/@me/stats` -> win / loss / ratio
 
-## Secondary
-- shop with api aled
-
-## A la fin
-- fake captcha en mode dactylo ?
+# localhost:8888 -> things to change
+- api.js			x1
+- auth.js			x2
+- token				x1
+- SignIn			x1
+- TwoFactorAuth		x1
+- Verify			x1
+- RelationContext	x2
+- .env				x2

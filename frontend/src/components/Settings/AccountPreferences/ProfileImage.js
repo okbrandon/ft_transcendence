@@ -10,9 +10,11 @@ import { SubSectionHeading } from '../styles/Settings.styled';
 import { GetImage } from '../../../api/user';
 import PongButton from '../../../styles/shared/PongButton.styled';
 import ErrorMessage from '../../../styles/shared/ErrorMessage.styled';
+import { useNotification } from '../../../context/NotificationContext';
 import { useTranslation } from 'react-i18next';
 
 const ImageSettings = ({ user, setFormData, handleChange }) => {
+	const { addNotification } = useNotification();
 	const [profileImage, setProfileImage] = useState(user.avatarID);
 	const [bannerImage, setBannerImage] = useState(user.bannerID);
 	const [error, setError] = useState('');
@@ -34,7 +36,7 @@ const ImageSettings = ({ user, setFormData, handleChange }) => {
 				setImage(image);
 			})
 			.catch(err => {
-				setError(err);
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred'}`);
 			});
 	};
 

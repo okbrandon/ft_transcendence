@@ -18,6 +18,9 @@ const PlayMenu = () => {
 				<ModeCard onClick={() => navigate('/game')}>
 					<h1>1 v 1</h1>
 				</ModeCard>
+				<ModeCard>
+					<h1>Local</h1>
+				</ModeCard>
 			</ModesContainer>
 		</PlayMenuContainer>
 	);

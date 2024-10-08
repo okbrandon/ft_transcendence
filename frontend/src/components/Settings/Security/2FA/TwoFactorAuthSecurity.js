@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import API from '../../../../api/api';
-import logger from '../../../../api/logger';
 import { GetUser } from '../../../../api/user';
 import OTPInputComponent from '../../../Auth/OTPInput';
 import { AvailablePlatformsContainer, PlatformButton } from '../../../Auth/styles/TwoFactorAuth.styled';
 import { Backdrop, FormContainer } from '../../styles/TwoFactorAuth.styled';
 import PongButton from '../../../../styles/shared/PongButton.styled';
 import ErrorMessage from '../../../../styles/shared/ErrorMessage.styled';
+import { useNotification } from '../../../../context/NotificationContext';
 import { useTranslation } from 'react-i18next';
 
 const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactorAuth }) => {
+	const { addNotification } = useNotification();
 	const [availablePlatforms, setAvailablePlatforms] = useState([]);
 	const [authCode, setAuthCode] = useState('');
 	const [disableVerify, setDisableVerify] = useState(true);
@@ -22,18 +23,17 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactor
 				setAvailablePlatforms(res.data.available_platforms);
 			})
 			.catch(err => {
-				setError(err.response.data.error);
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred'}`);
 			});
-	}, []);
+	}, [addNotification]);
 
 	const handlePlatform = platform => {
 		API.post('auth/totp/request', { platform })
 			.then(() => {
-				logger('2FA: Request sent');
+				addNotification('success', 'Request sent');
 			})
 			.catch(err => {
-				logger('2FA: Request failed');
-				setError(err.response?.data?.error || 'An error occurred');
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred'}`);
 			});
 	};
 
@@ -46,12 +46,10 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactor
 
 		API.patch('users/@me/profile', { ...submissionData, otp: authCode })
 			.then(() => {
-				logger('2FA: Success');
 				setSuccess('Security updated successfully');
 				GetUser()
 					.then(res => {
 						setUser(res.data);
-						logger('User data refetched and updated in context:', res.data);
 					})
 					.catch(err => {
 						setError(err.response.data.error);

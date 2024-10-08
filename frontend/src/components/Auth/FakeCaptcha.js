@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ApiSignup } from "../../api/auth";
 import {
 	Cursor,
 	FakeCaptchaContainer,
@@ -8,10 +9,12 @@ import {
 } from "./styles/FakeCaptcha.styled";
 import PongButton from "../../styles/shared/PongButton.styled";
 import ErrorMessage from "../../styles/shared/ErrorMessage.styled";
+import { useNotification } from "../../context/NotificationContext";
 import { useTranslation } from "react-i18next";
 
-const FakeCaptcha = () => {
+const FakeCaptcha = ({ formData, setShowFakeCaptcha, setErrorSignUp }) => {
 	const navigate = useNavigate();
+	const { addNotification } = useNotification();
 	const inputRef = useRef(null);
 	const [inputValue, setInputValue] = useState("");
 	const [errorMessage, setErrorMessage] = useState("");
@@ -28,11 +31,23 @@ const FakeCaptcha = () => {
 	const handleSubmit = e => {
 		e.preventDefault();
 		if (inputValue === correctText) {
-			navigate('/signin/send-email-notification');
+			ApiSignup(formData)
+				.then(() => {
+					addNotification('success', 'Account created successfully. Please verify your email.');
+					navigate("/signin");
+				})
+				.catch(err => {
+					setErrorSignUp(err?.response?.data?.error || "An error occurred. Please try again.");
+					setShowFakeCaptcha(false);
+				});
 		} else {
 			setErrorMessage(t('auth.fakeCaptcha.errorMessage'));
 		}
 		inputRef.current.focus();
+	};
+
+	const handleKeyDown = e => {
+		if (e.key === 'Enter') handleSubmit(e);
 	};
 
 	const renderTypingFeedback = () => {
@@ -66,6 +81,7 @@ const FakeCaptcha = () => {
 				type="text"
 				value={inputValue}
 				onChange={handleInputChange}
+				onKeyDown={handleKeyDown}
 				maxLength={correctText.length}
 				ref={inputRef}
 				autoFocus
