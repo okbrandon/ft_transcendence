@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import GameProfiles from "./GameProfiles";
 import GameScene from "./GameScene";
@@ -9,6 +9,8 @@ import { PageContainer } from "./styles/Game.styled";
 
 const Game = () => {
 	const navigate = useNavigate();
+	const location = useLocation();
+	const gameMode = location.state?.mode;
 	const [gameState, setGameState] = useState({
 		matchState: null,
 		player: null,
@@ -59,10 +61,10 @@ const Game = () => {
 		if (heartbeatAckCount.current === 2) {
 			sendMessage(JSON.stringify({
 				e: 'MATCHMAKE_REQUEST',
-				d: { match_type: '1v1' }
+				d: { match_type: gameMode }
 			}));
 		}
-	}, [sendMessage]);
+	}, [sendMessage, gameMode]);
 
 	// Send IDENTIFY message on connection open
 	useEffect(() => {

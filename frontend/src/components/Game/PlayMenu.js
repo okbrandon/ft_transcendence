@@ -9,13 +9,13 @@ const PlayMenu = () => {
 		<PlayMenuContainer>
 			<Title>Select Game Mode</Title>
 			<ModesContainer>
-				<ModeCard onClick={() => navigate('/game')}>
+				<ModeCard onClick={() => navigate('/game', { state: { mode: 'ai' } })}>
 					<h1>AI</h1>
 				</ModeCard>
 				<ModeCard onClick={() => navigate('/tournament')}>
 					<h1>Tournament</h1>
 				</ModeCard>
-				<ModeCard onClick={() => navigate('/game')}>
+				<ModeCard onClick={() => navigate('/game', { state: { mode: '1v1' } })}>
 					<h1>1 v 1</h1>
 				</ModeCard>
 				<ModeCard>
