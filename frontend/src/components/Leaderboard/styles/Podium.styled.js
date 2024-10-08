@@ -7,16 +7,15 @@ export const PodiumContainer = styled.div`
 	height: 400px;
 	width: 100%;
 	margin-top: 60px;
-	gap: 120px;
+	gap: 100px;
 	perspective: 1000px;
 `;
 
 export const PodiumBase = styled.div`
 	position: relative;
-	width: 150px;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+	justify-content: start;
 	align-items: center;
 	background-image:
 		linear-gradient(
@@ -24,28 +23,25 @@ export const PodiumBase = styled.div`
 			rgba(0, 0, 0, 1) 0%,
 			rgba(0, 0, 0, 0) 100%
 		),
-		url(${props => props.imgSrc || '/images/podium.png'});
+		url('/images/podium.png');
 	background-size: contain;
 	background-position: center;
 	background-repeat: no-repeat;
 	border-radius: 10px;
-	height: ${props => props.height || '200px'};
-	width: ${props => props.width || '150px'};
-`;
+	width: 200px;
 
-export const FirstPlace = styled(PodiumBase)`
-	height: 320px;	/* Tallest podium */
-	order: 2;
-`;
+	&.first {
+		height: 320px;
+	}
 
-export const SecondPlace = styled(PodiumBase)`
-	height: 280px;
-	order: 1;
-`;
+	&.second {
+		height: 280px;
+	}
 
-export const ThirdPlace = styled(PodiumBase)`
-	height: 250px;
-	order: 3;
+	&.third {
+		height: 270px;
+	}
+
 `;
 
 export const PlayerInfo = styled.div`
@@ -53,7 +49,6 @@ export const PlayerInfo = styled.div`
 	flex-direction: column;
 	text-align: center;
 	color: #fff;
-	gap: 40px;
 `;
 
 export const PlayerAvatar = styled.img`
@@ -61,8 +56,6 @@ export const PlayerAvatar = styled.img`
 	height: 80px;
 	border-radius: 25%;
 	border: 3px solid #3f3f3f;
-	margin-top: -170px;
-	margin-bottom: 20px;
 	box-shadow: 0 0 100px rgba(255, 255, 255, 0.7);
 `;
 
@@ -78,13 +71,21 @@ export const PlayerScore = styled.div`
 	font-size: 1em;
 	color: #e0e0e0;
 	font-weight: bold;
-	margin-bottom: 100px;
 `;
 
 export const TrophyContainer = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	position: relative;
+	top: 15px;
+`;
+
+export const Separator = styled.hr`
+	width: 100%;
+	border: 0.5px solid #ccc;
+	margin: 10px 0;
+	box-sizing: border-box;
 `;
 
 export const Badge = styled.div`
@@ -94,17 +95,16 @@ export const Badge = styled.div`
 	border-radius: 5px;
 	width: 40px;
 	height: 30px;
-	margin-bottom: 35px
-`;
 
-export const FirstPosition = styled(Badge)`
-	background-color: #ffd700;
-`;
+	&.first {
+		background-color: #ffd700;
+	}
 
-export const SecondPosition = styled(Badge)`
-	background-color: #c0c0c0;
-`;
+	&.second {
+		background-color: #c0c0c0;
+	}
 
-export const ThirdPosition = styled(Badge)`
-	background-color: #cd7f32;
+	&.third {
+		background-color: #cd7f32;
+	}
 `;

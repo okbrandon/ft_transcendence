@@ -1,56 +1,57 @@
 import React from 'react';
 import {
 	PodiumContainer,
-	FirstPlace,
-	SecondPlace,
-	ThirdPlace,
 	PlayerInfo,
 	PlayerName,
 	PlayerScore,
 	PlayerAvatar,
 	TrophyContainer,
-	FirstPosition,
-	SecondPosition,
-	ThirdPosition,
+	Separator,
+	PodiumBase,
+	Badge,
 } from './styles/Podium.styled';
 
 const Podium = ({ leaderboardData }) => {
 	const topThree = leaderboardData.slice(0, 3);
+	const podiumOrder = [1, 0, 2];
 
 	return (
 		<PodiumContainer>
-			<SecondPlace>
-				<PlayerAvatar src={topThree[1]?.avatar} alt={topThree[1]?.name || 'N/A'} />
+			<PodiumBase className='second'>
+				<PlayerAvatar src={topThree[1]?.avatar || 'images/default-profile.png'} alt={topThree[1]?.name || 'N/A'} />
 				<PlayerInfo>
 					<PlayerName>{topThree[1]?.name || 'N/A'}</PlayerName>
 					<TrophyContainer>
-						<SecondPosition><i className="bi bi-trophy-fill" /></SecondPosition>
+						<Badge className='second'><i className="bi bi-trophy-fill" /></Badge>
 					</TrophyContainer>
 					<PlayerScore>{topThree[1]?.stats.gamesWon || 0} points</PlayerScore>
+					<Separator />
 				</PlayerInfo>
-			</SecondPlace>
+			</PodiumBase>
 
-			<FirstPlace>
-				<PlayerAvatar src={topThree[0]?.avatar} alt={topThree[0]?.name || 'N/A'} />
+			<PodiumBase className='first'>
+				<PlayerAvatar src={topThree[0]?.avatar || 'images/default-profile.png'} alt={topThree[0]?.name || 'N/A'} />
 				<PlayerInfo>
 					<PlayerName>{topThree[0]?.name || 'N/A'}</PlayerName>
 					<TrophyContainer>
-						<FirstPosition><i className="bi bi-trophy-fill" /></FirstPosition>
+						<Badge className='first'><i className="bi bi-trophy-fill" /></Badge>
 					</TrophyContainer>
 					<PlayerScore>{topThree[0]?.stats.gamesWon || 0} points</PlayerScore>
+					<Separator />
 				</PlayerInfo>
-			</FirstPlace>
+			</PodiumBase>
 
-			<ThirdPlace>
-				<PlayerAvatar src={topThree[2]?.avatar} alt={topThree[2]?.name || 'N/A'} />
+			<PodiumBase className='third'>
+				<PlayerAvatar src={topThree[2]?.avatar || 'images/default-profile.png'} alt={topThree[2]?.name || 'N/A'} />
 				<PlayerInfo>
 					<PlayerName>{topThree[2]?.name || 'N/A'}</PlayerName>
 					<TrophyContainer>
-						<ThirdPosition><i className="bi bi-trophy-fill" /></ThirdPosition>
+						<Badge className='third'><i className="bi bi-trophy-fill" /></Badge>
 					</TrophyContainer>
 					<PlayerScore>{topThree[2]?.stats.gamesWon || 0} points</PlayerScore>
+					<Separator />
 				</PlayerInfo>
-			</ThirdPlace>
+			</PodiumBase>
 		</PodiumContainer>
 	);
 };
