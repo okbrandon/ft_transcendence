@@ -357,8 +357,6 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         if event_type != 'HEARTBEAT':
             # logger.info(f"[{self.__class__.__name__}] Received event: {event_type}")
             pass
-            # logger.info(f"[{self.__class__.__name__}] Received event: {event_type}")
-            pass
 
         if event_type == 'HEARTBEAT':
             self.last_heartbeat = time.time()
@@ -486,7 +484,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         elif direction == 'down':
             match_state[player_key]['paddle_y'] = max(60, match_state[player_key]['paddle_y'] - paddle_speed)
 
-        # logger.debug(f"[MatchConsumer] Paddle moved: {player_key} - {direction}")
+        # logger.debug(f"[{self.__class__.__name__}] Paddle moved: {player_key} - {direction}")
         await self.send_match_update()
 
     async def handle_player_quit(self):
