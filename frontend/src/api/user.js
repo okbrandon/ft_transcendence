@@ -5,10 +5,10 @@ export const formatUserData = user => {
 	if (user.displayName === null) {
 		user.displayName = user.username;
 	}
-	if (user.avatarID === 'default' || user.avatarID === null) {
+	if (user.avatarID === 'default' || !user.avatarID) {
 		user.avatarID = '/images/default-profile.png';
 	}
-	if (user.bannerID === null) {
+	if (!user.bannerID) {
 		user.bannerID = '/images/default-banner.png';
 	}
 	return user;
@@ -18,7 +18,6 @@ export const GetUser = async () => {
 	try {
 		logger('Getting current user...');
 		const res = await API.get(`users/@me/profile`);
-
 		const user = formatUserData(res.data);
 		return user;
 	} catch (err) {

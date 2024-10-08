@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pong Game</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+        #gameArea {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="tokenForm">
+        <h2>Enter Game Token</h2>
+        <input type="text" id="gameToken" placeholder="Enter game token">
+        <button onclick="connectToGame()">Connect</button>
+    </div>
+
+    <div id="gameArea">
+        <h2>Pong Game</h2>
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <div id="gameStatus"></div>
+    </div>
+
+    <script>
+        let socket;
+        let canvas;
+        let ctx;
+        let playerSide;
+        let gameState;
+
+        function connectToGame() {
+            const token = document.getElementById('gameToken').value;
+            socket = new WebSocket(`ws://localhost:8888/ws/game/${token}/`);
+
+            socket.onopen = function(e) {
+                console.log("Connected to game server");
+                document.getElementById('tokenForm').style.display = 'none';
+                document.getElementById('gameArea').style.display = 'block';
+                initializeGame();
+            };
+
+            socket.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                handleGameEvent(data);
+            };
+
+            socket.onclose = function(event) {
+                if (event.wasClean) {
+                    console.log(`Connection closed cleanly, code=${event.code} reason=${event.reason}`);
+                } else {
+                    console.log('Connection died');
+                }
+            };
+
+            socket.onerror = function(error) {
+                console.log(`WebSocket Error: ${error.message}`);
+            };
+        }
+
+        function initializeGame() {
+            canvas = document.getElementById('gameCanvas');
+            ctx = canvas.getContext('2d');
+            
+            document.addEventListener('keydown', handleKeyPress);
+        }
+
+        function handleGameEvent(data) {
+            switch(data.e) {
+                case 'HEARTBEAT_INTERVAL':
+                    setInterval(() => socket.send(JSON.stringify({e: 'HEARTBEAT'})), data.d.interval * 1000);
+                    break;
+                case 'PLAYER_SIDE':
+                    playerSide = data.d.side;
+                    break;
+                case 'GAME_UPDATE':
+                    gameState = data.d;
+                    drawGame();
+                    break;
+                case 'GAME_ENDED':
+                    endGame(data.d);
+                    break;
+                // Handle other game events...
+            }
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'ArrowUp') {
+                socket.send(JSON.stringify({e: 'PADDLE_UP'}));
+            } else if (e.key === 'ArrowDown') {
+                socket.send(JSON.stringify({e: 'PADDLE_DOWN'}));
+            }
+        }
+
+        function drawGame() {
+            if (!gameState) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw paddles
+            ctx.fillStyle = 'black';
+            for (let playerId in gameState.paddles) {
+                const x = playerId === Object.keys(gameState.paddles)[0] ? 0 : canvas.width - 20;
+                ctx.fillRect(x, gameState.paddles[playerId], 20, 100);
+            }
+
+            // Draw ball
+            ctx.beginPath();
+            ctx.arc(gameState.ball.x, gameState.ball.y, 10, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw scores
+            ctx.font = '24px Arial';
+            ctx.fillText(Object.values(gameState.scores)[0], canvas.width / 4, 30);
+            ctx.fillText(Object.values(gameState.scores)[1], 3 * canvas.width / 4, 30);
+        }
+
+        function endGame(data) {
+            document.getElementById('gameStatus').innerText = `Game Over! Winner: ${data.winner.username}`;
+            document.removeEventListener('keydown', handleKeyPress);
+        }
+    </script>
+</body>
+</html>

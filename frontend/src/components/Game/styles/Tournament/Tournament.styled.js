@@ -16,62 +16,48 @@ export const TournamentOptionsContainer = styled.div`
 	background-position: center;
 
 	h1 {
-		font-family: "Orbitron", sans-serif;
-		font-size: 2.5rem;
-		margin-bottom: 3rem;
-		font-weight: bold;
-		color: #fff;
+		font-size: 3rem;
+		font-family: 'Orbitron', sans-serif;
+		margin-bottom: 5rem;
+		text-transform: uppercase;
+		letter-spacing: 5px;
+		background: linear-gradient(135deg, #ff00ff, #00ffff);
+		background-clip: text;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		text-shadow:
+			0 0 10px rgba(255, 255, 255, 0.6),
+			0 0 15px rgba(128, 0, 128, 0.4),
+			0 0 20px rgba(75, 0, 130, 0.3);
 	}
 `;
 
 export const OptionButton = styled.button`
-	background-color: #111;
 	color: #fff;
-	border: 2px solid #555;
+	text-transform: uppercase;
+	letter-spacing: 5px;
 	border-radius: 15px;
+	border: none;
+	background-color: #1a1a1a;
 	padding: 1.5rem 3rem;
 	margin-bottom: 2rem;
 	cursor: pointer;
 	font-size: 1.5rem;
 	transition: all 0.3s ease;
-	box-shadow: 0px 4px 8px rgba(255, 255, 255, 0.1);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 8px rgba(59, 130, 246, 0.2);
 	width: 80%;
 	max-width: 500px;
 	text-align: center;
 
 	&:hover {
-		background-color: #222;
-		border-color: #fff;
-		box-shadow: 0px 8px 16px rgba(255, 255, 255, 0.2);
-	}
-`;
-
-export const OptionDescription = styled.p`
-	margin-top: 1rem;
-	font-size: 1rem;
-	color: #bbb;
-`;
-
-export const BackButton = styled.button`
-	position: absolute;
-	top: 90px;
-	left: 20px;
-	padding: 0.5rem 1rem;
-	background-color: #444;
-	color: #fff;
-	border: none;
-	border-radius: 8px;
-	font-size: 1.5rem;
-	cursor: pointer;
-	transition: all 0.3s ease;
-	box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
-
-	&:hover {
-		background-color: #555;
-		box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.5);
+		transform: translateY(-6px);
+		box-shadow: 0 8px 16px rgba(164, 69, 178, 0.4), 0 0 12px rgba(59, 130, 246, 0.4);
 	}
 
-	&:focus {
-		outline: none;
+	& > p {
+		margin-top: 20px;
+		font-size: 1rem;
+		text-transform: none;
+		color: rgba(255, 255, 255, 0.5);
 	}
 `;

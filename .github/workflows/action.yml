@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [frontend, backend, gameserver, harvester]
+        service: [frontend, backend, harvester, statcruncher]
 
     steps:
     - name: Checkout code

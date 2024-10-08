@@ -5,13 +5,13 @@ import Button from 'react-bootstrap/Button';
 import { ApiLogin } from '../../api/auth';
 import {
 	AuthenticationSection,
-	ErrorMessage,
 	FormContainer,
 	FortyTwoButton
 } from './styles/Authentication.styled';
 import { AuthContext } from '../../context/AuthContext';
-import TwoFactorAuth from './TwoFactorAuthSignIn';
+import TwoFactorAuthSignIn from './TwoFactorAuthSignIn';
 import Notification from '../Notification/Notification';
+import ErrorMessage from '../../styles/shared/ErrorMessage.styled';
 
 const SignIn = () => {
 	const navigate = useNavigate();
@@ -20,11 +20,14 @@ const SignIn = () => {
 	const { setIsLoggedIn } = useContext(AuthContext);
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
+	const [isTwoFactorAuth, setIsTwoFactorAuth] = useState(false);
+	const [availablePlatforms, setAvailablePlatforms] = useState(null);
+	const [showPassword, setShowPassword] = useState(false);
 	const [error, setError] = useState('');
 	const [isTwoFactorAuth, setIsTwoFactorAuth] = useState(false);
 	const [availablePlatforms, setAvailablePlatforms] = useState(null);
 
-	const handleSubmit = (event) => {
+	const handleSubmit = event => {
 		event.preventDefault();
 		if (!username || !password) {
 			setError('Please enter a username and a password.');
@@ -45,7 +48,7 @@ const SignIn = () => {
 		}
 	};
 
-	const handleFortyTwo = (event) => {
+	const handleFortyTwo = event => {
 		event.preventDefault();
 		window.location.href = `http://localhost:8888/api/v1/auth/42/login`;
 	};
@@ -85,7 +88,7 @@ const SignIn = () => {
 						<FormContainer.Group className="mb-3">
 							<FormContainer.Control
 								id="password"
-								type="password"
+								type={showPassword ? 'text' : 'password'}
 								placeholder=" "
 								value={password}
 								onChange={(e) => setPassword(e.target.value)}
@@ -93,6 +96,7 @@ const SignIn = () => {
 								autoComplete='current-password'
 							/>
 							<span>PASSWORD</span>
+							{showPassword ? <i className="bi bi-eye-fill" onClick={() => setShowPassword(!showPassword)}/> : <i className="bi bi-eye" onClick={() => setShowPassword(!showPassword)}/>}
 						</FormContainer.Group>
 						<p>Not Signed Up ? <Link to="/signup">Sign Up</Link></p>
 						{error && <ErrorMessage>{error}</ErrorMessage>}
@@ -101,7 +105,7 @@ const SignIn = () => {
 					<Notification ref={notificationRef}/>
 				</>
 			) : (
-				<TwoFactorAuth
+				<TwoFactorAuthSignIn
 					username={username}
 					password={password}
 					setIsTwoFactorAuth={setIsTwoFactorAuth}

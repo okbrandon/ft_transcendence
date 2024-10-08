@@ -3,7 +3,7 @@ import API from "./api";
 import logger from "./logger";
 import { formatUserData } from "./user";
 
-export const GetUserFromRelation = async (profileUsername) => {
+export const GetUserFromRelation = async profileUsername => {
 	try {
 		logger('Getting user from relation...');
 		const res = await API.get('users/@me/relationships');
@@ -31,6 +31,29 @@ export const GetFriends = async () => {
 				const friend = GetOtherFromRelationship(relation, userID);
 				return { ...friend, relationID: relation.relationshipID };
 			});
+		return friends;
+	} catch (err) {
+		console.error(err.response?.data?.error || 'An error occurred');
+		return [];
+	}
+};
+
+export const GetActiveFriends = async () => {
+	try {
+		logger('Getting active friends...');
+		const res = await API.get('users/@me/relationships');
+		const userID = localStorage.getItem('userID');
+
+		const friends = res.data
+			.filter(relation => relation.status === 1)
+			.map(relation => {
+				relation.sender = formatUserData(relation.sender);
+				relation.target = formatUserData(relation.target);
+				const friend = GetOtherFromRelationship(relation, userID);
+				return { ...friend, relationID: relation.relationshipID };
+			})
+			.filter(friend => !!friend.status.online);
+		logger(friends);
 		return friends;
 	} catch (err) {
 		console.error(err.response?.data?.error || 'An error occurred');

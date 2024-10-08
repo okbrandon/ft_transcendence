@@ -12,7 +12,6 @@ export const Title = styled.h1`
 	padding: 0;
 	color: #fff;
 	text-decoration: none;
-	z-index: 1000;
 
 	text-shadow:
 		0 0 10px rgba(255, 255, 255, 0.7),

@@ -49,12 +49,20 @@ class UserProfileMe(APIView):
 
             for field in allowed_fields:
                 if field in data:
-                    if field == 'username' and not validate_username(data[field]):
-                        return Response({"error": "Invalid username. Username must be 4-16 characters long and contain only alphanumeric characters."}, status=status.HTTP_400_BAD_REQUEST)
+                    if field == 'username' and me.oauthAccountID:
+                        return Response({"error": "Cannot change username for OAuth accounts."}, status=status.HTTP_400_BAD_REQUEST)
+                    elif field == 'username':
+                        if not validate_username(data[field]):
+                            return Response({"error": "Invalid username. Username must be 4-16 characters long and contain only alphanumeric characters and cannot end with '42'."}, status=status.HTTP_400_BAD_REQUEST)
+                        if User.objects.filter(username=data[field]).exclude(id=me.id).exists():
+                            return Response({"error": "Username is already taken"}, status=status.HTTP_409_CONFLICT)
                     elif field == 'displayName' and not validate_displayname(data[field]):
                         return Response({"error": "Invalid display name. Display name must be 4-16 characters long and contain only alphanumeric characters or null."}, status=status.HTTP_400_BAD_REQUEST)
-                    elif field == 'email' and not validate_email(data[field]):
-                        return Response({"error": "Invalid email. Email must be a valid format and no longer than 64 characters."}, status=status.HTTP_400_BAD_REQUEST)
+                    elif field == 'email':
+                        if not validate_email(data[field]):
+                            return Response({"error": "Invalid email. Email must be a valid format and no longer than 64 characters."}, status=status.HTTP_400_BAD_REQUEST)
+                        if User.objects.filter(email=data[field]).exclude(id=me.id).exists():
+                            return Response({"error": "Email is already in use"}, status=status.HTTP_409_CONFLICT)
                     elif field == 'lang' and not validate_lang(data[field]):
                         return Response({"error": "Invalid language. Supported languages are 'en', 'fr', and 'es'."}, status=status.HTTP_400_BAD_REQUEST)
                     elif field in ['avatarID', 'bannerID'] and not validate_image(data[field]):
@@ -227,6 +235,7 @@ class UserSettingsMe(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class UserRelationshipsMe(APIView):
+
     def get(self, request, *args, **kwargs):
         me = request.user
         relationships = Relationship.objects.filter(userA=me.userID) | Relationship.objects.filter(userB=me.userID)
@@ -291,7 +300,7 @@ class UserRelationshipsMe(APIView):
                 if existing_relationship.status == 0 and existing_relationship.userB == me.userID:
                     existing_relationship.status = 1
                     existing_relationship.save()
-                    self.notify_chat_websocket(existing_relationship)
+                    self.notify_chat_websocket(existing_relationship, status="accepted")
                     return Response({"status": "Friend request accepted"}, status=status.HTTP_200_OK)
                 else:
                     return Response({"error": "Cannot directly set friendship status"}, status=status.HTTP_400_BAD_REQUEST)
@@ -303,7 +312,7 @@ class UserRelationshipsMe(APIView):
                 userB=target_user_id,
                 status=0
             )
-            self.notify_chat_websocket(relationship)
+            self.notify_chat_websocket(relationship, status="pending")
             return Response({"status": "Friend request sent"}, status=status.HTTP_200_OK)
 
         return Response({"error": "Invalid operation"}, status=status.HTTP_400_BAD_REQUEST)
@@ -317,29 +326,49 @@ class UserRelationshipsMe(APIView):
             relationshipID=relationshipID
         )
 
+        if relationship.status == 0:
+            self.notify_chat_websocket(relationship, status="rejected")
+
         relationship.delete()
 
         return Response({"status": "Relationship deleted"}, status=status.HTTP_200_OK)
 
-    def notify_chat_websocket(self, relationship):
+    def notify_chat_websocket(self, relationship, status):
         channel_layer = get_channel_layer()
-        group_name = f"chat_{relationship.userB}" if relationship.status == 0 else f"chat_{relationship.userA}"
+
+        if status == "accepted" or status == "rejected":
+            group_name = f"chat_{relationship.userA}"
+        elif status == "pending":
+            group_name = f"chat_{relationship.userB}"
+        else:
+            return
+
+        try:
+            from_user = User.objects.get(userID=relationship.userA)
+        except User.DoesNotExist:
+            return
+
+        try:
+            to_user = User.objects.get(userID=relationship.userB)
+        except User.DoesNotExist:
+            return
 
         try:
             async_to_sync(channel_layer.group_send)(
                 group_name,
                 {
                     "type": "friend_request",
-                    "status": "pending" if relationship.status == 0 else "accepted",
+                    "status": status,
                     "data": {
                         "type": "relationship",
                         "relationshipID": relationship.relationshipID,
-                        "from": relationship.userA if relationship.status == 0 else relationship.userB,
+                        "from": get_safe_profile(UserSerializer(from_user).data, me=False),
+                        "to": get_safe_profile(UserSerializer(to_user).data, me=False)
                     }
                 }
             )
         except Exception as _:
-            logger.error(f"Failed to send friend request notification. User {relationship.userB} might be offline.")
+            logger.error(f"Failed to send friend request notification. Group: {group_name}")
 
 
 class UserMatchesMe(APIView):

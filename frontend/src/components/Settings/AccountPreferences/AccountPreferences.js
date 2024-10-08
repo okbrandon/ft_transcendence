@@ -1,26 +1,19 @@
-import React, { useContext, useState } from 'react';
-import {
-	BioContainer,
-	ErrorMessage,
-	Form,
-	FormInput,
-	LanguageDropdown,
-	SectionHeading,
-	SubSectionHeading,
-	SuccessMessage,
-	TextArea,
-} from '../styles/Settings.styled';
-import UploadImage from './UploadImage';
+import React, { useState } from 'react';
+import ProfileImage from './ProfileImage';
+import AccountManagement from './AccountManagement';
+import ProfileInformation from './ProfileInformation';
 import API from '../../../api/api';
 import { GetUser } from '../../../api/user';
-import logger from '../../../api/logger';
-import DeleteAccount from './DeleteAccount';
 import { checkAccountPreferencesRestrictions } from '../../../scripts/restrictions';
-import { AuthContext } from '../../../context/AuthContext';
+import {
+	Form,
+	SectionHeading,
+	SuccessMessage,
+} from '../styles/Settings.styled';
 import PongButton from '../../../styles/shared/PongButton.styled';
+import ErrorMessage from '../../../styles/shared/ErrorMessage.styled';
 
-const AccountPreferences = ({ user }) => {
-	const { setUser } = useContext(AuthContext);
+const AccountPreferences = ({ user, setUser }) => {
 	const [formData, setFormData] = useState({
 		username: user.username,
 		displayName: user.displayName === user.username ? '' : user.displayName,
@@ -31,7 +24,6 @@ const AccountPreferences = ({ user }) => {
 	const [loading, setLoading] = useState(false);
 	const [success, setSuccess] = useState('');
 	const [error, setError] = useState('');
-	const [serverError, setServerError] = useState('');
 
 	const handleChange = (e) => {
 		const { id, value } = e.target;
@@ -65,30 +57,24 @@ const AccountPreferences = ({ user }) => {
 		if (errorMessage) {
 			setError(errorMessage);
 			setSuccess('');
-			setServerError('');
 		} else {
 			setLoading(true);
 			API.patch('/users/@me/profile', submissionData)
 				.then(() => {
 					setSuccess('Account Preferences updated successfully.');
 					setError('');
-					setServerError('');
-					logger('Account Preferences updated successfully with:', submissionData);
 					GetUser()
 						.then(user => {
 							setUser(user);
-							logger('User data refetched and updated in context:', user);
 						})
 						.catch(err => {
-							setServerError(err.response.data.error);
+							setError(err.response?.data?.error || 'An error occurred');
 							setSuccess('');
-							setError('');
 						});
 				})
 				.catch(err => {
-					setServerError(err.response.data.error);
+					setError(err.response?.data?.error || 'An error occurred');
 					setSuccess('');
-					setError('');
 				})
 				.finally(() => {
 					setLoading(false);
@@ -99,55 +85,20 @@ const AccountPreferences = ({ user }) => {
 	return (
 		<Form onSubmit={handleSubmit}>
 			<SectionHeading>Account Preferences</SectionHeading>
-			<SubSectionHeading>Profile Information</SubSectionHeading>
-			<label htmlFor="username">Username</label>
-			{error.includes("Username") && <ErrorMessage>{error}</ErrorMessage>}
-			<FormInput
-				type="text"
-				id="username"
-				placeholder="Username"
-				value={formData.username}
-				onChange={handleChange}
-				autoComplete='off'
+			<ProfileInformation
+				error={error}
+				bioByteLength={bioByteLength}
+				formData={formData}
+				handleChange={handleChange}
 			/>
-			<label htmlFor="displayName">Display Name</label>
-			{error.includes("Display Name") && <ErrorMessage>{error}</ErrorMessage>}
-			<FormInput
-				type="text"
-				id="displayName"
-				placeholder="Display Name"
-				value={formData.displayName || ''}
-				onChange={handleChange}
+			<ProfileImage
+				user={user}
+				setFormData={setFormData}
+				handleChange={handleChange}
 			/>
-			<label htmlFor="bio">Bio</label>
-			<BioContainer>
-				<TextArea
-					id="bio"
-					placeholder="Tell us about yourself"
-					value={formData.bio || ''}
-					rows="4"
-					cols="50"
-					onChange={handleChange}
-				/>
-				<p>{bioByteLength} / 280</p>
-			</BioContainer>
-			<SubSectionHeading>Profile Image & Background</SubSectionHeading>
-			<UploadImage user={user} setFormData={setFormData} handleChange={handleChange}/>
-			<SubSectionHeading>General Preferences</SubSectionHeading>
-			<label htmlFor="lang">Language</label>
-			<LanguageDropdown
-				id="lang"
-				value={formData.lang}
-				onChange={handleChange}
-			>
-				<option value="en">🇬🇧 English</option>
-				<option value="es">🇪🇸 Spanish</option>
-				<option value="fr">🇫🇷 French</option>
-			</LanguageDropdown>
-			<SubSectionHeading>Account Management</SubSectionHeading>
-			<DeleteAccount/>
+			<AccountManagement/>
 			{success && <SuccessMessage>{success}</SuccessMessage>}
-			{serverError && <ErrorMessage>{serverError}</ErrorMessage>}
+			{error && <ErrorMessage>{error}</ErrorMessage>}
 			<PongButton type="submit" disabled={loading}>
 				{loading ? 'Saving...' : 'Save Changes'}
 			</PongButton>

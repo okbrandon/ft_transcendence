@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import {
+	FormControl,
+	FormGroup,
+	FormLabel,
+	FormSelect,
 	PageContainer,
 	TournamentForm
 } from "../styles/Tournament/CreateTournament.styled";
-import { BackButton } from "../styles/Tournament/Tournament.styled";
+import PongButton from "../../../styles/shared/PongButton.styled";
 
 const CreateTournament = ({ setOptions }) => {
 	const [maxPlayers, setMaxPlayers] = useState(4);
@@ -17,42 +21,42 @@ const CreateTournament = ({ setOptions }) => {
 
 	return (
 		<PageContainer>
-			<BackButton onClick={() => setOptions('')}><i className="bi bi-arrow-left"/></BackButton>
 			<h1>Tournament Setup</h1>
 			<TournamentForm onSubmit={handleSubmit}>
-				<TournamentForm.Group>
-					<TournamentForm.Label htmlFor="tournament-name">Tournament Name</TournamentForm.Label>
-					<TournamentForm.Control
+				<FormGroup>
+					<FormLabel htmlFor="tournament-name">Tournament Name</FormLabel>
+					<FormControl
 						id="tournament-name"
 						type="text"
 						required
 					/>
-				</TournamentForm.Group>
-				<TournamentForm.Group>
-					<TournamentForm.Label htmlFor="players">Max Players:</TournamentForm.Label>
-					<TournamentForm.Select
+				</FormGroup>
+				<FormGroup>
+					<FormLabel htmlFor="players">Max Players:</FormLabel>
+					<FormSelect
 						id="players"
-						defaultValue="4"
+						value={maxPlayers}
 						onChange={(e) => setMaxPlayers(parseInt(e.target.value))}
 					>
 						<option value="4">4</option>
 						<option value="6">6</option>
 						<option value="8">8</option>
-					</TournamentForm.Select>
-				</TournamentForm.Group>
-				<TournamentForm.Group>
-					<TournamentForm.Label htmlFor="rounds">Max Rounds:</TournamentForm.Label>
-					<TournamentForm.Select
+					</FormSelect>
+				</FormGroup>
+				<FormGroup>
+					<FormLabel htmlFor="rounds">Max Rounds:</FormLabel>
+					<FormSelect
 						id="rounds"
-						defaultValue="3"
+						value={maxRounds}
 						onChange={(e) => setMaxRounds(parseInt(e.target.value))}
 					>
 						<option value="3">3</option>
 						<option value="5">5</option>
 						<option value="7">7</option>
-					</TournamentForm.Select>
-				</TournamentForm.Group>
-				<button type="submit">CREATE</button>
+					</FormSelect>
+				</FormGroup>
+				<PongButton type="submit" $width='100%'>CREATE</PongButton>
+				<PongButton type="button" $width='100%' onClick={() => setOptions('')}>BACK</PongButton>
 			</TournamentForm>
 		</PageContainer>
 	);

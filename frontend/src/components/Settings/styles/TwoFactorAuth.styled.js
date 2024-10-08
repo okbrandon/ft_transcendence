@@ -1,94 +1,58 @@
-import styled from "styled-components";
+import styled from 'styled-components';
+import Form from 'react-bootstrap/Form';
 
-// ToggleContainer is the main wrapper
-export const ToggleContainer = styled.div`
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	margin: 1rem 0;
-`;
-
-// ToggleLabel is for optional text next to the toggle
-export const ToggleLabel = styled.span`
-	font-size: 1rem;
-	margin-right: 10px;
-	color: #fff;
-`;
-
-// ToggleSwitch is the actual toggle switch
-export const ToggleSwitch = styled.label`
-	position: relative;
-	display: inline-block;
-	width: 60px;
-	height: 34px;
-
-	input {
-		opacity: 0;
-		width: 0;
-		height: 0;
-	}
-
-	input:checked + span {
-		background-color: #4caf50;
-	}
-
-	input:checked + span:before {
-		transform: translateX(26px);
-	}
-`;
-
-// Slider is the sliding part of the toggle switch
-export const Slider = styled.span`
-	position: absolute;
-	cursor: pointer;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background-color: #ccc;
-	transition: 0.4s;
-	border-radius: 34px;
-
-	&:before {
-		position: absolute;
-		content: "";
-		height: 26px;
-		width: 26px;
-		left: 4px;
-		bottom: 4px;
-		background-color: white;
-		transition: 0.4s;
-		border-radius: 50%;
-	}
-`;
-
-// Container for the 2FA setup section
-export const TwoFAContainer = styled.div`
+export const FormContainer = styled(Form)`
 	display: flex;
 	flex-direction: column;
+	justify-content: center;
 	align-items: center;
-	background-color: rgba(20, 20, 20, 0.5);
-	padding: 2rem;
-	border-radius: 10px;
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
-	max-width: 400px;
-	margin: 0 auto;
-`;
-
-// Styled paragraph text
-export const TwoFAText = styled.p`
-	color: rgba(255, 255, 255, 0.9);
+	gap: 20px;
+	border-radius: 15px;
+	width: 600px;
+	padding: 50px 50px;
 	font-family: 'Inter', sans-serif;
-	margin-bottom: 1.5rem;
-	font-size: 1.1rem;
-	text-align: center;
+	background: #000;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	box-shadow: 0 4px 15px rgba(164, 69, 178, 0.5), 0 0 10px rgba(59, 130, 246, 0.5);
+
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 1000;
+
+	& > h1 {
+		font-family: 'Orbitron', sans-serif;
+		font-size: 2.5rem;
+		margin-bottom: 20px;
+		text-shadow: 0px 4px 10px rgba(164, 69, 178, 0.7);
+	}
+
+	& > p {
+		color: #ababab;
+		font-size: 13px;
+		z-index: 2;
+	}
+
+	& .mb-3 {
+		width: 100%;
+		position: relative;
+		margin: 10px 0;
+	}
+
+	& button {
+		z-index: 1;
+		width: 100%;
+	}
 `;
 
-// QRCode container
-export const QRCodeWrapper = styled.div`
-	margin-bottom: 1.5rem;
-	background-color: #fff;
-	padding: 1rem;
-	border-radius: 10px;
+export const Backdrop = styled.div`
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background: rgba(0, 0, 0, 0.7);
+	z-index: 999;
+	pointer-events: all;
 `;

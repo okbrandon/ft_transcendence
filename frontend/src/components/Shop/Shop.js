@@ -13,6 +13,7 @@ import {
 } from "./styles/Shop.styled";
 import { AuthContext } from "../../context/AuthContext";
 import API from "../../api/api";
+import Loader from "../../styles/shared/Loader.styled";
 
 const skins = [
 	{ id: 1, name: "Red", price: 100, img: "/images/skins/red.jpeg" },
@@ -24,7 +25,7 @@ const skins = [
 
 const Shop = () => {
 	const [purchasedSkins, setPurchasedSkins] = useState([]);
-	const { user } = useContext(AuthContext);
+	const { user, loading } = useContext(AuthContext);
 
 	const handlePurchase = (skin) => {
 		if (user.money >= skin.price) {
@@ -37,6 +38,14 @@ const Shop = () => {
 			alert("Not enough coins!");
 		}
 	};
+
+	if (loading) {
+		return (
+			<ShopContainer>
+				<Loader/>
+			</ShopContainer>
+		);
+	}
 
 	return (
 		<ShopContainer>

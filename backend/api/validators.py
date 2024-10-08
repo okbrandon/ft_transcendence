@@ -4,7 +4,7 @@ import base64
 def validate_username(username):
     if username is None:
         return False
-    return 4 <= len(username) <= 16 and re.match(r'^[a-zA-Z0-9_]+$', username) is not None
+    return 4 <= len(username) <= 16 and re.match(r'^[a-zA-Z0-9_]+$', username) is not None and re.search(r'42$', username) is None
 
 def validate_displayname(displayname):
     if displayname is None:

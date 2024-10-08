@@ -21,7 +21,6 @@ import PlayMenu from '../components/Game/PlayMenu';
 import Shop from '../components/Shop/Shop';
 import Tournament from '../components/Game/Tournament/Tournament';
 import JoinTournament from '../components/Game/Tournament/JoinTournament';
-import Match from '../components/Game/Match';
 import Friends from '../components/Friends/Friends';
 import PageNotFound from '../components/PageNotFound/PageNotFound';
 import Settings from '../components/Settings/Settings';
@@ -40,9 +39,7 @@ const PrivateRoutes = () => {
 
 const GameRoutes = () => {
 	return (
-		<GameProvider>
-			<Outlet/>
-		</GameProvider>
+		<Outlet/>
 	);
 };
 
@@ -54,17 +51,16 @@ const Router = createBrowserRouter(createRoutesFromElements(
 			<Route path="signup" element={ <SignUp/> }/>
 			<Route element={ <PrivateRoutes/> }>
 				<Route path="friends" element={ <Friends/> }/>
-				<Route path="leaderboard" element={ <Leaderboard/> }/>
 				<Route path="profile/:username" element={ <Profile/> }/>
 				<Route path="settings" element={ <Settings/> }/>
 				<Route path="shop" element={ <Shop/> }/>
-				<Route path="playmenu" element={ <PlayMenu/> }/>
 				<Route path="tournament" element={ <Tournament/> }/>
 				<Route path="tournament-room" element={ <JoinTournament/> }/> {/* ⚒️ testing... */}
 				<Route element={ <GameRoutes/> }>
-					<Route path="matchmaking" element={ <Match/> }/>
 					<Route path="game" element={ <Game/> }/>
+					<Route path="playmenu" element={ <PlayMenu/> }/>
 				</Route>
+				<Route path="leaderboard" element={ <Leaderboard/> }/>
 			</Route>
 		</Route>
 		<Route path="callback" element={ <Callback/> }/>

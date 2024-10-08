@@ -1,54 +1,24 @@
 import React, { useContext, useEffect, useState } from "react";
+import Tabs from "react-bootstrap/Tabs";
+import Tab from "react-bootstrap/Tab";
+import RequestsList from "./RequestsList";
+import FriendsList from "./FriendsList";
 import {
 	Header,
 	PageContainer,
 	SearchInput,
 } from "./styles/Friends.styled";
-import Tabs from "react-bootstrap/Tabs";
-import Tab from "react-bootstrap/Tab";
-import RequestsList from "./RequestsList";
-import FriendsList from "./FriendsList";
 import Loader from "../../styles/shared/Loader.styled";
-import { GetFriends, GetRequests } from "../../api/friends";
 import { RelationContext } from "../../context/RelationContext";
 
 const Friends = () => {
 	const [searchTerm, setSearchTerm] = useState("");
-	const { updatedFriend, setUpdatedFriend } = useContext(RelationContext);
-	const [friends, setFriends] = useState(null);
-	const [requests, setRequests] = useState(null);
+	const [requestsLen, setRequestsLen] = useState(0);
+	const { friends, requests, setFriends, setRequests } = useContext(RelationContext);
 
 	useEffect(() => {
-		const fetchFriendsAndRequests = async () => {
-			try {
-				const [friendsResponse, requestsResponse] = await Promise.all([
-					GetFriends(),
-					GetRequests(),
-				]);
-				setFriends(friendsResponse);
-				setRequests(requestsResponse);
-			} catch (err) {
-				console.error(err.response.data.error);
-			}
-		};
-
-		fetchFriendsAndRequests();
-	}, []);
-
-	useEffect(() => {
-		if (friends && updatedFriend) {
-			setFriends(prev => prev.map(f => {
-				if (f.username === updatedFriend.username) {
-					return {
-						...f,
-						status: updatedFriend.status,
-					};
-				}
-				return f;
-			}));
-			setUpdatedFriend(null);
-		}
-	}, [updatedFriend, setUpdatedFriend, friends]);
+		setRequestsLen(requests.length);
+	}, [requests]);
 
 	if (!friends || !requests) {
 		return (
@@ -71,7 +41,7 @@ const Friends = () => {
 					type="text"
 					placeholder="Search Friends"
 					value={searchTerm}
-					onChange={(e) => setSearchTerm(e.target.value)}
+					onChange={e => setSearchTerm(e.target.value)}
 				/>
 			</Header>
 			<Tabs

@@ -1,23 +1,20 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import API from "../../../api/api";
+import { GetUser } from "../../../api/user";
+import { checkSecurityRestrictions } from "../../../scripts/restrictions";
+import TwoFactorAuthToggle from "./2FA/TwoFactorAuthToggle";
+import TwoFactorAuthSecurity from "./2FA/TwoFactorAuthSecurity";
+import ContactInformation from "./ContactInformation";
+import SignIn from "./SignIn";
 import {
-	ErrorMessage,
 	Form,
-	FormInput,
 	SectionHeading,
-	SubSectionHeading,
 	SuccessMessage
 } from "../styles/Settings.styled";
-import API from "../../../api/api";
-import logger from "../../../api/logger";
-import { checkSecurityRestrictions } from "../../../scripts/restrictions";
-import { AuthContext } from "../../../context/AuthContext";
-import { GetUser } from "../../../api/user";
-import TwoFactorAuth from "./TwoFactorAuth";
-import TwoFactorAuthPassword from "./TwoFactorAuthSecurity";
 import PongButton from "../../../styles/shared/PongButton.styled";
+import ErrorMessage from "../../../styles/shared/ErrorMessage.styled";
 
-const Security = ({ user }) => {
-	const { setUser } = useContext(AuthContext);
+const Security = ({ user, setUser }) => {
 	const [formData, setFormData] = useState({
 		email: user.email,
 		phone_number: user.phone_number || '',
@@ -40,7 +37,7 @@ const Security = ({ user }) => {
 			})
 	}, []);
 
-	const handleChange = (e) => {
+	const handleChange = e => {
 		const { id, value } = e.target;
 
 		setFormData(data => ({
@@ -49,16 +46,13 @@ const Security = ({ user }) => {
 		}));
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = e => {
 		e.preventDefault();
 
 		const submissionData = { ...formData };
 
 		if (!submissionData.password) {
 			delete submissionData.password;
-		}
-		if (!submissionData.phone_number) {
-			delete submissionData.phone_number;
 		}
 
 		const errorMessage = checkSecurityRestrictions(submissionData, cfPassword);
@@ -70,7 +64,7 @@ const Security = ({ user }) => {
 			setShowTwoFactorAuth(true);
 		} else {
 			setLoading(true);
-			API.patch('/users/@me/profile', submissionData)
+			API.patch('users/@me/profile', submissionData)
 				.then(() => {
 					setSuccess('Security updated successfully');
 					setError('');
@@ -97,43 +91,17 @@ const Security = ({ user }) => {
 		<>
 			<Form onSubmit={handleSubmit}>
 				<SectionHeading>Security</SectionHeading>
-				<SubSectionHeading>Sign in</SubSectionHeading>
-				<label htmlFor="password">Password</label>
-				<FormInput
-					type="password"
-					id="password"
-					placeholder="Change Password"
-					value={formData.password}
-					onChange={handleChange}
-					autoComplete="off"
+				<SignIn
+					error={error}
+					cfPassword={cfPassword}
+					setCfPassword={setCfPassword}
+					formData={formData}
+					handleChange={handleChange}
 				/>
-				<label htmlFor="cfPassword">Confirm Password</label>
-				<FormInput
-					type="password"
-					id="cfPassword"
-					placeholder="Confirm New Password"
-					value={cfPassword}
-					onChange={(e) => setCfPassword(e.target.value)}
-					autoComplete="off"
-				/>
-				<SubSectionHeading>Contact Information</SubSectionHeading>
-				<label htmlFor="email">Email</label>
-				<FormInput
-					type="email"
-					id="email"
-					placeholder="Change Email"
-					value={formData.email}
-					onChange={handleChange}
-					autoComplete="email"
-				/>
-				<label htmlFor="phone_number">Phone number</label>
-				<FormInput
-					type="tel"
-					id="phone_number"
-					placeholder="Add Phone Number"
-					value={formData.phone_number}
-					onChange={handleChange}
-					autoComplete="tel"
+				<ContactInformation
+					error={error}
+					formData={formData}
+					handleChange={handleChange}
 				/>
 				{success && <SuccessMessage>{success}</SuccessMessage>}
 				{error && <ErrorMessage>{error}</ErrorMessage>}
@@ -141,10 +109,9 @@ const Security = ({ user }) => {
 					{loading ? 'Saving...' : 'Save Changes'}
 				</PongButton>
 			</Form>
-			<SubSectionHeading>Two-Factor Authentication</SubSectionHeading>
-			<TwoFactorAuth user={user} handleChange={handleChange}/>
+			<TwoFactorAuthToggle user={user} handleChange={handleChange}/>
 			{showTwoFactorAuth && (
-				<TwoFactorAuthPassword
+				<TwoFactorAuthSecurity
 					formData={formData}
 					setUser={setUser}
 					setSuccess={setSuccess}

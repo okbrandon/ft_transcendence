@@ -72,6 +72,13 @@ services:
     networks:
       - transcendence
 
+  statcruncher:
+    build: ./statcruncher
+    restart: always
+    env_file: .env
+    networks:
+      - transcendence
+
 networks:
   transcendence:
     driver: bridge
