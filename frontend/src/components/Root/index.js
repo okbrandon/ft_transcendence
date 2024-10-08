@@ -22,31 +22,23 @@ const Root = () => {
 
 	return (
 		<>
-			{showPersistentUI ? (
-				<>
-					{isLoggedIn ? (
-						<RelationProvider>
-							<ConnectedNavBar/>
-							<main>
-								<Chat/>
-								<Outlet/>
-							</main>
-							<Footer/>
-						</RelationProvider>
-					) : (
-						<>
-							<NavBar/>
-							<main>
-								<Outlet/>
-							</main>
-							<Footer/>
-						</>
-					)}
-				</>
+			{isLoggedIn ? (
+				<RelationProvider>
+					{showPersistentUI && <ConnectedNavBar/>}
+					<main>
+						{showPersistentUI && <Chat/>}
+						<Outlet/>
+					</main>
+					{showPersistentUI && <Footer/>}
+				</RelationProvider>
 			) : (
-				<main>
-					<Outlet/>
-				</main>
+				<>
+					{showPersistentUI && <NavBar/>}
+					<main>
+						<Outlet/>
+					</main>
+					{showPersistentUI && <Footer/>}
+				</>
 			)}
 		</>
 	);
