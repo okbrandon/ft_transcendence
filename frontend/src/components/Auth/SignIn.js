@@ -24,8 +24,6 @@ const SignIn = () => {
 	const [availablePlatforms, setAvailablePlatforms] = useState(null);
 	const [showPassword, setShowPassword] = useState(false);
 	const [error, setError] = useState('');
-	const [isTwoFactorAuth, setIsTwoFactorAuth] = useState(false);
-	const [availablePlatforms, setAvailablePlatforms] = useState(null);
 
 	const handleSubmit = event => {
 		event.preventDefault();

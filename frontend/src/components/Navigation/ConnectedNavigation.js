@@ -47,7 +47,7 @@ const ConnectedNavBar = () => {
 						<StyledNavLink to="/friends">FRIENDS</StyledNavLink>
 						{!!requestsLen && <RequestPopUp>{requestsLen}</RequestPopUp>}
 					</FriendsNavLinkContainer>
-					<StyledNavLink to="/">LEADERBOARD</StyledNavLink>
+					<StyledNavLink to="leaderboard">LEADERBOARD</StyledNavLink>
 					<StyledNavLink to="shop">SHOP</StyledNavLink>
 					<StyledNavLink to="playmenu">PLAY</StyledNavLink>
 				</NavItemsContainer>

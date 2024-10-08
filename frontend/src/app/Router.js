@@ -51,6 +51,7 @@ const Router = createBrowserRouter(createRoutesFromElements(
 			<Route path="signup" element={ <SignUp/> }/>
 			<Route element={ <PrivateRoutes/> }>
 				<Route path="friends" element={ <Friends/> }/>
+				<Route path="leaderboard" element={ <Leaderboard/> }/>
 				<Route path="profile/:username" element={ <Profile/> }/>
 				<Route path="settings" element={ <Settings/> }/>
 				<Route path="shop" element={ <Shop/> }/>
@@ -60,7 +61,6 @@ const Router = createBrowserRouter(createRoutesFromElements(
 					<Route path="game" element={ <Game/> }/>
 					<Route path="playmenu" element={ <PlayMenu/> }/>
 				</Route>
-				<Route path="leaderboard" element={ <Leaderboard/> }/>
 			</Route>
 		</Route>
 		<Route path="callback" element={ <Callback/> }/>
