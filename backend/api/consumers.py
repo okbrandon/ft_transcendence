@@ -336,7 +336,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         await self.accept()
         await self.send_json({
             "e": "HELLO",
-            "d": {"heartbeat_interval": 300000}
+            "d": {"heartbeat_interval": 1000}
         })
         self.last_heartbeat = time.time()
         self.heartbeat_task = asyncio.create_task(self.heartbeat_check())
@@ -377,7 +377,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         while True:
             await asyncio.sleep(2)  # Check every 2 seconds
             current_time = time.time()
-            if current_time - self.last_heartbeat > 10:  # No heartbeat for 10 seconds
+            if current_time - self.last_heartbeat > 10000:  # No heartbeat for 10 seconds
                 logger.warning(f"[{self.__class__.__name__}] User {self.user.userID} missed heartbeat too many times, closing connection")
                 await self.close()
                 break
@@ -463,34 +463,52 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             logger.info(f"[{self.__class__.__name__}] Match {match.matchID} started with both players")
 
     async def handle_matchmake_force_join(self, data):
+        if self.user.userID != 'user_ai':
+            logger.error(f"[{self.__class__.__name__}] User {self.user.userID} attempted to force join a match")
+            return
+
         match_id = data.get('match_id')
-        logger.info(f"[{self.__class__.__name__}] Force join request received for match: {match_id}")
+        logger.info(f"[{self.__class__.__name__}] User {self.user.userID} asked to force join match {match_id}")
+
         match = await self.find_match_by_id(match_id)
+
+        if not match:
+            logger.error(f"[{self.__class__.__name__}] Match {match_id} not found")
+            return
+
+        match.playerB = {"id": self.user.userID, "platform": "server"}
+        sync_to_async(match.save)()
+
         self.match = match
         await self.channel_layer.group_add(
             f"match_{match.matchID}",
             self.channel_name
         )
 
-        user_data = UserSerializer(self.user).data
-
         await self.send_json({
             "e": "MATCH_JOIN",
             "d": {
                 "match_id": match.matchID,
-                "side": "right",
+                "side": "left" if match.playerA['id'] == self.user.userID else "right",
                 "opponent": await self.get_opponent_info(match, self.user)
             }
         })
-
-        await self.channel_layer.group_send(
-            f"match_{match.matchID}",
-            {
-                "type": "player.join",
-                "player": get_safe_profile(user_data, me=False)
-            }
-        )
-        await self.send_match_begin(match)
+        if match.playerB:
+            # Update playerB id in active match state
+            self.active_matches[match.matchID]['playerB']['id'] = match.playerB['id']
+            # Add playerB to active match game state scores
+            self.active_matches[match.matchID]['scores'][match.playerB['id']] = 0
+            # Send PLAYER_JOIN to playerA with playerB data
+            playerB_info = await self.get_opponent_info(match, await self.get_user_from_id(match.playerA['id']))
+            await self.channel_layer.group_send(
+                f"match_{match.matchID}",
+                {
+                    "type": "player.join",
+                    "player": playerB_info
+                }
+            )
+            await self.send_match_begin(match)
+            logger.info(f"[{self.__class__.__name__}] Match {match.matchID} started with both players")
 
     async def send_match_begin(self, match):
         match_state = self.active_matches[match.matchID]
