@@ -31,15 +31,16 @@ def create_store_items(sender, **kwargs):
 def create_ai_account(sender, **kwargs):
     from .models import User
 
-    User.objects.create(
-        userID="user_ai",
-        username='ai',
-        displayName='Prune',
-        email='prune@brandoncodes.dev',
-        password='',
-        lang='en',
-        flags=3
-    )
+    if not User.objects.filter(userID="user_ai").exists():
+        User.objects.create(
+            userID="user_ai",
+            username='ai',
+            displayName='Prune',
+            email='prune@brandoncodes.dev',
+            password='',
+            lang='en',
+            flags=3
+        )
 
 def delete_unfinished_matches(sender, **kwargs):
     from .models import Match
