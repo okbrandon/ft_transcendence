@@ -474,6 +474,12 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
 
         if not match:
             logger.error(f"[{self.__class__.__name__}] Match {match_id} not found")
+            await self.send_json({
+                "e": "MATCH_FORCE_JOIN_FAILED",
+                "d": {
+                    "reason": "Match not found"
+                }
+            })
             return
 
         match.playerB = {"id": self.user.userID, "platform": "server"}
