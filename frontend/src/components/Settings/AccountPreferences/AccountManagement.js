@@ -11,38 +11,43 @@ import {
 	ModalButton
 } from '../styles/AccountManagement.styled';
 import { SubSectionHeading } from '../styles/Settings.styled';
+import { useNotification } from '../../../context/NotificationContext';
+import { useTranslation } from 'react-i18next';
 
 const AccountManagement = () => {
-	const [isModalOpen, setIsModalOpen] = useState(false);
 	const navigate = useNavigate();
+	const { addNotification } = useNotification();
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const { t } = useTranslation();
 
 	const handleConfirmDelete = () => {
-		API.delete('/users/@me/profile')
+		API.delete('users/@me/profile')
 			.then(() => {
 				localStorage.removeItem('token');
 				localStorage.removeItem('refresh');
-				navigate('/login');
+				navigate('/signin');
 			})
-			.catch((err) => {
-				console.error(err);
+			.catch(err => {
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 			});
 		setIsModalOpen(false);
 	};
+
 	return (
 		<>
-			<SubSectionHeading>Account Management</SubSectionHeading>
+			<SubSectionHeading>{t('settings.accountPreferences.subSections.accountManagement.title')}</SubSectionHeading>
 			<AccountManagementContainer>
-				<AccountManagementButton type="button" onClick={() => setIsModalOpen(true)}>Delete</AccountManagementButton>
-				<AccountManagementText>Delete your account</AccountManagementText>
+				<AccountManagementButton type="button" onClick={() => setIsModalOpen(true)}>{t('settings.accountPreferences.subSections.accountManagement.deleteButton')}</AccountManagementButton>
+				<AccountManagementText>{t('settings.accountPreferences.subSections.accountManagement.deleteConfirmation.title')}</AccountManagementText>
 
 				{isModalOpen && (
 					<ModalOverlay>
 						<ModalContainer>
 							<ModalContent>
-								<p>Are you sure you want to delete your account? This action cannot be undone.</p>
+								<p>{t('settings.accountPreferences.subSections.accountManagement.deleteConfirmation.subTitle')}</p>
 								<div>
-									<ModalButton onClick={handleConfirmDelete}>Yes, Delete</ModalButton>
-									<ModalButton onClick={() => setIsModalOpen(false)}>Cancel</ModalButton>
+									<ModalButton onClick={handleConfirmDelete}>{t('settings.accountPreferences.subSections.accountManagement.deleteConfirmation.deleteButton')}</ModalButton>
+									<ModalButton onClick={() => setIsModalOpen(false)}>{t('settings.accountPreferences.subSections.accountManagement.deleteConfirmation.cancelButton')}</ModalButton>
 								</div>
 							</ModalContent>
 						</ModalContainer>

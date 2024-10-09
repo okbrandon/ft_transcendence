@@ -6,10 +6,12 @@ import {
 	PongBallBackground,
 	PongElementsBackground,
 } from "./styles/Presentation.styled";
+import { useTranslation } from "react-i18next";
 
 const Presentation = () => {
 	const [visible, setVisible] = useState(false);
 	const presentationRef = useRef(null);
+	const { t } = useTranslation();
 
 	const handleScroll = () => {
 		const rect = presentationRef.current.getBoundingClientRect();
@@ -26,10 +28,9 @@ const Presentation = () => {
 	return (
 		<PresentationSection ref={presentationRef}>
 			<PresentationContent>
-				<h1>Welcome to Pong!</h1>
-				<p>Pong is a classic arcade game that has been a favorite among gamers for decades.</p>
-				<p>Now, you can enjoy this timeless game right here on our platform with enhanced features, multiplayer support, and online
-				tournaments.</p>
+				<h1>{t('home.presentation.title')}</h1>
+				<p>{t('home.presentation.description.firstParagraph')}</p>
+				<p>{t('home.presentation.description.secondParagraph')}</p>
 			</PresentationContent>
 			<PongElementsBackground>
 				<PongPaddleBackground className={visible ? "visible" : ""}/>

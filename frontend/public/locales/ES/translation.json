@@ -1,0 +1,356 @@
+{
+	"auth": {
+		"callback": {
+			"logIn": {
+				"title": "Iniciando sesión...",
+				"subTitle": "Por favor espera mientras iniciamos sesión."
+			},
+			"email": {
+				"title": "Verificando tu correo electrónico...",
+				"subTitle": "Por favor espera mientras verificamos tu correo electrónico."
+			}
+		},
+		"fakeCaptcha": {
+			"title": "¿Eres un robot?",
+			"subTitle": "Escribe el siguiente texto para demostrar que no eres un robot:",
+			"phrase": "No soy un robot.",
+			"errorMessage": "Por favor escribe la frase exacta.",
+			"submitButton": "Enviar"
+		},
+		"signIn": {
+			"title": "Iniciar sesión",
+			"fortyTwoProvider": "Iniciar sesión con 42",
+			"providerDivider": "- O -",
+			"usernameTitle": "NOMBRE DE USUARIO",
+			"passwordTitle": "CONTRASEÑA",
+			"notRegistered": "¿No tienes una cuenta? ",
+			"registerButton": "Registrarse",
+			"loginButton": "Enviar",
+			"successMessage": "Por favor verifica tu correo electrónico para activar tu cuenta.",
+			"errorMessage": "Por favor ingresa un nombre de usuario y una contraseña."
+		},
+		"signUp": {
+			"title": "Registrarse",
+			"usernameTitle": "NOMBRE DE USUARIO",
+			"emailTitle": "CORREO ELECTRÓNICO",
+			"passwordTitle": "CONTRASEÑA",
+			"confirmPasswordTitle": "CONFIRMAR CONTRASEÑA",
+			"alreadyRegistered": "¿Ya tienes una cuenta? ",
+			"loginButton": "Iniciar sesión",
+			"registerButton": "Enviar"
+		},
+		"twoFactor": {
+			"title": "Autenticación de dos factores",
+			"subTitle": "Por favor ingresa el código de 6 dígitos generado por tu aplicación de autenticación.",
+			"noAvailablePlatform": "No hay plataformas disponibles para configurar OTP.",
+			"verifyButton": "Verificar",
+			"backButton": "Atrás",
+			"successMessage": "OTP se ha configurado en la plataforma elegida.",
+			"disableButton": "Desactivar 2FA",
+			"enableButton": "Activar 2FA",
+			"scanMessage": "Escanea este código QR con tu aplicación de autenticación para configurar OTP."
+		}
+	},
+	"restrictions": {
+		"username": {
+			"required": "Se requiere un nombre de usuario.",
+			"invalidLength": "El nombre de usuario debe tener entre 4 y 16 caracteres.",
+			"invalidCharacters": "El nombre de usuario solo puede contener caracteres alfanuméricos.",
+			"errorKeyword": "Nombre de usuario"
+		},
+		"displayName": {
+			"invalidLength": "El nombre de visualización debe tener entre 4 y 16 caracteres.",
+			"invalidCharacters": "El nombre de visualización solo puede contener caracteres alfanuméricos.",
+			"errorKeyword": "Nombre de visualización"
+		},
+		"email": {
+			"required": "Se requiere un correo electrónico.",
+			"invalidLength": "El correo electrónico no puede tener más de 64 caracteres.",
+			"invalidFormat": "El correo electrónico debe ser una dirección de correo válida.",
+			"errorKeyword": "Correo electrónico"
+		},
+		"password": {
+			"required": "Se requiere una contraseña.",
+			"invalidLength": "La contraseña debe tener entre 8 y 72 caracteres.",
+			"missingLowercase": "La contraseña debe contener al menos una letra minúscula.",
+			"missingUppercase": "La contraseña debe contener al menos una letra mayúscula.",
+			"missingDigit": "La contraseña debe contener al menos un dígito.",
+			"missingSpecial": "La contraseña debe contener al menos un carácter especial.",
+			"noMatch": "Las contraseñas no coinciden.",
+			"errorKeyword": "Contraseña"
+		},
+		"phoneNumber": {
+			"invalidFormat": "El número de teléfono debe estar en formato E.164 (por ejemplo, +12345678901).",
+			"errorKeyword": "Número de teléfono"
+		}
+	},
+	"header": {
+		"title": "PONG",
+		"connectButton": "CONECTAR",
+		"friendsButton": "AMIGOS",
+		"leaderboardButton": "CLASIFICACIÓN",
+		"storeButton": "TIENDA",
+		"playButton": "JUGAR",
+		"profileButton": {
+			"title": "PERFIL",
+			"myProfile": "Mi Perfil",
+			"settings": "Configuración",
+			"logout": "Cerrar sesión"
+		},
+		"searchBar": {
+			"placeholder": "Buscar un usuario...",
+			"noResults": "No se encontraron resultados."
+		}
+	},
+	"footer": {
+		"title": "PONG",
+		"subTitle": "42 ft_transcendence",
+		"authors": "Hecho por <0>{{firstAuthor}}</0>, <1>{{secondAuthor}}</1>, <2>{{thirdAuthor}}</2> y <3>{{fourthAuthor}}</3>",
+		"copyright": "PONG 2024"
+	},
+	"home": {
+		"welcome": "¡Mueve tu raqueta!",
+		"playButton": "JUGAR AHORA",
+		"contributors": {
+			"title": "EQUIPO",
+			"subTitle": "Conoce al equipo detrás del proyecto"
+		},
+		"features": {
+			"first": "Multijugador",
+			"second": "Clasificación",
+			"third": "Skins",
+			"teaser": "...¡Y muchas más!"
+		},
+		"presentation": {
+			"title": "¡Bienvenido a Pong!",
+			"description": {
+				"firstParagraph": "Pong es un juego de arcade clásico que ha sido uno de los favoritos entre los jugadores durante décadas.",
+				"secondParagraph": "Ahora, puedes disfrutar de este juego atemporal aquí mismo en nuestra plataforma con características mejoradas, soporte multijugador y torneos en línea."
+			}
+		}
+	},
+	"pageNotFound": {
+		"title": "404",
+		"subTitle": "¡Ups! La página que buscabas no está aquí.",
+		"backButton": "Volver a Inicio"
+	},
+	"profile": {
+		"about": {
+			"title": "ACERCA DE",
+			"bio": {
+				"notSet": "Nada interesante aquí."
+			},
+			"balance": {
+				"title": "Saldo"
+			},
+			"activity": {
+				"title": "Actividad"
+			}
+		},
+		"skinDisplay": {
+			"title": "MOSTRAR SKIN"
+		},
+		"matchHistory": {
+			"title": "HISTORIAL DE PARTIDAS",
+			"table": {
+				"opponent": "Oponente",
+				"duration": "Duración",
+				"scores": "Puntuación",
+				"results": "Resultado",
+				"date": "Fecha",
+				"victoryLabel": "Victoria",
+				"defeatLabel": "Derrota"
+			},
+			"noResults": "No se encontró historial de partidas."
+		},
+		"winRate": {
+			"title": "PORCENTAJE DE VICTORIAS",
+			"lifetime": {
+				"title": "Total"
+			},
+			"lastFive": {
+				"title": "Últimas 5 Partidas"
+			}
+		},
+		"stats": {
+			"features": {
+				"first": {
+					"title": "RANKING"
+				},
+				"second": {
+					"title": "VICTORIAS"
+				},
+				"third": {
+					"title": "RATIO"
+				}
+			},
+			"donut": {
+				"labels": {
+					"first": "Victorias",
+					"second": "Derrotas"
+				}
+			},
+			"line": {
+				"title": "Partidas jugadas",
+				"subTitle": "Partidas jugadas por mes",
+				"categories": {
+					"months": {
+						"january": "Ene",
+						"february": "Feb",
+						"march": "Mar",
+						"april": "Abr",
+						"may": "May",
+						"june": "Jun",
+						"july": "Jul",
+						"august": "Ago",
+						"september": "Sep",
+						"october": "Oct",
+						"november": "Nov",
+						"december": "Dic"
+					}
+				}
+			}
+		}
+	},
+	"store": {
+		"title": "TIENDA",
+		"subTitle": "Skins de paletas para personalizar tu juego. ¡Selecciona una que se adapte a tu estilo!",
+		"currency": {
+			"type": "monedas",
+			"icon": "🪙"
+		},
+		"currentBalance": "Tienes {{balance}} 🪙",
+		"purchasedMessage": "¡Has comprado {{skinName}}!",
+		"insufficientFunds": "¡No tienes suficientes monedas!",
+		"equipButton": "Equipar skin",
+		"equippedLabel": "Seleccionado",
+		"equipError": "No se pudo equipar el skin",
+		"purchaseError": "No se pudo comprar el skin",
+		"buyButton": "COMPRAR"
+	},
+	"settings": {
+		"accountPreferences": {
+			"title": "Preferencias de la cuenta",
+			"saveButton": "Guardar cambios",
+			"loadingButton": "Guardando...",
+			"successMessage": "Cambios guardados exitosamente.",
+			"subSections": {
+				"accountManagement": {
+					"title": "Gestión de la cuenta",
+					"deleteButton": "Eliminar mi cuenta",
+					"deleteConfirmation": {
+						"title": "Eliminar tu cuenta",
+						"subTitle": "¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.",
+						"cancelButton": "Cancelar",
+						"deleteButton": "Sí, eliminar"
+					}
+				},
+				"profileImage": {
+					"title": "Imagen de perfil y fondo",
+					"profilePicture": {
+						"title": "Imagen de perfil",
+						"noImage": "No se ha seleccionado una imagen de perfil",
+						"removeButton": "Eliminar imagen"
+					},
+					"backgroundImage": {
+						"title": "Imagen de fondo",
+						"noImage": "No se ha seleccionado una imagen de fondo",
+						"removeButton": "Eliminar imagen"
+					}
+				},
+				"profileInformation": {
+					"title": "Información de perfil",
+					"username": {
+						"title": "Nombre de usuario",
+						"placeholder": "Ingresa tu nombre de usuario..."
+					},
+					"displayName": {
+						"title": "Nombre de visualización",
+						"placeholder": "Ingresa tu nombre de visualización..."
+					},
+					"bio": {
+						"title": "Biografía",
+						"placeholder": "Cuéntanos sobre ti..."
+					}
+				}
+			}
+		},
+		"security": {
+			"title": "Seguridad",
+			"saveButton": "Guardar cambios",
+			"loadingButton": "Guardando...",
+			"successMessage": "Cambios guardados exitosamente.",
+			"subSections": {
+				"signIn": {
+					"title": "Inicio de sesión",
+					"password": {
+						"title": "Contraseña",
+						"placeholder": "Cambia tu contraseña..."
+					},
+					"confirmPassword": {
+						"title": "Confirmar contraseña",
+						"placeholder": "Confirma tu nueva contraseña..."
+					}
+				},
+				"contactInformation": {
+					"title": "Información de contacto",
+					"email": {
+						"title": "Correo electrónico",
+						"placeholder": "Cambia tu correo electrónico..."
+					},
+					"phoneNumber": {
+						"title": "Número de teléfono",
+						"placeholder": "Agrega un número de teléfono..."
+					}
+				}
+			}
+		},
+		"privacy": {
+			"title": "Privacidad de datos",
+			"subTitle": "Vuelve en unos minutos mientras preparamos tus datos...",
+			"subSections": {
+				"downloadData": {
+					"title": "Descargar datos",
+					"readyButton": "Descargar",
+					"loadingButton": "Los datos aún no están listos..."
+				},
+				"requestData": {
+					"title": "Solicitar exportación de datos",
+					"requestButton": "Solicitar exportación",
+					"loadingButton": "Tu solicitud ha sido enviada..."
+				}
+			}
+		},
+		"visibility": {
+			"title": "Visibilidad",
+			"subSections": {
+				"blockedUsers": {
+					"title": "Usuarios bloqueados",
+					"noResults": "No se encontraron usuarios bloqueados.",
+					"unblockButton": "Desbloquear"
+				}
+			}
+		},
+		"backButton": "Volver"
+	},
+	"friends": {
+		"title": "AMIGOS",
+		"placeholder": "Buscar un amigo...",
+		"subSections": {
+			"friendList": {
+				"title": "Amigos",
+				"inviteButton": "Desafiar",
+				"messageButton": "Mensaje",
+				"deleteButton": "Eliminar",
+				"noResults": "No se encontraron amigos."
+			},
+			"friendRequests": {
+				"title": "Solicitudes",
+				"acceptButton": "Aceptar",
+				"declineButton": "Rechazar",
+				"cancelButton": "Revocar",
+				"noResults": "No se encontraron solicitudes de amistad."
+			}
+		}
+	}
+}

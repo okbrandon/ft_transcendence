@@ -1,24 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { Form, SectionHeading, SubSectionHeading } from "./styles/Settings.styled";
-import logger from "../../api/logger";
 import API from "../../api/api";
 import { InfoParagraph } from "./styles/Privacy.styled";
 import PongButton from "../../styles/shared/PongButton.styled";
+import { useNotification } from "../../context/NotificationContext";
+import { useTranslation } from "react-i18next";
 
 const Privacy = () => {
 	const [isHarvesting, setIsHarvesting] = useState(false);
 	const [isDataReady, setIsDataReady] = useState(false);
+	const { addNotification } = useNotification();
+	const { t } = useTranslation();
 
 	useEffect(() => {
-		API.get('/users/@me/harvest')
+		API.get('users/@me/harvest')
 			.then(res => {
 				setIsHarvesting(res.data.scheduled_harvesting);
 			})
 			.catch(err => {
-				console.error('Failed to harvest data:', err);
+				console.error(err?.response?.data?.error || 'An error occurred');
 			});
 
-		API.get('/users/@me/exports')
+		API.get('users/@me/exports')
 			.then(() => {
 				setIsDataReady(true);
 			})
@@ -27,9 +30,9 @@ const Privacy = () => {
 			});
 	}, []);
 
-	const handleHarvest = (e) => {
+	const handleHarvest = e => {
 		e.preventDefault();
-		API.get('/users/@me/exports', { responseType: 'blob' })
+		API.get('users/@me/exports', { responseType: 'blob' })
 			.then(res => {
 				const blobUrl = window.URL.createObjectURL(res.data);
 				const link = document.createElement('a');
@@ -41,43 +44,44 @@ const Privacy = () => {
 				window.URL.revokeObjectURL(blobUrl);
 				console.log('Data harvested');
 				setIsHarvesting(true);
+				addNotification('success', 'Download started');
 			})
 			.catch(err => {
-				console.error(err);
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred'}`);
 			});
 	};
 
-	const handleAskData = (e) => {
+	const handleAskData = e => {
 		e.preventDefault();
-		API.post('/users/@me/harvest')
+		API.post('users/@me/harvest')
 			.then(() => {
-				logger('Data harvesting requested');
+				addNotification('success', 'Data harvesting scheduled');
 			})
 			.catch(err => {
-				console.error(err.response.data.error);
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred'}`);
 			});
 	};
 
 	return (
 		<Form>
-			<SectionHeading>Data Privacy</SectionHeading>
-			<SubSectionHeading>Download Data</SubSectionHeading>
+			<SectionHeading>{t('settings.privacy.title')}</SectionHeading>
+			<SubSectionHeading>{t('settings.privacy.subSections.downloadData.title')}</SubSectionHeading>
 			<PongButton
 				onClick={handleHarvest}
 				$width="100%"
 				disabled={!isDataReady}
 			>
-				{isDataReady ? 'Download' : 'Data not ready'}
+				{isDataReady ? t('settings.privacy.subSections.downloadData.readyButton') : t('settings.privacy.subSections.downloadData.loadingButton')}
 			</PongButton>
-			<SubSectionHeading>Request Data Export</SubSectionHeading>
+			<SubSectionHeading>{t('settings.privacy.subSections.requestData.title')}</SubSectionHeading>
 			<PongButton
 				onClick={handleAskData}
 				$width="100%"
 				disabled={isHarvesting}
 			>
-				{isHarvesting ? "Data Harvesting Scheduled" : "Request Data Export"}
+				{isHarvesting ? t('settings.privacy.subSections.requestData.loadingButton') : t('settings.privacy.subSections.requestData.requestButton')}
 			</PongButton>
-			{(isHarvesting && !isDataReady) && <InfoParagraph>Come back in a few minutes while we prepare your data...</InfoParagraph>}
+			{(isHarvesting && !isDataReady) && <InfoParagraph>{t('settings.privacy.subTitle')}</InfoParagraph>}
 		</Form>
 	);
 };

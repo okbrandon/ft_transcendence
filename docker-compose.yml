@@ -1,74 +1,56 @@
 services:
-  traefik:
-    image: traefik:v2.5
-    restart: always
-    command:
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--entrypoints.web.address=:80"
-    ports:
-      - "8888:80"
-    networks:
-      - transcendence
-    volumes:
-      - ./config/traefik:/etc/traefik
-
   postgres:
     image: postgres
     restart: always
     env_file: .env
     volumes:
-      - ./data/postgres:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - transcendence
 
-  # frontend:
-  #   build: ./frontend
-  #   restart: always
-  #   env_file: .env
-  #   labels:
-  #     - "traefik.enable=true"
-  #     - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
-  #     - "traefik.http.services.frontend.loadbalancer.server.port=3000"
-  #   networks:
-  #     - transcendence
+  certs:
+    build: ./certs
+    restart: on-failure
+    env_file: .env
+    volumes:
+      - certs_data:/certs
+    networks:
+      - transcendence
+
+  frontend:
+    build: ./frontend
+    restart: always
+    env_file: .env
+    depends_on:
+      - certs
+    ports:
+      - "8888:443"
+    networks:
+      - transcendence
+    volumes:
+      - certs_data:/certs
 
   backend:
     build: ./backend
     restart: always
     env_file: .env
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=PathPrefix(`/api`)"
-      - "traefik.http.services.backend.loadbalancer.server.port=8000"
-      - "traefik.http.routers.backend-websocket.rule=PathPrefix(`/ws`)"
-      - "traefik.http.routers.backend-websocket.entrypoints=websecure"
-      - "traefik.http.routers.backend-websocket.service=backend-websocket"
-      - "traefik.http.services.backend-websocket.loadbalancer.server.port=8000"
+    depends_on:
+      - postgres
+      - certs
     networks:
       - transcendence
     volumes:
-      - ./data/exports:/exports
-
-  # gameserver:
-  #   build: ./gameserver
-  #   restart: always
-  #   env_file: .env
-  #   labels:
-  #     - "traefik.enable=true"
-  #     - "traefik.http.routers.gameserver.rule=PathPrefix(`/ws`)"
-  #     - "traefik.http.services.gameserver.loadbalancer.server.port=8080"
-  #   ports:
-  #     - 8080:8080
-  #   networks:
-  #     - transcendence
+      - exports_data:/exports
+      - certs_data:/certs
 
   harvester:
     build: ./harvester
     restart: always
     env_file: .env
+    depends_on:
+      - postgres
     volumes:
-      - ./data/exports:/exports
+      - exports_data:/exports
     networks:
       - transcendence
 
@@ -76,9 +58,19 @@ services:
     build: ./statcruncher
     restart: always
     env_file: .env
+    depends_on:
+      - postgres
+      - certs
     networks:
       - transcendence
+    volumes:
+      - certs_data:/certs
 
 networks:
   transcendence:
     driver: bridge
+
+volumes:
+  postgres_data:
+  exports_data:
+  certs_data:

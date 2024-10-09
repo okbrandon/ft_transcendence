@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { GetBlockedUsers } from "../../api/friends";
+import React from "react";
+import API from "../../api/api";
+import { useRelation } from "../../context/RelationContext";
+import { useNotification } from "../../context/NotificationContext";
 import {
 	Form,
 	SectionHeading,
@@ -12,40 +14,32 @@ import {
 	BlockedUserName,
 } from "./styles/Visibility.styled";
 import Loader from "../../styles/shared/Loader.styled";
-import API from "../../api/api";
-import logger from "../../api/logger";
 import PongButton from "../../styles/shared/PongButton.styled";
+import { useTranslation } from "react-i18next";
 
 const Visibility = () => {
-	const [blockedUsers, setBlockedUsers] = useState(null);
+	const { blockedUsers, setIsRefetch } = useRelation();
+	const { addNotification } = useNotification();
+	const { t } = useTranslation();
 
-	useEffect(() => {
-		GetBlockedUsers()
-			.then(users => {
-				setBlockedUsers(users.filter(user => user.is === 'target'));
-			});
-	}, []);
-
-	if (!blockedUsers) {
-		return <Loader/>;
-	}
+	if (!blockedUsers) return <Loader/>;
 
 	const handleUnblock = (e, relationID) => {
 		e.preventDefault();
 		API.delete(`users/@me/relationships/${relationID}`)
 			.then(() => {
-				logger('User unblocked');
-				setBlockedUsers(blockedUsers.filter(user => user.relationID !== relationID));
+				addNotification('success', 'User unblocked');
+				setIsRefetch(true);
 			})
 			.catch(err => {
-				console.error(err.response.data.error);
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 			});
 	};
 
 	return (
 		<Form>
-			<SectionHeading>Visibility</SectionHeading>
-			<SubSectionHeading>Blocked Users</SubSectionHeading>
+			<SectionHeading>{t('settings.visibility.title')}</SectionHeading>
+			<SubSectionHeading>{t('settings.visibility.subSections.blockedUsers.title')}</SubSectionHeading>
 			{blockedUsers.length ? (
 				<BlockedUserList>
 					{blockedUsers.map((relation, id) => (
@@ -55,12 +49,12 @@ const Visibility = () => {
 								<BlockedUserName>{relation.displayName}</BlockedUserName>
 							</div>
 							<PongButton onClick={e => handleUnblock(e, relation.relationID)}>
-								Unblock
+								{t('settings.visibility.subSections.blockedUsers.unblockButton')}
 							</PongButton>
 						</BlockedUserItem>
 					))}
 				</BlockedUserList>
-			) : <p>No Blocked Users</p>}
+			) : <p>{t('settings.visibility.subSections.blockedUsers.noResults')}</p>}
 		</Form>
 	);
 };

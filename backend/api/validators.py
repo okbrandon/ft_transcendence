@@ -15,7 +15,7 @@ def validate_email(email):
     return len(email) <= 64 and re.match(r"[^@]+@[^@]+\.[^@]+", email) is not None
 
 def validate_lang(lang):
-    return lang in ['en', 'fr', 'es']
+    return lang in ['EN', 'FR', 'ES']
 
 def validate_image(image):
     if image is None:
@@ -39,11 +39,11 @@ def validate_bio(bio):
 def validate_password(password):
     if password is None:
         return False
-    
+
     # Check length
     if len(password) < 8 or len(password.encode('utf-8')) > 72:
         return False
-    
+
     # Check for at least one lowercase letter, one uppercase letter, one digit, and one special character
     if not re.search(r'[a-z]', password):
         return False
@@ -53,5 +53,5 @@ def validate_password(password):
         return False
     if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
         return False
-    
+
     return True

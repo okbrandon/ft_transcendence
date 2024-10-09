@@ -7,27 +7,21 @@ from rest_framework.response import Response
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 
-from ..backends.database import StatDatabase
-from ..backends.statcruncher import StatCruncher
+from ..apps import STATCRUNCHER
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-
-database = StatDatabase()
-statcruncher = StatCruncher(database)
 
 class Leaderboard():
 
 	@staticmethod
 	def get_leaderboard_response(period, requested_stats):
-		global statcruncher
-
 		if not requested_stats:
 			return Response({'error': 'No stats requested'}, status=status.HTTP_400_BAD_REQUEST)
 		if requested_stats not in ['gamesPlayed', 'gamesWon', 'gamesLost']:
 			return Response({'error': 'Invalid stats requested'}, status=status.HTTP_400_BAD_REQUEST)
 
-		leaderboard = statcruncher.get_leaderboard(period, requested_stats)
+		leaderboard = STATCRUNCHER.get_leaderboard(period, requested_stats)
 		return Response(leaderboard, status=status.HTTP_200_OK)
 
 	class Daily(APIView):

@@ -4,7 +4,6 @@ import AccountManagement from './AccountManagement';
 import ProfileInformation from './ProfileInformation';
 import API from '../../../api/api';
 import { GetUser } from '../../../api/user';
-import { checkAccountPreferencesRestrictions } from '../../../scripts/restrictions';
 import {
 	Form,
 	SectionHeading,
@@ -12,6 +11,7 @@ import {
 } from '../styles/Settings.styled';
 import PongButton from '../../../styles/shared/PongButton.styled';
 import ErrorMessage from '../../../styles/shared/ErrorMessage.styled';
+import { useTranslation } from 'react-i18next';
 
 const AccountPreferences = ({ user, setUser }) => {
 	const [formData, setFormData] = useState({
@@ -24,6 +24,7 @@ const AccountPreferences = ({ user, setUser }) => {
 	const [loading, setLoading] = useState(false);
 	const [success, setSuccess] = useState('');
 	const [error, setError] = useState('');
+	const { t } = useTranslation();
 
 	const handleChange = (e) => {
 		const { id, value } = e.target;
@@ -45,6 +46,26 @@ const AccountPreferences = ({ user, setUser }) => {
 		}
 	};
 
+	const checkAccountPreferencesRestrictions = data => {
+		if (!data) {
+			return '';
+		}
+
+		if (!data.username) { // username
+			return t('restrictions.username.required');
+		} else if (data.username.length < 4 || data.username.length > 16) {
+			return t('restrictions.username.invalidLength');
+		} else if (/[^a-zA-Z0-9]/.test(data.username)) {
+			return t('restrictions.username.invalidCharacters');
+		} else if (data.displayName && (data.displayName.length < 4 || data.displayName.length > 16)) {
+			return t('restrictions.displayName.invalidLength');
+		} else if (/[^a-zA-Z0-9]/.test(data.displayName)) {
+			return t('restrictions.displayName.invalidCharacters');
+		}
+
+		return '';
+	};
+
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		const errorMessage = checkAccountPreferencesRestrictions(formData);
@@ -61,19 +82,19 @@ const AccountPreferences = ({ user, setUser }) => {
 			setLoading(true);
 			API.patch('/users/@me/profile', submissionData)
 				.then(() => {
-					setSuccess('Account Preferences updated successfully.');
+					setSuccess(t('settings.accountPreferences.successMessage'));
 					setError('');
 					GetUser()
 						.then(user => {
 							setUser(user);
 						})
 						.catch(err => {
-							setError(err.response?.data?.error || 'An error occurred');
+							setError(err?.response?.data?.error || 'An error occurred.');
 							setSuccess('');
 						});
 				})
 				.catch(err => {
-					setError(err.response?.data?.error || 'An error occurred');
+					setError(err?.response?.data?.error || 'An error occurred.');
 					setSuccess('');
 				})
 				.finally(() => {
@@ -84,7 +105,7 @@ const AccountPreferences = ({ user, setUser }) => {
 
 	return (
 		<Form onSubmit={handleSubmit}>
-			<SectionHeading>Account Preferences</SectionHeading>
+			<SectionHeading>{t('settings.accountPreferences.title')}</SectionHeading>
 			<ProfileInformation
 				error={error}
 				bioByteLength={bioByteLength}
@@ -100,7 +121,7 @@ const AccountPreferences = ({ user, setUser }) => {
 			{success && <SuccessMessage>{success}</SuccessMessage>}
 			{error && <ErrorMessage>{error}</ErrorMessage>}
 			<PongButton type="submit" disabled={loading}>
-				{loading ? 'Saving...' : 'Save Changes'}
+				{loading ? t('settings.accountPreferences.loadingButton') : t('settings.accountPreferences.saveButton')}
 			</PongButton>
 		</Form>
 	);

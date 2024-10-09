@@ -1,14 +1,24 @@
 import React from "react";
 import { FooterContainer } from "./styles/Footer.styled";
 import { Title } from "../../styles/shared/Title.styled";
+import { useTranslation, Trans } from "react-i18next";
 
 const Footer = () => {
+	const { t } = useTranslation();
+
 	return (
 		<FooterContainer>
-			<Title>PONG</Title><br/>
-			<p>42 ft_transcendence</p>
-			<p>Made by <strong>Kian</strong>, <strong>Evan</strong>, <strong>Brandon</strong>, and <strong>Hanmin</strong></p>
-			<p>&copy; PONG 2024</p>
+			<Title>{t('footer.title')}</Title><br/>
+			<p>{t('footer.subTitle')}</p>
+			<p>
+				<Trans i18nKey="footer.authors" components={[<strong key="first"/>, <strong key="second"/>, <strong key="third"/>, <strong key="fourth"/>]} values={{
+						firstAuthor: "Kian",
+						secondAuthor: "Evan",
+						thirdAuthor: "Brandon",
+						fourthAuthor: "Hanmin"
+					}} />
+			</p>
+			<p>&copy; {t('footer.copyright')}</p>
 		</FooterContainer>
 	);
 };

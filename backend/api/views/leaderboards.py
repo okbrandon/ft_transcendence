@@ -15,7 +15,7 @@ class Leaderboards:
 			if not requested_stats:
 				return Response({"error": "No stats requested"}, status=400)
 
-			response = requests.get('http://statcruncher:9000/leaderboard/daily' + '?stats=' + requested_stats)
+			response = requests.get('https://statcruncher:9000/leaderboard/daily' + '?stats=' + requested_stats, verify=False)
 			return Response(response.json(), status=response.status_code)
 
 	class Weekly(APIView):
@@ -25,7 +25,7 @@ class Leaderboards:
 			if not requested_stats:
 				return Response({"error": "No stats requested"}, status=400)
 
-			response = requests.get('http://statcruncher:9000/leaderboard/weekly' + '?stats=' + requested_stats)
+			response = requests.get('https://statcruncher:9000/leaderboard/weekly' + '?stats=' + requested_stats, verify=False)
 			return Response(response.json(), status=response.status_code)
 
 	class Lifetime(APIView):
@@ -35,5 +35,5 @@ class Leaderboards:
 			if not requested_stats:
 				return Response({"error": "No stats requested"}, status=400)
 
-			response = requests.get('http://statcruncher:9000/leaderboard/lifetime' + '?stats=' + requested_stats)
+			response = requests.get('https://statcruncher:9000/leaderboard/lifetime' + '?stats=' + requested_stats, verify=False)
 			return Response(response.json(), status=response.status_code)

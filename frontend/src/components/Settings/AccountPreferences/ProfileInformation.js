@@ -1,40 +1,42 @@
 import React from "react";
 import { BioContainer, FormInput, SubSectionHeading, TextArea } from "../styles/Settings.styled";
+import { useTranslation } from "react-i18next";
 
 const ProfileInformation = ({ error, bioByteLength, formData, handleChange }) => {
+	const { t } = useTranslation();
+
 	return (
 		<>
-			<SubSectionHeading>Profile Information</SubSectionHeading>
-			<label htmlFor="username">Username</label>
+			<SubSectionHeading>{t('settings.accountPreferences.subSections.profileInformation.title')}</SubSectionHeading>
+			<label htmlFor="username">{t('settings.accountPreferences.subSections.profileInformation.username.title')}</label>
 			<FormInput
-				type="test"
+				type="text"
 				id="username"
-				placeholder="Username"
+				placeholder={t('settings.accountPreferences.subSections.profileInformation.username.placeholder')}
 				value={formData.username}
 				onChange={handleChange}
-				className={error.includes("Username") ? "is-invalid" : ""}
+				className={error.includes(t('restrictions.username.errorKeyword')) ? "is-invalid" : ""}
 				autoComplete="off"
 			/>
-			<label htmlFor="displayName">Display Name</label>
+			<label htmlFor="displayName">{t('settings.accountPreferences.subSections.profileInformation.displayName.title')}</label>
 			<FormInput
 				type="text"
 				id="displayName"
-				placeholder="Display Name"
+				placeholder={t('settings.accountPreferences.subSections.profileInformation.displayName.placeholder')}
 				value={formData.displayName || ""}
 				onChange={handleChange}
-				className={error.includes("Display Name") ? "is-invalid" : ""}
+				className={error.includes(t('restrictions.displayName.errorKeyword')) ? "is-invalid" : ""}
 				autoComplete="off"
 			/>
-			<label htmlFor="bio">Bio</label>
+			<label htmlFor="bio">{t('settings.accountPreferences.subSections.profileInformation.bio.title')}</label>
 			<BioContainer>
 				<TextArea
 					id="bio"
-					placeholder="Tell us about yourself"
+					placeholder={t('settings.accountPreferences.subSections.profileInformation.bio.placeholder')}
 					value={formData.bio || ""}
 					rows="4"
 					cols="50"
 					onChange={handleChange}
-					className={error.includes("Bio") ? "is-invalid" : ""}
 				/>
 				<p>{bioByteLength} / 280</p>
 			</BioContainer>

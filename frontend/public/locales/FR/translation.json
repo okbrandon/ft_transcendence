@@ -1,0 +1,356 @@
+{
+	"auth": {
+		"callback": {
+			"logIn": {
+				"title": "Connexion en cours...",
+				"subTitle": "Veuillez patienter pendant que nous vous connectons."
+			},
+			"email": {
+				"title": "Vérification de votre adresse e-mail...",
+				"subTitle": "Veuillez patienter pendant que nous vérifions votre adresse e-mail."
+			}
+		},
+		"fakeCaptcha": {
+			"title": "Êtes-vous un robot ?",
+			"subTitle": "Tapez le texte suivant pour prouver que vous n'êtes pas un robot :",
+			"phrase": "Je ne suis pas un robot.",
+			"errorMessage": "Veuillez taper la phrase exacte.",
+			"submitButton": "Soumettre"
+		},
+		"signIn": {
+			"title": "Connexion",
+			"fortyTwoProvider": "Se connecter avec 42",
+			"providerDivider": "- Ou -",
+			"usernameTitle": "NOM D'UTILISATEUR",
+			"passwordTitle": "MOT DE PASSE",
+			"notRegistered": "Pas encore inscrit ? ",
+			"registerButton": "S'inscrire",
+			"loginButton": "Soumettre",
+			"successMessage": "Veuillez vérifier votre e-mail pour vérifier votre compte.",
+			"errorMessage": "Veuillez entrer un nom d'utilisateur et un mot de passe."
+		},
+		"signUp": {
+			"title": "Inscription",
+			"usernameTitle": "NOM D'UTILISATEUR",
+			"emailTitle": "E-MAIL",
+			"passwordTitle": "MOT DE PASSE",
+			"confirmPasswordTitle": "CONFIRMER LE MOT DE PASSE",
+			"alreadyRegistered": "Déjà inscrit ? ",
+			"loginButton": "Se connecter",
+			"registerButton": "Soumettre"
+		},
+		"twoFactor": {
+			"title": "Authentification à deux facteurs",
+			"subTitle": "Veuillez entrer le code à 6 chiffres généré par votre application d'authentification.",
+			"noAvailablePlatform": "Aucune plateforme disponible pour configurer l'OTP.",
+			"verifyButton": "Vérifier",
+			"backButton": "Retour",
+			"successMessage": "L'OTP a été configuré sur votre plateforme choisie.",
+			"disableButton": "Désactiver l'authentification à deux facteurs",
+			"enableButton": "Activer l'authentification à deux facteurs",
+			"scanMessage": "Scannez ce code QR avec votre application d'authentification pour configurer l'OTP."
+		}
+	},
+	"restrictions": {
+		"username": {
+			"required": "Le nom d'utilisateur est requis.",
+			"invalidLength": "Le nom d'utilisateur doit comporter entre 4 et 16 caractères.",
+			"invalidCharacters": "Le nom d'utilisateur ne doit contenir que des caractères alphanumériques.",
+			"errorKeyword": "Nom d'utilisateur"
+		},
+		"displayName": {
+			"invalidLength": "Le nom d'affichage doit comporter entre 4 et 16 caractères.",
+			"invalidCharacters": "Le nom d'affichage ne doit contenir que des caractères alphanumériques.",
+			"errorKeyword": "Nom d'affichage"
+		},
+		"email": {
+			"required": "L'adresse e-mail est requise.",
+			"invalidLength": "L'adresse e-mail ne peut pas dépasser 64 caractères.",
+			"invalidFormat": "L'adresse e-mail doit être une adresse e-mail valide.",
+			"errorKeyword": "Adresse e-mail"
+		},
+		"password": {
+			"required": "Le mot de passe est requis.",
+			"invalidLength": "Le mot de passe doit comporter entre 8 et 72 caractères.",
+			"missingLowercase": "Le mot de passe doit contenir au moins une lettre minuscule.",
+			"missingUppercase": "Le mot de passe doit contenir au moins une lettre majuscule.",
+			"missingDigit": "Le mot de passe doit contenir au moins un chiffre.",
+			"missingSpecial": "Le mot de passe doit contenir au moins un caractère spécial.",
+			"noMatch": "Les mots de passe ne correspondent pas.",
+			"errorKeyword": "Mot de passe"
+		},
+		"phoneNumber": {
+			"invalidFormat": "Le numéro de téléphone doit être au format E.164 (par exemple, +12345678901).",
+			"errorKeyword": "Numéro de téléphone"
+		}
+	},
+	"header": {
+		"title": "PONG",
+		"connectButton": "CONNEXION",
+		"friendsButton": "AMIS",
+		"leaderboardButton": "CLASSEMENT",
+		"storeButton": "BOUTIQUE",
+		"playButton": "JOUER",
+		"profileButton": {
+			"title": "PROFIL",
+			"myProfile": "Mon Profil",
+			"settings": "Paramètres",
+			"logout": "Déconnexion"
+		},
+		"searchBar": {
+			"placeholder": "Rechercher un utilisateur...",
+			"noResults": "Aucun résultat trouvé."
+		}
+	},
+	"footer": {
+		"title": "PONG",
+		"subTitle": "42 ft_transcendence",
+		"authors": "Créé par <0>{{firstAuthor}}</0>, <1>{{secondAuthor}}</1>, <2>{{thirdAuthor}}</2> et <3>{{fourthAuthor}}</3>",
+		"copyright": "PONG 2024"
+	},
+	"home": {
+		"welcome": "Secouez la raquette !",
+		"playButton": "JOUER MAINTENANT",
+		"contributors": {
+			"title": "ÉQUIPE",
+			"subTitle": "Rencontrez l'équipe derrière le projet"
+		},
+		"features": {
+			"first": "Multijoueur",
+			"second": "Classement",
+			"third": "Skins",
+			"teaser": "...Et bien plus encore !"
+		},
+		"presentation": {
+			"title": "Bienvenue dans Pong !",
+			"description": {
+				"firstParagraph": "Pong est un jeu d'arcade classique qui est un favori parmi les joueurs depuis des décennies.",
+				"secondParagraph": "Maintenant, vous pouvez profiter de ce jeu intemporel ici même sur notre plateforme avec des fonctionnalités améliorées, un support multijoueur et des tournois en ligne."
+			}
+		}
+	},
+	"pageNotFound": {
+		"title": "404",
+		"subTitle": "Oops ! La page que vous recherchez n'est pas ici.",
+		"backButton": "Retour à l'accueil"
+	},
+	"profile": {
+		"about": {
+			"title": "À PROPOS",
+			"bio": {
+				"notSet": "Rien d'intéressant ici."
+			},
+			"balance": {
+				"title": "Solde"
+			},
+			"activity": {
+				"title": "Activité"
+			}
+		},
+		"skinDisplay": {
+			"title": "AFFICHAGE DES SKINS"
+		},
+		"matchHistory": {
+			"title": "HISTORIQUE DES MATCHS",
+			"table": {
+				"opponent": "Adversaire",
+				"duration": "Durée",
+				"scores": "Score",
+				"results": "Résultat",
+				"date": "Date",
+				"victoryLabel": "Victoire",
+				"defeatLabel": "Défaite"
+			},
+			"noResults": "Aucun historique de match trouvé."
+		},
+		"winRate": {
+			"title": "TAUX DE VICTOIRE",
+			"lifetime": {
+				"title": "Tout le temps"
+			},
+			"lastFive": {
+				"title": "5 Derniers Jeux"
+			}
+		},
+		"stats": {
+			"features": {
+				"first": {
+					"title": "CLASSEMENT"
+				},
+				"second": {
+					"title": "VICTOIRES"
+				},
+				"third": {
+					"title": "RATIO"
+				}
+			},
+			"donut": {
+				"labels": {
+					"first": "Victoires",
+					"second": "Défaites"
+				}
+			},
+			"line": {
+				"title": "Parties jouées",
+				"subTitle": "Matchs joués par mois",
+				"categories": {
+					"months": {
+						"january": "Jan",
+						"february": "Fév",
+						"march": "Mar",
+						"april": "Avr",
+						"may": "Mai",
+						"june": "Juin",
+						"july": "Juil",
+						"august": "Août",
+						"september": "Sept",
+						"october": "Oct",
+						"november": "Nov",
+						"december": "Déc"
+					}
+				}
+			}
+		}
+	},
+	"store": {
+		"title": "BOUTIQUE",
+		"subTitle": "Skins de raquette pour personnaliser votre jeu. Choisissez celui qui correspond à votre style !",
+		"currency": {
+			"type": "pièces",
+			"icon": "🪙"
+		},
+		"currentBalance": "Vous avez {{balance}} 🪙",
+		"purchasedMessage": "Vous avez acheté {{skinName}} !",
+		"insufficientFunds": "Pas assez de pièces !",
+		"equipButton": "Équiper le skin",
+		"equippedLabel": "Sélectionné",
+		"equipError": "Impossible d'équiper le skin",
+		"purchaseError": "Impossible d'acheter le skin",
+		"buyButton": "ACHETER"
+	},
+	"settings": {
+		"accountPreferences": {
+			"title": "Préférences du compte",
+			"saveButton": "Enregistrer les modifications",
+			"loadingButton": "Enregistrement...",
+			"successMessage": "Modifications enregistrées avec succès.",
+			"subSections": {
+				"accountManagement": {
+					"title": "Gestion du compte",
+					"deleteButton": "Supprimer mon compte",
+					"deleteConfirmation": {
+						"title": "Supprimer votre compte",
+						"subTitle": "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.",
+						"cancelButton": "Annuler",
+						"deleteButton": "Oui, supprimer"
+					}
+				},
+				"profileImage": {
+					"title": "Image de profil et arrière-plan",
+					"profilePicture": {
+						"title": "Photo de profil",
+						"noImage": "Aucune image de profil sélectionnée",
+						"removeButton": "Supprimer l'image"
+					},
+					"backgroundImage": {
+						"title": "Image d'arrière-plan",
+						"noImage": "Aucune image d'arrière-plan sélectionnée",
+						"removeButton": "Supprimer l'image"
+					}
+				},
+				"profileInformation": {
+					"title": "Informations de profil",
+					"username": {
+						"title": "Nom d'utilisateur",
+						"placeholder": "Entrez votre nom d'utilisateur..."
+					},
+					"displayName": {
+						"title": "Nom d'affichage",
+						"placeholder": "Entrez votre nom d'affichage..."
+					},
+					"bio": {
+						"title": "Biographie",
+						"placeholder": "Parlez-nous de vous..."
+					}
+				}
+			}
+		},
+		"security": {
+			"title": "Sécurité",
+			"saveButton": "Enregistrer les modifications",
+			"loadingButton": "Enregistrement...",
+			"successMessage": "Modifications enregistrées avec succès.",
+			"subSections": {
+				"signIn": {
+					"title": "Connexion",
+					"password": {
+						"title": "Mot de passe",
+						"placeholder": "Changez votre mot de passe..."
+					},
+					"confirmPassword": {
+						"title": "Confirmer le mot de passe",
+						"placeholder": "Confirmez votre nouveau mot de passe..."
+					}
+				},
+				"contactInformation": {
+					"title": "Informations de contact",
+					"email": {
+						"title": "E-mail",
+						"placeholder": "Changez votre e-mail..."
+					},
+					"phoneNumber": {
+						"title": "Numéro de téléphone",
+						"placeholder": "Ajoutez un numéro de téléphone..."
+					}
+				}
+			}
+		},
+		"privacy": {
+			"title": "Confidentialité des données",
+			"subTitle": "Revenez dans quelques minutes pendant que nous préparons vos données...",
+			"subSections": {
+				"downloadData": {
+					"title": "Télécharger les données",
+					"readyButton": "Télécharger",
+					"loadingButton": "Données pas encore prêtes..."
+				},
+				"requestData": {
+					"title": "Demander l'exportation des données",
+					"requestButton": "Demander l'exportation",
+					"loadingButton": "Votre demande a été soumise..."
+				}
+			}
+		},
+		"visibility": {
+			"title": "Visibilité",
+			"subSections": {
+				"blockedUsers": {
+					"title": "Utilisateurs bloqués",
+					"noResults": "Aucun utilisateur bloqué trouvé.",
+					"unblockButton": "Débloquer"
+				}
+			}
+		},
+		"backButton": "Retour"
+	},
+	"friends": {
+		"title": "AMIS",
+		"placeholder": "Rechercher un ami...",
+		"subSections": {
+			"friendList": {
+				"title": "Amis",
+				"inviteButton": "Défier",
+				"messageButton": "Message",
+				"deleteButton": "Supprimer",
+				"noResults": "Aucun ami trouvé."
+			},
+			"friendRequests": {
+				"title": "Demandes",
+				"acceptButton": "Accepter",
+				"declineButton": "Refuser",
+				"cancelButton": "Annuler",
+				"noResults": "Aucune demande d'ami trouvée."
+			}
+		}
+	}
+}

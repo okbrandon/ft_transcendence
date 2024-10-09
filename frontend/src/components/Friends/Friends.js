@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import RequestsList from "./RequestsList";
@@ -9,16 +9,17 @@ import {
 	SearchInput,
 } from "./styles/Friends.styled";
 import Loader from "../../styles/shared/Loader.styled";
-import { RelationContext } from "../../context/RelationContext";
+import { useRelation } from "../../context/RelationContext";
+import { useTranslation } from "react-i18next";
 
 const Friends = () => {
 	const [searchTerm, setSearchTerm] = useState("");
-	const [requestsLen, setRequestsLen] = useState(0);
-	const { friends, requests, setFriends, setRequests } = useContext(RelationContext);
+	const { friends, requests, setIsRefetch } = useRelation();
+	const { t } = useTranslation();
 
 	useEffect(() => {
-		setRequestsLen(requests.length);
-	}, [requests]);
+		setIsRefetch(true);
+	}, [setIsRefetch]);
 
 	if (!friends || !requests) {
 		return (
@@ -35,11 +36,11 @@ const Friends = () => {
 	return (
 		<PageContainer>
 			<Header>
-				<h1>FRIENDS</h1>
+				<h1>{t('friends.title')}</h1>
 				<SearchInput
 					id="friends-search"
 					type="text"
-					placeholder="Search Friends"
+					placeholder={t('friends.placeholder')}
 					value={searchTerm}
 					onChange={e => setSearchTerm(e.target.value)}
 				/>
@@ -49,10 +50,16 @@ const Friends = () => {
 				className="mb-3"
 			>
 				<Tab eventKey="friends" title="Friends">
-					<FriendsList friends={filteredFriends} setFriends={setFriends}/>
+					<FriendsList
+						friends={filteredFriends}
+						setIsRefetch={setIsRefetch}
+					/>
 				</Tab>
 				<Tab eventKey="requests" title="Requests">
-					<RequestsList requests={requests} setRequests={setRequests} setFriends={setFriends}/>
+					<RequestsList
+						requests={requests}
+						setIsRefetch={setIsRefetch}
+					/>
 				</Tab>
 			</Tabs>
 		</PageContainer>

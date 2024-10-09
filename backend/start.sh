@@ -8,5 +8,5 @@ done
 # Apply database migrations
 python manage.py migrate
 
-# Start server
-daphne -b 0.0.0.0 -p 8000 backend.asgi:application
+# Start server with SSL certificates
+exec daphne -b 0.0.0.0 -e ssl:8443:privateKey=/certs/server.key:certKey=/certs/server.crt backend.asgi:application

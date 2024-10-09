@@ -4,7 +4,7 @@ This document outlines the API endpoints and data structures used for the chat f
 
 ## Conversation update subscription
 
-At authentication, the user connects to the server via a WebSocket connection. The server sends a notification to the user when a new message is received in one of their conversations. This means that the user needs to request the conversations. The WebSocket URL is `ws://localhost:8888/ws/chat/?token=X` where `X` represents the user's token.
+At authentication, the user connects to the server via a WebSocket connection. The server sends a notification to the user when a new message is received in one of their conversations. This means that the user needs to request the conversations. The WebSocket URL is `wss://localhost:8888/ws/chat/?token=X` where `X` represents the user's token.
 
 Example of server notification:
 

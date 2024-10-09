@@ -5,6 +5,8 @@ import resend
 import os
 import httpx
 import logging
+import ssl
+import certifi
 
 from plivo import RestClient
 
@@ -131,12 +133,17 @@ def get_safe_profile(data: dict, me: bool, many: bool = False):
 
 async def get_user_id_from_token(token):
     try:
-        url = "http://localhost:8000/api/v1/users/@me/profile"
+        url = "https://localhost:8443/api/v1/users/@me/profile"
         headers = {
             "Authorization": f"Bearer {token}"
         }
 
-        async with httpx.AsyncClient() as client:
+        # Create a custom SSL context that doesn't verify certificates
+        ssl_context = ssl.create_default_context(cafile=certifi.where())
+        ssl_context.check_hostname = False
+        ssl_context.verify_mode = ssl.CERT_NONE
+
+        async with httpx.AsyncClient(verify=ssl_context) as client:
             response = await client.get(url, headers=headers)
 
         if response.status_code != 200:

@@ -5,26 +5,29 @@ import {
 	Line,
 	Teaser
 } from "./styles/Features.styled";
+import { useTranslation } from "react-i18next";
 
 const Features = () => {
+	const { t } = useTranslation();
+
 	return (
 		<>
 			<FeaturesSection>
 				<Line/>
 				<FeatureItem>
 					<i className="bi bi-globe"/>
-					<h3>Multiplayer</h3>
+					<h3>{t('home.features.first')}</h3>
 				</FeatureItem>
 				<FeatureItem>
 					<i className="bi bi-trophy-fill"/>
-					<h3>Leaderboard</h3>
+					<h3>{t('home.features.second')}</h3>
 				</FeatureItem>
 				<FeatureItem>
 					<i className="bi bi-brush-fill"/>
-					<h3>Skins</h3>
+					<h3>{t('home.features.third')}</h3>
 				</FeatureItem>
 			</FeaturesSection>
-			<Teaser>...And Much More!</Teaser>
+			<Teaser>{t('home.features.teaser')}</Teaser>
 		</>
 	);
 };

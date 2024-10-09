@@ -1,15 +1,18 @@
 import React from "react";
 import { Message, PageContainer, PongContainer, ReturnButton } from "./styles/PageNotFound.styled";
+import { useTranslation } from "react-i18next";
 
 const PageNotFound = () => {
+	const { t } = useTranslation();
+
 	return (
 		<PageContainer>
-			<h1>404</h1>
+			<h1>{t('pageNotFound.title')}</h1>
 			<PongContainer>
 				<img src="/images/404.gif" alt="Pong"/>
 			</PongContainer>
-			<Message>Oops! The page you were looking for isn't here.</Message>
-			<ReturnButton to="/">Return Home</ReturnButton>
+			<Message>{t('pageNotFound.subTitle')}</Message>
+			<ReturnButton to="/">{t('pageNotFound.backButton')}</ReturnButton>
 		</PageContainer>
 	);
 };

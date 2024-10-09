@@ -9,4 +9,4 @@ done
 python3 manage.py migrate
 
 # Start the server
-python3 manage.py runserver 0.0.0.0:9000
+exec gunicorn --certfile=/certs/server.crt --keyfile=/certs/server.key --bind 0.0.0.0:9000 statcruncher.wsgi:application

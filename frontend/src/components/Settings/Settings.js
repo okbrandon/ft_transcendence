@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AccountPreferences from './AccountPreferences/AccountPreferences';
 import Security from './Security/Security';
@@ -11,13 +11,15 @@ import {
 	SidebarBackButton,
 	SidebarButton,
 } from './styles/Settings.styled';
-import { AuthContext } from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import Loader from '../../styles/shared/Loader.styled';
+import { useTranslation } from 'react-i18next';
 
 const Settings = () => {
-	const { user, setUser, loading } = useContext(AuthContext);
+	const { user, setUser, loading } = useAuth();
 	const [activeSection, setActiveSection] = useState("account");
 	const navigate = useNavigate();
+	const { t } = useTranslation();
 
 	if (loading) {
 		return (
@@ -34,28 +36,28 @@ const Settings = () => {
 					onClick={() => setActiveSection("account")}
 					className={activeSection === "account" ? "active" : ""}
 				>
-					Account Preferences
+					{t('settings.accountPreferences.title')}
 				</SidebarButton>
 				<SidebarButton
 					onClick={() => setActiveSection("security")}
 					className={activeSection === "security" ? "active" : ""}
 				>
-					Security
+					{t('settings.security.title')}
 				</SidebarButton>
 				<SidebarButton
 					onClick={() => setActiveSection("visibility")}
 					className={activeSection === "visibility" ? "active" : ""}
 				>
-					Visibility
+					{t('settings.visibility.title')}
 				</SidebarButton>
 				<SidebarButton
 					onClick={() => setActiveSection("privacy")}
 					className={activeSection === "privacy" ? "active" : ""}
 				>
-					Data Privacy
+					{t('settings.privacy.title')}
 				</SidebarButton>
 				<SidebarBackButton onClick={() => navigate(-1)}>
-					Back
+					{t('settings.backButton')}
 				</SidebarBackButton>
 
 			</SideBar>

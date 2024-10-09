@@ -50,6 +50,7 @@ class AuthRegister(APIView):
             email=data['email'],
             password=make_password(data['password']),
             lang=data['lang'],
+            money=100000 if skip_email_verification else 0,
             flags=1 if skip_email_verification else 0  # Set EMAIL_VERIFIED flag if skipping verification
         )
         serializer = UserSerializer(user)

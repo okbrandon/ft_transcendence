@@ -6,30 +6,22 @@ import {
 	ConnectButton,
 } from './styles/Navigation.styled';
 import Language from './LanguageDropdown';
+import { useTranslation } from 'react-i18next';
 
 const NavBar = () => {
-	const [language, setLanguage] = useState("en");
-
-	const setLocalStorageLanguage = lang => {
-		if (lang === 'en') {
-			return 'en-US';
-		} else if (lang === 'es') {
-			return 'es-ES';
-		} else if (lang === 'fr') {
-			return 'fr-FR';
-		}
-	};
+	const [language, setLanguage] = useState(localStorage.getItem('i18nextLng') || 'en');
+	const { t, i18n } = useTranslation();
 
 	const handleChangeLoggedOut = (e) => {
 		setLanguage(e.target.value);
-		localStorage.setItem('i18nextLng', setLocalStorageLanguage(e.target.value));
+		i18n.changeLanguage(e.target.value);
 	};
 
 	return (
 		<NavContainer>
-			<TitleLink to="/">PONG</TitleLink>
+			<TitleLink to="/">{t('header.title')}</TitleLink>
 			<NavItemsContainer>
-				<ConnectButton to="/login">CONNECT</ConnectButton>
+				<ConnectButton to="/signin">{t('header.connectButton')}</ConnectButton>
 				<Language handleChange={handleChangeLoggedOut} language={language}/>
 			</NavItemsContainer>
 		</NavContainer>

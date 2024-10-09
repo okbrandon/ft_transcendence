@@ -1,15 +1,15 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import NavBar from '../Navigation/Navigation';
+import Chat from '../Chat/Chat';
 import Footer from '../Footer/Footer';
-import { AuthContext } from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import RelationProvider from '../../context/RelationContext';
-import ConnectedRoot from './ConnectedRoot';
 import ConnectedNavBar from '../Navigation/ConnectedNavigation';
 
 const Root = () => {
 	const location = useLocation();
-	const { isLoggedIn } = useContext(AuthContext);
+	const { isLoggedIn } = useAuth();
 	const [showPersistentUI, setShowPersistentUI] = useState(true);
 
 	useEffect(() => {
@@ -22,31 +22,23 @@ const Root = () => {
 
 	return (
 		<>
-			{showPersistentUI ? (
-				<>
-					{isLoggedIn ? (
-						<RelationProvider>
-							<ConnectedNavBar/>
-							<main>
-								<ConnectedRoot/>
-								<Outlet/>
-							</main>
-							<Footer/>
-						</RelationProvider>
-					) : (
-						<>
-							<NavBar/>
-							<main>
-								<Outlet/>
-							</main>
-							<Footer/>
-						</>
-					)}
-				</>
+			{isLoggedIn ? (
+				<RelationProvider>
+					{showPersistentUI && <ConnectedNavBar/>}
+					<main>
+						{showPersistentUI && <Chat/>}
+						<Outlet/>
+					</main>
+					{showPersistentUI && <Footer/>}
+				</RelationProvider>
 			) : (
-				<main>
-					<Outlet/>
-				</main>
+				<>
+					{showPersistentUI && <NavBar/>}
+					<main>
+						<Outlet/>
+					</main>
+					{showPersistentUI && <Footer/>}
+				</>
 			)}
 		</>
 	);

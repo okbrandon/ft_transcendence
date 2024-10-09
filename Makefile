@@ -1,5 +1,7 @@
 # Variables
 DC = docker compose
+CERT_DIR = certs
+HOSTNAME := $(shell hostname -s)
 
 all: up
 
@@ -12,12 +14,12 @@ intro:
 	@ echo "\033[38;5;147m+#+        +#+    +#+ +#+  +#+#+# +#+   +#+#"
 	@ echo "\033[38;5;183m#+#        #+#    #+# #+#   #+#+# #+#    #+#"
 	@ echo "\033[38;5;219m###         ########  ###    ####  ########"
-	@ echo ""
+	@ echo "\033[0m"
 
 help: intro
 	@ echo "\033[1mUsage:\033[0m"
 	@ echo ""
-	@ awk 'BEGIN {FS = ":.*##";} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
+	@ awk 'BEGIN {FS = ":.*##";} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 	@ echo ""
 
 up: intro ## Launch the project in the background
@@ -26,16 +28,34 @@ up: intro ## Launch the project in the background
 		exit 1; \
 	fi
 	@ if [ -z "$$(grep -E '^HOST_NAME=' .env)" ]; then \
-		echo "HOST_NAME="`hostname -s` >> .env; \
+		echo "HOST_NAME=$(HOSTNAME)" >> .env; \
 	else \
-		sed -i 's/^HOST_NAME=.*/HOST_NAME='`hostname -s`'/' .env; \
+		sed -i 's/^HOST_NAME=.*/HOST_NAME=$(HOSTNAME)/' .env; \
 	fi
 	@ $(DC) up -d --build
 
-logs: ## Show the logs of the project
-	@ $(DC) logs
+logs: intro ## Show the logs of the project
+	@ $(DC) logs -f
 
-down: ## Stop the project
+logs-backend: intro ## Show the logs of the backend
+	@ docker logs ft_transcendence-backend-1
+
+logs-frontend: intro ## Show the logs of the frontend
+	@ docker logs ft_transcendence-frontend-1
+
+logs-harvester: intro ## Show the logs of the harvester
+	@ docker logs ft_transcendence-harvester-1
+
+logs-postgres: intro ## Show the logs of the database
+	@ docker logs ft_transcendence-postgres-1
+
+logs-statcruncher: intro ## Show the logs of the statcruncher
+	@ docker logs ft_transcendence-statcruncher-1
+
+logs-traefik: intro ## Show the logs of the reverse proxy
+	@ docker logs ft_transcendence-traefik-1
+
+down: intro ## Stop the project
 	@ $(DC) down
 
 clean: down ## Stop the project and remove all the stopped containers / unused networks / dangling images / unused build caches (docker system prune -f)

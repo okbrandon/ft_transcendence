@@ -1,9 +1,10 @@
-import React, { createContext, useEffect, useRef, useState } from "react";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import API from '../api/api';
 import { useLocation } from "react-router-dom";
 import logger from "../api/logger";
 import { formatUserData } from "../api/user";
-import { GetFriends, GetRequests } from "../api/friends";
+import { GetBlockedUsers, GetFriends, GetRequests } from "../scripts/relation";
+import { useNotification } from "./NotificationContext";
 
 const WS_CHAT_URL = '/ws/chat/?token=';
 const WS_STATUS_URL = '/ws/status/?token=';
@@ -14,6 +15,7 @@ export const RelationContext = createContext({
 
 const RelationProvider = ({ children }) => {
 	const location = useLocation();
+	const { addNotification } = useNotification();
 	const socketStatus = useRef(null);
 	const socketChat = useRef(null);
 	const pathnameRef = useRef(location.pathname);
@@ -135,22 +137,11 @@ const RelationProvider = ({ children }) => {
 					]
 				}
 			]);
-	const [notificationUser, setNotificationUser] = useState(null);
-	const [requests, setRequests] = useState([]);
+	const [relations, setRelations] = useState([]);
 	const [friends, setFriends] = useState([]);
-
-	const fetchFriendsAndRequests = async () => {
-		try {
-			const [friendsResponse, requestsResponse] = await Promise.all([
-				GetFriends(),
-				GetRequests(),
-			]);
-			setFriends(friendsResponse);
-			setRequests(requestsResponse);
-		} catch (err) {
-			console.error(err.response?.data?.error || 'An error occurred');
-		}
-	};
+	const [requests, setRequests] = useState([]);
+	const [blockedUsers, setBlockedUsers] = useState([]);
+	const [isRefetch, setIsRefetch] = useState(false);
 
 	const setActivity = location => {
 		if (location === '/vs-ai' || location === '/vs-player') {
@@ -162,8 +153,20 @@ const RelationProvider = ({ children }) => {
 	};
 
 	useEffect(() => {
-		fetchFriendsAndRequests();
-	}, []);
+		API.get('users/@me/relationships')
+			.then(relationships => {
+				setRelations(relationships.data);
+				setFriends(GetFriends(relationships.data));
+				setRequests(GetRequests(relationships.data));
+				setBlockedUsers(GetBlockedUsers(relationships.data));
+			})
+			.catch(err => {
+				console.error(err?.response?.data?.error || 'An error occurred.');
+			})
+			.finally(() => {
+				setIsRefetch(false);
+			})
+	}, [isRefetch]);
 
 	useEffect(() => {
 		socketChat.current = new WebSocket(WS_CHAT_URL + localStorage.getItem('token'));
@@ -181,11 +184,18 @@ const RelationProvider = ({ children }) => {
 						console.error('Failed to update conversations:', error);
 					});
 			} else if (response.type === 'friend_request') {
-				fetchFriendsAndRequests();
-				setNotificationUser(formatUserData({
+				const user = formatUserData({
 					...response.data.from,
 					status: response.status
-				}));
+				});
+				setIsRefetch(true);
+				if (user.status === 'pending') {
+					addNotification('info', `You have a friend request from ${user.displayName}.`);
+				} else if (user.status === 'rejected') {
+					addNotification('info', `${user.displayName} rejected your friend request.`);
+				} else if (user.status === 'accepted') {
+					addNotification('info', `${user.displayName} accepted your friend request.`);
+				};
 			}
 		};
 		socketChat.current.onerror = error => {
@@ -193,12 +203,12 @@ const RelationProvider = ({ children }) => {
 		};
 
 		return () => {
-			if (socketChat.current) {
+			if (socketChat.current && socketChat.current.readyState === WebSocket.OPEN) {
 				socketChat.current.close();
 				logger('WebSocket for Chat closed');
 			}
 		};
-	}, []);
+	}, [addNotification]);
 
 	useEffect(() => {
 		socketStatus.current = new WebSocket(WS_STATUS_URL + localStorage.getItem('token'));
@@ -206,14 +216,14 @@ const RelationProvider = ({ children }) => {
 			logger('WebSocket for Status connection opened');
 		};
 		socketStatus.current.onmessage = event => {
-			const data = JSON.parse(event.data);
-			if (data.type === 'heartbeat') {
+			const response = JSON.parse(event.data);
+			if (response.type === 'heartbeat') {
 				socketStatus.current.send(JSON.stringify({
 					type: 'heartbeat',
 					activity: setActivity(pathnameRef.current)
 				}));
-			} else if (data.type === 'connection_event') {
-				fetchFriendsAndRequests();
+			} else if (response.type === 'connection_event') {
+				setIsRefetch(true);
 			}
 		};
 		socketStatus.current.onerror = error => {
@@ -221,7 +231,7 @@ const RelationProvider = ({ children }) => {
 		};
 
 		return () => {
-			if (socketStatus.current) {
+			if (socketStatus.current && socketStatus.current.readyState === WebSocket.OPEN) {
 				socketStatus.current.close();
 				logger('WebSocket for Status closed');
 			}
@@ -235,16 +245,22 @@ const RelationProvider = ({ children }) => {
 	return (
 		<RelationContext.Provider value={{
 			conversations,
-			notificationUser,
-			setNotificationUser,
-			friends,
-			setFriends,
-			requests,
-			setRequests,
+			setConversations,
+			relations,				// get the relations
+			setRelations,			// change the relations
+			friends,				// get the friends
+			setFriends,				// change the friends
+			requests,				// get the requests users
+			setRequests,			// change the requests
+			blockedUsers,			// get the blocked users
+			setBlockedUsers,		// change the blocked users
+			setIsRefetch,			// refetch the relations when set to true
 		}}>
 			{ children }
 		</RelationContext.Provider>
 	);
 };
+
+export const useRelation = () => useContext(RelationContext);
 
 export default RelationProvider;

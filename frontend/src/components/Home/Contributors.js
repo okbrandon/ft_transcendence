@@ -7,6 +7,7 @@ import {
 	Title,
 	SubTitle
 } from "./styles/Contributors.styled";
+import { useTranslation } from "react-i18next";
 
 const contributors =[
 	{
@@ -36,10 +37,12 @@ const contributors =[
 ];
 
 const Contributors = () => {
+	const { t } = useTranslation();
+
 	return (
 		<ContributorsContainer>
-			<Title>TEAM</Title>
-			<SubTitle>Meet the team behind the project</SubTitle>
+			<Title>{t('home.contributors.title')}</Title>
+			<SubTitle>{t('home.contributors.subTitle')}</SubTitle>
 			<CardsContainer>
 				<Cards>
 					{contributors.map((contributor, index) => (
