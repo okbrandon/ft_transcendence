@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { useNotification } from "../../context/NotificationContext";
 import { ApiLogin } from "../../api/auth";
-import logger from "../../api/logger";
 import { useAuth } from "../../context/AuthContext";
 import OTPInputComponent from "./OTPInput";
 import { FormContainer } from "./styles/Authentication.styled";
