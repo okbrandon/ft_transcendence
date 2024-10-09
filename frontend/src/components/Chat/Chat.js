@@ -55,7 +55,7 @@ const Chat = () => {
 				{!isOverlayMinimized && (
 					<>
 						<SearchFriends conversations={conversations} /> { /* TODO: SearchFriends */ }
-						<MessagePreview conversationsData={conversations} handleSelectChat={handleSelectChat} />
+						<MessagePreview conversations={conversations} handleSelectChat={handleSelectChat} />
 					</>
 				)}
 			</MainChatContainer>

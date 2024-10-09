@@ -7,7 +7,7 @@ import SearchFriendsContainer, {
 import { useNavigate } from 'react-router-dom';
 
 
-export const SearchFriends = ({ onOpenChat }) => {
+export const SearchFriends = ({ onOpenChat, conversations }) => {
 	const [searchQuery, setSearchQuery] = useState('');
 	const navigate = useNavigate();
 	const currentUserID = localStorage.getItem('userID');

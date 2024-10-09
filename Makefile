@@ -31,9 +31,9 @@ up: intro ## Launch the project in the background
 		echo "HOST_NAME=$(HOSTNAME)" >> .env; \
 	else \
 		if [ "$$(uname)" = "Darwin" ]; then \
-			sed -i '' 's/^HOST_NAME=*/HOST_NAME=$(HOSTNAME)/' .env; \
+			sed -i '' -E 's/^HOST_NAME=.*/HOST_NAME=$(HOSTNAME)/' .env; \
 		else \
-			sed -i 's/^HOST_NAME=*/HOST_NAME=$(HOSTNAME)/' .env; \
+			sed -i 's/^HOST_NAME=.*/HOST_NAME=$(HOSTNAME)/' .env; \
 		fi; \
 	fi
 	@ $(DC) up -d --build
