@@ -3,17 +3,13 @@ import { SearchFriends } from './SearchFriends.js';
 import { MessagePreview } from './MessagePreview.js';
 import { DirectMessage } from './DirectMessage.js';
 import ChatContainer, { MainChatContainer } from './styles/Chat/ChatContainer.styled.js';
-import ScrollableComponent from './tools/ScrollableComponent.js';
 import { useRelation } from '../../context/RelationContext.js';
 import ChatHeader from './ChatHeader.js';
 
 const Chat = () => {
 	const { conversations } = useRelation();
-	const [DMWindow, setDMWindow] = useState(null);
-	const [$isMinimized, setIsMinimized] = useState(true);
 	const [isOverlayMinimized, setIsOverlayMinimized] = useState(true);
 	const [mainWinArrow, setMainWinArrow] = useState(false);
-
 	const [directMessage, setDirectMessage] = useState({
 		isOpen: false,
 		isMinimized: false,
@@ -58,7 +54,7 @@ const Chat = () => {
 				<ChatHeader toggleMinimization={mainMinimizer} arrowState={mainWinArrow} />
 				{!isOverlayMinimized && (
 					<>
-						<SearchFriends/>
+						<SearchFriends conversations={conversations} /> { /* TODO: SearchFriends */ }
 						<MessagePreview conversationsData={conversations} handleSelectChat={handleSelectChat} />
 					</>
 				)}

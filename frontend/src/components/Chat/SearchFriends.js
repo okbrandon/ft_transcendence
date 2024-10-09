@@ -3,16 +3,12 @@ import SearchFriendsContainer, {
 	SearchInput,
 	Dropdown,
 	FriendItem,
-	FriendActions,
-	ActionButton
 } from './styles/Chat/SearchFriends.styled';
 import { useNavigate } from 'react-router-dom';
-import { RelationContext } from '../../context/RelationContext';
 
 
 export const SearchFriends = ({ onOpenChat }) => {
 	const [searchQuery, setSearchQuery] = useState('');
-	const { conversations } = useContext(RelationContext);
 	const navigate = useNavigate();
 	const currentUserID = localStorage.getItem('userID');
 
@@ -42,7 +38,7 @@ export const SearchFriends = ({ onOpenChat }) => {
 	const handleBlock = (friend) => {
 		console.log('Block', friend);
 		// TODO: implement block functionality
-		// 
+		//
 	};
 
 	return (

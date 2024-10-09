@@ -1,9 +1,6 @@
-import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import defaultAvatar from './img/default-avatar.jpg';
 import ProfilePicture from './styles/global/ProfilePicture.styled';
 import ScrollableComponent from './tools/ScrollableComponent';
-import { GetFriends } from '../../api/friends';
 
 const PreviewContainer = styled.div`
 	padding: 10px;
@@ -40,24 +37,11 @@ const NoFriendsMessage = styled.div`
 	font-size: 1.2rem;
 `;
 
-export const MessagePreview = ({ conversationsData, handleSelectChat }) => {
+export const MessagePreview = ({ conversations, handleSelectChat }) => {
 	const userID = localStorage.getItem('userID');
-	const [friends, setFriends] = useState([]);
-	const [friendStatus, setFriendStatus] = useState([]); // useState for finding conversation type: 1/2 1: friends, 2: blocked request received
-	const [loading, setLoading] = useState(true);
 
-	// Fetching friends temporarily for rendering purposes, to remove once backend is implemented
-	useEffect(() => {
-		const fetchFriends = async () => {
-			const friendsData = await GetFriends();
-			setFriends(friendsData);
-			setLoading(false);
-		};
-		fetchFriends();
-	}, []);
-	// same here, to remove once backend is implemented
 	const handleSelectFriend = (friend) => {
-		const convo = conversationsData.find((convo) => {
+		const convo = conversations.find((convo) => {
 			const other = convo.participants.find(participant => participant.userID !== userID);
 			return other.username === friend.username;
 		});
@@ -65,10 +49,10 @@ export const MessagePreview = ({ conversationsData, handleSelectChat }) => {
 		handleSelectChat(friend.username, convo ? convo.conversationID : null);
 	};
 
-	const renderFriendPreview = (friend, index, message = 'Click to start a conversation') => (
+	const renderFriendPreview = (friend, index, message) => (
 		<PreviewContainer key={index} onClick={() => handleSelectFriend(friend)}>
 			<ProfilePicture
-				src={defaultAvatar}
+				src={friend.avatarID || 'images/default-profile.png'}
 				alt={`${friend.username}'s profile picture`}
 			/>
 			<MessageContent>
@@ -78,31 +62,23 @@ export const MessagePreview = ({ conversationsData, handleSelectChat }) => {
 		</PreviewContainer>
 	);
 
-	if (loading) {
-		return <NoFriendsMessage>Loading friends...</NoFriendsMessage>;
-	}
-
-	if (friends.length === 0) {
-		return <NoFriendsMessage>No friends yet</NoFriendsMessage>;
-	}
-
-	if (conversationsData.length === 0) {
-		return (
-			<ScrollableComponent>
-				{friends.map((friend, index) =>
-					renderFriendPreview(friend, index)
-				)}
-			</ScrollableComponent>
-		);
-	}
+	// if (conversations.length === 0) {
+	// 	return (
+	// 		<ScrollableComponent>
+	// 			{friends.map((friend, index) =>
+	// 				renderFriendPreview(friend, index)
+	// 			)}
+	// 		</ScrollableComponent>
+	// 	);
+	// }
 
 	return (
 		<ScrollableComponent>
-			{conversationsData.map((convo, index) => {
+			{conversations.map((convo, index) => {
 				const other = convo.participants.find(participant => participant.userID !== userID);
 
 				if (convo.messages.length === 0) {
-					return renderFriendPreview(other, index, 'No messages yet');
+					return renderFriendPreview(other, index, 'Start a new conversation');
 				}
 
 				const lastMessage = convo.messages[convo.messages.length - 1];

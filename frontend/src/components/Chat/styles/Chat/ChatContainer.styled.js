@@ -4,7 +4,7 @@ const ChatContainer = styled.div`
 	width: 100%;
 	height: 0;
 	position: fixed;
-	z-index: 100;
+	z-index: 10000;
 	bottom: 0;
 	left: 0;
 	pointer-events: auto;
@@ -21,7 +21,7 @@ const ChatContainer = styled.div`
 export const Header = styled.div`
 	padding: 10px;
 	background-color: #000;
-	border: 1px solid #ddd;
+	// border: 1px solid #ddd;
 	font-weight: bold;
 	color: #fff;
 	position: relative;
