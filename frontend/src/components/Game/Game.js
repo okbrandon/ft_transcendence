@@ -1,266 +1,145 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import useWebSocket, { ReadyState } from 'react-use-websocket';
-import {
-	GameContainer,
-	GameSeparator,
-	PageContainer,
-	PongBall,
-	PongPaddle,
-	Profile,
-	ProfileImage,
-	ProfileName,
-	ProfilesContainer,
-	Score,
-	ScoreContainer,
-} from './styles/Game.styled';
-import Spinner from 'react-bootstrap/Spinner';
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import useWebSocket, { ReadyState } from "react-use-websocket";
+import GameProfiles from "./GameProfiles";
+import GameScene from "./GameScene";
+import { formatUserData } from "../../api/user";
+import logger from "../../api/logger";
+import { PageContainer } from "./styles/Game.styled";
 
 const Game = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const gameMode = location.state?.mode;
-	const [matchState, setMatchState] = useState(null);
-	const [playerSide, setPlayerSide] = useState(null);
-	const [opponent, setOpponent] = useState(null);
-	const [player, setPlayer] = useState(null);
-	const [matchBegun, setMatchBegun] = useState(false);
-	const [keyPressed, setKeyPressed] = useState(null);
+	const [gameState, setGameState] = useState({
+		matchState: null,
+		player: null,
+		opponent: null,
+		playerSide: null,
+	});
 
+	const [heartbeatIntervalTime, setHeartbeatIntervalTime] = useState(null);
+	const [hitPos, setHitPos] = useState(null);
+
+	const [activateTimer, setActivateTimer] = useState(false);
+
+	const heartbeatAckCount = useRef(0);
 	const heartbeatInterval = useRef(null);
 	const reconnectAttempts = useRef(0);
-	const maxReconnectAttempts = 5;
-	const [helloReceived, setHelloReceived] = useState(false);
-	const [heartbeatIntervalTime, setHeartbeatIntervalTime] = useState(null);
-	const [heartbeatAckCount, setHeartbeatAckCount] = useState(0);
-	const [matchmakingStarted, setMatchmakingStarted] = useState(false);
+	const token = useRef(localStorage.getItem('token'));
 
-	const { sendMessage, lastMessage, readyState } = useWebSocket(`/ws/match`, {
-		onClose: (event) => {
-			if (event.code === 1006) {
-				handleReconnect();
-			}
-		},
-		retryOnError: true,
+	const maxReconnectAttempts = 5;
+
+	const { sendMessage, lastMessage, readyState } = useWebSocket('/ws/match', {
+		onClose: event => { if (event.code === 1006) handleReconnect() },
 		shouldReconnect: () => true,
 	});
+
+	const handleReconnect = useCallback(() => {
+		if (reconnectAttempts.current < maxReconnectAttempts) {
+			reconnectAttempts.current += 1;
+			logger(`Attempting to reconnect... (Attempt ${reconnectAttempts.current})`);
+		} else {
+			logger('Max reconnection attempts reached. Redirecting to home.');
+			navigate('/');
+		}
+	}, [navigate]);
 
 	const sendHeartbeat = useCallback(() => {
 		sendMessage(JSON.stringify({ e: 'HEARTBEAT' }));
 	}, [sendMessage]);
 
-	const handleReconnect = useCallback(() => {
-		if (reconnectAttempts.current < maxReconnectAttempts) {
-			reconnectAttempts.current += 1;
-			console.log(`Attempting to reconnect... (Attempt ${reconnectAttempts.current})`);
-		} else {
-			console.log('Max reconnection attempts reached. Redirecting to home.');
-			navigate('/');
-		}
-	}, [navigate]);
+	const handleIdentify = useCallback(() => {
+		sendMessage(JSON.stringify({
+			e: 'IDENTIFY',
+			d: { token: token.current }
+		}));
+	}, [sendMessage]);
 
-	useEffect(() => {
-		if (readyState === ReadyState.OPEN && helloReceived) {
-			reconnectAttempts.current = 0;
+	const handleHeartbeatAck = useCallback(() => {
+		heartbeatAckCount.current += 1;
+		if (heartbeatAckCount.current === 2) {
 			sendMessage(JSON.stringify({
-				e: 'IDENTIFY',
-				d: { token: localStorage.getItem('token') }
+				e: 'MATCHMAKE_REQUEST',
+				d: { match_type: gameMode }
 			}));
-			if (heartbeatIntervalTime) {
-				heartbeatInterval.current = setInterval(() => {
-					sendHeartbeat();
-				}, heartbeatIntervalTime);
-			}
+		}
+	}, [sendMessage, gameMode]);
+
+	// Send IDENTIFY message on connection open
+	useEffect(() => {
+		if (readyState === ReadyState.OPEN && heartbeatIntervalTime) {
+			reconnectAttempts.current = 0;
+			handleIdentify();
+
+			heartbeatInterval.current = setInterval(sendHeartbeat, heartbeatIntervalTime);
 		}
 
 		return () => {
-			if (heartbeatInterval.current) {
-				clearInterval(heartbeatInterval.current);
-			}
+			if (heartbeatInterval.current) clearInterval(heartbeatInterval.current);
 		};
-	}, [readyState, sendHeartbeat, sendMessage, helloReceived, heartbeatIntervalTime]);
+	}, [readyState, heartbeatIntervalTime, handleIdentify, sendHeartbeat]);
 
+	// Handle incoming messages
 	useEffect(() => {
-		if (heartbeatAckCount >= 0 && !matchmakingStarted) {
-			setTimeout(() => {
-				sendMessage(JSON.stringify({
-					e: 'MATCHMAKE_REQUEST',
-					d: { match_type: gameMode }
-				}));
-				setMatchmakingStarted(true);
-			}, 6000);
-		}
-	}, [sendMessage, heartbeatAckCount, matchmakingStarted]);
-
-	useEffect(() => {
-		if (lastMessage !== null) {
+		if (lastMessage) {
 			const data = JSON.parse(lastMessage.data);
 			switch (data.e) {
 				case 'HELLO':
-					setHelloReceived(true);
 					setHeartbeatIntervalTime(data.d.heartbeat_interval);
 					break;
-				case 'READY':
-					setPlayer(data.d);
-					break;
-				case 'MATCH_JOIN':
-					setPlayerSide(data.d.side);
-					setOpponent(data.d.opponent);
-					break;
-				case 'PLAYER_JOIN':
-					if (data.d.userID !== player.userID) {
-						setOpponent(data.d);
-					}
-					break;
 				case 'MATCH_BEGIN':
-					setMatchState(data.d);
-					setMatchBegun(true);
+					setActivateTimer(true);
+					setGameState(prevState => ({ ...prevState, matchState: data.d }));
 					break;
 				case 'MATCH_UPDATE':
-					setMatchState(data.d);
+					setGameState(prevState => ({ ...prevState, matchState: data.d }));
 					break;
 				case 'MATCH_END':
 					alert(data.d.won ? 'You won!' : 'You lost!');
 					navigate('/');
 					break;
 				case 'HEARTBEAT_ACK':
-					setHeartbeatAckCount(prevCount => prevCount + 1);
+					handleHeartbeatAck();
+					break;
+				case 'READY':
+					setGameState(prevState => ({ ...prevState, player: formatUserData(data.d) }));
+					break;
+				case 'MATCH_JOIN':
+					setGameState(prevState => ({
+						...prevState,
+						playerSide: data.d.side,
+						opponent: data.d.opponent ? formatUserData(data.d.opponent) : null
+					}));
+					break;
+				case 'PLAYER_JOIN':
+					if (data.d.userID !== gameState.player?.userID) setGameState(prevState => ({ ...prevState, opponent: formatUserData(data.d) }));
 					break;
 				case 'PADDLE_HIT':
+					setHitPos(data.d.ball);
 					break;
 				default:
-					console.log('Unhandled event:', data);
+					console.log('Unhandled message:', data);
 			}
 		}
-	}, [lastMessage]);
+	}, [lastMessage, gameState.player?.userID, handleHeartbeatAck, navigate]);
 
-	const handlePaddleMove = useCallback((direction) => {
-		sendMessage(JSON.stringify({
-			e: 'PADDLE_MOVE',
-			d: { direction }
-		}));
-	}, [sendMessage]);
-
-	useEffect(() => {
-		const handleKeydown = (event) => {
-			if (event.key === 'ArrowUp') {
-				setKeyPressed('up');
-			} else if (event.key === 'ArrowDown') {
-				setKeyPressed('down');
-			} else if (event.key === 'q') {
-				sendMessage(JSON.stringify({ e: 'PLAYER_QUIT' }));
-				navigate('/');
-			}
-		};
-
-		const handleKeyup = (event) => {
-			if (event.key === 'ArrowUp') {
-				if (keyPressed === 'up') {
-					setKeyPressed(null);
-				}
-			} else if (event.key === 'ArrowDown') {
-				if (keyPressed === 'down') {
-					setKeyPressed(null);
-				}
-			}
-		};
-
-		window.addEventListener('keydown', handleKeydown);
-		window.addEventListener('keyup', handleKeyup);
-
-		return () => {
-			window.removeEventListener('keydown', handleKeydown);
-			window.removeEventListener('keyup', handleKeyup);
-		};
-	}, [keyPressed]);
-
-	useEffect(() => {
-		if (keyPressed) {
-			if (keyPressed === 'up') {
-				handlePaddleMove('up');
-			} else if (keyPressed === 'down') {
-				handlePaddleMove('down');
-			}
-		}
-	}, [matchState]);
-
-    return (
-        <PageContainer>
-            <ProfilesContainer>
-				<Profile>
-					{playerSide === 'left' ? (
-						player ? (
-							<>
-								<ProfileImage src={player.avatarID === 'default' || !player.avatarID ? '/images/default-profile.png' : player.avatarID} alt='Profile Picture'/>
-								<ProfileName>{player.username}</ProfileName>
-							</>
-						) : (
-							<>
-								<p>Waiting for player</p>
-								<Spinner animation='border'/>
-							</>
-						)
-					) : (
-						opponent ? (
-							<>
-								<ProfileImage src={opponent.avatarID === 'default' || !opponent.avatarID ? '/images/default-profile.png' : opponent.avatarID} alt='Profile Picture'/>
-								<ProfileName>{opponent.username}</ProfileName>
-							</>
-						) : (
-							<>
-								<p>Waiting for opponent</p>
-								<Spinner animation='border'/>
-							</>
-						)
-					)}
-				</Profile>
-				<p>Press <b>Q</b> to quit game</p>
-				<Profile>
-					{playerSide === 'right' ? (
-						player ? (
-							<>
-								<ProfileImage src={player.avatarID === 'default' || !player.avatarID ? '/images/default-profile.png' : player.avatarID} alt='Profile Picture'/>
-								<ProfileName>{player.username}</ProfileName>
-							</>
-						) : (
-							<>
-								<p>Waiting for player</p>
-								<Spinner animation='border'/>
-							</>
-						)
-					) : (
-						opponent ? (
-							<>
-								<ProfileImage src={opponent.avatarID === 'default' || !opponent.avatarID ? '/images/default-profile.png' : opponent.avatarID} alt='Profile Picture'/>
-								<ProfileName>{opponent.username}</ProfileName>
-							</>
-						) : (
-							<>
-								<p>Waiting for opponent</p>
-								<Spinner animation='border'/>
-							</>
-						)
-					)}
-				</Profile>
-			</ProfilesContainer>
-			<GameContainer>
-				{matchState && (
-					<>
-						{matchBegun && (
-							<ScoreContainer>
-								<Score>{matchState.scores[matchState.playerA.id]}</Score>
-								<Score>{matchState.scores[matchState.playerB.id]}</Score>
-							</ScoreContainer>
-						)}
-						<PongPaddle $side="left" $leftPaddleTop={matchState.playerA.paddle_y} />
-						<PongPaddle $side="right" $rightPaddleTop={matchState.playerB.paddle_y} />
-						<PongBall x={matchState.ball.x} y={matchState.ball.y} />
-						<GameSeparator />
-					</>
-				)}
-			</GameContainer>
+	return (
+		<PageContainer>
+			<GameProfiles
+				player={gameState.player}
+				opponent={gameState.opponent}
+				playerSide={gameState.playerSide}
+			/>
+			<GameScene
+				matchState={gameState.matchState}
+				hitPos={hitPos}
+				sendMessage={sendMessage}
+				activateTimer={activateTimer}
+				setActivateTimer={setActivateTimer}
+			/>
 		</PageContainer>
-	);
+	)
 };
 
 export default Game;

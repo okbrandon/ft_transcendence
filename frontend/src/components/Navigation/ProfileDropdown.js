@@ -1,22 +1,24 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Dropdown from 'react-bootstrap/Dropdown';
+import { useAuth } from '../../context/AuthContext';
+import { useRelation } from '../../context/RelationContext';
 import { ProfileDropdownButton } from './styles/Navigation.styled';
-import { AuthContext } from '../../context/AuthContext';
-import { RelationContext } from '../../context/RelationContext';
 import { useTranslation } from 'react-i18next';
 
 const ProfileDropdown = () => {
 	const navigate = useNavigate();
-	const { setIsLoggedIn, user, setUser } = useContext(AuthContext);
-	const { setConversations, setFriends, setRequests } = useContext(RelationContext);
+	const { setIsLoggedIn, user, setUser } = useAuth();
+	const { setConversations, setRelations, setFriends, setRequests, setBlockedUsers } = useRelation();
 	const { t } = useTranslation();
 
 	const handleLogout = () => {
 		setIsLoggedIn(false);
 		setUser(null);
+		setRelations([]);
 		setFriends([]);
 		setRequests([]);
+		setBlockedUsers([]);
 		setConversations([]);
 		localStorage.removeItem('token');
 		localStorage.removeItem('refresh');

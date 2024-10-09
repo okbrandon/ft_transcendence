@@ -13,9 +13,11 @@ import {
 } from "../../styles/TwoFactorAuthToggle.styled";
 import { SubSectionHeading } from "../../styles/Settings.styled";
 import ErrorMessage from "../../../../styles/shared/ErrorMessage.styled";
+import { useNotification } from "../../../../context/NotificationContext";
 import { useTranslation } from "react-i18next";
 
 const TwoFactorAuthToggle = () => {
+	const { addNotification } = useNotification();
 	const [is2FAEnabled, setIs2FAEnabled] = useState(false);
 	const [show2FA, setShow2FA] = useState(false);
 	const [qrCodeToken, setQrCodeToken] = useState('');
@@ -29,9 +31,9 @@ const TwoFactorAuthToggle = () => {
 				setIs2FAEnabled(res.data.has_otp);
 			})
 			.catch(err => {
-				console.error(err);
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred'}`);
 			});
-	}, []);
+	}, [addNotification]);
 
 	const handleToggle = () => {
 		if (is2FAEnabled) {
@@ -45,7 +47,7 @@ const TwoFactorAuthToggle = () => {
 					setError('');
 				})
 				.catch(err => {
-					setError(err.response.data.error);
+					addNotification('error', `${err?.response?.data?.error || 'An error occurred'}`);
 				});
 		}
 	};

@@ -3,13 +3,13 @@ import { DisplaySkinContainer, DisplaySkinPaddle } from "../styles/content/Displ
 import { CardTitle } from "../styles/Profile.styled";
 import { useTranslation } from "react-i18next";
 
-const DisplaySkin = ({ profileUser }) => {
+const DisplaySkin = ({ currentSkin }) => {
     const { t } = useTranslation();
 
     return (
         <DisplaySkinContainer>
             <CardTitle>{t('profile.skinDisplay.title')}</CardTitle>
-            <DisplaySkinPaddle $skin={'/images/skins/galaxy.jpeg'}/>
+            <DisplaySkinPaddle $skin={'/images/skins/' + currentSkin}/>
         </DisplaySkinContainer>
     );
 };

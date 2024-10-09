@@ -8,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["userID", "username", "displayName", "email", "mfaToken", "lang",
-                  "avatarID", "bannerID", "bio", "oauthAccountID", "phone_number", "password", "flags", "money", "status"]
+                  "avatarID", "bannerID", "bio", "oauthAccountID", "phone_number", "password", "flags", "money", "status", "xp"]
         read_only_fields = ["userID", "mfaToken", "oauthAccountID", "flags", "money"]
 
 class MatchSerializer(serializers.ModelSerializer):
@@ -25,7 +25,7 @@ class RelationshipSerializer(serializers.ModelSerializer):
 class StoreItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = StoreItem
-        fields = ["itemID", "name", "description", "price"]
+        fields = ["itemID", "name", "assetID", "price"]
 
 class VerificationCodeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -53,7 +53,7 @@ class TokenSerializer(serializers.ModelSerializer):
 class UserSettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserSettings
-        fields = ["userID", "theme", "colorblind"]
+        fields = ["userID", "selectedPaddleSkin"]
 
 class MessageSerializer(serializers.ModelSerializer):
     sender = UserSerializer()

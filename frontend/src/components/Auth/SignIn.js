@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { useNavigate, Link, useParams } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import Image from 'react-bootstrap/Image';
 import Button from 'react-bootstrap/Button';
 import { ApiLogin } from '../../api/auth';
@@ -8,17 +8,14 @@ import {
 	FormContainer,
 	FortyTwoButton
 } from './styles/Authentication.styled';
-import { AuthContext } from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import TwoFactorAuthSignIn from './TwoFactorAuthSignIn';
-import Notification from '../Notification/Notification';
 import ErrorMessage from '../../styles/shared/ErrorMessage.styled';
 import { useTranslation } from 'react-i18next';
 
 const SignIn = () => {
 	const navigate = useNavigate();
-	const { fromSignUp } = useParams();
-	const notificationRef = useRef(null);
-	const { setIsLoggedIn } = useContext(AuthContext);
+	const { setIsLoggedIn } = useAuth();
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [isTwoFactorAuth, setIsTwoFactorAuth] = useState(false);
@@ -52,15 +49,6 @@ const SignIn = () => {
 		event.preventDefault();
 		window.location.href = `/api/v1/auth/42/login`;
 	};
-
-	useEffect(() => {
-		if (fromSignUp && notificationRef.current) {
-			notificationRef.current.addNotification(
-				'success',
-				t('auth.signIn.successMessage')
-			);
-		}
-	}, [fromSignUp]);
 
 	return (
 		<AuthenticationSection>
@@ -102,7 +90,6 @@ const SignIn = () => {
 						{error && <ErrorMessage>{error}</ErrorMessage>}
 						<Button variant='light' type='submit'>{t('auth.signIn.loginButton')}</Button>
 					</FormContainer>
-					<Notification ref={notificationRef}/>
 				</>
 			) : (
 				<TwoFactorAuthSignIn

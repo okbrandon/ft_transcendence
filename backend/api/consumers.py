@@ -15,9 +15,9 @@ from asgiref.sync import sync_to_async, async_to_sync
 from django.db.models import Q, Count
 from django.utils import timezone
 
-from .models import Conversation, User, Relationship, Match
+from .models import Conversation, User, Relationship, Match, UserSettings
 from .util import generate_id, get_safe_profile, get_user_id_from_token
-from .serializers import UserSerializer, MatchSerializer
+from .serializers import UserSerializer, MatchSerializer, UserSettingsSerializer
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -340,17 +340,20 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         })
         self.last_heartbeat = time.time()
         self.heartbeat_task = asyncio.create_task(self.heartbeat_check())
+        self.match = None
         logger.info(f"[{self.__class__.__name__}] Connection accepted, heartbeat check task started")
 
     async def disconnect(self, close_code):
         logger.info(f"[{self.__class__.__name__}] Disconnecting with close code: {close_code}")
         if hasattr(self, 'heartbeat_task'):
             self.heartbeat_task.cancel()
+
         logger.info(f"[{self.__class__.__name__}] Disconnected, cleanup completed")
 
     async def receive_json(self, content):
         event_type = content.get('e')
         data = content.get('d')
+
 
         if event_type != 'HEARTBEAT':
             # logger.info(f"[{self.__class__.__name__}] Received event: {event_type}")
@@ -374,8 +377,8 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         while True:
             await asyncio.sleep(2)  # Check every 2 seconds
             current_time = time.time()
-            if current_time - self.last_heartbeat > 300:  # No heartbeat for 10 seconds
-                logger.warning(f"[{self.__class__.__name__}] No heartbeat received for 10 seconds, closing connection")
+            if current_time - self.last_heartbeat > 10:  # No heartbeat for 10 seconds
+                logger.warning(f"[{self.__class__.__name__}] User {self.user.userID} missed heartbeat too many times, closing connection")
                 await self.close()
                 break
 
@@ -427,9 +430,9 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         # Initialize match state for this match
         if match.matchID not in self.active_matches:
             self.active_matches[match.matchID] = {
-                'playerA': {'id': match.playerA['id'], 'paddle_y': 315},
-                'playerB': {'id': match.playerB['id'] if match.playerB else None, 'paddle_y': 315},
-                'ball': {'x': 587.5, 'y': 362.5, 'dx': 6, 'dy': 6},
+                'playerA': {'id': match.playerA['id'], 'paddle_y': 375, 'pos': 'A'},
+                'playerB': {'id': match.playerB['id'] if match.playerB else None, 'paddle_y': 375, 'pos': 'B'},
+                'ball': {'x': 600, 'y': 375, 'dx': 6, 'dy': 6},
                 'scores': {match.playerA['id']: 0}
             }
             logger.info(f"[{self.__class__.__name__}] New match state initialized for match: {match.matchID}")
@@ -499,6 +502,9 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             }
         )
         logger.info(f"[{self.__class__.__name__}] MATCH_BEGIN sent for match: {match.matchID}")
+        asyncio.create_task(self.delayed_match_start(match))
+
+    async def delayed_match_start(self, match):
         await asyncio.sleep(5)
         await self.start_match(match)
 
@@ -513,17 +519,21 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         match_state = self.active_matches[self.match.matchID]
         player_key = 'playerA' if match_state['playerA']['id'] == self.user.userID else 'playerB'
 
-        paddle_speed = 0.15  # Appropriate paddle speed (adjust as needed)
+        paddle_speed = 5  # Appropriate paddle speed (adjust as needed)
 
         if direction == 'up':
-            match_state[player_key]['paddle_y'] = max(0, match_state[player_key]['paddle_y'] - paddle_speed)
+            match_state[player_key]['paddle_y'] = min(690, match_state[player_key]['paddle_y'] + paddle_speed)
         elif direction == 'down':
-            match_state[player_key]['paddle_y'] = min(630, match_state[player_key]['paddle_y'] + paddle_speed)
+            match_state[player_key]['paddle_y'] = max(60, match_state[player_key]['paddle_y'] - paddle_speed)
 
         # logger.debug(f"[{self.__class__.__name__}] Paddle moved: {player_key} - {direction}")
         await self.send_match_update()
 
     async def handle_player_quit(self):
+        if self.match is None:
+            logger.info(f"[{self.__class__.__name__}] Player {self.user.userID} quit without being in a match")
+            return
+
         logger.info(f"[{self.__class__.__name__}] Player {self.user.userID} quit the match {self.match.matchID}")
 
         if self.match.playerB is not None and self.match.playerA is not None:
@@ -536,7 +546,6 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             if self.match.matchID in self.active_matches:
                 logger.info(f"[{self.__class__.__name__}] Deleting match state for match: {self.match.matchID}")
                 del self.active_matches[self.match.matchID]
-
 
     @database_sync_to_async
     def delete_match(self, match_id):
@@ -608,6 +617,9 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             opponent = User.objects.get(userID=opponent_id)
             opponent_data = UserSerializer(opponent).data
             safe_profile = get_safe_profile(opponent_data, me=False)
+            opponent_settings, created = UserSettings.objects.get_or_create(userID=opponent_id)
+            opponent_settings_data = UserSettingsSerializer(opponent_settings).data
+            safe_profile['paddle_skin'] = opponent_settings_data['selectedPaddleSkin']
             logger.info(f"[{self.__class__.__name__}] Opponent info retrieved for: {opponent_id}")
             return safe_profile
         except User.DoesNotExist:
@@ -643,9 +655,9 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
     async def run_match_loop(self, match_id):
         TERRAIN_WIDTH = 1200
         TERRAIN_HEIGHT = 750
-        PADDLE_WIDTH = 20
-        PADDLE_HEIGHT = 120
-        BALL_SIZE = 25
+        PADDLE_WIDTH = 10
+        PADDLE_HEIGHT = 60
+        BALL_RADIUS = 25 / 2
         BALL_SPEED = 0.3
         MAX_SCORE = 10
 
@@ -657,27 +669,27 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             match_state['ball']['y'] += match_state['ball']['dy'] * BALL_SPEED
 
             # Check for collisions with top and bottom walls
-            if match_state['ball']['y'] <= 0 or match_state['ball']['y'] + BALL_SIZE >= TERRAIN_HEIGHT:
+            if match_state['ball']['y'] - BALL_RADIUS <= 0 or match_state['ball']['y'] + BALL_RADIUS >= TERRAIN_HEIGHT:
                 match_state['ball']['dy'] *= -1
 
-            # Check for collisions with paddles
-            if (match_state['ball']['x'] <= PADDLE_WIDTH and
-                match_state['ball']['y'] + BALL_SIZE >= match_state['playerA']['paddle_y'] and
-                match_state['ball']['y'] <= match_state['playerA']['paddle_y'] + PADDLE_HEIGHT):
+            if (match_state['ball']['x'] - BALL_RADIUS <= PADDLE_WIDTH and  # Left side of ball hits Player A's paddle
+                match_state['ball']['y'] - BALL_RADIUS <= match_state['playerA']['paddle_y'] + PADDLE_HEIGHT and  # Ball's bottom is above paddle's bottom
+                match_state['ball']['y'] + BALL_RADIUS >= match_state['playerA']['paddle_y'] - PADDLE_HEIGHT):  # Ball's top is below paddle's top
                 match_state['ball']['dx'] *= -1
-                await self.send_paddle_hit(match_state['playerA'])
-            elif (match_state['ball']['x'] + BALL_SIZE >= TERRAIN_WIDTH - PADDLE_WIDTH and
-                  match_state['ball']['y'] + BALL_SIZE >= match_state['playerB']['paddle_y'] and
-                  match_state['ball']['y'] <= match_state['playerB']['paddle_y'] + PADDLE_HEIGHT):
+                await self.send_paddle_hit(match_state['playerA'], match_state['ball'])
+
+            elif (match_state['ball']['x'] + BALL_RADIUS >= TERRAIN_WIDTH - PADDLE_WIDTH and  # Right side of ball hits Player B's paddle
+                match_state['ball']['y'] - BALL_RADIUS <= match_state['playerB']['paddle_y'] + PADDLE_HEIGHT and  # Ball's bottom is above paddle's bottom
+                match_state['ball']['y'] + BALL_RADIUS >= match_state['playerB']['paddle_y'] - PADDLE_HEIGHT):  # Ball's top is below paddle's top
                 match_state['ball']['dx'] *= -1
-                await self.send_paddle_hit(match_state['playerB'])
+                await self.send_paddle_hit(match_state['playerB'], match_state['ball'])
 
             # Check for scoring
             if match_state['ball']['x'] <= 0:
                 match_state['scores'][match_state['playerB']['id']] += 1
                 self.reset_ball(match_state)
                 logger.info(f"[{self.__class__.__name__}] Player B scored in match: {match_id}")
-            elif match_state['ball']['x'] + BALL_SIZE >= TERRAIN_WIDTH:
+            elif match_state['ball']['x'] + BALL_RADIUS >= TERRAIN_WIDTH:
                 match_state['scores'][match_state['playerA']['id']] += 1
                 self.reset_ball(match_state)
                 logger.info(f"[{self.__class__.__name__}] Player A scored in match: {match_id}")
@@ -692,19 +704,20 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             await self.send_match_update()
             await asyncio.sleep(1 / 120) # 120 FPS
 
-    async def send_paddle_hit(self, player):
+    async def send_paddle_hit(self, player, ball):
         await self.channel_layer.group_send(
             f"match_{self.match.matchID}",
             {
                 "type": "paddle.hit",
-                "player": player
+                "player": player,
+                "ball": ball
             }
         )
 
     async def paddle_hit(self, event):
         await self.send_json({
             "e": "PADDLE_HIT",
-            "d": {"player": event["player"]}
+            "d": {"player": event["player"], "ball": event["ball"]}
         })
         logger.info(f"[{self.__class__.__name__}] Paddle hit event sent for player: {event['player']['id']}")
 

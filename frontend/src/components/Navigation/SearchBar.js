@@ -4,10 +4,12 @@ import debounce from 'lodash/debounce';
 import SearchList from './SearchList';
 import { SearchBarContainer } from './styles/Navigation.styled';
 import { GetUsers } from '../../api/user';
+import { useNotification } from '../../context/NotificationContext';
 import { useTranslation } from 'react-i18next';
 
 const SearchBar = () => {
 	const [input, setInput] = useState('');
+	const { addNotification } = useNotification();
 	const [results, setResults] = useState(null);
 	const searchBarRef = useRef(null);
 	const { t } = useTranslation();
@@ -26,15 +28,15 @@ const SearchBar = () => {
 	}, []);
 
 	useEffect(() => {
-		const debouncedSearch = debounce((query) => {
+		const debouncedSearch = debounce(query => {
 			if (query) {
 				GetUsers(query)
-				.then((users) => {
-					setResults(users);
-				})
-				.catch((err) => {
-					console.error(err?.response?.data?.error || 'An error occurred');
-				});
+					.then(users => {
+						setResults(users);
+					})
+					.catch(err => {
+						addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
+					});
 			} else {
 				setResults(null);
 			}
@@ -45,7 +47,7 @@ const SearchBar = () => {
 		return () => {
 			debouncedSearch.cancel();
 		};
-	}, [input]);
+	}, [input, addNotification]);
 
 	const handleInput = event => {
 		setInput(event.target.value);

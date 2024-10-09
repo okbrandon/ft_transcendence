@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	ShopContainer,
 	CoinsDisplay,
@@ -11,34 +11,76 @@ import {
     Header,
 	SubtitleSection,
 } from "./styles/Shop.styled";
-import { AuthContext } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import API from "../../api/api";
 import Loader from "../../styles/shared/Loader.styled";
+import { useNotification } from "../../context/NotificationContext";
 import { useTranslation } from "react-i18next";
 
-const skins = [
-	{ id: 1, name: "Red", price: 100, img: "/images/skins/red.jpeg" },
-	{ id: 2, name: "Neon", price: 150, img: "/images/skins/neon.jpeg" },
-	{ id: 3, name: "Galaxy", price: 250, img: "/images/skins/galaxy.jpeg" },
-	{ id: 4, name: "Luxury", price: 300, img: "/images/skins/luxury.jpeg" },
-	{ id: 5, name: "Pepe", price: 1000, img: "/images/skins/pepe.jpeg" },
-];
-
 const Shop = () => {
-	const [purchasedSkins, setPurchasedSkins] = useState([]);
-	const { user, loading } = useContext(AuthContext);
+	const { user, setUser, loading } = useAuth();
+	const { addNotification } = useNotification();
+	const [purchasedItems, setPurchasedItems] = useState([]);
+	const [storeItems, setStoreItems] = useState([]);
+	const [selectedSkin, setSelectedSkin] = useState(null);
 	const { t } = useTranslation();
 
-	const handlePurchase = (skin) => {
-		if (user.money >= skin.price) {
-			API.patch(`/users/@me/profile`, { money: user.money - skin.price })
-				.then(() => console.log('User bought a skin'))
-				.catch((err) => console.error(err));
-			setPurchasedSkins([...purchasedSkins, skin.id]);
-			alert(t('store.purchasedMessage', {skinName: `${skin.name}`}));
-		} else {
-			alert(t('store.insufficientFunds'));
-		}
+	useEffect(() => {
+		API.get('/users/@me/settings')
+			.then(response => {
+				setSelectedSkin(response.data.selectedPaddleSkin);
+			})
+			.catch(err => {
+				addNotification('error', err?.response?.data?.error || 'An error occurred');
+			})
+	}, [addNotification]);
+
+	const handleEquip = itemID => {
+		API.patch('/users/@me/settings', { selectedPaddleSkin: itemID })
+			.then(() => {
+				setSelectedSkin(itemID);
+			})
+			.catch(() => {
+				addNotification('error', `${t('store.equipError')}`);
+			})
+	};
+
+	useEffect(() => {
+		API.get('/store/items')
+			.then(response => {
+				setStoreItems(response.data);
+			})
+			.catch(err => {
+				addNotification('error', err?.response?.data?.error || 'An error occurred');
+			});
+	}, [addNotification]);
+
+	useEffect(() => {
+		API.get('/users/@me/purchases')
+			.then(response => {
+				setPurchasedItems(response.data);
+			})
+			.catch(err => {
+				addNotification('error', err?.response?.data?.error || 'An error occurred');
+			});
+	}, [addNotification]);
+
+	const handlePurchase = item => {
+		API.post(`/store/${item.itemID}/purchase`)
+			.then(response => {
+				setPurchasedItems(prev => [...prev, response.data]);
+				setUser(prev => ({
+					...prev,
+					money: prev.money - item.price,
+				}));
+			})
+			.catch(err => {
+				if (err.response && err.response.status === 400) {
+					addNotification('error', t('store.insufficientFunds'));
+				} else {
+					addNotification('error', t('store.purchaseError'));
+				}
+			});
 	};
 
 	if (loading) {
@@ -59,17 +101,23 @@ const Shop = () => {
 				<p>{t('store.subTitle')}</p>
 			</SubtitleSection>
 			<SkinsGrid>
-				{skins.map((skin) => (
-					<SkinCard key={skin.id}>
-						<SkinImage src={skin.img} alt={skin.name} />
-						<SkinName>{skin.name}</SkinName>
-						<SkinPrice>{skin.price} {t('store.currency.icon')}</SkinPrice>
-						<BuyButton
-							disabled={purchasedSkins.includes(skin.id)}
-							onClick={() => handlePurchase(skin)}
-						>
-							{purchasedSkins.includes(skin.id) ? t('store.ownedLabel') : t('store.buyButton')}
-						</BuyButton>
+				{storeItems.map((item) => (
+					<SkinCard key={item.itemID}>
+						<SkinImage src={'/images/skins/' + item.assetID} alt={item.name} />
+						<SkinName>{item.name}</SkinName>
+						<SkinPrice>{item.price} {t('store.currency.icon')}</SkinPrice>
+						{purchasedItems.some(purchase => purchase.itemID === item.itemID) ? (
+							<BuyButton
+								onClick={() => handleEquip(item.itemID)}
+								disabled={selectedSkin === item.itemID}
+							>
+								{selectedSkin === item.itemID ? t('store.equippedLabel') : t('store.equipButton')}
+							</BuyButton>
+						) : (
+							<BuyButton onClick={() => handlePurchase(item)}>
+								{t('store.buyButton')}
+							</BuyButton>
+						)}
 					</SkinCard>
 				))}
 			</SkinsGrid>

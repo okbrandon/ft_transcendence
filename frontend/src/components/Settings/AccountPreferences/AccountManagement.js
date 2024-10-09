@@ -11,22 +11,24 @@ import {
 	ModalButton
 } from '../styles/AccountManagement.styled';
 import { SubSectionHeading } from '../styles/Settings.styled';
+import { useNotification } from '../../../context/NotificationContext';
 import { useTranslation } from 'react-i18next';
 
 const AccountManagement = () => {
-	const [isModalOpen, setIsModalOpen] = useState(false);
 	const navigate = useNavigate();
+	const { addNotification } = useNotification();
+	const [isModalOpen, setIsModalOpen] = useState(false);
 	const { t } = useTranslation();
 
 	const handleConfirmDelete = () => {
-		API.delete('/users/@me/profile')
+		API.delete('users/@me/profile')
 			.then(() => {
 				localStorage.removeItem('token');
 				localStorage.removeItem('refresh');
 				navigate('/signin');
 			})
-			.catch((err) => {
-				console.error(err);
+			.catch(err => {
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 			});
 		setIsModalOpen(false);
 	};

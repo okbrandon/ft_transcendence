@@ -34,7 +34,7 @@ export const Title = styled.h1`
 
 export const ModesContainer = styled.div`
 	display: flex;
-	gap: 5rem;
+	gap: 4rem;
 `;
 
 export const ModeCard = styled.div`
@@ -43,8 +43,8 @@ export const ModeCard = styled.div`
 	align-items: center;
 	justify-content: center;
 	border-radius: 20px;
-	width: 280px;
-	height: 280px;
+	width: 250px;
+	height: 250px;
 	background: #1a1a1a;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 8px rgba(59, 130, 246, 0.2);
 	transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;

@@ -1,7 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ProfileDropdown from "./ProfileDropdown";
 import LanguageDropdown from "./LanguageDropdown";
 import SearchBar from "./SearchBar";
+import API from "../../api/api";
+import { useAuth } from "../../context/AuthContext";
+import { useRelation } from "../../context/RelationContext";
+import { useNotification } from "../../context/NotificationContext";
 import {
 	FriendsNavLinkContainer,
 	NavContainer,
@@ -10,17 +14,20 @@ import {
 	StyledNavLink,
 } from "./styles/Navigation.styled";
 import { TitleLink } from "../../styles/shared/Title.styled";
-import API from "../../api/api";
-import { AuthContext } from "../../context/AuthContext";
-import { RelationContext } from "../../context/RelationContext";
 import { useTranslation } from "react-i18next";
 
 const ConnectedNavBar = () => {
-	const { user, setUser } = useContext(AuthContext);
-	const { requests } = useContext(RelationContext);
+	const { addNotification } = useNotification();
+	const { user, setUser } = useAuth();
+	const { relations } = useRelation();
 	const [language, setLanguage] = useState(null);
 	const [requestsLen, setRequestsLen] = useState(0);
+	const userID = localStorage.getItem('userID');
 	const { t, i18n } = useTranslation();
+
+	useEffect(() => {
+		setRequestsLen(relations.filter(relation => relation.status === 0 && relation.target.userID === userID).length);
+	}, [relations, userID]);
 
 	const handleLanguage = event => {
 		setLanguage(event.target.value);
@@ -33,19 +40,16 @@ const ConnectedNavBar = () => {
 				}))
 			})
 			.catch(err => {
-				console.error(err.response?.data?.error || 'An error occurred');
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 			});
 	};
 
 	useEffect(() => {
-		setRequestsLen(requests.length);
-	}, [requests]);
-
-	useEffect(() => {
 		if (!user) return;
+
 		setLanguage(user.lang);
 		i18n.changeLanguage(user.lang);
-	}, [user]);
+	}, [user, i18n]);
 
 	return (
 		<NavContainer>

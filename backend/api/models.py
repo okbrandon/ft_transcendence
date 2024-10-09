@@ -27,7 +27,7 @@ class GameToken(models.Model):
 class StoreItem(models.Model):
     itemID = models.CharField(max_length=48, unique=True)
     name = models.CharField(max_length=100)
-    description = models.TextField(null=True, blank=True)
+    assetID = models.TextField(null=True, blank=True)
     price = models.IntegerField()
 
     def __str__(self):
@@ -36,7 +36,7 @@ class StoreItem(models.Model):
 class Purchase(models.Model):
     purchaseID = models.CharField(max_length=48, unique=True)
     userID = models.CharField(max_length=48)
-    itemID = models.ForeignKey(StoreItem, on_delete=models.CASCADE)
+    itemID = models.CharField(max_length=48)
     purchaseDate = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -59,6 +59,7 @@ class User(AbstractUser):
     flags = models.IntegerField(default = 0) # 1 << 0 = EMAIL_VERIFIED, 1 << 1 = IS_AI, 1 << 2 = ACCOUNT_DISABLED, 1<<3 = SCHEDULED_HARVESTING
     money = models.IntegerField(default = 0)
     status = models.JSONField(null=True) # ex: {"online": True, "activity": "PLAYING", "last_seen": "2021-01-01T00:00:00Z"}
+    xp = models.IntegerField(default = 0)
 
     # Override the groups and user_permissions to avoid field clashes
     groups = models.ManyToManyField(
@@ -92,9 +93,8 @@ class VerificationCode(models.Model):
 
 
 class UserSettings(models.Model):
-    userID = models.CharField(max_length = 48)
-    theme = models.CharField(max_length = 16)
-    colorblind = models.BooleanField(default = False)
+    userID = models.CharField(max_length = 48, unique = True)
+    selectedPaddleSkin = models.CharField(max_length = 48, null = True)
 
     def __str__(self):
         return self.userID

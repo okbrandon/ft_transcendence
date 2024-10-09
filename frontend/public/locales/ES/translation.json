@@ -222,7 +222,10 @@
 		"currentBalance": "Tienes {{balance}} 🪙",
 		"purchasedMessage": "¡Has comprado {{skinName}}!",
 		"insufficientFunds": "¡No tienes suficientes monedas!",
-		"ownedLabel": "ADQUIRIDO",
+		"equipButton": "Equipar skin",
+		"equippedLabel": "Seleccionado",
+		"equipError": "No se pudo equipar el skin",
+		"purchaseError": "No se pudo comprar el skin",
 		"buyButton": "COMPRAR"
 	},
 	"settings": {

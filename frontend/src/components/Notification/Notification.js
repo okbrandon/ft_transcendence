@@ -1,28 +1,7 @@
-import React, { useState, forwardRef, useImperativeHandle } from 'react';
+import React from 'react';
 import { NotificationWrapper, NotificationContainer } from './styles/Notification.styled';
 
-const Notification = forwardRef((_, ref) => {
-	const [notifications, setNotifications] = useState([]);
-
-	useImperativeHandle(ref, () => ({
-		addNotification(type, message) {
-			const id = Date.now();
-			setNotifications(prev => [...prev, { id, type, message, isVisible: true }]);
-
-			setTimeout(() => {
-				setNotifications(prev =>
-					prev.map(notification =>
-						notification.id === id ? { ...notification, isVisible: false } : notification
-					)
-				);
-			}, 4500);
-
-			setTimeout(() => {
-				setNotifications(prev => prev.filter(notification => notification.id !== id));
-			}, 5000);
-		}
-	  }));
-
+const Notification = ({ notifications }) => {
 	return (
 		<NotificationWrapper>
 			{notifications.map(notification => (
@@ -36,6 +15,6 @@ const Notification = forwardRef((_, ref) => {
 			))}
 		</NotificationWrapper>
 	);
-});
+};
 
 export default Notification;
