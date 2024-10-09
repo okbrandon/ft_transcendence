@@ -464,6 +464,9 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             }
         )
         logger.info(f"[{self.__class__.__name__}] MATCH_BEGIN sent for match: {match.matchID}")
+        asyncio.create_task(self.delayed_match_start(match))
+
+    async def delayed_match_start(self, match):
         await asyncio.sleep(5)
         await self.start_match(match)
 
