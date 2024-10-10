@@ -1,5 +1,4 @@
 # TODO
-- check all <img> tags to add <figure> and <figcaption>
 - Game: send invite
 - Profile: `users/@me/stats` -> win / loss / ratio
 

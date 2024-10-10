@@ -54,7 +54,7 @@ const FriendsList = ({ friends, setIsRefetch }) => {
 					<ListCard key={key}>
 						<ProfileInfo onClick={() => handleProfile(friend.username)}>
 							<ProfileStatus $status={friend.status?.online || false}/>
-							<ProfileAvatar src={friend.avatarID} alt={`${friend.displayName}'s avatar`}/>
+							<ProfileAvatar src={friend.avatarID} alt={`${friend.username}'s avatar`}/>
 							<ProfileInfoContainer>
 								{friend.displayName}
 								<ProfileActivity>{setActivityDescription(friend.status?.activity)}</ProfileActivity>
