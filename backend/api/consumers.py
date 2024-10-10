@@ -433,9 +433,10 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             self.active_matches[match.matchID] = {
                 'playerA': {'id': match.playerA['id'], 'paddle_y': 375, 'pos': 'A'},
                 'playerB': {'id': match.playerB['id'] if match.playerB else None, 'paddle_y': 375, 'pos': 'B'},
-                'ball': {'x': 600, 'y': 375, 'dx': 6, 'dy': 6},
+                'ball': {},
                 'scores': {match.playerA['id']: 0}
             }
+            self.reset_ball(self.active_matches[match.matchID])
             logger.info(f"[{self.__class__.__name__}] New match state initialized for match: {match.matchID}")
 
         await self.send_json({
@@ -460,7 +461,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                     "player": playerB_info
                 }
             )
-            await self.send_match_begin(match)
+            await self.send_match_ready(match)
             logger.info(f"[{self.__class__.__name__}] Match {match.matchID} started with both players")
 
     async def handle_matchmake_force_join(self, data):
@@ -514,28 +515,28 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                     "player": playerB_info
                 }
             )
-            await self.send_match_begin(match)
+            await self.send_match_ready(match)
             logger.info(f"[{self.__class__.__name__}] Match {match.matchID} started with both players")
 
-    async def send_match_begin(self, match):
+    async def send_match_ready(self, match):
         match_state = self.active_matches[match.matchID]
         await self.channel_layer.group_send(
             f"match_{match.matchID}",
             {
-                "type": "match.begin",
+                "type": "match.ready",
                 "match_state": match_state
             }
         )
-        logger.info(f"[{self.__class__.__name__}] MATCH_BEGIN sent for match: {match.matchID}")
+        logger.info(f"[{self.__class__.__name__}] MATCH_READY sent for match: {match.matchID}")
         asyncio.create_task(self.delayed_match_start(match))
 
     async def delayed_match_start(self, match):
         await asyncio.sleep(5)
         await self.start_match(match)
 
-    async def match_begin(self, event):
+    async def match_ready(self, event):
         await self.send_json({
-            "e": "MATCH_BEGIN",
+            "e": "MATCH_READY",
             "d": event["match_state"]
         })
 
@@ -671,6 +672,12 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             "d": event["match_state"]
         })
 
+    async def match_begin(self, event):
+        await self.send_json({
+            "e": "MATCH_BEGIN",
+            "d": event["match_state"]
+        })
+
     @database_sync_to_async
     def start_match(self, match):
         # Use async_to_sync to run the coroutine in a new event loop
@@ -678,6 +685,13 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         logger.info(f"[{self.__class__.__name__}] Match loop started for match: {match.matchID}")
 
     async def _start_match_async(self, match_id):
+        await self.channel_layer.group_send(
+            f"match_{match_id}",
+            {
+                "type": "match.begin",
+                "match_state": self.active_matches[match_id]
+            }
+        )
         asyncio.create_task(self.run_match_loop(match_id))
 
     async def run_match_loop(self, match_id):
@@ -750,7 +764,10 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         logger.info(f"[{self.__class__.__name__}] Paddle hit event sent for player: {event['player']['id']}")
 
     def reset_ball(self, match_state):
-        dx = random.choice([-8, 8])  # Increased ball speed slightly
+        if self.match.flags & (1 << 1):
+            dx = -8
+        else:
+            dx = random.choice([-8, 8])  # Increased ball speed slightly
         dy = random.choice([-8, 8])
         match_state['ball'] = {'x': 600, 'y': 375, 'dx': dx, 'dy': dy}
 

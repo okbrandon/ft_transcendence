@@ -88,7 +88,7 @@ const Game = () => {
 				case 'HELLO':
 					setHeartbeatIntervalTime(data.d.heartbeat_interval);
 					break;
-				case 'MATCH_BEGIN':
+				case 'MATCH_READY':
 					setActivateTimer(true);
 					setGameState(prevState => ({ ...prevState, matchState: data.d }));
 					break;
