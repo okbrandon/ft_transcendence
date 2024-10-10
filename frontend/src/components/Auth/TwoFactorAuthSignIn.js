@@ -30,7 +30,7 @@ const TwoFactorAuthSignIn = ({ username, password, setIsTwoFactorAuth, available
 	}, [otpSent, addNotification, t]);
 
 	const handlePlatform = platform => {
-		axios.post('/api/v1/auth/totp/request', { username, password, platform })
+		axios.post(process.env.REACT_APP_ENV == 'production' ? '/api/v1/auth/totp/request' : 'http://localhost:8000/api/v1/auth/totp/request', { username, password, platform })
 			.then(() => {
 				setOtpSent(true);
 			})

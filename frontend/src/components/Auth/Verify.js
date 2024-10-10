@@ -18,7 +18,7 @@ const Verify = () => {
 		const code = params.get('code');
 
 		if (code) {
-			axios.post(`/api/v1/verify`, { code })
+			axios.post(process.env.REACT_APP_ENV == 'production' ? '/api/v1/verify' : 'http://localhost:8000/api/v1/verify', { code })
 				.then(() => {
 					window.location.href = '/signin';
 				})
