@@ -341,6 +341,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         })
         self.last_heartbeat = time.time()
         self.heartbeat_task = asyncio.create_task(self.heartbeat_check())
+        self.match = None
         logger.info(f"[{self.__class__.__name__}] Connection accepted, heartbeat check task started")
 
     async def disconnect(self, close_code):
@@ -376,7 +377,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             await asyncio.sleep(2)  # Check every 2 seconds
             current_time = time.time()
             if current_time - self.last_heartbeat > 10:  # No heartbeat for 10 seconds
-                logger.warning(f"[{self.__class__.__name__}] No heartbeat received for 10 seconds, closing connection")
+                logger.warning(f"[{self.__class__.__name__}] User {self.user.userID} missed heartbeat too many times, closing connection")
                 await self.close()
                 break
 
@@ -464,6 +465,9 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             }
         )
         logger.info(f"[{self.__class__.__name__}] MATCH_BEGIN sent for match: {match.matchID}")
+        asyncio.create_task(self.delayed_match_start(match))
+
+    async def delayed_match_start(self, match):
         await asyncio.sleep(5)
         await self.start_match(match)
 
@@ -489,6 +493,10 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         await self.send_match_update()
 
     async def handle_player_quit(self):
+        if self.match is None:
+            logger.info(f"[{self.__class__.__name__}] Player {self.user.userID} quit without being in a match")
+            return
+
         logger.info(f"[{self.__class__.__name__}] Player {self.user.userID} quit the match {self.match.matchID}")
 
         if self.match.playerB is not None and self.match.playerA is not None:
@@ -564,7 +572,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             opponent = User.objects.get(userID=opponent_id)
             opponent_data = UserSerializer(opponent).data
             safe_profile = get_safe_profile(opponent_data, me=False)
-            opponent_settings = UserSettings.objects.get(userID=opponent_id)
+            opponent_settings, created = UserSettings.objects.get_or_create(userID=opponent_id)
             opponent_settings_data = UserSettingsSerializer(opponent_settings).data
             safe_profile['paddle_skin'] = opponent_settings_data['selectedPaddleSkin']
             logger.info(f"[{self.__class__.__name__}] Opponent info retrieved for: {opponent_id}")
