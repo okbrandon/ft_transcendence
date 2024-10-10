@@ -7,7 +7,7 @@ import { useRelation } from '../../context/RelationContext.js';
 import ChatHeader from './ChatHeader.js';
 
 const Chat = () => {
-	const { conversations } = useRelation();
+	const { conversations, friends } = useRelation();
 	const [isOverlayMinimized, setIsOverlayMinimized] = useState(true);
 	const [mainWinArrow, setMainWinArrow] = useState(false);
 	const [directMessage, setDirectMessage] = useState({
@@ -54,8 +54,8 @@ const Chat = () => {
 				<ChatHeader toggleMinimization={mainMinimizer} arrowState={mainWinArrow} />
 				{!isOverlayMinimized && (
 					<>
-						<SearchFriends conversations={conversations} /> { /* TODO: SearchFriends */ }
-						<MessagePreview conversations={conversations} handleSelectChat={handleSelectChat} />
+						<SearchFriends friends={friends} conversations={conversations} /> { /* TODO: SearchFriends */ }
+						<MessagePreview friends={friends} conversations={conversations} handleSelectChat={handleSelectChat} />
 					</>
 				)}
 			</MainChatContainer>

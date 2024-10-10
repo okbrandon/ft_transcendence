@@ -37,7 +37,7 @@ const NoFriendsMessage = styled.div`
 	font-size: 1.2rem;
 `;
 
-export const MessagePreview = ({ conversations, handleSelectChat }) => {
+export const MessagePreview = ({ friends, conversations, handleSelectChat }) => {
 	const userID = localStorage.getItem('userID');
 
 	const handleSelectFriend = (friend) => {
@@ -62,15 +62,9 @@ export const MessagePreview = ({ conversations, handleSelectChat }) => {
 		</PreviewContainer>
 	);
 
-	// if (conversations.length === 0) {
-	// 	return (
-	// 		<ScrollableComponent>
-	// 			{friends.map((friend, index) =>
-	// 				renderFriendPreview(friend, index)
-	// 			)}
-	// 		</ScrollableComponent>
-	// 	);
-	// }
+	if (friends.length === 0) {
+		return <NoFriendsMessage>Make some friends so you can chat with them !</NoFriendsMessage>;
+	}
 
 	return (
 		<ScrollableComponent>

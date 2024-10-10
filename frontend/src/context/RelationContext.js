@@ -52,20 +52,25 @@ const RelationProvider = ({ children }) => {
 	}, [isRefetch]);
 
 	useEffect(() => {
+		const fetchConversations = () => {
+			API.get('chat/conversations')
+				.then(response => {
+					setConversations(response.data.conversations);
+				})
+				.catch(error => {
+					console.error('Failed to fetch conversations:', error);
+				});
+		};
+
 		socketChat.current = new WebSocket(WS_CHAT_URL + localStorage.getItem('token'));
 		socketChat.current.onopen = () => {
 			logger('WebSocket for Chat connection opened');
+			fetchConversations();
 		};
 		socketChat.current.onmessage = event => {
 			const response = JSON.parse(event.data);
 			if (response.type === 'conversation_update') {
-				API.get('chat/conversations')
-					.then(response => {
-						setConversations(response.data.conversations);
-					})
-					.catch(error => {
-						console.error('Failed to update conversations:', error);
-					});
+				fetchConversations();
 			} else if (response.type === 'friend_request') {
 				const user = formatUserData({
 					...response.data.from,
