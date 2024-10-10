@@ -35,6 +35,14 @@ const RelationProvider = ({ children }) => {
 		return 'HOME';
 	};
 
+	const sendMessage = (message) => {
+		if (socketChat.current.readyState === WebSocket.OPEN) {
+			socketChat.current.send(JSON.stringify(message));
+		} else {
+			logger('WebSocket for Chat is not open');
+		}
+	};
+
 	useEffect(() => {
 		API.get('users/@me/relationships')
 			.then(relationships => {
@@ -134,6 +142,7 @@ const RelationProvider = ({ children }) => {
 		<RelationContext.Provider value={{
 			conversations,
 			setConversations,
+			sendMessage,			// send a message
 			relations,				// get the relations
 			setRelations,			// change the relations
 			friends,				// get the friends

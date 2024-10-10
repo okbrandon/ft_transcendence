@@ -3,7 +3,7 @@ import { Header } from './styles/Chat/ChatContainer.styled.js';
 import CloseButton from 'react-bootstrap/CloseButton';
 import Arrow from './tools/Arrow.js';
 import { SendButton } from './tools/SendButton.js';
-import { RelationContext } from '../../context/RelationContext.js';
+import { RelationContext, useRelation } from '../../context/RelationContext.js';
 import API from '../../api/api.js';
 import ConfirmationModal from './tools/ConfirmationModal.js';
 import { useNavigate } from 'react-router-dom';
@@ -55,7 +55,7 @@ export const DirectMessage = ({
 }) => {
 	const userID = localStorage.getItem('userID');
 	const [content, setContent] = useState('');
-	const { sendMessage } = useContext(RelationContext);
+	const { sendMessage } = useRelation();
 	const messagesEndRef = useRef(null);
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [isBlockModalOpen, setIsBlockModalOpen] = useState(false);

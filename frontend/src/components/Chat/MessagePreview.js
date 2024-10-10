@@ -37,7 +37,7 @@ const NoFriendsMessage = styled.div`
 	font-size: 1.2rem;
 `;
 
-export const MessagePreview = ({ friends, conversations, handleSelectChat }) => {
+export const MessagePreview = ({ blockedUsers, conversations, handleSelectChat }) => {
 	const userID = localStorage.getItem('userID');
 
 	const handleSelectFriend = (friend) => {
@@ -62,7 +62,7 @@ export const MessagePreview = ({ friends, conversations, handleSelectChat }) => 
 		</PreviewContainer>
 	);
 
-	if (friends.length === 0) {
+	if (conversations.length === 0) {
 		return <NoFriendsMessage>Make some friends so you can chat with them !</NoFriendsMessage>;
 	}
 
@@ -70,14 +70,15 @@ export const MessagePreview = ({ friends, conversations, handleSelectChat }) => 
 		<ScrollableComponent>
 			{conversations.map((convo, index) => {
 				const other = convo.participants.find(participant => participant.userID !== userID);
+				const isBlocked = blockedUsers.find(blocked => blocked.userID === other.userID);
 
-				if (convo.messages.length === 0) {
-					return renderFriendPreview(other, index, 'Start a new conversation');
-				}
-
-				const lastMessage = convo.messages[convo.messages.length - 1];
-				return renderFriendPreview(other, index, lastMessage.content);
-			})}
+				if (!isBlocked) {
+					if (convo.messages.length === 0) {
+						return renderFriendPreview(other, index, 'Start a new conversation');
+					}
+					const lastMessage = convo.messages[convo.messages.length - 1];
+					return renderFriendPreview(other, index, lastMessage.content);
+				}})}
 		</ScrollableComponent>
 	);
 };
