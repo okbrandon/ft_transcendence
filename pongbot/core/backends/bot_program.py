@@ -4,10 +4,13 @@ import logging
 import ssl
 import json
 import os
+import time
 
 from multiprocessing import Process
 
 from .config import get_config
+from .bot.data_models import BotData, MatchData, BallData, PaddleData
+from .bot.match_predictors import BotActionPredictor
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -15,6 +18,7 @@ logger = logging.getLogger(__name__)
 class BotProgram:
 
 	def __init__(self, **kwargs) -> None:
+		self.config = get_config()
 		self.ws_connection = None
 		self.heartbeat_task = None
 		self.heartbeat_interval = None
@@ -22,10 +26,15 @@ class BotProgram:
 
 		self.is_identified = False
 
+		self.match_started = False
+		self.match_data = None
+		self.bot_data = BotData()
+		self.last_move_sent = 0
+
 		self.host = kwargs.get('host', None)
 		self.port = kwargs.get('port', None)
 		self.match_id = kwargs.get('matchID', None)
-		self.ws_url = get_config()['ws_url'].format(self.host, self.port)
+		self.ws_url = self.config['ws_url'].format(self.host, self.port)
 
 		if not self.host or not self.port or not self.match_id:
 			raise ValueError("Invalid host, port or match ID")
@@ -45,9 +54,27 @@ class BotProgram:
 				await self.ws_connection.send(json.dumps({'e': 'HEARTBEAT'}))
 			if self.heartbeat_ack == 1:
 				await self.handle_identify()
-			if self.heartbeat_ack == 2 and self.is_identified:
-				await self.handle_join_match()
+			if self.is_identified:
+				if self.heartbeat_ack == 2:
+					await self.handle_join_match()
+				if self.match_started: # Considering the HEARTBEAT_INTERVAL is every second
+					await self.handle_match_update()
 			await asyncio.sleep(self.heartbeat_interval / 1000)
+
+	async def handle_match_update(self):
+		self.bot_data.update_match_data(self.match_data)
+		try:
+			self.bot_data.bot_action_predictor.velocity_estimator.update_velocity(self.match_data.ball_data.x, self.match_data.ball_data.y)
+			self.bot_data.bot_action_predictor.ball_predictor.predict_ball_land(self.match_data.ball_data, self.bot_data.bot_action_predictor.velocity_estimator)
+		except Exception as e:
+			logger.error(f"[{self.__class__.__name__} | MatchID: {self.match_id}] Error: {type(e).__name__} - {e}")
+
+	async def handle_match_move(self):
+		current_time = time.time()
+
+		if (current_time - self.last_move_sent) * 1000 >= self.config['fps_interval_ms']:
+			await self.bot_data.bot_action_predictor.send_predicted_action(self.ws_connection)
+			self.last_move_sent = current_time
 
 	async def handle_identify(self):
 		await self.ws_connection.send(json.dumps({
@@ -74,17 +101,52 @@ class BotProgram:
 				case 'HELLO':
 					self.heartbeat_interval = int(data.get('heartbeat_interval', 1000))
 					self.heartbeat_task = asyncio.create_task(self.heartbeat())
+					self.bot_data.bot_action_predictor = BotActionPredictor()
 				case 'HEARTBEAT_ACK':
 					self.heartbeat_ack += 1
 				case 'READY':
+					logger.info(f"[{self.__class__.__name__} | MatchID: {self.match_id}] Ready to play")
 					self.is_identified = True
 				case 'MATCH_FORCE_JOIN_FAILED':
 					event_data = data.get('d', {})
 					raise Exception(f"Failed to join match: {event_data.get('reason', 'Unknown reason')}")
 				case 'MATCH_END':
 					raise Exception("Match has ended")
+				case 'MATCH_BEGIN':
+					logger.info(f"[{self.__class__.__name__} | MatchID: {self.match_id}] Match has started")
+					self.match_started = True
+				case 'MATCH_UPDATE':
+					event_data = data.get('d', {})
+					ball_data = event_data.get('ball', {})
+					paddle_data = event_data.get('playerB', {})
+					self.match_data = MatchData(
+						ball_data=BallData(
+							x=ball_data.get('x', 0),
+							y=ball_data.get('y', 0),
+							dx=ball_data.get('dx', 0),
+							dy=ball_data.get('dy', 0)
+						),
+						paddle_data=PaddleData(
+							y=paddle_data.get('paddle_y', 0),
+							position=paddle_data.get('pos', 'Unknown')
+						)
+					)
+					await self.handle_match_move()
+				case 'PADDLE_HIT':
+					event_data = data.get('d', {})
+					player_data = event_data.get('player', {})
+
+					if player_data.get('pos') != 'A':
+						return
+
+					await self.handle_match_update()
+					if self.bot_data.should_predict:
+						logger.info(f"[{self.__class__.__name__} | MatchID: {self.match_id}] Should predict")
+						self.bot_data.should_predict = False
+						self.bot_data.bot_action_predictor.predict_action(self.match_data)
 				case _:
-					logger.info(f"[{self.__class__.__name__} | MatchID: {self.match_id}] Unknown event: {event}")
+					event_data = data.get('d', {})
+					logger.info(f"[{self.__class__.__name__} | MatchID: {self.match_id}] Event: {event} - {event_data}")
 
 		except json.JSONDecodeError:
 			logger.error(f"[{self.__class__.__name__} | MatchID: {self.match_id}] Invalid JSON format")
@@ -98,6 +160,7 @@ class BotProgram:
 		try:
 			async with websockets.connect(self.ws_url, ssl=self.ssl_context) as ws:
 				self.ws_connection = ws
+				self.bot_data.ws_connection = ws
 				while True:
 					message = await ws.recv()
 					await self.handle_message(message)
