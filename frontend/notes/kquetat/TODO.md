@@ -75,7 +75,7 @@
 ## LeaderBoard:
 
 - TODO (today):
-	- 
+	-
 
 - endpoint:
 	- leaderboards/`daily`
@@ -109,3 +109,9 @@ Structure:
 			}
 }
 ```
+
+# git merge changes to enable http localhost dev
+
+- docker-compose.yml
+- frontend/config/nginx/nginx.conf
+- frontend/package.json

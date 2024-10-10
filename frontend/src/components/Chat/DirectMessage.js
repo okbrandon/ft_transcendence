@@ -63,7 +63,6 @@ export const DirectMessage = ({
 
 	const realConvo = conversations.find(c => c.conversationID === conversationID);
 
-
 	const toggleDropdown = (event) => {
 		event.stopPropagation();
 		console.log("Toggling dropdown");
