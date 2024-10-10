@@ -6,6 +6,7 @@ import asyncio
 import random
 import os
 import time
+import ssl
 
 from channels.generic.websocket import AsyncWebsocketConsumer, AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
@@ -627,7 +628,10 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                 flags=1 << 1  # AI flag
             )
             logger.info(f"[{self.__class__.__name__}] Created new AI match: {new_match.matchID}")
-            #TODO: post request to AI server to start game
+            try:
+                httpx.post('https://pongbot:5443/bot/connect', json={'matchID': new_match.matchID}, verify=False)
+            except Exception as e:
+                logger.error(f"[{self.__class__.__name__}] Failed to connect to bot: {str(e)}")
             return new_match
 
     @database_sync_to_async
