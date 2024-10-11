@@ -34,7 +34,8 @@ export const SearchListItem = styled.div`
 	cursor: pointer;
 	transition: background-color 0.25s ease, transform 0.25s ease;
 
-	&:hover {
+	&:hover,
+	&.selected {
 		background-color: rgba(255, 255, 255, 0.15);
 	}
 

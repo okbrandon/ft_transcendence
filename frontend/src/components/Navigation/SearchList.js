@@ -3,20 +3,16 @@ import { SearchListContainer, SearchListItem, SearchListItemImage, SearchListIte
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-const SearchList = ({ results, setInput, setResults }) => {
-	const navigate = useNavigate();
+const SearchList = ({ results, activeIndex, handleSelect }) => {
 	const { t } = useTranslation();
-
-	const handleSelect = (username) => {
-		setInput('');
-		setResults(null);
-		navigate(`/profile/${username}`);
-	};
 
 	return (
 		<SearchListContainer>
-			{results && results.length ? results.map((profile) => (
-				<SearchListItem key={profile.userID} onClick={() => handleSelect(profile.username)}>
+			{results && results.length ? results.map((profile, index) => (
+				<SearchListItem
+					key={profile.userID}
+					onClick={() => handleSelect(profile.username)}
+					className={index === activeIndex ? 'selected' : ''}>
 					<SearchListItemImage src={profile.avatarID} alt={`${profile.username}'s avatar`}/>
 					<SearchListItemText>{profile.displayName}</SearchListItemText>
 				</SearchListItem>

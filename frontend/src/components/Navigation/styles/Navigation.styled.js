@@ -80,7 +80,7 @@ export const SearchBarContainer = styled(Form)`
 	display: flex;
 	position: relative;
 	align-items: center;
-	width: 210px;
+	width: 250px;
 
 	& i {
 		margin-right: 10px;
