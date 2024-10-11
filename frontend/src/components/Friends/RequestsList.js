@@ -48,7 +48,7 @@ const RequestsList = ({ requests, setIsRefetch }) => {
 				requests.map((request, key) => (
 					<ListCard key={key}>
 						<ProfileInfo onClick={() => handleProfile(request.username)}>
-								<ProfileAvatar src={request.avatarID} alt={`${request.displayName}'s avatar`}/>
+								<ProfileAvatar src={request.avatarID} alt={`${request.username}'s avatar`}/>
 								{request.displayName}
 						</ProfileInfo>
 						{request.is === 'sender' ? (

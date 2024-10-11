@@ -484,9 +484,9 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         paddle_speed = 5  # Appropriate paddle speed (adjust as needed)
 
         if direction == 'up':
-            match_state[player_key]['paddle_y'] = min(690, match_state[player_key]['paddle_y'] + paddle_speed)
+            match_state[player_key]['paddle_y'] = min(682, match_state[player_key]['paddle_y'] + paddle_speed)
         elif direction == 'down':
-            match_state[player_key]['paddle_y'] = max(60, match_state[player_key]['paddle_y'] - paddle_speed)
+            match_state[player_key]['paddle_y'] = max(73, match_state[player_key]['paddle_y'] - paddle_speed)
 
         # logger.debug(f"[{self.__class__.__name__}] Paddle moved: {player_key} - {direction}")
         await self.send_match_update()
@@ -611,7 +611,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         PADDLE_WIDTH = 10
         PADDLE_HEIGHT = 60
         BALL_RADIUS = 25 / 2
-        BALL_SPEED = 0.3
+        BALL_SPEED = 0.6
         MAX_SCORE = 10
 
         while match_id in self.active_matches:
@@ -655,7 +655,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                 break
 
             await self.send_match_update()
-            await asyncio.sleep(1 / 120) # 120 FPS
+            await asyncio.sleep(1 / 60) # 120 FPS
 
     async def send_paddle_hit(self, player, ball):
         await self.channel_layer.group_send(
