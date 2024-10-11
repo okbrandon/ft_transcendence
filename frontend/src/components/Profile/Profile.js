@@ -6,7 +6,7 @@ import API from '../../api/api'
 import MatchHistory from './content/MatchHistory';
 import Winrate from './content/Winrate';
 import DisplaySkin from './content/DisplaySkin';
-import { GetUserByUsername } from '../../api/user';
+import { GetUser, GetUserByUsername } from '../../api/user';
 import { useRelation } from '../../context/RelationContext';
 import { GetUserFromRelation } from '../../scripts/relation';
 import { useNotification } from '../../context/NotificationContext';
@@ -62,7 +62,18 @@ const Profile = () => {
 		if (username && relations) {
 			GetUserByUsername(username)
 				.then(user => {
-					setProfileUser(user);
+					if (user.userID === userID) {
+						GetUser()
+							.then(meUser => {
+								setProfileUser(meUser);
+							})
+							.catch(err => {
+								addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
+								navigate('/404');
+							});
+					} else {
+						setProfileUser(user);
+					}
 					return GetUserFromRelation(relations, user.username);
 				})
 				.then(relationData => {
@@ -73,7 +84,7 @@ const Profile = () => {
 					navigate('/404');
 			});
 		}
-	}, [relations, username, navigate, addNotification]);
+	}, [relations, username, navigate, addNotification, userID]);
 
 	useEffect(() => {
 		if (relation) {
