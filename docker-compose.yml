@@ -25,6 +25,7 @@ services:
       - certs
     ports:
       - "8888:443"
+      - "8000:80"
     networks:
       - transcendence
     volumes:
