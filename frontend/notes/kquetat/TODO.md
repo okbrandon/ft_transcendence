@@ -1,6 +1,7 @@
 # NEW TODO
 
 - Chat (!!) :
+	- enable max characters input
 	- Enable instant access to messaging when adding a new friend [x]
 	- Make Chat messages direct message work again [x]
 	- Fix default avatar picture
@@ -10,8 +11,7 @@
 	- Enable game invite (gameserver)
 		- Use notification Context for enabling sending game invite notification
 	- The tournament system should be able to warn users expected for the next game
-	- Re-enable the redirection to the profile
-	- If a friend is removed, remove the conversation correctly
+	- If a friend is removed, remove/hide the conversation correctly
 	{
 		// when removing a friend
 

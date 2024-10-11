@@ -2,7 +2,6 @@ import styled from 'styled-components';
 
 const DirectMessageContainer = styled.div`
 	flex: 1;
-	background-color: #f9f9f9;
 	display: flex;
 	flex-direction: column;
 	position: relative !important;
@@ -12,6 +11,20 @@ const DirectMessageContainer = styled.div`
 	transition: height 0.3s ease;
 	border: 1px solid #ddd;
 	border-radius: 10px 10px 0 0;
+	z-index: 1; /* Ensure the content is above the pseudo-element */
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent background */
+		backdrop-filter: blur(10px); /* Blur effect */
+		border-radius: 10px 10px 0 0;
+		z-index: -1; /* Ensure the pseudo-element is behind the content */
+	}
 `;
 
 export const Username = styled.span`

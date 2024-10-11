@@ -1,9 +1,10 @@
-import React, { useState, useContext, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Header } from './styles/Chat/ChatContainer.styled.js';
+import { useRelation } from '../../context/RelationContext.js';
+import { useNotification } from '../../context/NotificationContext.js';
 import CloseButton from 'react-bootstrap/CloseButton';
 import Arrow from './tools/Arrow.js';
 import { SendButton } from './tools/SendButton.js';
-import { RelationContext, useRelation } from '../../context/RelationContext.js';
 import API from '../../api/api.js';
 import ConfirmationModal from './tools/ConfirmationModal.js';
 import { useNavigate } from 'react-router-dom';
@@ -20,6 +21,7 @@ import DirectMessageContainer, {
 	ChatInput,
 	ActionButtonContainer
 } from './styles/DirectMessage/DirectMessage.styled.js';
+import ProfilePicture from './styles/global/ProfilePicture.styled.js';
 
 const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) => {
 	if (!realConvo || realConvo.messages.length === 0) {
@@ -56,34 +58,50 @@ export const DirectMessage = ({
 	const userID = localStorage.getItem('userID');
 	const [content, setContent] = useState('');
 	const { sendMessage } = useRelation();
+	const { addNotification } = useNotification();
 	const messagesEndRef = useRef(null);
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [isBlockModalOpen, setIsBlockModalOpen] = useState(false);
 	const navigate = useNavigate();
+	const dropdownRef = useRef(null);
 
 	const realConvo = conversations.find(c => c.conversationID === conversationID);
+	const otherUser = realConvo.participants.find(id => id.userID !== userID);
+	const proPic = otherUser.avatarID || 'images/default-profile.png';
 
 	const toggleDropdown = (event) => {
 		event.stopPropagation();
-		console.log("Toggling dropdown");
 		setIsDropdownOpen(!isDropdownOpen);
 	}
 
+	const handleClickOutside = (event) => {
+		if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+			setIsDropdownOpen(false);
+		}
+	};
+
+	useEffect(() => {
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, []);
+
 	const handleBlockUser = () => {
-		const other = realConvo.participants.find(id => id !== userID);
+		const other = realConvo.participants.find(id => id.userID !== userID);
 
 		if (!other || !other.userID) return;
 		if (other.userID === userID) {
-			console.error('You cannot block yourself');
+			addNotification('error', 'You cannot block yourself');
 			return;
 		}
 
 		API.put('users/@me/relationships', { user: other.userID, type: 2 })
 			.then(() => {
-				console.log('User blocked');
+				addNotification('warning', 'User blocked.');
 			})
 			.catch(err => {
-				console.error(err.response.data.error);
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 			});
 		setIsBlockModalOpen(false);
 	}
@@ -117,11 +135,7 @@ export const DirectMessage = ({
 	const handleMessage = () => {
 		if (content.trim() === '') return;
 
-		sendMessage(JSON.stringify({
-			type: 'send_message',
-			conversationID: conversationID,
-			content: content,
-		}))
+		sendMessage(JSON.stringify({ type: 'send_message', conversationID: conversationID, content: content, }))
 		setContent('');
 	};
 
@@ -129,8 +143,9 @@ export const DirectMessage = ({
 		<>
 		<DirectMessageContainer $isOpen={isOpen} $isMinimized={isMinimized}>
 			<Header onClick={toggleMinimization}>
+				<ProfilePicture src={proPic} alt={`${otherUser.username}'s profile picture`} $header />
 				<Username onClick={toggleDropdown}>{username}</Username>
-				<Dropdown $isOpen={isDropdownOpen}>
+				<Dropdown ref={dropdownRef} $isOpen={isDropdownOpen}>
 					<DropdownItem data-action="profile" onClick={() => handleDropdownAction('profile')}>Profile</DropdownItem>
 					<DropdownItem data-action="invite" onClick={() => handleDropdownAction('invite')}>Invite</DropdownItem>
 					<DropdownItem data-action="block" onClick={() => handleDropdownAction('block')}>Block</DropdownItem>
