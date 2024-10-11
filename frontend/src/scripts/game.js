@@ -54,7 +54,7 @@ const AddToScene = (scene, terrain, paddle1, paddle2, ball) => {
 const GameCanvas = (canvas, paddle1, paddle2, ball, terrain, hit) => {
 	const scene = new THREE.Scene();
 	const camera = new THREE.PerspectiveCamera(40, terrain.WIDTH / terrain.HEIGHT, 0.1, 1000);
-	camera.position.set(0, 0, 20.7);
+	camera.position.set(0, 0, 20.8);
 	camera.lookAt(0, 0, 0);
 
 	const lights = Lightning(scene, terrain);
