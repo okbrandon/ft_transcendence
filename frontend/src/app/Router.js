@@ -10,7 +10,7 @@ import { isValidToken } from '../api/api';
 import Root from '../components/Root';
 import SignIn from '../components/Auth/SignIn';
 import SignUp from '../components/Auth/SignUp';
-import Game from '../components/Game/Game';
+import Game from '../components/Game/remote/Game';
 import Home from '../components/Home/Home';
 import Profile from '../components/Profile/Profile';
 import Verify from '../components/Auth/Verify';
@@ -24,6 +24,7 @@ import Friends from '../components/Friends/Friends';
 import PageNotFound from '../components/PageNotFound/PageNotFound';
 import Settings from '../components/Settings/Settings';
 import { useAuth } from '../context/AuthContext';
+import GameLocal from '../components/Game/local/GameLocal';
 
 const PrivateRoutes = () => {
 	const { isLoggedIn, setIsLoggedIn } = useAuth();
@@ -73,6 +74,7 @@ const Router = createBrowserRouter(createRoutesFromElements(
 				<Route element={ <GameRoutes/> }>
 					<Route path="game" element={ <Game/> }/>
 					<Route path="playmenu" element={ <PlayMenu/> }/>
+					<Route path="game-local" element={ <GameLocal/> }/>
 				</Route>
 				<Route path="leaderboard" element={ <Leaderboard/> }/>
 			</Route>

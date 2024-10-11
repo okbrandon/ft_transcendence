@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { GameSceneContainer, Score, ScoresContainer, StyledCanvas, Timer, TimerContainer } from "./styles/Game.styled";
-import GameCanvas from "../../scripts/game";
+import { GameSceneContainer, Score, ScoresContainer, StyledCanvas, Timer, TimerContainer } from "../styles/Game.styled";
+import GameCanvas from "../../../scripts/game";
 import { useNavigate } from "react-router-dom";
 
 const GameScene = ({ matchState, hitPos, sendMessage, activateTimer, setActivateTimer }) => {
