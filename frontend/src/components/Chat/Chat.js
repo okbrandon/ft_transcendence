@@ -5,9 +5,10 @@ import { DirectMessage } from './DirectMessage.js';
 import ChatContainer, { MainChatContainer } from './styles/Chat/ChatContainer.styled.js';
 import { useRelation } from '../../context/RelationContext.js';
 import ChatHeader from './ChatHeader.js';
+import { ChatProvider } from '../../context/ChatContext.js';
 
 const Chat = () => {
-	const { conversations, blockedUsers, relations } = useRelation();
+	const { conversations, blockedUsers, relations, friends } = useRelation();
 	const [isOverlayMinimized, setIsOverlayMinimized] = useState(true);
 	const [mainWinArrow, setMainWinArrow] = useState(false);
 	const [directMessage, setDirectMessage] = useState({
@@ -17,8 +18,13 @@ const Chat = () => {
 		conversationID: null,
 	});
 
+	// log a separate in the console
 
-	console.log('Relations: ', relations);
+	console.log('-----------------------------');
+	console.log('In Chat relations: ', relations); // Do I need this?
+	console.log('In Chat friends: ', friends);
+	console.log('In Chat blockedUsers: ', blockedUsers);
+	console.log('In Chat conversations: ', conversations);
 
 	const handleSelectChat = (username, conversationID) => {
 		setDirectMessage({
@@ -52,25 +58,27 @@ const Chat = () => {
 	}
 
 	return (
-		<ChatContainer>
-			<MainChatContainer $isMinimized={isOverlayMinimized}>
-				<ChatHeader toggleMinimization={mainMinimizer} arrowState={mainWinArrow} />
-				{!isOverlayMinimized && (
-					<>
-						<SearchFriends conversations={conversations} />
-						<MessagePreview blockedUsers={blockedUsers} conversations={conversations} handleSelectChat={handleSelectChat} />
-					</>
+		<ChatProvider conversations={conversations} friends={friends} blockedUsers={blockedUsers}>
+			<ChatContainer>
+				<MainChatContainer $isMinimized={isOverlayMinimized}>
+					<ChatHeader toggleMinimization={mainMinimizer} arrowState={mainWinArrow} />
+					{!isOverlayMinimized && (
+						<>
+							<SearchFriends conversations={conversations} />
+							<MessagePreview handleSelectChat={handleSelectChat} />
+						</>
+					)}
+				</MainChatContainer>
+				{directMessage.username && (
+					<DirectMessage
+						{...directMessage}
+						conversations={conversations}
+						onClose={handleCloseChat}
+						toggleMinimization={toggleDMMinimization}
+					/>
 				)}
-			</MainChatContainer>
-			{directMessage.username && (
-				<DirectMessage
-					{...directMessage}
-					conversations={conversations}
-					onClose={handleCloseChat}
-					toggleMinimization={toggleDMMinimization}
-				/>
-			)}
-		</ChatContainer>
+			</ChatContainer>
+		</ChatProvider>
 	);
 };
 

@@ -1,16 +1,35 @@
-## TODO - today
+# NEW TODO
 
-- Add styling in DMWinHeader.
-	- on:click:
-		- dropdown to invite user to game party. (waiting for gameserver)
-			- add a notification to user, to confirm that he wants to invite him.
-		- add a notification to user, to confirm the blocking of the user selected.
-		- if person is blocked:
-			- the blocked user cannot see the conversation anymore. (must double check)
-				- (optional): custom message to say that user was blocked.
-					- (optional): another custom message to the user that blocked, 'You blocked that user'.
+- Chat (!!) :
+	- Enable instant access to messaging when adding a new friend [x]
+	- Make Chat messages direct message work again [x]
+	- Fix default avatar picture
+	- Enable blocking feature, where we cannot see the chat again
+		- Use notification context for warning user that <targetuser> has been blocked.
+		- If user has been blocked already => notify: <targetuser> has been already blocked.
+	- Enable game invite (gameserver)
+		- Use notification Context for enabling sending game invite notification
+	- The tournament system should be able to warn users expected for the next game
+	- Re-enable the redirection to the profile
+	- If a friend is removed, remove the conversation correctly
+	{
+		// when removing a friend
 
-- Search friends features:
+			const handleRemove = relationID => {
+		API.delete(`users/@me/relationships/${relationID}`)
+			.then(() => {
+				addNotification("success", "Friend removed");
+				setIsRefetch(true);
+			})
+			.catch(err => {
+				addNotification("error", `${err?.response?.data?.error || "An error occurred."}`);
+			});
+	};
+
+
+	}
+
+- Search friends component:
 	- Fix the feature.
 		- Map through the list of friends.
 	- Implement the Invite button, (TODO LATER : waiting for gameserver)
@@ -21,12 +40,7 @@
 
 - Implement notification:
 	- When message received from any user:
-		- implement smol notification badge on main Chat feature.
-			- with notification number.
-
- (from: subject)
-- The tournament system should be able to warn users expected for the next game.
-
+		- implement small notification badge on main Chat feature.
 
 ### structure conversations chat
 
@@ -74,10 +88,14 @@
 
 ## LeaderBoard:
 
-- TODO (today):
-	-
+# TODO:
 
-- endpoint:
+- Finish the podium styling
+- Edit the styling for the leaderbaord
+	- re-cented the leaderboard
+- Enable access to profile when clicking on a user
+
+- API ENDPOINTS:
 	- leaderboards/`daily`
 	- leaderboards/`weekly`
 	- leaderboards/`lifetime`
@@ -109,9 +127,3 @@ Structure:
 			}
 }
 ```
-
-# git merge changes to enable http localhost dev
-
-- docker-compose.yml
-- frontend/config/nginx/nginx.conf
-- frontend/package.json

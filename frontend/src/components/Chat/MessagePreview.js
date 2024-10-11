@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import ProfilePicture from './styles/global/ProfilePicture.styled';
 import ScrollableComponent from './tools/ScrollableComponent';
+import { useChat } from '../../context/ChatContext';
 
 const PreviewContainer = styled.div`
 	padding: 10px;
@@ -37,8 +38,11 @@ const NoFriendsMessage = styled.div`
 	font-size: 1.2rem;
 `;
 
-export const MessagePreview = ({ blockedUsers, conversations, handleSelectChat }) => {
+export const MessagePreview = ({ handleSelectChat }) => {
 	const userID = localStorage.getItem('userID');
+	const { conversations, friends, blockedUsers } = useChat();
+
+	console.log('In MessagePreview friends: ', friends);
 
 	const handleSelectFriend = (friend) => {
 		const convo = conversations.find((convo) => {
@@ -62,7 +66,7 @@ export const MessagePreview = ({ blockedUsers, conversations, handleSelectChat }
 		</PreviewContainer>
 	);
 
-	if (conversations.length === 0) {
+	if (friends.length === 0) {
 		return <NoFriendsMessage>Make some friends so you can chat with them !</NoFriendsMessage>;
 	}
 
@@ -71,8 +75,10 @@ export const MessagePreview = ({ blockedUsers, conversations, handleSelectChat }
 			{conversations.map((convo, index) => {
 				const other = convo.participants.find(participant => participant.userID !== userID);
 				const isBlocked = blockedUsers.find(blocked => blocked.userID === other.userID);
+				const friendExists = friends.find(friend => friend.username === other.username);
+				console.log('In MessagePreview friendExists: ', friendExists);
 
-				if (!isBlocked) {
+				if (!isBlocked && friendExists) {
 					if (convo.messages.length === 0) {
 						return renderFriendPreview(other, index, 'Start a new conversation');
 					}

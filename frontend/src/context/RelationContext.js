@@ -6,8 +6,8 @@ import { formatUserData } from "../api/user";
 import { GetBlockedUsers, GetFriends, GetRequests } from "../scripts/relation";
 import { useNotification } from "./NotificationContext";
 
-const WS_CHAT_URL = process.env.REACT_APP_ENV == 'production' ? '/ws/chat/?token=' : 'ws://localhost:8000/ws/chat/?token=';
-const WS_STATUS_URL =  process.env.REACT_APP_ENV == 'production' ? '/ws/status/?token=' : 'ws://localhost:8000/ws/status/?token='
+const WS_CHAT_URL = process.env.REACT_APP_ENV === 'production' ? '/ws/chat/?token=' : 'ws://localhost:8000/ws/chat/?token=';
+const WS_STATUS_URL =  process.env.REACT_APP_ENV === 'production' ? '/ws/status/?token=' : 'ws://localhost:8000/ws/status/?token='
 
 export const RelationContext = createContext({
 	conversations: [],
@@ -36,8 +36,8 @@ const RelationProvider = ({ children }) => {
 	};
 
 	const sendMessage = (message) => {
-		if (socketChat.current.readyState === WebSocket.OPEN) {
-			socketChat.current.send(JSON.stringify(message));
+		if (socketChat.current && socketChat.current.readyState === WebSocket.OPEN) {
+			socketChat.current.send(message);
 		} else {
 			logger('WebSocket for Chat is not open');
 		}
@@ -91,6 +91,7 @@ const RelationProvider = ({ children }) => {
 					addNotification('info', `${user.displayName} rejected your friend request.`);
 				} else if (user.status === 'accepted') {
 					addNotification('info', `${user.displayName} accepted your friend request.`);
+					fetchConversations();
 				};
 			}
 		};
