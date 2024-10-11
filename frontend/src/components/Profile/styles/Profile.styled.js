@@ -18,12 +18,19 @@ export const ProfileContainer = styled.div`
 	background-position: center;
 `;
 
+export const UserProfileBannerContainer = styled.div`
+	position: relative;
+	width: 80%;
+	margin: 150px auto 0 auto;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+`;
+
 export const UserProfileBanner = styled.div`
-	width: 75%;
-	margin: 100px auto 0 auto;
-	border-top-left-radius: 30px;
-	border-top-right-radius: 30px;
-	height: 250px;
+	width: 100%;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	height: 300px;
 	background-repeat: no-repeat;
 	${props => props.$path ? `background-image: url(${props.$path});` : 'background-color: #111;'}
 	background-size: cover;
@@ -32,9 +39,7 @@ export const UserProfileBanner = styled.div`
 
 export const UserContainer = styled.div`
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	top: 280px;
-	left: 10%;
+	grid-template-columns: 3fr 2fr;
 	width: 80%;
 `;
 

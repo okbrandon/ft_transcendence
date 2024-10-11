@@ -10,8 +10,9 @@ import { GetUser, GetUserByUsername } from '../../api/user';
 import { useRelation } from '../../context/RelationContext';
 import { GetUserFromRelation } from '../../scripts/relation';
 import { useNotification } from '../../context/NotificationContext';
-import { ProfileContainer, UserContainer, UserProfileBanner } from './styles/Profile.styled';
+import { ProfileContainer, UserContainer, UserProfileBanner, UserProfileBannerContainer } from './styles/Profile.styled';
 import Loader from '../../styles/shared/Loader.styled';
+import ProfileMainInfo from './main/ProfileMainInfo';
 
 const matchArray = [
 	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Brandon"}, scores: {playerA: 9, playerB: 10}, startedAt: "2021-09-01T12:28:01Z", finishedAt: "2021-09-01T12:30:38Z"},
@@ -112,14 +113,15 @@ const Profile = () => {
 				<Loader $profilePicture={profileUser.avatarID}/>
 			) : (
 				<>
-					<UserProfileBanner $path={profileUser.bannerID}/>
-					<UserContainer>
-						<MainBar
+					<UserProfileBannerContainer>
+						<UserProfileBanner $path={profileUser.bannerID}/>
+						<ProfileMainInfo
 							profileUser={profileUser}
-							matchArray={matchArray}
 							relation={relation}
-							setIsRefetch={setIsRefetch}
-						/>
+							setIsRefetch={setIsRefetch}/>
+					</UserProfileBannerContainer>
+					<UserContainer>
+						<MainBar matchArray={matchArray}/>
 						<About
 							profileUser={profileUser}
 							matchArray={matchArray}

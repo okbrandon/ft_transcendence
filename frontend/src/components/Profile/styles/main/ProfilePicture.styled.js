@@ -3,45 +3,23 @@ import Image from 'react-bootstrap/Image';
 
 export const SectionContainer = styled.div`
 	position: absolute;
-	top: -130px;
-	left: 50%;
-	transform: translateX(-50%);
+	top: 50%;
+	transform: translateY(-50%);
 	display: flex;
-	flex-direction: column;
+	justify-content: center;
 	align-items: center;
+	gap: 25px;
+	height: 100%;
+	padding-left: 150px;
+	padding-right: 200px;
+	background: linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0) 100%);
 
 	& > h2 {
 		text-align: center;
 		font-size: 2rem;
 		font-weight: 700;
-		position: relative;
-		cursor: default;
 		margin-top: 20px;
 		word-spacing: 5px;
-
-		&:hover::before {
-			background-position: 0% 50%;
-		}
-
-		&::before {
-			content: '';
-			position: absolute;
-			left: 0;
-			bottom: 0;
-			width: 100%;
-			height: 2px;
-			background-image: linear-gradient(to right, #ffffff 45%, #ffffff4D 55%);
-			background-repeat: no-repeat;
-			background-size: 220% 100%;
-			background-position: 100% 50%;
-			transition: 0.3s ease-out;
-		}
-	}
-	
-	& > h3 {
-		font-size: 1.5rem;
-		margin-top: 5px;
-		color: rgb(200,200,200);
 	}
 `;
 
