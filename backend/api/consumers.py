@@ -765,10 +765,10 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
 
     def reset_ball(self, match_state):
         if self.match.flags & (1 << 1):
-            dx = -8
+            dx = random.choice([-8, -7])
         else:
-            dx = random.choice([-8, 8])  # Increased ball speed slightly
-        dy = random.choice([-8, 8])
+            dx = random.choice([-8, -7, 7, 8])  # Increased ball speed slightly
+        dy = random.choice([-8, -7, 7 , 8])
         match_state['ball'] = {'x': 600, 'y': 375, 'dx': dx, 'dy': dy}
 
     async def end_match(self, match_id, winner_id):
