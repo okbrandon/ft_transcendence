@@ -64,8 +64,13 @@ class BotProgram:
 	async def handle_match_update(self):
 		self.bot_data.update_match_data(self.match_data)
 		try:
-			self.bot_data.bot_action_predictor.velocity_estimator.update_velocity(self.match_data.ball_data.x, self.match_data.ball_data.y)
-			self.bot_data.bot_action_predictor.ball_predictor.predict_ball_land(self.match_data.ball_data, self.bot_data.bot_action_predictor.velocity_estimator)
+			# self.bot_data.bot_action_predictor.velocity_estimator.update_velocity(self.match_data.ball_data.x, self.match_data.ball_data.y)
+			self.bot_data.bot_action_predictor.velocity_estimator.vx = self.match_data.ball_data.dx
+			self.bot_data.bot_action_predictor.velocity_estimator.vy = self.match_data.ball_data.dy
+			if self.bot_data.should_predict:
+				logger.info(f"[{self.__class__.__name__} | MatchID: {self.match_id}] Should predict")
+				self.bot_data.should_predict = False
+				self.bot_data.bot_action_predictor.ball_predictor.predict_ball_land(self.match_data.ball_data, self.bot_data.bot_action_predictor.velocity_estimator)
 		except Exception as e:
 			logger.error(f"[{self.__class__.__name__} | MatchID: {self.match_id}] Error: {type(e).__name__} - {e}")
 
@@ -139,11 +144,9 @@ class BotProgram:
 					if player_data.get('pos') != 'A':
 						return
 
+					self.bot_data.should_predict = True
 					await self.handle_match_update()
-					if self.bot_data.should_predict:
-						logger.info(f"[{self.__class__.__name__} | MatchID: {self.match_id}] Should predict")
-						self.bot_data.should_predict = False
-						self.bot_data.bot_action_predictor.predict_action(self.match_data)
+					self.bot_data.bot_action_predictor.predict_action(self.match_data)
 				case _:
 					event_data = data.get('d', {})
 					logger.info(f"[{self.__class__.__name__} | MatchID: {self.match_id}] Event: {event} - {event_data}")

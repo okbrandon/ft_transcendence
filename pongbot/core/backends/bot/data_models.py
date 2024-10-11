@@ -34,9 +34,8 @@ class BotData:
 	def __init__(self):
 		self.ws_connection = None
 		self.match_data = None
-		self.should_predict = False
 		self.bot_action_predictor = None
+		self.should_predict = False
 
 	def update_match_data(self, match_data: MatchData):
 		self.match_data = match_data
-		self.should_predict = True

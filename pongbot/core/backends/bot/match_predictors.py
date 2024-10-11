@@ -38,22 +38,32 @@ class BallPredictor:
 		self.court_height = court_height
 		self.ball_radius = ball_radius
 		self.ball_predicted_y = 0
+		self.config = get_config()
 
 	def predict_ball_land(self, ball_data: BallData, velocity: BallVelocityEstimator):
 		if velocity.vx == 0:
 			return
 
-		distance_to_paddle = ball_data.x - self.ball_radius # Considering the opponent at LEFT side
+		distance_to_paddle = self.court_width - ball_data.x - self.ball_radius
 		time_to_reach_paddle = distance_to_paddle / abs(velocity.vx)
 		predicted_y_position = ball_data.y + velocity.vy * time_to_reach_paddle
 
+		bounces = 0
 		while predicted_y_position < 0 or predicted_y_position > self.court_height:
 			if predicted_y_position < 0:
 				predicted_y_position = -predicted_y_position
+				bounces += 1
 			elif predicted_y_position > self.court_height:
 				predicted_y_position = 2 * self.court_height - predicted_y_position
+				bounces += 1
 
-		self.ball_predicted_y = predicted_y_position
+		self.ball_predicted_y = predicted_y_position - self.config['paddle']['height'] / 2
+
+		logger.info(f"[{self.__class__.__name__}] -- PREDICTION LOGS --")
+		logger.info(f"[{self.__class__.__name__}] Distance to paddle: {distance_to_paddle}")
+		logger.info(f"[{self.__class__.__name__}] Time to reach paddle: {time_to_reach_paddle}")
+		logger.info(f"[{self.__class__.__name__}] Predicted Y: {self.ball_predicted_y}")
+		logger.info(f"[{self.__class__.__name__}] Bounces: {bounces}")
 
 """
 Predicts the action of the bot
@@ -70,6 +80,7 @@ class BotActionPredictor:
 
 		def reset(self):
 			logger.info(f"[{self.__class__.__name__}] Target reached, resetting paddle state")
+			logger.info(f"[{self.__class__.__name__}] Imaginary Y: {self.imaginary_y}, Y to reach: {self.y_to_reach}")
 			self.imaginary_y = 0
 			self.y_to_reach = 0
 			self.should_move_up = False
@@ -109,7 +120,6 @@ class BotActionPredictor:
 
 		logger.info(f"[{self.__class__.__name__}] Predicted Y: {predicted_y}, Player Y: {match_data.paddle_data.y}")
 		logger.info(f"[{self.__class__.__name__}] Y to reach: {self.paddle_state.y_to_reach}, Imaginary Y: {self.paddle_state.imaginary_y}")
-		logger.info(f"[{self.__class__.__name__}] Ball speed: {self.velocity_estimator.speed}")
 
 		if predicted_y > paddle_pos:
 			self.paddle_state.should_move_up = True
