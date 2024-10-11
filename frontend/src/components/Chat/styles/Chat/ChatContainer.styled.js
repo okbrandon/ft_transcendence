@@ -71,4 +71,17 @@ export const MainChatContainer = styled.div`
 	}
 `;
 
+export const MessagePopUp = styled.div`
+	position: absolute;
+	top: 0;
+	right: 0;
+	background: #ff0000;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	text-align: center;
+	font-size: 0.8rem;
+	font-weight: 700;
+`;
+
 export default ChatContainer;
