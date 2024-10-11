@@ -4,7 +4,7 @@ import { MessagePreview } from './MessagePreview.js';
 import { DirectMessage } from './DirectMessage.js';
 import ChatContainer, { MainChatContainer } from './styles/Chat/ChatContainer.styled.js';
 import { useRelation } from '../../context/RelationContext.js';
-import ChatHeader from './ChatHeader.js';
+import ChatHeader from './tools/ChatHeader.js';
 import { ChatProvider } from '../../context/ChatContext.js';
 
 const Chat = () => {

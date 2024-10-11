@@ -158,6 +158,8 @@ export const SenderBubble = styled.div`
 	margin: 5px 5px 5px auto;
 	max-width: 70%;
 	align-self: flex-end;
+	word-wrap: break-word;
+	white-space: pre-wrap;
 `;
 
 export const HostBubble = styled.div`
@@ -168,6 +170,8 @@ export const HostBubble = styled.div`
 	margin: 5px auto 5px 5px;
 	max-width: 70%;
 	align-self: flex-start;
+	word-wrap: break-word;
+	white-space: pre-wrap;
 `;
 
 export default DirectMessageContainer;

@@ -1,50 +1,28 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Header } from './styles/Chat/ChatContainer.styled.js';
-import { useRelation } from '../../context/RelationContext.js';
-import { useNotification } from '../../context/NotificationContext.js';
-import CloseButton from 'react-bootstrap/CloseButton';
-import Arrow from './tools/Arrow.js';
-import { SendButton } from './tools/SendButton.js';
-import API from '../../api/api.js';
-import ConfirmationModal from './tools/ConfirmationModal.js';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import CloseButton from 'react-bootstrap/CloseButton';
 
+import { useRelation } from '../../context/RelationContext';
+import { useNotification } from '../../context/NotificationContext';
+import API from '../../api/api';
+
+import { Header } from './styles/Chat/ChatContainer.styled';
+import ProfilePicture from './styles/global/ProfilePicture.styled';
 import DirectMessageContainer, {
 	ChatMessages,
 	Username,
 	Dropdown,
 	DropdownItem,
-	NewConversationMessage,
-	SenderBubble,
-	HostBubble,
 	ChatInputContainer,
 	ChatInput,
 	ActionButtonContainer
-} from './styles/DirectMessage/DirectMessage.styled.js';
-import ProfilePicture from './styles/global/ProfilePicture.styled.js';
+} from './styles/DirectMessage/DirectMessage.styled';
 
-const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) => {
-	if (!realConvo || realConvo.messages.length === 0) {
-		return (
-			<NewConversationMessage>
-				It's your first time chatting with {otherUser}. Say hi, don't be shy!
-			</NewConversationMessage>
-		);
-	} else {
-		return (
-			<>
-				{realConvo.messages.map((message, index) => {
-					return message.sender.userID === userID ? (
-						<SenderBubble key={index}>{message.content}</SenderBubble>
-					) : (
-						<HostBubble key={index}>{message.content}</HostBubble>
-					);
-				})}
-				<div ref={messagesEndRef} />
-			</>
-		);
-	}
-};
+import Arrow from './tools/Arrow';
+import { SendButton } from './tools/SendButton';
+import ConfirmationModal from './tools/ConfirmationModal';
+import DisplayChatMessages from './tools/DisplayChatMessages';
+import useClickOutside from './tools/hooks/useClickOutside';
 
 export const DirectMessage = ({
 	isOpen,
@@ -74,18 +52,8 @@ export const DirectMessage = ({
 		setIsDropdownOpen(!isDropdownOpen);
 	}
 
-	const handleClickOutside = (event) => {
-		if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-			setIsDropdownOpen(false);
-		}
-	};
-
-	useEffect(() => {
-		document.addEventListener('mousedown', handleClickOutside);
-		return () => {
-			document.removeEventListener('mousedown', handleClickOutside);
-		};
-	}, []);
+	const closeDropdown = useCallback(() => setIsDropdownOpen(false), []);
+	useClickOutside(dropdownRef, closeDropdown);
 
 	const handleBlockUser = () => {
 		const other = realConvo.participants.find(id => id.userID !== userID);
@@ -169,6 +137,7 @@ export const DirectMessage = ({
 
 					<ChatInputContainer>
 						<ChatInput
+							as="textarea"
 							placeholder="Type a message..."
 							value={content}
 							onChange={e => setContent(e.target.value)}
@@ -177,6 +146,9 @@ export const DirectMessage = ({
 									handleMessage();
 								}
 							}}
+							maxLength={256}
+							rows={1}
+							style={{ resize: 'none', overflow: 'hidden' }}
 						/>
 						<SendButton onClick={handleMessage} disabled={content.trim() === ''}>
 							<i className="bi bi-send-fill" />
