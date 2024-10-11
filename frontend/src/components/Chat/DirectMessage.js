@@ -35,7 +35,7 @@ export const DirectMessage = ({
 }) => {
 	const userID = localStorage.getItem('userID');
 	const [content, setContent] = useState('');
-	const { sendMessage } = useRelation();
+	const { sendMessage, setIsRefetch } = useRelation();
 	const { addNotification } = useNotification();
 	const messagesEndRef = useRef(null);
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -66,7 +66,9 @@ export const DirectMessage = ({
 
 		API.put('users/@me/relationships', { user: other.userID, type: 2 })
 			.then(() => {
-				addNotification('warning', 'User blocked.');
+				addNotification('warning', `User ${username} blocked.`);
+				setIsRefetch(true);
+				onClose();
 			})
 			.catch(err => {
 				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
@@ -143,6 +145,7 @@ export const DirectMessage = ({
 							onChange={e => setContent(e.target.value)}
 							onKeyDown={e => {
 								if (e.key === 'Enter') {
+									e.preventDefault();
 									handleMessage();
 								}
 							}}

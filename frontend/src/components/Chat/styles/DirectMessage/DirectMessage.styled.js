@@ -105,7 +105,7 @@ export const ChatInputContainer = styled.div`
 	display: flex;
 	align-items: center;
 	padding: 10px;
-	background-color: #fff;
+	background-color: rgba(255, 255, 255, 0.1);
 	border-top: 1px solid #ddd;
 	display: ${({ $isMinimized }) => ($isMinimized ? 'none' : 'flex')};
 	transition: all 0.3s ease;
@@ -151,7 +151,7 @@ export const NewConversationMessage = styled.div`
 `;
 
 export const SenderBubble = styled.div`
-	background-color: #0084ff;
+	background-color: #6a0dad;
 	color: #fff;
 	border-radius: 10px 10px 0 10px;
 	padding: 10px;

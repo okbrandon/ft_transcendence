@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import ProfilePicture from './styles/global/ProfilePicture.styled';
 import ScrollableComponent from './tools/ScrollableComponent';
 import { useChat } from '../../context/ChatContext';
+import { truncateText } from './tools/TruncateText';
 
 const PreviewContainer = styled.div`
 	padding: 10px;
@@ -61,7 +62,7 @@ export const MessagePreview = ({ handleSelectChat }) => {
 			/>
 			<MessageContent>
 				<Sender>{friend.username}</Sender>
-				<MessageText>{message}</MessageText>
+				<MessageText>{truncateText(message, 50)}</MessageText>
 			</MessageContent>
 		</PreviewContainer>
 	);

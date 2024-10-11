@@ -50,6 +50,12 @@ const RelationProvider = ({ children }) => {
 				setFriends(GetFriends(relationships.data));
 				setRequests(GetRequests(relationships.data));
 				setBlockedUsers(GetBlockedUsers(relationships.data));
+
+				// handle conversations when there is a change in relation status
+				return API.get('chat/conversations');
+			})
+			.then(response => {
+				setConversations(response.data.conversations);
 			})
 			.catch(err => {
 				console.error(err?.response?.data?.error || 'An error occurred.');
