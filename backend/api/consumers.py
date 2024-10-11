@@ -781,7 +781,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             "e": "BALL_SCORED",
             "d": {"player": event["player"]}
         })
-        logger.info(f"[{self.__class__}] Ball scored event processed for player: {event['player']['id']}")
+        logger.info(f"[{self.__class__.__name__}] Ball scored event processed for player: {event['player']['id']}")
 
     def reset_ball(self, match_state):
         if self.match.flags & (1 << 1):
@@ -795,7 +795,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         if self.match:
             # Match already ended
             if self.match.winnerID is not None or self.match.finishedAt is not None:
-                return
+                return None
 
             self.match.winnerID = winner_id
             self.match.finishedAt = timezone.now()
