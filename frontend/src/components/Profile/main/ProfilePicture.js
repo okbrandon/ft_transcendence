@@ -8,7 +8,7 @@ const ProfilePicture = ({ profileUser }) => {
 			<ProfilePictureContainer>
 				<ProfileImage
 					src={profileUser.avatarID}
-					alt='profile picture'
+					alt={`${profileUser.username}'s avatar`}
 					roundedCircle
 				/>
 				<div>

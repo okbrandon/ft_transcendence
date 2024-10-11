@@ -22,8 +22,8 @@ export const FormContainer = styled(Form)`
 	align-items: center;
 	gap: 20px;
 	border-radius: 15px;
-	width: 700px;
-	padding: 80px 50px;
+	width: 750px;
+	padding: 50px 100px;
 	margin-top: 80px;
 	font-family: 'Inter', sans-serif;
 	background: transparent;
@@ -46,7 +46,7 @@ export const FormContainer = styled(Form)`
 	& .mb-3 {
 		width: 100%;
 		position: relative;
-		margin: 10px 0;
+		margin: 20px 0;
 
 		& > i {
 			position: absolute;
@@ -100,7 +100,7 @@ export const FormContainer = styled(Form)`
 	.mb-3 input:not(:placeholder-shown) ~ span,
 	.mb-3 input:invalid ~ span,
 	.mb-3 input:focus ~ span {
-		transform: translateX(350px) translateY(-25px);
+		transform: translateX(400px) translateY(-25px);
 		font-size: 0.8rem;
 		padding: 5px 10px;
 		background: #fff;
@@ -136,6 +136,7 @@ export const LanguageDropdownButton = styled.select`
 	font-size: 0.9rem;
 	font-family: 'Orbitron', sans-serif;
 	transition: background 0.3s ease, border 0.3s ease;
+	margin-bottom: 15px;
 
 	&:hover {
         background: rgba(75, 0, 130, 0.6);

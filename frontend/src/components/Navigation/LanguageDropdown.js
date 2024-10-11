@@ -2,6 +2,8 @@ import React from "react";
 import { LanguageDropdownButton } from "./styles/LanguageDropdown.styled";
 
 const LanguageDropdown = ({ handleChange, language }) => {
+	if (!language) return null;
+
 	return (
 		<LanguageDropdownButton
 			id="nav-lang"

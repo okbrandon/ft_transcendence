@@ -44,7 +44,7 @@ export const isRefreshExpired = () => {
 };
 
 const API = axios.create({
-	baseURL: `/api/v1/`,
+	baseURL: process.env.REACT_APP_ENV === 'production' ? '/api/v1' : 'http://localhost:8000/api/v1',
 });
 
 API.interceptors.request.use(

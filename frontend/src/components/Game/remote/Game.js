@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import useWebSocket, { ReadyState } from "react-use-websocket";
-import GameProfiles from "./GameProfiles";
+import GameProfiles from "../GameProfiles";
 import GameScene from "./GameScene";
-import { formatUserData } from "../../api/user";
-import logger from "../../api/logger";
-import { PageContainer } from "./styles/Game.styled";
+import { formatUserData } from "../../../api/user";
+import logger from "../../../api/logger";
+import { PageContainer } from "../styles/Game.styled";
 
 const Game = () => {
 	const navigate = useNavigate();
@@ -30,7 +30,7 @@ const Game = () => {
 
 	const maxReconnectAttempts = 5;
 
-	const { sendMessage, lastMessage, readyState } = useWebSocket('/ws/match', {
+	const { sendMessage, lastMessage, readyState } = useWebSocket(process.env.REACT_APP_ENV === 'production' ? '/ws/match' : 'ws://localhost:8000/ws/match', {
 		onClose: event => { if (event.code === 1006) handleReconnect() },
 		shouldReconnect: () => true,
 	});

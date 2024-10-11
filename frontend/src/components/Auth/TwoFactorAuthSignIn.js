@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { useNotification } from "../../context/NotificationContext";
 import { ApiLogin } from "../../api/auth";
-import logger from "../../api/logger";
 import { useAuth } from "../../context/AuthContext";
 import OTPInputComponent from "./OTPInput";
 import { FormContainer } from "./styles/Authentication.styled";
@@ -30,7 +29,7 @@ const TwoFactorAuthSignIn = ({ username, password, setIsTwoFactorAuth, available
 	}, [otpSent, addNotification, t]);
 
 	const handlePlatform = platform => {
-		axios.post('/api/v1/auth/totp/request', { username, password, platform })
+		axios.post(process.env.REACT_APP_ENV === 'production' ? '/api/v1/auth/totp/request' : 'http://localhost:8000/api/v1/auth/totp/request', { username, password, platform })
 			.then(() => {
 				setOtpSent(true);
 			})

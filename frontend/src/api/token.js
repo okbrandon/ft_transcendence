@@ -14,7 +14,7 @@ const refreshToken = async () => {
 		throw new Error("Refresh token expired");
 	}
 
-	const response = await axios.post(`/api/v1/auth/token/refresh`, { refresh });
+	const response = await axios.post(process.env.REACT_APP_ENV === 'production' ? '/api/v1/auth/token/refresh' : 'http://localhost:8000/api/v1/auth/token/refresh', { refresh });
 	const newToken = response.data.access;
 
 	localStorage.setItem("token", newToken);

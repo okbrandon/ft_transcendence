@@ -38,27 +38,30 @@ logs: intro ## Show the logs of the project
 	@ $(DC) logs -f
 
 logs-backend: intro ## Show the logs of the backend
-	@ docker logs ft_transcendence-backend-1
+	@ docker logs ft_transcendence-backend-1 -f
 
 logs-frontend: intro ## Show the logs of the frontend
-	@ docker logs ft_transcendence-frontend-1
+	@ docker logs ft_transcendence-frontend-1 -f
 
 logs-harvester: intro ## Show the logs of the harvester
-	@ docker logs ft_transcendence-harvester-1
+	@ docker logs ft_transcendence-harvester-1 -f
 
 logs-postgres: intro ## Show the logs of the database
-	@ docker logs ft_transcendence-postgres-1
+	@ docker logs ft_transcendence-postgres-1 -f
 
 logs-statcruncher: intro ## Show the logs of the statcruncher
-	@ docker logs ft_transcendence-statcruncher-1
-
-logs-traefik: intro ## Show the logs of the reverse proxy
-	@ docker logs ft_transcendence-traefik-1
+	@ docker logs ft_transcendence-statcruncher-1 -f
 
 down: intro ## Stop the project
 	@ $(DC) down
 
 clean: down ## Stop the project and remove all the stopped containers / unused networks / dangling images / unused build caches (docker system prune -f)
 	@ docker system prune -f
+
+cleanv: down ## Stop the project and remove all the volumes
+	@ docker volume prune -af
+
+fclean: cleanv ## Stop the project and remove all the stopped containers / unused networks / dangling images / unused build caches / volumes
+	@ docker system prune -af
 
 .PHONY: all up down clean

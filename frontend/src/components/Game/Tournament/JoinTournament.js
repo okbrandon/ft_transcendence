@@ -91,7 +91,7 @@ const JoinTournament = () => {
 							{activeFriends.length ? (
 								activeFriends.map((friend) => (
 									<FriendItem key={friend.userID}>
-										<FriendProfilePicture src={friend.avatarID} alt={`${friend.displayName}'s avatar`} />
+										<FriendProfilePicture src={friend.avatarID} alt={`${friend.username}'s avatar`} />
 										{friend.displayName}
 									</FriendItem>
 								))

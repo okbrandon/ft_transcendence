@@ -8,7 +8,7 @@ const GameProfile = ({ side, playerSide, player, opponent }) => {
 			{playerSide === side ? (
 					player ? (
 						<>
-							<ProfileImage src={player.avatarID} alt="Profile Picture"/>
+							<ProfileImage src={player.avatarID} alt={`${player.username}'s avatar`}/>
 							<ProfileName>{player.username}</ProfileName>
 						</>
 					) : (
@@ -20,7 +20,7 @@ const GameProfile = ({ side, playerSide, player, opponent }) => {
 				) : (
 					opponent ? (
 						<>
-							<ProfileImage src={opponent.avatarID} alt="Profile Picture"/>
+							<ProfileImage src={opponent.avatarID} alt={`${opponent.username}'s avatar`}/>
 							<ProfileName>{opponent.username}</ProfileName>
 						</>
 					) : (

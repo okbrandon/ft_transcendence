@@ -45,7 +45,7 @@ const Visibility = () => {
 					{blockedUsers.map((relation, id) => (
 						<BlockedUserItem key={id}>
 							<div>
-								<BlockedUserAvatar src='/images/default-profile.png' alt={'Blocked user'}/>
+								<BlockedUserAvatar src='/images/default-profile.png' alt='Blocked user'/>
 								<BlockedUserName>{relation.displayName}</BlockedUserName>
 							</div>
 							<PongButton onClick={e => handleUnblock(e, relation.relationID)}>

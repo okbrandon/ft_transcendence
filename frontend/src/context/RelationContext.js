@@ -6,8 +6,8 @@ import { formatUserData } from "../api/user";
 import { GetBlockedUsers, GetFriends, GetRequests } from "../scripts/relation";
 import { useNotification } from "./NotificationContext";
 
-const WS_CHAT_URL = '/ws/chat/?token=';
-const WS_STATUS_URL = '/ws/status/?token=';
+const WS_CHAT_URL = process.env.REACT_APP_ENV === 'production' ? '/ws/chat/?token=' : 'ws://localhost:8000/ws/chat/?token=';
+const WS_STATUS_URL =  process.env.REACT_APP_ENV === 'production' ? '/ws/status/?token=' : 'ws://localhost:8000/ws/status/?token='
 
 export const RelationContext = createContext({
 	conversations: [],
