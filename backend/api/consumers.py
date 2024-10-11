@@ -342,6 +342,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         self.last_heartbeat = time.time()
         self.heartbeat_task = asyncio.create_task(self.heartbeat_check())
         self.match = None
+        self.is_spectator = False
         logger.info(f"[{self.__class__.__name__}] Connection accepted, heartbeat check task started")
 
     async def disconnect(self, close_code):
@@ -349,12 +350,16 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         if hasattr(self, 'heartbeat_task'):
             self.heartbeat_task.cancel()
 
+        if self.match and not self.is_spectator:
+            await self.handle_player_quit()
+        elif self.match and self.is_spectator:
+            await self.leave_spectator_mode()
+
         logger.info(f"[{self.__class__.__name__}] Disconnected, cleanup completed")
 
     async def receive_json(self, content):
         event_type = content.get('e')
         data = content.get('d')
-
 
         if event_type != 'HEARTBEAT':
             # logger.info(f"[{self.__class__.__name__}] Received event: {event_type}")
@@ -373,6 +378,8 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             await self.handle_paddle_move(data)
         elif event_type == 'PLAYER_QUIT':
             await self.handle_player_quit()
+        elif event_type == 'SPECTATE_REQUEST':
+            await self.handle_spectate_request(data)
 
     async def heartbeat_check(self):
         while True:
@@ -434,7 +441,8 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                 'playerA': {'id': match.playerA['id'], 'paddle_y': 375, 'pos': 'A'},
                 'playerB': {'id': match.playerB['id'] if match.playerB else None, 'paddle_y': 375, 'pos': 'B'},
                 'ball': {},
-                'scores': {match.playerA['id']: 0}
+                'scores': {match.playerA['id']: 0},
+                'spectators': []
             }
             self.reset_ball(self.active_matches[match.matchID])
             logger.info(f"[{self.__class__.__name__}] New match state initialized for match: {match.matchID}")
@@ -541,6 +549,9 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         })
 
     async def handle_paddle_move(self, data):
+        if self.is_spectator:
+            return
+
         direction = data.get('direction')
         match_state = self.active_matches[self.match.matchID]
         player_key = 'playerA' if match_state['playerA']['id'] == self.user.userID else 'playerB'
@@ -572,6 +583,50 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             if self.match.matchID in self.active_matches:
                 logger.info(f"[{self.__class__.__name__}] Deleting match state for match: {self.match.matchID}")
                 del self.active_matches[self.match.matchID]
+
+    async def handle_spectate_request(self, data):
+        match_id = data.get('match_id')
+        match = await self.find_match_by_id(match_id)
+
+        if not match:
+            logger.error(f"[{self.__class__.__name__}] Match {match_id} not found for spectating")
+            await self.send_json({
+                "e": "SPECTATE_FAILED",
+                "d": {
+                    "reason": "Match not found"
+                }
+            })
+            return
+
+        self.match = match
+        self.is_spectator = True
+        await self.channel_layer.group_add(
+            f"match_{match.matchID}",
+            self.channel_name
+        )
+
+        match_state = self.active_matches[match.matchID]
+        match_state['spectators'].append(self.user.userID)
+
+        await self.send_json({
+            "e": "SPECTATE_JOIN",
+            "d": {
+                "match_id": match.matchID,
+                "match_state": match_state
+            }
+        })
+
+        logger.info(f"[{self.__class__.__name__}] User {self.user.userID} joined match {match_id} as spectator")
+
+    async def leave_spectator_mode(self):
+        if self.match and self.is_spectator:
+            match_state = self.active_matches[self.match.matchID]
+            match_state['spectators'].remove(self.user.userID)
+            await self.channel_layer.group_discard(
+                f"match_{self.match.matchID}",
+                self.channel_name
+            )
+            logger.info(f"[{self.__class__.__name__}] User {self.user.userID} left spectator mode for match {self.match.matchID}")
 
     @database_sync_to_async
     def delete_match(self, match_id):
@@ -820,10 +875,16 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         logger.info(f"[{self.__class__.__name__}] Match end event sent for match: {self.match.matchID}")
 
     async def match_ended(self, event):
-        await self.send_json({
-            "e": "MATCH_END",
-            "d": {"won": event["winner"] == self.user.userID}
-        })
+        if self.is_spectator:
+            await self.send_json({
+                "e": "MATCH_END",
+                "d": {"winner": event["winner"]}
+            })
+        else:
+            await self.send_json({
+                "e": "MATCH_END",
+                "d": {"won": event["winner"] == self.user.userID}
+            })
         logger.info(f"[{self.__class__.__name__}] Match end event processed for user: {self.user.userID}")
         await self.close()
 
