@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { GameSceneContainer, PageContainer, Score, ScoresContainer, StyledCanvas, Timer, TimerContainer } from "../styles/Game.styled";
+import { GameSceneContainer, PageContainer, ProfilesContainer, Score, ScoresContainer, StyledCanvas, Timer, TimerContainer } from "../styles/Game.styled";
 import GameCanvas from "../../../scripts/game";
 import { useNavigate } from "react-router-dom";
 
@@ -213,6 +213,9 @@ const GameLocal = () => {
 
 	return (
 		<PageContainer>
+			<ProfilesContainer>
+				<p style={{margin: '0 auto'}}>Press <b>Q</b> to quit game</p>
+			</ProfilesContainer>
 			<GameSceneContainer className={isHit ? "hit" : ""}>
 				<StyledCanvas ref={canvas}/>
 				<ScoresContainer>
