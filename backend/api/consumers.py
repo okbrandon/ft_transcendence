@@ -579,6 +579,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                 'playerB': {'id': match.playerB['id'] if match.playerB else None, 'paddle_y': 375, 'pos': 'B'},
                 'ball': {},
                 'scores': {match.playerA['id']: 0},
+                'spectators': [],
                 'rewards': {match.playerA['id']: {'xp': 0, 'money': 0}},
                 'spectators': []
             }
