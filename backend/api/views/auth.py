@@ -42,6 +42,8 @@ class AuthRegister(APIView):
 
         skip_email_verification = os.environ.get('SKIP_EMAIL_VERIFICATION', '').lower() == 'true'
 
+        skip_email_verification = os.environ.get('SKIP_EMAIL_VERIFICATION', '').lower() == 'true'
+
         user = User.objects.create(
             userID=generate_id('user'),
             username=data['username'],

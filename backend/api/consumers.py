@@ -171,6 +171,7 @@ class StatusConsumer(AsyncWebsocketConsumer):
 
 class ChatConsumer(AsyncWebsocketConsumer):
 
+
     async def connect(self):
         self.user = None
 
@@ -545,14 +546,14 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         match_state = self.active_matches[self.match.matchID]
         player_key = 'playerA' if match_state['playerA']['id'] == self.user.userID else 'playerB'
 
-        paddle_speed = 5  # Appropriate paddle speed (adjust as needed)
+        paddle_speed = 20  # Appropriate paddle speed (adjust as needed)
 
         if direction == 'up':
             match_state[player_key]['paddle_y'] = min(682, match_state[player_key]['paddle_y'] + paddle_speed)
         elif direction == 'down':
             match_state[player_key]['paddle_y'] = max(73, match_state[player_key]['paddle_y'] - paddle_speed)
 
-        # logger.debug(f"[{self.__class__.__name__}] Paddle moved: {player_key} - {direction}")
+        logger.debug(f"[MatchConsumer] Paddle moved: {player_key} - {direction}")
         await self.send_match_update()
 
     async def handle_player_quit(self):
@@ -569,9 +570,10 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             if self.match.finishedAt is None:
                 await self.delete_match(self.match.matchID)
 
-            if self.match.matchID in self.active_matches:
-                logger.info(f"[{self.__class__.__name__}] Deleting match state for match: {self.match.matchID}")
-                del self.active_matches[self.match.matchID]
+        await self.end_match(self.match.matchID, self.user.userID)
+        if self.match.matchID in self.active_matches:
+            del self.active_matches[self.match.matchID]
+
 
     @database_sync_to_async
     def delete_match(self, match_id):
@@ -701,33 +703,39 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         PADDLE_HEIGHT = 60
         BALL_RADIUS = 25 / 2
         BALL_SPEED = 0.6
+        BALL_MAX_SPEED = 17
         MAX_SCORE = 10
 
         while match_id in self.active_matches:
             match_state = self.active_matches[match_id]
 
             # Update ball position
-            match_state['ball']['x'] += match_state['ball']['dx'] * BALL_SPEED
-            match_state['ball']['y'] += match_state['ball']['dy'] * BALL_SPEED
+            match_state['ball']['x'] += match_state['ball']['dx']
+            match_state['ball']['y'] += match_state['ball']['dy']
 
             # Check for collisions with top and bottom walls
             if match_state['ball']['y'] - BALL_RADIUS <= 0 or match_state['ball']['y'] + BALL_RADIUS >= TERRAIN_HEIGHT:
                 match_state['ball']['dy'] *= -1
 
-            if (match_state['ball']['x'] - BALL_RADIUS <= PADDLE_WIDTH and  # Left side of ball hits Player A's paddle
-                match_state['ball']['y'] - BALL_RADIUS <= match_state['playerA']['paddle_y'] + PADDLE_HEIGHT and  # Ball's bottom is above paddle's bottom
-                match_state['ball']['y'] + BALL_RADIUS >= match_state['playerA']['paddle_y'] - PADDLE_HEIGHT):  # Ball's top is below paddle's top
+            # Check for collisions with paddles
+            if (match_state['ball']['x'] <= PADDLE_WIDTH and
+                match_state['ball']['y'] + BALL_SIZE >= match_state['playerA']['paddle_y'] and
+                match_state['ball']['y'] <= match_state['playerA']['paddle_y'] + PADDLE_HEIGHT):
                 match_state['ball']['dx'] *= -1
-                match_state['ball']['dx'] *= 1.1
-                match_state['ball']['dy'] *= 1.1
+                if abs(match_state['ball']['dx']) < BALL_MAX_SPEED:
+                    match_state['ball']['dx'] *= 1.1
+                if abs(match_state['ball']['dy']) < BALL_MAX_SPEED:
+                    match_state['ball']['dy'] *= 1.1
                 await self.send_paddle_hit(match_state['playerA'], match_state['ball'])
 
             elif (match_state['ball']['x'] + BALL_RADIUS >= TERRAIN_WIDTH - PADDLE_WIDTH and  # Right side of ball hits Player B's paddle
                 match_state['ball']['y'] - BALL_RADIUS <= match_state['playerB']['paddle_y'] + PADDLE_HEIGHT and  # Ball's bottom is above paddle's bottom
                 match_state['ball']['y'] + BALL_RADIUS >= match_state['playerB']['paddle_y'] - PADDLE_HEIGHT):  # Ball's top is below paddle's top
                 match_state['ball']['dx'] *= -1
-                match_state['ball']['dx'] *= 1.1
-                match_state['ball']['dy'] *= 1.1
+                if abs(match_state['ball']['dx']) < BALL_MAX_SPEED:
+                    match_state['ball']['dx'] *= 1.1
+                if abs(match_state['ball']['dy']) < BALL_MAX_SPEED:
+                    match_state['ball']['dy'] *= 1.1
                 await self.send_paddle_hit(match_state['playerB'], match_state['ball'])
 
             # Check for scoring
@@ -832,4 +840,4 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             "e": "PLAYER_JOIN",
             "d": event["player"]
         })
-        logger.info(f"[{self.__class__.__name__}] Player join event sent for match: {self.match.matchID}")
+        logger.info(f"[MatchConsumer] Player join event sent for match: {self.match.matchID}")
