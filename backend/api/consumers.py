@@ -701,6 +701,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         PADDLE_HEIGHT = 60
         BALL_RADIUS = 25 / 2
         BALL_SPEED = 0.6
+        BALL_MAX_SPEED = 17
         MAX_SCORE = 10
 
         while match_id in self.active_matches:
@@ -718,16 +719,20 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                 match_state['ball']['y'] - BALL_RADIUS <= match_state['playerA']['paddle_y'] + PADDLE_HEIGHT and  # Ball's bottom is above paddle's bottom
                 match_state['ball']['y'] + BALL_RADIUS >= match_state['playerA']['paddle_y'] - PADDLE_HEIGHT):  # Ball's top is below paddle's top
                 match_state['ball']['dx'] *= -1
-                match_state['ball']['dx'] *= 1.1
-                match_state['ball']['dy'] *= 1.1
+                if abs(match_state['ball']['dx']) < BALL_MAX_SPEED:
+                    match_state['ball']['dx'] *= 1.1
+                if abs(match_state['ball']['dy']) < BALL_MAX_SPEED:
+                    match_state['ball']['dy'] *= 1.1
                 await self.send_paddle_hit(match_state['playerA'], match_state['ball'])
 
             elif (match_state['ball']['x'] + BALL_RADIUS >= TERRAIN_WIDTH - PADDLE_WIDTH and  # Right side of ball hits Player B's paddle
                 match_state['ball']['y'] - BALL_RADIUS <= match_state['playerB']['paddle_y'] + PADDLE_HEIGHT and  # Ball's bottom is above paddle's bottom
                 match_state['ball']['y'] + BALL_RADIUS >= match_state['playerB']['paddle_y'] - PADDLE_HEIGHT):  # Ball's top is below paddle's top
                 match_state['ball']['dx'] *= -1
-                match_state['ball']['dx'] *= 1.1
-                match_state['ball']['dy'] *= 1.1
+                if abs(match_state['ball']['dx']) < BALL_MAX_SPEED:
+                    match_state['ball']['dx'] *= 1.1
+                if abs(match_state['ball']['dy']) < BALL_MAX_SPEED:
+                    match_state['ball']['dy'] *= 1.1
                 await self.send_paddle_hit(match_state['playerB'], match_state['ball'])
 
             # Check for scoring
