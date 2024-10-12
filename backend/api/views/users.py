@@ -226,7 +226,7 @@ class UserSettingsMe(APIView):
 
         if 'selectedPaddleSkin' in data:
             new_skin_id = data['selectedPaddleSkin']
-            
+
             # Check if the user has purchased the skin
             if new_skin_id is not None:
                 try:
@@ -236,10 +236,27 @@ class UserSettingsMe(APIView):
                         return Response({"error": "You haven't purchased this paddle skin."}, status=status.HTTP_403_FORBIDDEN)
                 except StoreItem.DoesNotExist:
                     return Response({"error": "Invalid paddle skin ID."}, status=status.HTTP_400_BAD_REQUEST)
-            
+
             settings.selectedPaddleSkin = new_skin_id
 
         settings.save()
+        serializer = UserSettingsSerializer(settings)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class UserSettings(APIView):
+    def get_object(self, identifier):
+        try:
+            return User.objects.get(models.Q(userID=identifier) | models.Q(username=identifier))
+        except User.DoesNotExist:
+            return None
+
+    def get(self, request, identifier, *args, **kwargs):
+        user = self.get_object(identifier)
+        if not user:
+            return Response(
+                status=status.HTTP_404_NOT_FOUND
+            )
+        settings, created = UserSettings.objects.get_or_create(userID=user)
         serializer = UserSettingsSerializer(settings)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

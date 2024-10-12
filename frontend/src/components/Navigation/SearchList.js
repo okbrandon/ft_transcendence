@@ -17,7 +17,7 @@ const SearchList = ({ results, setInput, setResults }) => {
 		<SearchListContainer>
 			{results && results.length ? results.map((profile) => (
 				<SearchListItem key={profile.userID} onClick={() => handleSelect(profile.username)}>
-					<SearchListItemImage src={profile.avatarID} alt='profile picture'/>
+					<SearchListItemImage src={profile.avatarID} alt={`${profile.username}'s avatar`}/>
 					<SearchListItemText>{profile.displayName}</SearchListItemText>
 				</SearchListItem>
 			)) : (

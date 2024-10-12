@@ -10,6 +10,7 @@ class ApiConfig(AppConfig):
     def ready(self):
         post_migrate.connect(create_store_items)
         post_migrate.connect(delete_unfinished_matches)
+        post_migrate.connect(create_ai_account)
 
 def create_store_items(sender, **kwargs):
     from .models import StoreItem
@@ -26,6 +27,20 @@ def create_store_items(sender, **kwargs):
         # Check if an item with the same name already exists
         if not StoreItem.objects.filter(name=item["name"]).exists():
             StoreItem.objects.create(**item)
+
+def create_ai_account(sender, **kwargs):
+    from .models import User
+
+    if not User.objects.filter(userID="user_ai").exists():
+        User.objects.create(
+            userID="user_ai",
+            username='ai',
+            displayName='Prune',
+            email='prune@brandoncodes.dev',
+            password='',
+            lang='en',
+            flags=3
+        )
 
 def delete_unfinished_matches(sender, **kwargs):
     from .models import Match

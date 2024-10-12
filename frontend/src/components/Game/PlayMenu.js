@@ -18,7 +18,7 @@ const PlayMenu = () => {
 				<ModeCard onClick={() => navigate('/game', { state: { mode: '1v1' } })}>
 					<h1>1 v 1</h1>
 				</ModeCard>
-				<ModeCard>
+				<ModeCard onClick={() => navigate('/game-local')}>
 					<h1>Local</h1>
 				</ModeCard>
 			</ModesContainer>
