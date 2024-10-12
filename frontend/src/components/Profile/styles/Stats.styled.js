@@ -1,13 +1,12 @@
 import styled from "styled-components";
 
 export const DonutStatsContainer = styled.div`
-	width: 320px;
-	margin: 20px auto;
+	width: 220px;
+	margin-top: 20px;
 `;
 
 export const LineStatsContainer = styled.div`
-	width: 100%;
-	margin: 20px auto;
+	margin-top: 20px;
 	color: #000;
 `;
 
@@ -15,8 +14,6 @@ export const WinrateContainer = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	padding: 20px 0;
-	gap: 20px;
 `;
 
 export const WinrateCard = styled.div`
@@ -24,8 +21,6 @@ export const WinrateCard = styled.div`
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	border-radius: 15px;
-	width: 250px;
 
 	& > h3 {
 		color: rgba(255, 255, 255, 0.8);

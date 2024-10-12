@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 export const ProfileContainer = styled.div`
 	position: relative;
@@ -64,16 +64,71 @@ export const UserInfoItemContainer = styled.div`
 	justify-content: center;
 	gap: 20px;
 	width: 100%;
-	padding: 20px;
+	padding: 30px;
 	border-radius: 10px;
 	background-color: rgba(0, 0, 0, 0.8);
 	position: relative;
+	border: 1px solid rgba(255, 255, 255, 0.1);
 `;
 
 export const UserInfoItemTitle = styled.h3`
 	font-size: 1.5rem;
 	font-weight: 600;
 	color: rgba(255, 255, 255, 0.9);
+`;
+
+const movePaddle = keyframes`
+	0% {
+		transform: translateX(100%);
+	}
+	50% {
+		transform: translateX(110%);
+	}
+	100% {
+		transform: translateX(100%);
+	}
+`;
+
+export const DisplaySkinPaddle = styled.div`
+	${({ $skin }) => $skin ? `background: url(${$skin})` : 'background: #fff'};
+	width: 225px;
+	height: 40px;
+	border-radius: 20px;
+	border: 2px solid rgba(255, 255, 255, 0.2);
+	box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+	animation: ${movePaddle} 2s infinite;
+`;
+
+export const StyledCanvas = styled.canvas`
+	width: 600px;
+	height: 300px;
+`;
+
+export const BalanceContainer = styled.div`
+	width: 90%;
+	margin: 20px auto;
+
+	& > p {
+		font-size: 2.5rem;
+		color: rgba(255, 255, 255, 0.9);
+
+		& > i {
+			margin-right: 10px;
+			color: #ffdf00; /* Gold coin icon color */
+		}
+	}
+`;
+
+export const ActivityContainer = styled.div`
+	grid-column: 1;
+	grid-row: 2;
+	width: 100%;
+	margin: 0 auto;
+	padding-top: 20px;
+
+	& > h2 {
+		color: rgba(255, 255, 255, 0.9);
+	}
 `;
 
 export const BlockedProfileContainer = styled.div`

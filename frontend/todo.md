@@ -1,4 +1,8 @@
 # TODO
+- Game -> scores animation
+- Game -> 'press q to quit' not centered depending on elements
+- Profile -> remove friend button if already friends
+- tournaments
 - Game: send invite
 - Profile: `users/@me/stats` -> win / loss / ratio
 

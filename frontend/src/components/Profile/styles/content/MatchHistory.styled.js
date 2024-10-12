@@ -2,10 +2,7 @@ import styled from "styled-components";
 
 export const MatchHistoryContainer = styled.div`
 	grid-column: 1 / 2;
-	grid-row: 1 / 6;
 	margin: 30px 0;
-	height: 780px;
-	padding: 0 0 50px 0;
 	position: relative;
 
 	& > h2 {

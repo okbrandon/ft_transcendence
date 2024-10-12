@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-const roundedRectShape = (width, height, radius) => {
+export const roundedRectShape = (width, height, radius) => {
 	const shape = new THREE.Shape();
 	const w = width / 2;
 	const h = height / 2;
