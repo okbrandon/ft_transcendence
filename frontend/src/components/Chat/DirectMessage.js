@@ -18,6 +18,7 @@ import DirectMessageContainer, {
 	ActionButtonContainer
 } from './styles/DirectMessage/DirectMessage.styled';
 
+import { OnlineStatus } from './tools/OnlineStatus';
 import Arrow from './tools/Arrow';
 import { SendButton } from './tools/SendButton';
 import ConfirmationModal from './tools/ConfirmationModal';
@@ -114,6 +115,7 @@ export const DirectMessage = ({
 		<DirectMessageContainer $isOpen={isOpen} $isMinimized={isMinimized}>
 			<Header onClick={toggleMinimization}>
 				<ProfilePicture src={proPic} alt={`${otherUser.username}'s profile picture`} $header />
+				<OnlineStatus $status={otherUser.status?.online || false} />
 				<Username onClick={toggleDropdown}>{username}</Username>
 				<Dropdown ref={dropdownRef} $isOpen={isDropdownOpen}>
 					<DropdownItem data-action="profile" onClick={() => handleDropdownAction('profile')}>Profile</DropdownItem>
