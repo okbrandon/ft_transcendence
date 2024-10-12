@@ -106,7 +106,7 @@ const Chat = () => {
 					{totalUnreadMessages > 0 && <NotificationBadge count={totalUnreadMessages} />}
 					{!isOverlayMinimized && (
 						<>
-							<SearchFriends />
+							<SearchFriends handleSelectChat={handleSelectChat}/>
 							<MessagePreview handleSelectChat={handleSelectChat} />
 						</>
 					)}
