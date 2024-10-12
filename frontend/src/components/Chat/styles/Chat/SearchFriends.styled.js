@@ -5,12 +5,12 @@ const SearchFriendsContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	padding: 1rem;
-	position: relative; /* Ensures dropdown is positioned correctly */
+	position: relative;
 `;
 
 export const SearchInput = styled.input`
 	width: 100%;
-	padding: 2px 10px 2px 30px; /* Add padding-left to make space for the icon */
+	padding: 2px 10px 2px 30px;
 	border: 1px solid #ccc;
 	border-radius: 4px;
 	background-image: url(${magnifier});
@@ -21,10 +21,10 @@ export const SearchInput = styled.input`
 
 export const Dropdown = styled.div`
 	position: absolute;
-	top: 100%; /* Places the dropdown right below the input */
+	top: 100%;
 	left: 0;
 	width: 100%;
-	max-height: 200px; /* Limits the height of the dropdown */
+	max-height: 200px;
 	overflow-y: auto;
 	background-color: #fff;
 	border: 1px solid #ccc;
@@ -38,10 +38,36 @@ export const FriendItem = styled.div`
 	cursor: pointer;
 	color: black;
 	display: flex;
-	justify-content: space-between; /* Space out the friend name and button */
+	align-items: center;
+	justify-content: space-between;
 
 	&:hover {
-	background-color: #f0f0f0;
+		background-color: #f0f0f0;
+	}
+`;
+
+export const Username = styled.span`
+	font-size: 0.9rem;
+	margin-right: 10px;
+`;
+
+export const ButtonContainer = styled.div`
+	display: flex;
+`;
+
+export const ActionButton = styled.button`
+	margin: 0 2px;
+	padding: 3px 5px;
+	border: none;
+	border-radius: 4px;
+	color: white;
+	font-size: 0.8rem;
+	background-color: ${({ color }) => color};
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+
+	&:hover {
+		opacity: 0.8;
 	}
 `;
 

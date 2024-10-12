@@ -83,7 +83,7 @@ export const DirectMessage = ({
 				navigate(`/profile/${username}`);
 				break;
 			case 'invite':
-				console.log('invite'); // Waiting for gameserver
+				console.log('invite'); // Leader: Game invites can be implemented here
 				break;
 			case 'block':
 				console.log('block');

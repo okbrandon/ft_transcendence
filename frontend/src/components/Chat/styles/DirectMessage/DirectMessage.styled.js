@@ -20,10 +20,10 @@ const DirectMessageContainer = styled.div`
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent background */
-		backdrop-filter: blur(10px); /* Blur effect */
+		background-color: rgba(255, 255, 255, 0.5);
+		backdrop-filter: blur(10px);
 		border-radius: 10px 10px 0 0;
-		z-index: -1; /* Ensure the pseudo-element is behind the content */
+		z-index: -1;
 	}
 `;
 
@@ -43,12 +43,12 @@ export const Username = styled.span`
 
 export const Dropdown = styled.div`
 	position: absolute;
-	width: 40%;
+	width: 70%;
 	top: 100%;
-	left: 0;
-	background-color: black;
-	border-radius: 0 0 5px 0;
-	box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+	left: 50%; /* Center horizontally */
+	transform: translateX(-50%); /* Center horizontally */
+	border-radius: 0 0 5px 5px;
+	box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 	display: ${({ $isOpen }) => $isOpen ? 'block' : 'none'};
 	z-index: 1000;
 `;
@@ -57,13 +57,11 @@ export const DropdownItem = styled.button`
 	display: block;
 	width: 100%;
 	padding: 10px;
-	text-align: left;
-	background: none;
 	border: none;
 	cursor: pointer;
 	transition: background-color 0.3s ease;
 	font-size: 0.9rem;
-	color: #fff;
+	background-color: rgba(255, 255, 255, 0.7);
 
 	&[data-action="profile"] {
 		&:hover {
@@ -80,7 +78,7 @@ export const DropdownItem = styled.button`
 		}
 	}
 	&[data-action="block"] {
-		border-radius: 0 0 5px 0;
+		border-radius: 0 0 5px 5px;
 
 		&:hover {
 			background-color: #EE4266;

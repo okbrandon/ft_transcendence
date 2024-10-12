@@ -65,7 +65,7 @@ const Chat = () => {
 					{notificationCount > 0 && <NotificationBadge count={notificationCount} />}
 					{!isOverlayMinimized && (
 						<>
-							<SearchFriends conversations={conversations} />
+							<SearchFriends />
 							<MessagePreview handleSelectChat={handleSelectChat} />
 						</>
 					)}
