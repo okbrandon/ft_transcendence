@@ -18,7 +18,11 @@ const Chat = () => {
 		username: null,
 		conversationID: null,
 	});
-	const [notificationCount, setNotificationCount] = useState(0);
+	const [unreadMessages, setUnreadMessages] = useState({});
+	const [readConversations, setReadConversations] = useState(
+		JSON.parse(localStorage.getItem('readConversations')) || {}
+	);
+	const userID = localStorage.getItem('userID');
 
 	const handleSelectChat = (username, conversationID) => {
 		setDirectMessage({
@@ -27,6 +31,20 @@ const Chat = () => {
 			username,
 			conversationID,
 		});
+
+		setReadConversations((prev) => {
+			const updatedReadConversations = {
+				...prev,
+				[conversationID]: true,
+			};
+			localStorage.setItem('readConversations', JSON.stringify(updatedReadConversations));
+			return updatedReadConversations;
+		});
+
+		setUnreadMessages((prev) => ({
+			...prev,
+			[conversationID]: 0,
+		}));
 	};
 
 	const handleCloseChat = () => {
@@ -36,10 +54,10 @@ const Chat = () => {
 			username: null,
 			conversationID: null,
 		});
-	}
+	};
 
 	const toggleDMMinimization = () => {
-		setDirectMessage(prev => ({
+		setDirectMessage((prev) => ({
 			...prev,
 			isOpen: true,
 			isMinimized: !prev.isMinimized,
@@ -49,20 +67,43 @@ const Chat = () => {
 	const mainMinimizer = () => {
 		setIsOverlayMinimized(!isOverlayMinimized);
 		setMainWinArrow(!mainWinArrow);
-	}
+	};
 
-	// Update message count when conversations change
 	useEffect(() => {
-		const totalMessages = conversations.reduce((acc, convo) => acc + convo.messages.length, 0);
-		setNotificationCount(totalMessages);
-	}, [conversations]);
+		const updatedUnreadMessages = conversations.reduce((acc, convo) => {
+			const messages = convo.messages;
+			if (messages && messages.length > 0) {
+				const lastMessage = messages[messages.length - 1];
+
+				const isReceiver = lastMessage.sender.userID !== userID;
+				const isConversationRead = !!readConversations[convo.conversationID];
+
+				if (isReceiver && !isConversationRead) {
+					acc[convo.conversationID] = (acc[convo.conversationID] || 0) + 1;
+				} else {
+					acc[convo.conversationID] = 0;
+				}
+			} else {
+				acc[convo.conversationID] = 0;
+			}
+
+			return acc;
+		}, {});
+
+		setUnreadMessages(updatedUnreadMessages);
+	}, [conversations, userID, readConversations]);
+
+	const totalUnreadMessages = Object.values(unreadMessages).reduce(
+		(acc, count) => acc + count,
+		0
+	);
 
 	return (
 		<ChatProvider conversations={conversations} friends={friends} blockedUsers={blockedUsers}>
 			<ChatContainer>
 				<MainChatContainer $isMinimized={isOverlayMinimized}>
 					<ChatHeader toggleMinimization={mainMinimizer} arrowState={mainWinArrow} />
-					{notificationCount > 0 && <NotificationBadge count={notificationCount} />}
+					{totalUnreadMessages > 0 && <NotificationBadge count={totalUnreadMessages} />}
 					{!isOverlayMinimized && (
 						<>
 							<SearchFriends />

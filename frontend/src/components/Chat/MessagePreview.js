@@ -43,8 +43,6 @@ export const MessagePreview = ({ handleSelectChat }) => {
 	const userID = localStorage.getItem('userID');
 	const { conversations, friends, blockedUsers } = useChat();
 
-	console.log('In MessagePreview friends: ', friends);
-
 	const handleSelectFriend = (friend) => {
 		const convo = conversations.find((convo) => {
 			const other = convo.participants.find(participant => participant.userID !== userID);
@@ -77,7 +75,6 @@ export const MessagePreview = ({ handleSelectChat }) => {
 				const other = convo.participants.find(participant => participant.userID !== userID);
 				const isBlocked = blockedUsers.find(blocked => blocked.userID === other.userID);
 				const friendExists = friends.find(friend => friend.username === other.username);
-				console.log('In MessagePreview friendExists: ', friendExists);
 
 				if (!isBlocked && friendExists) {
 					if (convo.messages.length === 0) {
