@@ -547,7 +547,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         match_state = self.active_matches[self.match.matchID]
         player_key = 'playerA' if match_state['playerA']['id'] == self.user.userID else 'playerB'
 
-        paddle_speed = 20  # Appropriate paddle speed (adjust as needed)
+        paddle_speed = 5  # Appropriate paddle speed (adjust as needed)
 
         if direction == 'up':
             match_state[player_key]['paddle_y'] = min(682, match_state[player_key]['paddle_y'] + paddle_speed)
@@ -708,17 +708,17 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             match_state = self.active_matches[match_id]
 
             # Update ball position
-            match_state['ball']['x'] += match_state['ball']['dx']
-            match_state['ball']['y'] += match_state['ball']['dy']
+            match_state['ball']['x'] += match_state['ball']['dx'] * BALL_SPEED
+            match_state['ball']['y'] += match_state['ball']['dy'] * BALL_SPEED
 
             # Check for collisions with top and bottom walls
             if match_state['ball']['y'] - BALL_RADIUS <= 0 or match_state['ball']['y'] + BALL_RADIUS >= TERRAIN_HEIGHT:
                 match_state['ball']['dy'] *= -1
 
             # Check for collisions with paddles
-            if (match_state['ball']['x'] <= PADDLE_WIDTH and
-                match_state['ball']['y'] + BALL_SIZE >= match_state['playerA']['paddle_y'] and
-                match_state['ball']['y'] <= match_state['playerA']['paddle_y'] + PADDLE_HEIGHT):
+            if (match_state['ball']['x'] - BALL_RADIUS <= PADDLE_WIDTH and  # Left side of ball hits Player A's paddle
+                match_state['ball']['y'] - BALL_RADIUS <= match_state['playerA']['paddle_y'] + PADDLE_HEIGHT and  # Ball's bottom is above paddle's bottom
+                match_state['ball']['y'] + BALL_RADIUS >= match_state['playerA']['paddle_y'] - PADDLE_HEIGHT):  # Ball's top is below paddle's top
                 match_state['ball']['dx'] *= -1
                 if abs(match_state['ball']['dx']) < BALL_MAX_SPEED:
                     match_state['ball']['dx'] *= 1.1
