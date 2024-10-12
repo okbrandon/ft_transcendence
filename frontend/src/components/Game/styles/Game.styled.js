@@ -74,8 +74,9 @@ export const ProfilesContainer = styled.div`
 	align-items: center;
 	width: 1200px;
 	margin-bottom: 20px;
+	position: relative;
 
-	& > p {
+	p {
 		font-size: 1.5rem;
 		font-family: 'Orbitron', sans-serif;
 		color: rgba(255, 255, 255, 0.2);
@@ -83,6 +84,12 @@ export const ProfilesContainer = styled.div`
 		background-clip: text;
 		-webkit-background-clip: text;
 	}
+`;
+
+export const PressQContainer = styled.div`
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
 `;
 
 export const Profile = styled.div`
