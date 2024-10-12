@@ -836,8 +836,15 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         await self.close()
 
     async def player_join(self, event):
+        player_data = event["player"]
+
+        if player_data['userID'] == self.user.userID:
+            return
+
+        self.match.playerB = {"id": player_data['userID'], "platform": ("web" if player_data['userID'] != 'user_ai' else "server")}
+
         await self.send_json({
             "e": "PLAYER_JOIN",
-            "d": event["player"]
+            "d": player_data
         })
         logger.info(f"[MatchConsumer] Player join event sent for match: {self.match.matchID}")
