@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
 import { MatchHistoryContainer, MatchCardTable } from "../styles/content/MatchHistory.styled";
-import { CardTitle } from "../styles/Profile.styled";
 import { getDuration, getDate } from "../../../scripts/match";
 import { useTranslation } from "react-i18next";
 
@@ -34,38 +33,36 @@ const MatchHistory = ({ matchArray }) => {
 
 	return (
 		<MatchHistoryContainer>
-			<CardTitle>{t('profile.matchHistory.title')}</CardTitle>
-			{
-				matchArray.length === 0 ? (
-					<p>{t('profile.matchHistory.noResults')}</p>
-				) : (
-					<MatchCardTable>
-						<thead>
-							<tr>
-								<th>{t('profile.matchHistory.table.opponent')}</th>
-								<th>{t('profile.matchHistory.table.duration')}</th>
-								<th>{t('profile.matchHistory.table.scores')}</th>
-								<th>{t('profile.matchHistory.table.results')}</th>
-								<th>{t('profile.matchHistory.table.date')}</th>
+			<h2>{t('profile.matchHistory.title')}</h2>
+			{matchArray.length === 0 ? (
+				<p>{t('profile.matchHistory.noResults')}</p>
+			) : (
+				<MatchCardTable>
+					<thead>
+						<tr>
+							<th>{t('profile.matchHistory.table.opponent')}</th>
+							<th>{t('profile.matchHistory.table.duration')}</th>
+							<th>{t('profile.matchHistory.table.scores')}</th>
+							<th>{t('profile.matchHistory.table.results')}</th>
+							<th>{t('profile.matchHistory.table.date')}</th>
+						</tr>
+					</thead>
+					<tbody ref={containerRef}>
+						{matchArray.map((match, index) => (
+							<tr
+								key={index}
+								className={`match-card ${visibleRows.includes(index) ? "visible" : ""}`}
+							>
+								<td>{match.playerB.displayName}</td>
+								<td>{getDuration(match.startedAt, match.finishedAt)}</td>
+								<td>{match.scores.playerA} - {match.scores.playerB}</td>
+								<td>{match.scores.playerA > match.scores.playerB ? t('profile.matchHistory.table.victoryLabel') : t('profile.matchHistory.table.defeatLabel')}</td>
+								<td>{getDate(match.finishedAt)}</td>
 							</tr>
-						</thead>
-						<tbody ref={containerRef}>
-							{matchArray.map((match, index) => (
-								<tr
-									key={index}
-									className={`match-card ${visibleRows.includes(index) ? "visible" : ""}`}
-								>
-									<td>{match.playerB.displayName}</td>
-									<td>{getDuration(match.startedAt, match.finishedAt)}</td>
-									<td>{match.scores.playerA} - {match.scores.playerB}</td>
-									<td>{match.scores.playerA > match.scores.playerB ? t('profile.matchHistory.table.victoryLabel') : t('profile.matchHistory.table.defeatLabel')}</td>
-									<td>{getDate(match.finishedAt)}</td>
-								</tr>
-							))}
-						</tbody>
-					</MatchCardTable>
-				)
-			}
+						))}
+					</tbody>
+				</MatchCardTable>
+			)}
 		</MatchHistoryContainer>
 	);
 };

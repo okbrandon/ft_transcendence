@@ -11,22 +11,12 @@ export const LineStatsContainer = styled.div`
 	color: #000;
 `;
 
-export const SectionContainer = styled.div`
-	grid-column: 2 / 4;
-	grid-row: 2;
-	background: rgba(5, 5, 5, 0.9);
-	margin: 50px 0 0 30px;
-	border-radius: 20px;
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1), 0 0 15px rgba(164, 69, 178, 0.4);
-`;
-
 export const WinrateContainer = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	gap: 60px;
 	padding: 20px 0;
+	gap: 20px;
 `;
 
 export const WinrateCard = styled.div`
@@ -35,7 +25,7 @@ export const WinrateCard = styled.div`
 	justify-content: center;
 	align-items: center;
 	border-radius: 15px;
-	width: 300px;
+	width: 250px;
 
 	& > h3 {
 		color: rgba(255, 255, 255, 0.8);

@@ -1,10 +1,18 @@
 import React from 'react';
-import { ProfileImage, ProfilePictureContainer, SectionContainer } from '../styles/main/ProfilePicture.styled';
-import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
-import API from '../../../api/api';
 import { useNavigate } from 'react-router-dom';
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import { useNotification } from '../../../context/NotificationContext';
-import { IconButton, IconsContainer } from '../styles/main/MainBar.styled';
+import API from '../../../api/api';
+import {
+	ActionButton,
+	ActionsContainer,
+	ProfileActionContainer,
+	ProfileDisplayName,
+	ProfileImage,
+	ProfilePictureContainer,
+	ProfileUsername,
+	SectionContainer,
+} from '../styles/main/ProfileMainInfo.styled';
 
 const ProfilePicture = ({ profileUser, relation, setIsRefetch }) => {
 	const navigate = useNavigate();
@@ -66,35 +74,39 @@ const ProfilePicture = ({ profileUser, relation, setIsRefetch }) => {
 				</div>
 				<p>0</p>
 			</ProfilePictureContainer>
-			<div>
-				<h2>{profileUser.displayName}</h2>
+			<ProfileActionContainer>
+				<ProfileUsername>{profileUser.displayName}</ProfileUsername>
+				<ProfileDisplayName>{profileUser.username}</ProfileDisplayName>
 				<div>
 					{userID === profileUser.userID ? (
-						<IconsContainer>
-							<IconButton type="button" onClick={() => navigate('/settings')}>
+						<ActionsContainer>
+							<ActionButton type="button" onClick={() => navigate('/settings')}>
 								<i className="bi bi-gear-fill"/>
-							</IconButton>
-						</IconsContainer>
+								Settings
+							</ActionButton>
+						</ActionsContainer>
 					) : (
-						<IconsContainer>
-							<IconButton
+						<ActionsContainer>
+							<ActionButton
 								type="button"
 								onClick={handleBlockUser}
 								disabled={disableBlockUser}
 							>
 								<i className="bi bi-ban"/>
-							</IconButton>
-							<IconButton
+								Block
+							</ActionButton>
+							<ActionButton
 								type="button"
 								onClick={handleAddFriend}
 								disabled={disableAddFriend}
 							>
 								<i className="bi bi-person-fill-add"/>
-							</IconButton>
-						</IconsContainer>
+								Add Friend
+							</ActionButton>
+						</ActionsContainer>
 					)}
 				</div>
-			</div>
+			</ProfileActionContainer>
 		</SectionContainer>
 	);
 };

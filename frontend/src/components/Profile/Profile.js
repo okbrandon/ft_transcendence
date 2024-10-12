@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import MainBar from './main/MainBar';
 import About from './content/About';
@@ -10,7 +10,7 @@ import { GetUser, GetUserByUsername } from '../../api/user';
 import { useRelation } from '../../context/RelationContext';
 import { GetUserFromRelation } from '../../scripts/relation';
 import { useNotification } from '../../context/NotificationContext';
-import { ProfileContainer, UserContainer, UserProfileBanner, UserProfileBannerContainer } from './styles/Profile.styled';
+import { ProfileContainer, UserContainer, UserInfoContainer, UserProfileBanner, UserProfileBannerContainer } from './styles/Profile.styled';
 import Loader from '../../styles/shared/Loader.styled';
 import ProfileMainInfo from './main/ProfileMainInfo';
 
@@ -120,15 +120,18 @@ const Profile = () => {
 							relation={relation}
 							setIsRefetch={setIsRefetch}/>
 					</UserProfileBannerContainer>
+					<MainBar profileUser={profileUser} matchArray={matchArray}/>
 					<UserContainer>
-						<MainBar matchArray={matchArray}/>
-						<About
+						<MatchHistory matchArray={matchArray}/>
+						<UserInfoContainer>
+							<Winrate matchArray={matchArray}/>
+							<DisplaySkin currentSkin={currentSkin}/>
+							<About profileUser={profileUser} matchArray={matchArray}/>
+						</UserInfoContainer>
+						{/* <About
 							profileUser={profileUser}
 							matchArray={matchArray}
-						/>
-						<DisplaySkin currentSkin={currentSkin}/>
-						<Winrate matchArray={matchArray}/>
-						<MatchHistory matchArray={matchArray}/>
+						/> */}
 					</UserContainer>
 				</>
 			)}

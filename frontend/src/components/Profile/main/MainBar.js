@@ -2,17 +2,17 @@ import React from 'react';
 import MainStats from './MainStats';
 import {
 	MainBarContainer,
-	SectionContainer
 } from '../styles/main/MainBar.styled';
-import 'react-circular-progressbar/dist/styles.css';
+import { useTranslation } from 'react-i18next';
 
-const MainBar = ({ matchArray }) => {
+const MainBar = ({ profileUser, matchArray }) => {
+	const { t } = useTranslation();
+
 	return (
-		<SectionContainer>
-			<MainBarContainer>
-				<MainStats matchArray={matchArray}/>
-			</MainBarContainer>
-		</SectionContainer>
+		<MainBarContainer>
+			<MainStats matchArray={matchArray}/>
+			<p>{profileUser.bio ? profileUser.bio : t('profile.about.bio.notSet')}</p>
+		</MainBarContainer>
 	);
 };
 

@@ -1,32 +1,34 @@
 import styled from "styled-components";
 
 export const MatchHistoryContainer = styled.div`
-	grid-column: 2 / 4;
-	grid-row: 3 / 6;
-	margin: 30px 0 30px 30px;
-	background: rgba(5, 5, 5, 0.8);
-	border-radius: 20px;
+	grid-column: 1 / 2;
+	grid-row: 1 / 6;
+	margin: 30px 0;
 	height: 780px;
 	padding: 0 0 50px 0;
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1), 0 0 15px rgba(164, 69, 178, 0.3);
 	position: relative;
 
+	& > h2 {
+		font-size: 30px;
+		color: rgba(255, 255, 255, 0.9);
+		margin-bottom: 20px;
+		padding: 20px 0;
+	}
 `;
 
 export const MatchCardTable = styled.table`
 	margin: 0 auto;
 	text-align: center;
-	width: 98%;
+	width: 100%;
 	border-spacing: 0 10px;
 	border-bottom-left-radius: 20px;
 	border-bottom-right-radius: 20px;
 	overflow: hidden;
 
 	& thead {
-		background: rgb(10, 10, 10);
+		background: rgba(0, 0, 0, 0.8);
 		position: absolute;
-		top: 77px;
+		top: 82px;
 		left: 0;
 		height: 90px;
 		display: table;
@@ -41,11 +43,6 @@ export const MatchCardTable = styled.table`
 		overflow-y: auto;
 		width: 100%;
 		margin-top: 75px;
-		scrollbar-width: none; /* Firefox */
-	}
-
-	& tbody::-webkit-scrollbar {
-		display: none;
 	}
 
 	& tbody tr {

@@ -1,6 +1,6 @@
 import React from "react";
-import { WinrateCard, WinrateContainer, SectionContainer } from "../styles/Stats.styled";
-import { CardTitle } from "../styles/Profile.styled";
+import { WinrateCard, WinrateContainer } from "../styles/Stats.styled";
+import { UserInfoItemContainer, UserInfoItemTitle } from "../styles/Profile.styled";
 import DonutStats from "../stats/DonutStats";
 import { useTranslation } from "react-i18next";
 
@@ -8,8 +8,8 @@ const Winrate = ({ matchArray }) => {
 	const { t } = useTranslation();
 
 	return (
-		<SectionContainer>
-			<CardTitle>{t('profile.winRate.title')}</CardTitle>
+		<UserInfoItemContainer>
+			<UserInfoItemTitle>{t('profile.winRate.title')}</UserInfoItemTitle>
 			<WinrateContainer>
 				<WinrateCard>
 					<h3>{t('profile.winRate.lifetime.title')}</h3>
@@ -20,7 +20,7 @@ const Winrate = ({ matchArray }) => {
 					<DonutStats matchArray={matchArray.slice(0, 5)}/>
 				</WinrateCard>
 			</WinrateContainer>
-		</SectionContainer>
+		</UserInfoItemContainer>
 	);
 };
 

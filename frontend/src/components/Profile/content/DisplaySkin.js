@@ -1,16 +1,16 @@
 import React from "react";
-import { DisplaySkinContainer, DisplaySkinPaddle } from "../styles/content/DisplaySkin.styled";
-import { CardTitle } from "../styles/Profile.styled";
+import { DisplaySkinPaddle } from "../styles/content/DisplaySkin.styled";
+import { UserInfoItemContainer, UserInfoItemTitle } from "../styles/Profile.styled";
 import { useTranslation } from "react-i18next";
 
 const DisplaySkin = ({ currentSkin }) => {
     const { t } = useTranslation();
 
     return (
-        <DisplaySkinContainer>
-            <CardTitle>{t('profile.skinDisplay.title')}</CardTitle>
+        <UserInfoItemContainer>
+            <UserInfoItemTitle>{t('profile.skinDisplay.title')}</UserInfoItemTitle>
             <DisplaySkinPaddle $skin={'/images/skins/' + currentSkin}/>
-        </DisplaySkinContainer>
+        </UserInfoItemContainer>
     );
 };
 

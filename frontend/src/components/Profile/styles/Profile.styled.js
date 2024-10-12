@@ -39,29 +39,41 @@ export const UserProfileBanner = styled.div`
 
 export const UserContainer = styled.div`
 	display: grid;
-	grid-template-columns: 3fr 2fr;
-	width: 80%;
+	grid-template-columns: 60% 40%;
+	gap: 30px;
+	width: 70%;
+	margin-top: 30px;
 `;
 
-export const CardTitle = styled.h2`
-	padding: 20px 0;
-	font-family: 'Orbitron', serif;
-	font-size: 30px;
-	font-weight: 600;
-	text-align: center;
+export const UserInfoContainer = styled.div`
+	grid-column: 2;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 	width: 100%;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-	border-radius: 30px 30px 0 0;
-	background: linear-gradient(135deg, #a445b2, #d41872, #6a0dad);
-	background-clip: text;
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
-	text-shadow: 0 0 10px rgba(164, 69, 178, 0.5), 0 0 15px rgba(128, 0, 128, 0.4);
-	transition: all 0.3s ease-in-out;
+	gap: 50px;
+	border-radius: 10px;
+	background-color: rgba(0, 0, 0, 0.6);
+	padding: 50px;
+`;
 
-	&:hover {
-		text-shadow: 0 0 15px rgba(164, 69, 178, 0.7), 0 0 20px rgba(128, 0, 128, 0.6);
-	}
+export const UserInfoItemContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 20px;
+	width: 100%;
+	padding: 20px;
+	border-radius: 10px;
+	background-color: rgba(0, 0, 0, 0.8);
+	position: relative;
+`;
+
+export const UserInfoItemTitle = styled.h3`
+	font-size: 1.5rem;
+	font-weight: 600;
+	color: rgba(255, 255, 255, 0.9);
 `;
 
 export const BlockedProfileContainer = styled.div`
