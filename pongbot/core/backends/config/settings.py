@@ -4,14 +4,14 @@ Constants
 WS_URL = 'wss://{}:{}/ws/match'
 TIME_BETWEEN_UPDATE_INTERVAL_MS = 1000
 MIN_SEND_INTERVAL_MS = 10
-FPS_INTERVAL_MS = 1 # Time in ms between each action sent to the server
+FPS_INTERVAL_MS = 2 # Time in ms between each action sent to the server
 
 PADDLE_WIDTH = 10
 PADDLE_HEIGHT = 120
-PADDLE_SPEED = 4
+PADDLE_SPEED = 5
 COURT_WIDTH = 1200
 COURT_HEIGHT = 750
-BALL_RADIUS = 20
+BALL_RADIUS = 25 / 2
 LEFT_SIDE_PADDLE_X = 10
 RIGHT_SIDE_PADDLE_X = COURT_WIDTH - LEFT_SIDE_PADDLE_X
 
