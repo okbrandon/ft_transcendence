@@ -81,7 +81,7 @@ export const ActionsContainer = styled.div`
 	justify-content: center;
 	align-items: center;
 	gap: 20px;
-	margin-right: 50px;
+	margin-top: 20px;
 `;
 
 export const ActionButton = styled.button`
@@ -89,42 +89,37 @@ export const ActionButton = styled.button`
 	justify-content: center;
 	align-items: center;
 	gap: 10px;
-	background: rgba(255, 255, 255, 0.1);
-	padding: 10px;
-	border: 2px solid rgba(255, 255, 255, 0.2);
-	border-radius: 10px;
+	background: rgba(255, 255, 255, 0.08);
+	padding: 12px 20px;
+	border: 2px solid rgba(255, 255, 255, 0.15);
+	border-radius: 12px;
 	cursor: pointer;
-	transition: all 0.3s ease;
-	box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+	transition: all 0.3s ease-in-out;
+	box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
 
-	font-size: 1.2rem;
-	color: rgba(255, 255, 255, 0.9);
+	font-size: 1.1rem;
+	color: rgba(255, 255, 255, 0.85);
 
 	&:hover {
-		background-color: rgba(164, 69, 178, 0.2);
-		border-color: rgba(164, 69, 178, 0.5);
-		box-shadow: 0 4px 15px rgba(164, 69, 178, 0.3), 0 0 10px rgba(255, 255, 255, 0.3);
+		background-color: rgba(164, 69, 178, 0.3);
+		border-color: rgba(164, 69, 178, 0.6);
+		box-shadow: 0 4px 15px rgba(164, 69, 178, 0.3), 0 0 12px rgba(255, 255, 255, 0.2);
+		transform: translateY(-2px); /* Slight lift on hover */
 	}
 
 	i {
-		font-size: 35px;
-		color: rgba(255, 255, 255, 0.9);
+		font-size: 1.5rem;
+		color: rgba(255, 255, 255, 0.85);
 	}
 
 	&:disabled {
 		background: rgba(100, 100, 100, 0.3);
 		border-color: rgba(100, 100, 100, 0.5);
 		color: rgba(200, 200, 200, 0.5);
+		cursor: not-allowed;
 		box-shadow: none;
 
 		i {
-			color: rgba(200, 200, 200, 0.5);
-		}
-
-		&:hover {
-			background: rgba(100, 100, 100, 0.3);
-			border-color: rgba(100, 100, 100, 0.5);
-			box-shadow: none;
 			color: rgba(200, 200, 200, 0.5);
 		}
 	}

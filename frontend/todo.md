@@ -1,6 +1,6 @@
 # TODO
+- Profile: Add friend remove friend websocket `rejected` problem
 - Game -> scores animation
-- Profile -> remove friend button if already friends
 - tournaments
 - Game: send invite
 - Profile: `users/@me/stats` -> win / loss / ratio

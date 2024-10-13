@@ -43,6 +43,17 @@ const ProfilePicture = ({ profileUser, relation, setIsRefetch }) => {
 		}
 	};
 
+	const handleRemoveFriend = () => {
+		API.delete(`users/@me/relationships/${relation[0].relationshipID}`)
+			.then(() => {
+				addNotification('success', 'Friend removed.');
+				setIsRefetch(true);
+			})
+			.catch(err => {
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
+			})
+	};
+
 	const handleBlockUser = () => {
 		API.put('users/@me/relationships', { user: profileUser.userID, type: 2 })
 			.then(() => {
@@ -95,14 +106,23 @@ const ProfilePicture = ({ profileUser, relation, setIsRefetch }) => {
 								<i className="bi bi-ban"/>
 								Block
 							</ActionButton>
-							<ActionButton
-								type="button"
-								onClick={handleAddFriend}
-								disabled={disableAddFriend}
-							>
-								<i className="bi bi-person-fill-add"/>
-								Add Friend
-							</ActionButton>
+							{disableAddFriend ? (
+								<ActionButton
+									type="button"
+									onClick={handleRemoveFriend}
+								>
+									<i className="bi bi-person-dash-fill"/>
+									Remove Friend
+								</ActionButton>
+							) : (
+								<ActionButton
+									type="button"
+									onClick={handleAddFriend}
+								>
+									<i className="bi bi-person-fill-add"/>
+									Add Friend
+								</ActionButton>
+							)}
 						</ActionsContainer>
 					)}
 				</div>

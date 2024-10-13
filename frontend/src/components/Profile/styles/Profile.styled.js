@@ -147,7 +147,7 @@ export const MatchHistoryContainer = styled.div`
 	}
 `;
 
-export const MatchCardTable = styled.div`
+export const MatchCardTable = styled.table`
 	width: 100%;
 	border-collapse: collapse;
 	font-family: 'Arial', sans-serif;
