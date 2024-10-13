@@ -330,6 +330,144 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 new_conversation.participants.add(user, friend)
                 new_conversation.save()
 
+class TournamentConsumer(AsyncJsonWebsocketConsumer):
+    async def connect(self):
+        logger.info(f"[{self.__class__.__name__}] New connection attempt")
+        await self.accept()
+        await self.send_json({
+            "e": "HELLO",
+            "d": {"heartbeat_interval": 1000}
+        })
+        self.last_heartbeat = time.time()
+        self.heartbeat_task = asyncio.create_task(self.heartbeat_check())
+        self.user = None
+        logger.info(f"[{self.__class__.__name__}] Connection accepted, heartbeat check task started")
+
+    async def disconnect(self, close_code):
+        logger.info(f"[{self.__class__.__name__}] Disconnecting with close code: {close_code}")
+        if hasattr(self, 'heartbeat_task'):
+            self.heartbeat_task.cancel()
+        if self.user:
+            await self.channel_layer.group_discard(
+                f"tournament_{self.user.userID}",
+                self.channel_name
+            )
+        logger.info(f"[{self.__class__.__name__}] Disconnected, cleanup completed")
+
+    async def receive_json(self, content):
+        event_type = content.get('e')
+        data = content.get('d')
+
+        if event_type != 'HEARTBEAT':
+            logger.info(f"[{self.__class__.__name__}] Received event: {event_type}")
+
+        if event_type == 'HEARTBEAT':
+            self.last_heartbeat = time.time()
+            await self.send_json({"e": "HEARTBEAT_ACK"})
+        elif event_type == 'IDENTIFY':
+            await self.handle_identify(data)
+
+    async def handle_identify(self, data):
+        token = data.get('token')
+        if not token:
+            logger.warning(f"[{self.__class__.__name__}] Identify attempt without token")
+            await self.close()
+            return
+
+        user_id = await get_user_id_from_token(token)
+        if not user_id:
+            logger.warning(f"[{self.__class__.__name__}] Invalid token in identify attempt")
+            await self.close()
+            return
+
+        try:
+            self.user = await sync_to_async(User.objects.get)(userID=user_id)
+            await self.channel_layer.group_add(
+                f"tournament_{self.user.userID}",
+                self.channel_name
+            )
+            await self.send_json({"e": "READY", "d": {"user_id": self.user.userID}})
+            logger.info(f"[{self.__class__.__name__}] User identified: {self.user.userID}")
+        except User.DoesNotExist:
+            logger.error(f"[{self.__class__.__name__}] User not found for ID: {user_id}")
+            await self.close()
+
+    async def heartbeat_check(self):
+        while True:
+            await asyncio.sleep(5)
+            if time.time() - self.last_heartbeat > 5:
+                logger.warning(f"[{self.__class__.__name__}] Heartbeat missed, closing connection")
+                await self.close()
+                break
+
+    async def tournament_invite(self, event):
+        await self.send_json({
+            "e": "TOURNAMENT_INVITE",
+            "d": event["tournament_data"]
+        })
+        
+        # Create or get conversation
+        conversation = await self.get_or_create_conversation(self.user.userID, event["tournament_data"]["target_user_id"])
+        
+        # Send tournament invite message
+        await self.send_tournament_invite_message(conversation.conversationID, event["tournament_data"]["tournament_id"])
+        
+        # Notify target user of new message
+        await self.notify_new_message(conversation.conversationID, self.user.username)
+
+    async def tournament_start(self, event):
+        await self.send_json({
+            "e": "TOURNAMENT_START",
+            "d": event["tournament_data"]
+        })
+
+    @database_sync_to_async
+    def get_or_create_conversation(self, user_id_a, user_id_b):
+        user_a = User.objects.get(userID=user_id_a)
+        user_b = User.objects.get(userID=user_id_b)
+        
+        conversation = Conversation.objects.filter(
+            participants__userID__in=[user_id_a, user_id_b],
+            conversationType='private_message'
+        ).annotate(participant_count=Count('participants')).filter(participant_count=2).first()
+        
+        if not conversation:
+            conversation = Conversation.objects.create(
+                conversationID=generate_id("conv"),
+                conversationType='private_message',
+                receipientID=user_id_b
+            )
+            conversation.participants.add(user_a, user_b)
+            conversation.save()
+        
+        return conversation
+
+    @database_sync_to_async
+    def send_tournament_invite_message(self, conversation_id, tournament_id):
+        conversation = Conversation.objects.get(conversationID=conversation_id)
+        conversation.messages.create(
+            messageID=generate_id("msg"),
+            sender=self.user,
+            content=tournament_id,
+            messageType=1
+        )
+        conversation.save()
+
+    async def notify_new_message(self, conversation_id, sender_username):
+        conversation = await sync_to_async(Conversation.objects.get)(conversationID=conversation_id)
+        participants = await sync_to_async(list)(conversation.participants.all())
+
+        for participant in participants:
+            if participant.userID != self.user.userID:
+                await self.channel_layer.group_send(
+                    f"chat_{participant.userID}",
+                    {
+                        "type": "conversation_update",
+                        "senderUsername": sender_username,
+                        "messagePreview": "Tournament invite"
+                    }
+                )
+
 class MatchConsumer(AsyncJsonWebsocketConsumer):
     active_matches = {}
 
