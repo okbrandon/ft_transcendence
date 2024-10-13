@@ -1,73 +1,173 @@
-import React, { useState } from 'react';
-import { Header } from './styles/Chat/ChatContainer.styled.js';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import CloseButton from 'react-bootstrap/CloseButton';
-import Arrow  from './tools/Arrow.js';
-import useWebSocket from 'react-use-websocket';
 
+import { useRelation } from '../../context/RelationContext';
+import { useNotification } from '../../context/NotificationContext';
+import API from '../../api/api';
+
+import { Header } from './styles/Chat/ChatContainer.styled';
+import ProfilePicture from './styles/global/ProfilePicture.styled';
 import DirectMessageContainer, {
 	ChatMessages,
-	SenderBubble,
-	HostBubble,
+	Username,
+	Dropdown,
+	DropdownItem,
 	ChatInputContainer,
 	ChatInput,
 	ActionButtonContainer
-} from './styles/DirectMessage/DirectMessage.styled.js';
+} from './styles/DirectMessage/DirectMessage.styled';
 
-const SendMessage = (content, conversationID) => {
-	const message = {
-		type: 'send_message',
-		conversationID: conversationID,
-		content: content
-	};
-	// Send the message to the server WebSocket
-	//sendMessage(JSON.stringify(message)); this is undefined uncomment me when im defined otherwise i break build step
-}
+import Arrow from './tools/Arrow';
+import { SendButton } from './tools/SendButton';
+import ConfirmationModal from './tools/ConfirmationModal';
+import DisplayChatMessages from './tools/DisplayChatMessages';
+import useClickOutside from './tools/hooks/useClickOutside';
 
-export const DirectMessage = ( { convo, username, onClose, $isMinimized, toggleMinimization, arrowState }) => {
+export const DirectMessage = ({
+	isOpen,
+	conversationID,
+	conversations,
+	username,
+	onClose,
+	isMinimized,
+	toggleMinimization,
+}) => {
+	const userID = localStorage.getItem('userID');
 	const [content, setContent] = useState('');
-	console.log('DirectMessage displaying (convo): ', convo);
+	const { sendMessage, setIsRefetch } = useRelation();
+	const { addNotification } = useNotification();
+	const messagesEndRef = useRef(null);
+	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+	const [isBlockModalOpen, setIsBlockModalOpen] = useState(false);
+	const navigate = useNavigate();
+	const dropdownRef = useRef(null);
+
+	const realConvo = conversations.find(c => c.conversationID === conversationID);
+	const otherUser = realConvo.participants.find(id => id.userID !== userID);
+	const proPic = otherUser.avatarID || 'images/default-profile.png';
+
+	const toggleDropdown = (event) => {
+		event.stopPropagation();
+		setIsDropdownOpen(!isDropdownOpen);
+	}
+
+	const closeDropdown = useCallback(() => setIsDropdownOpen(false), []);
+	useClickOutside(dropdownRef, closeDropdown);
+
+	const handleBlockUser = () => {
+		const other = realConvo.participants.find(id => id.userID !== userID);
+
+		if (!other || !other.userID) return;
+		if (other.userID === userID) {
+			addNotification('error', 'You cannot block yourself');
+			return;
+		}
+
+		API.put('users/@me/relationships', { user: other.userID, type: 2 })
+			.then(() => {
+				addNotification('warning', `User ${username} blocked.`);
+				setIsRefetch(true);
+				onClose();
+			})
+			.catch(err => {
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
+			});
+		setIsBlockModalOpen(false);
+	}
+
+	const handleDropdownAction = (action) => {
+		console.log(action);
+		switch (action) {
+			case 'profile':
+				navigate(`/profile/${username}`);
+				break;
+			case 'invite':
+				console.log('invite'); // Leader: Game invites can be implemented here
+				break;
+			case 'block':
+				console.log('block');
+				setIsBlockModalOpen(true);
+				break;
+			default:
+				break;
+		}
+		setIsDropdownOpen(false);
+	};
+
+	useEffect(() => {
+		if (messagesEndRef.current) {
+			messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+		}
+	}, [realConvo?.messages]);
+
+
+	const handleMessage = () => {
+		if (content.trim() === '') return;
+
+		sendMessage(JSON.stringify({ type: 'send_message', conversationID: conversationID, content: content, }))
+		setContent('');
+	};
+
 	return (
-		<DirectMessageContainer $isMinimized={$isMinimized}>
+		<>
+		<DirectMessageContainer $isOpen={isOpen} $isMinimized={isMinimized}>
 			<Header onClick={toggleMinimization}>
-				{username}
+				<ProfilePicture src={proPic} alt={`${otherUser.username}'s profile picture`} $header />
+				<Username onClick={toggleDropdown}>{username}</Username>
+				<Dropdown ref={dropdownRef} $isOpen={isDropdownOpen}>
+					<DropdownItem data-action="profile" onClick={() => handleDropdownAction('profile')}>Profile</DropdownItem>
+					<DropdownItem data-action="invite" onClick={() => handleDropdownAction('invite')}>Invite</DropdownItem>
+					<DropdownItem data-action="block" onClick={() => handleDropdownAction('block')}>Block</DropdownItem>
+				</Dropdown>
 				<ActionButtonContainer>
-					<Arrow ArrowAnimate={arrowState} />
+					<Arrow ArrowAnimate={!isMinimized} />
 					<CloseButton variant='white' onClick={onClose} />
 				</ActionButtonContainer>
 			</Header>
-			<ChatMessages $isMinimized={$isMinimized}>
-				{convo.messages.map((message, index) => {
-					if (message.sender.username === username) {
-						return <SenderBubble key={index}>{message.content}</SenderBubble>;
-					} else {
-						return <HostBubble key={index}>{message.content}</HostBubble>;
-					}
-				})}
-			</ChatMessages>
-			<ChatInputContainer $isMinimized={$isMinimized}>
-				<ChatInput
-					placeholder="Type a message..."
-					value={content}
-					onChange={e => ({})} /> 
-					{/* was onChange={e => setInput(e.target.value)}, removed bcuz setInput was undefined and it broke build step /> */}
-			</ChatInputContainer>
+
+			{isOpen && !isMinimized && (
+				<>
+					<ChatMessages>
+						<DisplayChatMessages
+							realConvo={realConvo}
+							userID={userID}
+							messagesEndRef={messagesEndRef}
+							otherUser={username}
+						/>
+					</ChatMessages>
+
+					<ChatInputContainer>
+						<ChatInput
+							as="textarea"
+							placeholder="Type a message..."
+							value={content}
+							onChange={e => setContent(e.target.value)}
+							onKeyDown={e => {
+								if (e.key === 'Enter') {
+									e.preventDefault();
+									handleMessage();
+								}
+							}}
+							maxLength={256}
+							rows={1}
+							style={{ resize: 'none', overflow: 'hidden' }}
+						/>
+						<SendButton onClick={handleMessage} disabled={content.trim() === ''}>
+							<i className="bi bi-send-fill" />
+						</SendButton>
+					</ChatInputContainer>
+				</>
+			)}
 		</DirectMessageContainer>
+
+		<ConfirmationModal
+			isOpen={isBlockModalOpen}
+			onClose={() => setIsBlockModalOpen(false)}
+			onConfirm={handleBlockUser}
+			title="Block User"
+			message={`Are you sure you want to block ${username}? You won't be able to see their messages or receive invitations from them.`}
+		/>
+	  </>
 	);
 };
-
-/*
-Sending a message:
-
-	When sending a message, the user sends a JSON object to the Websocket connection previously established at the authentication. The JSON object must contain the following fields:
-
-
-	{
-		"type": "send_message",
-		"conversationID": "546a31fd-fb13-4b8f-8cbb-b3ac59c7d52c",
-		"content": "Hello, how are you?"
-	}
-
-	Where the conversationID is the conversation ID where the message is sent and content is the message content.
-
-	Once received, the server will add the message to the conversation messages and send a Websocket notification to the participants of the conversation to tell them that they need to request the conversations again.
-*/

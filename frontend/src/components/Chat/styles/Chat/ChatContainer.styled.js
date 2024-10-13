@@ -4,7 +4,7 @@ const ChatContainer = styled.div`
 	width: 100%;
 	height: 0;
 	position: fixed;
-	z-index: 100;
+	z-index: 10000;
 	bottom: 0;
 	left: 0;
 	pointer-events: auto;
@@ -20,16 +20,27 @@ const ChatContainer = styled.div`
 
 export const Header = styled.div`
 	padding: 10px;
-	background-color: #000;
-	border: 1px solid #ddd;
-	font-weight: bold;
-	color: #fff;
 	position: relative;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	cursor: pointer;
 	border-radius: 10px 10px 0 0;
+	color: #fff;
+	z-index: 1;
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-color: rgba(0, 0, 0, 0.5);
+		backdrop-filter: blur(10px);
+		border-radius: 10px 10px 0 0;
+		z-index: -1;
+	}
 `;
 
 export const MainChatContainer = styled.div`
@@ -40,11 +51,37 @@ export const MainChatContainer = styled.div`
 	flex: 0 0 288px;
 	width: 288px;
 	min-width: 0;
-	background-color: #fff;
+	position: relative;
 	border: 1px solid #ddd;
 	border-radius: 10px 10px 0 0;
 	transition: height 0.3s ease;
+	z-index: 1; /* Ensure the content is above the pseudo-element */
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-color: rgba(255, 255, 255, 0.5);
+		backdrop-filter: blur(10px);
+		border-radius: 10px 10px 0 0;
+		z-index: -1;
+	}
 `;
 
+export const MessagePopUp = styled.div`
+	position: absolute;
+	top: 0;
+	right: 0;
+	background: #ff0000;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	text-align: center;
+	font-size: 0.8rem;
+	font-weight: 700;
+`;
 
 export default ChatContainer;

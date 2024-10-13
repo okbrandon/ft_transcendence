@@ -44,26 +44,29 @@ class BallPredictor:
 		if velocity.vx == 0:
 			return
 
-		distance_to_paddle = self.court_width - ball_data.x - self.ball_radius
-		time_to_reach_paddle = distance_to_paddle / abs(velocity.vx)
-		predicted_y_position = ball_data.y + velocity.vy * time_to_reach_paddle
+		velocity.vx = abs(velocity.vx)
+
+		time_to_reach_paddle = (self.config['right_side_paddle_x'] - ball_data.x) / velocity.vx
+		predicted_y = ball_data.y + velocity.vy * time_to_reach_paddle
 
 		bounces = 0
-		while predicted_y_position < 0 or predicted_y_position > self.court_height:
-			if predicted_y_position < 0:
-				predicted_y_position = -predicted_y_position
+		while predicted_y < 0 or predicted_y > self.court_height:
+			if predicted_y < 0:
+				predicted_y = -predicted_y
 				bounces += 1
-			elif predicted_y_position > self.court_height:
-				predicted_y_position = 2 * self.court_height - predicted_y_position
+			elif predicted_y > self.court_height:
+				predicted_y = 2 * self.court_height - predicted_y
 				bounces += 1
 
-		self.ball_predicted_y = predicted_y_position - self.config['paddle']['height'] / 2
+		self.ball_predicted_y = predicted_y
 
 		logger.info(f"[{self.__class__.__name__}] -- PREDICTION LOGS --")
-		logger.info(f"[{self.__class__.__name__}] Distance to paddle: {distance_to_paddle}")
 		logger.info(f"[{self.__class__.__name__}] Time to reach paddle: {time_to_reach_paddle}")
 		logger.info(f"[{self.__class__.__name__}] Predicted Y: {self.ball_predicted_y}")
 		logger.info(f"[{self.__class__.__name__}] Bounces: {bounces}")
+		logger.info(f"[{self.__class__.__name__}] --")
+		logger.info(f"[{self.__class__.__name__}] Ball Velocity X: {velocity.vx}, Ball Velocity Y: {velocity.vy}")
+		logger.info(f"[{self.__class__.__name__}] -- END PREDICTION LOGS --")
 
 """
 Predicts the action of the bot

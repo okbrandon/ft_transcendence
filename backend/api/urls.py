@@ -36,6 +36,7 @@ urlpatterns = [
     path('users/@me/matches', UserMatchesMe.as_view()), # GET
     path('users/<userID>/matches', UserMatches.as_view()), # GET
     path('users/@me/settings', UserSettingsMe.as_view()), # GET, PATCH
+    path('users/<identifier>/settings', UserSettingsOther.as_view()), # GET
     path('users/@me/exports', UserExports.as_view()), # GET
     path('users/@me/relationships', UserRelationshipsMe.as_view()), # GET, PUT
     path('users/@me/relationships/<str:relationshipID>', UserRelationshipsMe.as_view()),

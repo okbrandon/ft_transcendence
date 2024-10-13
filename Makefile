@@ -30,7 +30,11 @@ up: intro ## Launch the project in the background
 	@ if [ -z "$$(grep -E '^HOST_NAME=' .env)" ]; then \
 		echo "HOST_NAME=$(HOSTNAME)" >> .env; \
 	else \
-		sed -i 's/^HOST_NAME=.*/HOST_NAME=$(HOSTNAME)/' .env; \
+		if [ "$$(uname)" = "Darwin" ]; then \
+			sed -i '' -E 's/^HOST_NAME=.*/HOST_NAME=$(HOSTNAME)/' .env; \
+		else \
+			sed -i 's/^HOST_NAME=.*/HOST_NAME=$(HOSTNAME)/' .env; \
+		fi; \
 	fi
 	@ $(DC) up -d --build
 

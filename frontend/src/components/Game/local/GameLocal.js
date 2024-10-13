@@ -34,6 +34,7 @@ const GameLocal = () => {
 
 	// Ball speed and direction
 	const ballVelocity = useRef({ x: 0.1, y: 0.1 });
+	const maxBallSpeed = 0.17;
 
 	// Paddle movement speed
 	const paddleSpeed = 0.1;
@@ -125,8 +126,10 @@ const GameLocal = () => {
 			ball.current.position.y - ballRadius <= paddle1Top &&
 			ball.current.position.y + ballRadius >= paddle1Bottom) {
 			ballVelocity.current.x *= -1;
-			ballVelocity.current.x *= 1.1;
-			ballVelocity.current.y *= 1.1;
+			if (Math.abs(ballVelocity.current.x) < maxBallSpeed)
+				ballVelocity.current.x *= 1.1;
+			if (Math.abs(ballVelocity.current.y) < maxBallSpeed)
+				ballVelocity.current.y *= 1.1;
 			hit.current = { x: ball.current.position.x, y: ball.current.position.y };
 			setIsHit(true);
 		}
@@ -136,8 +139,10 @@ const GameLocal = () => {
 			ball.current.position.y - ballRadius <= paddle2Top &&
 			ball.current.position.y + ballRadius >= paddle2Bottom) {
 			ballVelocity.current.x *= -1;
-			ballVelocity.current.x *= 1.1;
-			ballVelocity.current.y *= 1.1;
+			if (Math.abs(ballVelocity.current.x) < maxBallSpeed)
+				ballVelocity.current.x *= 1.1;
+			if (Math.abs(ballVelocity.current.y) < maxBallSpeed)
+				ballVelocity.current.y *= 1.1;
 			hit.current = { x: ball.current.position.x, y: ball.current.position.y };
 			setIsHit(true);
 		}

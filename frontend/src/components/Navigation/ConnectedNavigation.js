@@ -60,7 +60,7 @@ const ConnectedNavBar = () => {
 						<StyledNavLink to="/friends">{t('header.friendsButton')}</StyledNavLink>
 						{!!requestsLen && <RequestPopUp>{requestsLen}</RequestPopUp>}
 					</FriendsNavLinkContainer>
-					<StyledNavLink to="/">{t('header.leaderboardButton')}</StyledNavLink>
+					<StyledNavLink to="leaderboard">{t('header.leaderboardButton')}</StyledNavLink>
 					<StyledNavLink to="shop">{t('header.storeButton')}</StyledNavLink>
 					<StyledNavLink to="playmenu">{t('header.playButton')}</StyledNavLink>
 				</NavItemsContainer>

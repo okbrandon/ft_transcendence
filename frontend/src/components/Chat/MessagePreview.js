@@ -1,7 +1,8 @@
-import React from 'react';
 import styled from 'styled-components';
-import defaultAvatar from './img/default-avatar.jpg';
 import ProfilePicture from './styles/global/ProfilePicture.styled';
+import ScrollableComponent from './tools/ScrollableComponent';
+import { useChat } from '../../context/ChatContext';
+import { truncateText } from './tools/TruncateText';
 
 const PreviewContainer = styled.div`
 	padding: 10px;
@@ -28,28 +29,60 @@ const MessageText = styled.span`
 	overflow: hidden;
 	text-overflow: ellipsis;
 	opacity: 0.5;
+	font-size: 0.9rem;
 `;
 
-// export const MessagePreview = ({})
+const NoFriendsMessage = styled.div`
+	padding: 20px;
+	text-align: center;
+	color: #666;
+	font-size: 1.2rem;
+`;
 
-export const MessagePreview = ({ conversationsData, onSelectChat }) => {
-	console.log('MessagePreview: conversationData ', conversationsData);
+export const MessagePreview = ({ handleSelectChat }) => {
+	const userID = localStorage.getItem('userID');
+	const { conversations, friends, blockedUsers } = useChat();
+
+	const handleSelectFriend = (friend) => {
+		const convo = conversations.find((convo) => {
+			const other = convo.participants.find(participant => participant.userID !== userID);
+			return other.username === friend.username;
+		});
+
+		handleSelectChat(friend.username, convo ? convo.conversationID : null);
+	};
+
+	const renderFriendPreview = (friend, index, message) => (
+		<PreviewContainer key={index} onClick={() => handleSelectFriend(friend)}>
+			<ProfilePicture
+				src={friend.avatarID || 'images/default-profile.png'}
+				alt={`${friend.username}'s profile picture`}
+			/>
+			<MessageContent>
+				<Sender>{friend.username}</Sender>
+				<MessageText>{truncateText(message, 50)}</MessageText>
+			</MessageContent>
+		</PreviewContainer>
+	);
+
+	if (friends.length === 0) {
+		return <NoFriendsMessage>Make some friends so you can chat with them !</NoFriendsMessage>;
+	}
 
 	return (
-		<>
-			{conversationsData.map((convo, index) => {
-				let lastMessageContent = convo.messages[convo.messages.length - 1].content;
-				let sender = convo.messages[convo.messages.length - 1].sender;
-				return (
-					<PreviewContainer key={index} onClick={() => onSelectChat(convo)}>
-						<ProfilePicture src={defaultAvatar} alt={'profile'} />
-						<MessageContent>
-							<Sender>{sender.username}</Sender>
-							<MessageText>{lastMessageContent}</MessageText>
-						</MessageContent>
-					</PreviewContainer>
-				)
-			})}
-		</>
+		<ScrollableComponent>
+			{conversations.map((convo, index) => {
+				const other = convo.participants.find(participant => participant.userID !== userID);
+				const isBlocked = blockedUsers.find(blocked => blocked.userID === other.userID);
+				const friendExists = friends.find(friend => friend.username === other.username);
+
+				if (!isBlocked && friendExists) {
+					if (convo.messages.length === 0) {
+						return renderFriendPreview(other, index, 'Start a new conversation');
+					}
+					const lastMessage = convo.messages[convo.messages.length - 1];
+					return renderFriendPreview(other, index, lastMessage.content);
+				}})}
+		</ScrollableComponent>
 	);
 };

@@ -1,22 +1,54 @@
-## TODO - today
+# NEW TODO
 
-### Problematic
-- Chat Preview:
-	- Display Correct Username
-	- Interaction with ChatPreview (onClick event) should open DirectMessage Window
+- Chat (!!) :
+	- enable max characters input [x]
+	- Enable instant access to messaging when adding a new friend [x]
+	- Make Chat messages direct message work again [x]
+	- Fix default avatar picture [x]
+	- Enable blocking feature, where we cannot see the chat again [x]
+	- if user is unblocked, re-fetch conversation with <targetuser> []
+		- Use notification context for warning user that <targetuser> has been blocked. []
+		- If user has been blocked already => notify: <targetuser> has been already blocked. []
+	- Enable game invite (gameserver) []
+		- Use notification Context for enabling sending game invite notification []
+	- The tournament system should be able to warn users expected for the next game []
+	- If a friend is removed, remove/hide the conversation correctly []
+	{
+		// when removing a friend
+
+			const handleRemove = relationID => {
+		API.delete(`users/@me/relationships/${relationID}`)
+			.then(() => {
+				addNotification("success", "Friend removed");
+				setIsRefetch(true);
+			})
+			.catch(err => {
+				addNotification("error", `${err?.response?.data?.error || "An error occurred."}`);
+			});
+	};
 
 
-- Implement backend into chat
-- Cleanup file structure
-- Add styling into chat
-	- Chat Bubbbles
+	}
+
+- Search friends component:
+	- Fix the feature.
+		- Map through the list of friends.
+	- Implement the Invite button, (TODO LATER : waiting for gameserver)
+	- Block button,
+	- Profile button,
+
+- Implement status (online, offline)
+
+- Implement notification:
+	- When message received from any user:
+		- implement small notification badge on main Chat feature.
 
 ### structure conversations chat
 
 {
 									1 CONVERSATION (Type: 'Array')
 									   |
-									   |
+									   |--- 'type: 1/2': 'friends/blocked'
 									   |
 	0:---------|                       |--- 'conversationID': "conv_MTcyNjMwMjg5NjQ2MDc3Mg"
 	1:---------| Conversations ------- |
@@ -55,6 +87,44 @@
 
 
 
-## LeaderBoard
+## LeaderBoard:
 
-- endpoint: 
+# TODO:
+
+- Finish the podium styling
+- Edit the styling for the leaderbaord
+	- re-cented the leaderboard
+- Enable access to profile when clicking on a user
+
+- API ENDPOINTS:
+	- leaderboards/`daily`
+	- leaderboards/`weekly`
+	- leaderboards/`lifetime`
+
+with the param `stats` to get `gamesPlayed`, `gamesWon` or `gamesLost`
+e.g. like GET leaderboards/daily/?stats=gamesPlayed
+you can spam the HTTP request, no need to cache, it handles cache by itself
+
+```
+{
+	|----- GET leaderboards/`daily/`?stats=`gamesPlayed`
+						   /`weekly/`      `gamesWon`
+						   /`lifetime/`    `gamesLost`
+
+
+
+Structure:
+
+	'userID': user['userID'],
+			'stats': {
+				'gamesPlayed': played,
+				'gamesWon': wins,
+				'gamesLost': losses
+			},
+			'period': {
+				'type': period_type[period_type.index(period)] if period in period_type else 'lifetime',
+				'from': start_date,
+				'to': now
+			}
+}
+```

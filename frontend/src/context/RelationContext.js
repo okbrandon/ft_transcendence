@@ -19,124 +19,7 @@ const RelationProvider = ({ children }) => {
 	const socketStatus = useRef(null);
 	const socketChat = useRef(null);
 	const pathnameRef = useRef(location.pathname);
-	const [conversations, setConversations] = useState([
-				{
-					"conversationID": "conv_MTcyNjMwMjg5NjQ2MDc3Mg",
-					"conversationType": "private_message",
-					"participants": [
-						{
-							"userID": "user_MTcyNjMwMTc5NTA5MjQ1MjA",
-							"username": "bsoubaig",
-							"displayName": null,
-							"lang": "fr",
-							"avatarID": null,
-							"bannerID": null,
-							"bio": null,
-							"flags": 1
-						},
-						{
-							"userID": "user_MTcyNjMwMTkxMzk0Nzg5NTU",
-							"username": "evmorvan",
-							"displayName": null,
-							"lang": "fr",
-							"avatarID": null,
-							"bannerID": null,
-							"bio": null,
-							"flags": 1
-						}
-					],
-					"messages": [
-						{
-							"messageID": "msg_MTcyNjMxOTU5OTk4MDg4MzI",
-							"content": "Hello, how are you?",
-							"sender": {
-								"userID": "user_MTcyNjMwMTc5NTA5MjQ1MjA",
-								"username": "bsoubaig",
-								"displayName": null,
-								"lang": "fr",
-								"avatarID": null,
-								"bannerID": null,
-								"bio": null,
-								"flags": 1
-							},
-							"createdAt": "2024-09-14T13:15:22.116212Z"
-						},
-						{
-							"messageID": "msg_MTcyNjMxOTk2NDg4MjY2Mjc",
-							"content": "YOU STINK BRO LMAOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO",
-							"sender": {
-								"userID": "user_MTcyNjMwMTc5NTA5MjQ1MjA",
-								"username": "bsoubaig",
-								"displayName": null,
-								"lang": "fr",
-								"avatarID": null,
-								"bannerID": null,
-								"bio": null,
-								"flags": 1
-							},
-							"createdAt": "2024-09-14T13:20:05.103983Z"
-						}
-					]
-				},
-				{
-					"conversationID": "conv_MTcyNjMwMjg5NjQ2MDc7Mg",
-					"conversationType": "private_message",
-					"participants": [
-						{
-							"userID": "user_MTcyNjMwMTc5NTA5MjQ1MjA",
-							"username": "johndoe",
-							"displayName": null,
-							"lang": "en",
-							"avatarID": null,
-							"bannerID": null,
-							"bio": null,
-							"flags": 1
-						},
-						{
-							"userID": "user_MTcyNjMwMTkxMzk0Nzg5NTU",
-							"username": "janedoe",
-							"displayName": null,
-							"lang": "en",
-							"avatarID": null,
-							"bannerID": null,
-							"bio": null,
-							"flags": 1
-						}
-					],
-					"messages": [
-						{
-							"messageID": "msg_MTcyNjMxOTU5OTk4MDg4MzI",
-							"content": "Hi, nice to meet you!",
-							"sender": {
-								"userID": "user_MTcyNjMwMTc5NTA5MjQ1MjA",
-								"username": "johndoe",
-								"displayName": null,
-								"lang": "en",
-								"avatarID": null,
-								"bannerID": null,
-								"bio": null,
-								"flags": 1
-							},
-							"createdAt": "2024-09-14T13:15:22.116212Z"
-						},
-						{
-							"messageID": "msg_MTcyNjMxOTk2NDg4MjY2Mjc",
-							"content": "Nice to meet you too!",
-							"sender": {
-								"userID": "user_MTcyNjMwMTkxMzk0Nzg5NTU",
-								"username": "janedoe",
-								"displayName": null,
-								"lang": "en",
-								"avatarID": null,
-								"bannerID": null,
-								"bio": null,
-								"flags": 1
-							},
-							"createdAt": "2024-09-14T13:20:05.103983Z"
-						}
-					]
-				}
-			]);
+	const [conversations, setConversations] = useState([]);
 	const [relations, setRelations] = useState([]);
 	const [friends, setFriends] = useState([]);
 	const [requests, setRequests] = useState([]);
@@ -152,6 +35,14 @@ const RelationProvider = ({ children }) => {
 		return 'HOME';
 	};
 
+	const sendMessage = (message) => {
+		if (socketChat.current && socketChat.current.readyState === WebSocket.OPEN) {
+			socketChat.current.send(message);
+		} else {
+			logger('WebSocket for Chat is not open');
+		}
+	};
+
 	useEffect(() => {
 		API.get('users/@me/relationships')
 			.then(relationships => {
@@ -159,6 +50,12 @@ const RelationProvider = ({ children }) => {
 				setFriends(GetFriends(relationships.data));
 				setRequests(GetRequests(relationships.data));
 				setBlockedUsers(GetBlockedUsers(relationships.data));
+
+				// handle conversations when there is a change in relation status
+				return API.get('chat/conversations');
+			})
+			.then(response => {
+				setConversations(response.data.conversations);
 			})
 			.catch(err => {
 				console.error(err?.response?.data?.error || 'An error occurred.');
@@ -169,20 +66,25 @@ const RelationProvider = ({ children }) => {
 	}, [isRefetch]);
 
 	useEffect(() => {
+		const fetchConversations = () => {
+			API.get('chat/conversations')
+				.then(response => {
+					setConversations(response.data.conversations);
+				})
+				.catch(error => {
+					console.error('Failed to fetch conversations:', error);
+				});
+		};
+
 		socketChat.current = new WebSocket(WS_CHAT_URL + localStorage.getItem('token'));
 		socketChat.current.onopen = () => {
 			logger('WebSocket for Chat connection opened');
+			fetchConversations();
 		};
 		socketChat.current.onmessage = event => {
 			const response = JSON.parse(event.data);
 			if (response.type === 'conversation_update') {
-				API.get('chat/conversations')
-					.then(response => {
-						setConversations(response.data.conversations);
-					})
-					.catch(error => {
-						console.error('Failed to update conversations:', error);
-					});
+				fetchConversations();
 			} else if (response.type === 'friend_request') {
 				const user = formatUserData({
 					...response.data.from,
@@ -195,6 +97,7 @@ const RelationProvider = ({ children }) => {
 					addNotification('info', `${user.displayName} rejected your friend request.`);
 				} else if (user.status === 'accepted') {
 					addNotification('info', `${user.displayName} accepted your friend request.`);
+					fetchConversations();
 				};
 			}
 		};
@@ -246,6 +149,7 @@ const RelationProvider = ({ children }) => {
 		<RelationContext.Provider value={{
 			conversations,
 			setConversations,
+			sendMessage,			// send a message
 			relations,				// get the relations
 			setRelations,			// change the relations
 			friends,				// get the friends
