@@ -2,7 +2,8 @@ import React from 'react';
 import {
 	NewConversationMessage,
 	SenderBubble,
-	HostBubble
+	HostBubble,
+	TournamentInviteBubble
 } from '../styles/DirectMessage/DirectMessage.styled.js';
 
 const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) => {
@@ -16,7 +17,14 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 		return (
 			<>
 				{realConvo.messages.map((message, index) => (
-					message.sender.userID === userID ? (
+					message.messageType === 1 ? (
+						<TournamentInviteBubble key={index}>
+							<p>Tournament Invitation</p>
+							<p>Summer championship</p>
+							<button>Accept</button>
+							<button>Decline</button>
+						</TournamentInviteBubble>
+					) : message.sender.userID === userID ? (
 						<SenderBubble key={index}>{message.content}</SenderBubble>
 					) : (
 						<HostBubble key={index}>{message.content}</HostBubble>
