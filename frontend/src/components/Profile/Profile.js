@@ -10,7 +10,7 @@ import { GetUser, GetUserByUsername } from '../../api/user';
 import { useRelation } from '../../context/RelationContext';
 import { GetUserFromRelation } from '../../scripts/relation';
 import { useNotification } from '../../context/NotificationContext';
-import { ProfileContainer, UserContainer, UserInfoContainer, UserProfileBanner, UserProfileBannerContainer } from './styles/Profile.styled';
+import { ProfileContainer, UserContainer, UserInfoContainer, UserMainInfoContainer, UserProfileBanner, UserProfileBannerContainer } from './styles/Profile.styled';
 import Loader from '../../styles/shared/Loader.styled';
 import ProfileMainInfo from './main/ProfileMainInfo';
 import Activity from './content/Activity';
@@ -123,8 +123,10 @@ const Profile = () => {
 					</UserProfileBannerContainer>
 					<MainBar profileUser={profileUser} matchArray={matchArray}/>
 					<UserContainer>
-						<MatchHistory matchArray={matchArray}/>
-						<Activity matchArray={matchArray}/>
+						<UserMainInfoContainer>
+							<MatchHistory matchArray={matchArray}/>
+							<Activity matchArray={matchArray}/>
+						</UserMainInfoContainer>
 						<UserInfoContainer>
 							<Winrate matchArray={matchArray}/>
 							<DisplaySkin currentSkin={currentSkin}/>

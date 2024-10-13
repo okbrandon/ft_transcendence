@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef } from "react";
-import { DisplaySkinPaddle, StyledCanvas, UserInfoItemContainer, UserInfoItemTitle } from "../styles/Profile.styled";
+import { StyledCanvas, UserInfoItemContainer, UserInfoItemTitle } from "../styles/Profile.styled";
 import { useTranslation } from "react-i18next";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
