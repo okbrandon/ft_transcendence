@@ -912,9 +912,9 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                         "d": {"won": event["winner"] == self.user.userID}
                     })
                 logger.info(f"[{self.__class__.__name__}] Match end event processed for user: {self.user.userID}")
-            await self.close()
-        except Exception as _:
-            pass
+                await self.close()
+            except Exception as _:
+                pass
 
     async def player_join(self, event):
         player_data = event["player"]
