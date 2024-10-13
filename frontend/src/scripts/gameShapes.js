@@ -25,24 +25,23 @@ export const PaddleAttributes = (terrain, textureUrl = undefined) => {
 	const paddleShape = roundedRectShape(20 * terrain.SCALEX, 120 * terrain.SCALEY, 10 * terrain.SCALEX);
 	const extrudeSettings = { depth: 0.5, bevelEnabled: false };
 	const paddleGeometry = new THREE.ExtrudeGeometry(paddleShape, extrudeSettings);
-	const paddleMaterial = new THREE.MeshPhongMaterial({
+	const paddleMaterial = new THREE.MeshPhysicalMaterial({
 		map: paddleTexture,
 		color: !paddleTexture ? 0xffffff : undefined,
-		shininess: 150,
-		specular: 0xaaaaaa,
 		emissive: 0x333333,
 		emissiveIntensity: 0.5,
+		reflectivity: 0.9,
+		roughness: 0.05,
+		ior: 1.5,
 		wireframe: false,
-		flatShading: false
+		flatShading: false,
 	});
 	return {paddleGeometry, paddleMaterial};
 }
 
 export const BallAttributes = terrain => {
 	const ballGeometry = new THREE.SphereGeometry(25 * terrain.SCALEX / 2, 32, 32);
-	const ballMaterial = new THREE.MeshPhysicalMaterial({
-		color: 0xffffff,
-	});
+	const ballMaterial = new THREE.MeshPhysicalMaterial({ color: 0x6FFFE9 });
 	return {ballGeometry, ballMaterial};
 }
 

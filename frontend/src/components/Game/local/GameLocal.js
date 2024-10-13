@@ -32,7 +32,7 @@ const GameLocal = () => {
 	}), []);
 
 	// Ball speed and direction
-	const ballVelocity = useRef({ x: 0.1, y: 0.1 });
+	const ballVelocity = useRef({ x: 0.01, y: 0.01 });
 
 	// Paddle movement speed
 	const paddleSpeed = 0.1;
