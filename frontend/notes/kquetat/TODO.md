@@ -95,20 +95,21 @@ you can spam the HTTP request, no need to cache, it handles cache by itself
 						   /`weekly/`      `gamesWon`
 						   /`lifetime/`    `gamesLost`
 
-
+}
 
 Structure:
 
-	'userID': user['userID'],
-			'stats': {
-				'gamesPlayed': played,
-				'gamesWon': wins,
-				'gamesLost': losses
-			},
-			'period': {
-				'type': period_type[period_type.index(period)] if period in period_type else 'lifetime',
-				'from': start_date,
-				'to': now
-			}
+{
+	"userID": "string",  // The unique ID of the user
+	"stats": {
+		"gamesPlayed": "number",  // Total number of games played
+		"gamesWon": "number",     // Total number of games won
+		"gamesLost": "number"     // Total number of games lost (derived from matches)
+	},
+	"period": {
+		"type": "string",	// 'daily', 'weekly', or 'lifetime'
+		"from": "ISO8601 timestamp",	// Start of the period (only for daily/weekly)
+		"to": "ISO8601 timestamp"		 // End of the period (current time)
+	}
 }
 ```
