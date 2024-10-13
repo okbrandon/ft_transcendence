@@ -173,12 +173,12 @@ const BaseBubble = styled.div`
 	max-width: calc(100% - 60px);
 	word-wrap: break-word;
 	white-space: pre-wrap;
-	font-family: 'Arial', sans-serif;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 	font-size: 14px;
 	line-height: 1.4;
 	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 	transition: all 0.3s ease;
-	animation: popIn 0.3s ease-out;
+	animation: ${popIn} 0.3s ease-out;
 	role: log;
 	aria-live: polite;
 
@@ -204,9 +204,14 @@ const BaseBubble = styled.div`
 export const SenderBubble = styled(BaseBubble)`
 	background-color: #6a0dad;
 	color: #fff;
-	border-radius: 10px 10px 0 10px;
+	border-radius: 18px 18px 0 18px;
 	margin-left: auto;
 	align-self: flex-end;
+
+	&::before {
+		right: -10px;
+		border-left: 10px solid #6a0dad;
+		border-bottom-left-radius: 16px 14px;
 `;
 
 export const HostBubble = styled(BaseBubble)`
@@ -215,6 +220,29 @@ export const HostBubble = styled(BaseBubble)`
 	border-radius: 10px 10px 10px 0;
 	margin-right: auto;
 	align-self: flex-start;
+
+	&::before {
+		left: -10px;
+		border-right: 10px solid #E8E2E2;
+		border-bottom-right-radius: 16px 14px;
+	}
+`;
+
+export const Avatar = styled.img`
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	margin-right: 8px;
+	vertical-align: middle;
+`;
+
+export const MessageUsername = styled.span`
+	font-size: 0.65em;
+	font-weight: bold;
+	margin-bottom: 4px;
+	color: ${props => props.$isHost ? '#333' : '#6a0dad'};
+	display: block;
+	text-align: ${props => props.$isHost ? 'left' : 'right'};
 `;
 
 export default DirectMessageContainer;

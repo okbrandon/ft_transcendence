@@ -2,7 +2,9 @@ import React from 'react';
 import {
 	NewConversationMessage,
 	SenderBubble,
-	HostBubble
+	HostBubble,
+	Avatar,
+	MessageUsername,
 } from '../styles/DirectMessage/DirectMessage.styled.js';
 
 const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) => {
@@ -16,11 +18,30 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 		return (
 			<>
 				{realConvo.messages.map((message, index) => (
-					message.sender.userID === userID ? (
-						<SenderBubble key={index}>{message.content}</SenderBubble>
-					) : (
-						<HostBubble key={index}>{message.content}</HostBubble>
-					)
+					<div key={index}>
+						{message.sender.userID === userID ? (
+							<>
+								<MessageUsername $isHost={false}>You</MessageUsername>
+								<SenderBubble
+									data-time={new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+								>
+									{message.content}
+								</SenderBubble>
+							</>
+						) : (
+							<>
+								<MessageUsername $isHost={true}>
+									<Avatar src={message.sender.avatarID || 'images/default-profile.png'} alt={message.sender.username} />
+									{message.sender.username}
+								</MessageUsername>
+								<HostBubble
+									data-time={new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+								>
+									{message.content}
+								</HostBubble>
+							</>
+						)}
+					</div>
 				))}
 				<div ref={messagesEndRef} />
 			</>
