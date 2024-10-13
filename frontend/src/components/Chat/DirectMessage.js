@@ -106,6 +106,7 @@ export const DirectMessage = ({
 	const handleMessage = () => {
 		if (content.trim() === '') return;
 
+		// Check for user relationship
 		sendMessage(JSON.stringify({ type: 'send_message', conversationID: conversationID, content: content, }))
 		setContent('');
 	};
