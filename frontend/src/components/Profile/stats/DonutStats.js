@@ -48,6 +48,7 @@ const DonutStats = ({ matchArray }) => {
 				options={options}
 				series={series}
 				type="donut"
+				height={260}
 			/>
 		</DonutStatsContainer>
 	);

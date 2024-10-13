@@ -32,6 +32,7 @@ const DisplaySkin = ({ currentSkin }) => {
 	// Function to initialize scene
 	const initScene = useCallback((canvas, currentSkin) => {
 		const scene = new THREE.Scene();
+		scene.background = new THREE.Color(0x1e1e28);
 
 		// Camera setup
 		const camera = new THREE.PerspectiveCamera(40, 600 / 300, 0.1, 1000);

@@ -7,7 +7,8 @@ export const MainBarContainer = styled.div`
 	position: relative;
 	width: 80%;
 	height: 180px;
-	background: rgba(0, 0, 0, 0.8);
+	background: #0f0e17;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 	border-bottom-left-radius: 10px;
 	border-bottom-right-radius: 10px;
 

@@ -1,4 +1,4 @@
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 
 export const ProfileContainer = styled.div`
 	position: relative;
@@ -37,17 +37,19 @@ export const UserProfileBanner = styled.div`
 
 export const UserContainer = styled.div`
 	display: flex;
-	justify-content: center;
-	gap: 30px;
-	width: 70%;
-	margin-top: 30px;
+	justify-content: space-between;
+	gap: 40px;
+	width: 75%;
+	margin: 40px auto;
+	padding-bottom: 20px;
 `;
 
 export const UserMainInfoContainer = styled.div`
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
-	align-items: center;
+	justify-content: flex-start;
+	width: 65%;
+	gap: 30px;
 `;
 
 export const UserInfoContainer = styled.div`
@@ -55,30 +57,35 @@ export const UserInfoContainer = styled.div`
 	flex-direction: column;
 	align-items: center;
 	height: fit-content;
-	width: 100%;
-	gap: 50px;
-	border-radius: 10px;
-	background-color: rgba(0, 0, 0, 0.6);
-	padding: 50px;
+	width: 35%;
+	gap: 40px;
+	border-radius: 12px;
+	background-color: #0f0e17;
+	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+	padding: 40px;
 `;
 
 export const UserInfoItemContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	gap: 20px;
+	gap: 25px;
 	width: 100%;
-	padding: 30px;
-	border-radius: 10px;
-	background-color: rgba(0, 0, 0, 0.8);
+	padding: 35px;
+	border-radius: 12px;
+	background-color: #1e1e28;
 	position: relative;
-	border: 1px solid rgba(255, 255, 255, 0.1);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 `;
 
 export const UserInfoItemTitle = styled.h3`
-	font-size: 1.5rem;
-	font-weight: 600;
-	color: rgba(255, 255, 255, 0.9);
+	font-size: 1.6rem;
+	font-weight: 700;
+	color: rgba(255, 255, 255, 0.95);
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	text-align: center;
 `;
 
 export const StyledCanvas = styled.canvas`
@@ -87,16 +94,22 @@ export const StyledCanvas = styled.canvas`
 `;
 
 export const BalanceContainer = styled.div`
-	width: 90%;
+	width: 100%;
 	margin: 20px auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 
 	& > p {
 		font-size: 2.5rem;
 		color: rgba(255, 255, 255, 0.9);
+		display: flex;
+		align-items: center;
 
 		& > i {
 			margin-right: 10px;
-			color: #ffdf00; /* Gold coin icon color */
+			color: #ffdf00;
+			font-size: 2.5rem;
 		}
 	}
 `;
@@ -107,79 +120,100 @@ export const ActivityContainer = styled.div`
 	width: 100%;
 	margin: 0 auto;
 	padding-top: 20px;
-
-	& > h2 {
-		color: rgba(255, 255, 255, 0.9);
-	}
 `;
 
 export const MatchHistoryContainer = styled.div`
-	position: relative;
+	padding: 30px;
+	background-color: #0f0e17;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+	margin: 0 auto;
+	overflow: hidden;
 
-	& > h2 {
-		font-size: 30px;
-		color: rgba(255, 255, 255, 0.9);
-		margin-bottom: 20px;
-		padding: 20px 0;
+	h2 {
+		font-size: 28px;
+		font-weight: 600;
+		margin-bottom: 25px;
+		text-align: center;
+		color: #e7e7e8;
+		text-transform: uppercase;
+		letter-spacing: 2px;
+	}
+
+	p {
+		text-align: center;
+		font-size: 18px;
+		color: #888;
 	}
 `;
 
-export const MatchCardTable = styled.table`
-	margin: 0 auto;
-	text-align: center;
+export const MatchCardTable = styled.div`
 	width: 100%;
-	border-spacing: 0 10px;
-	border-bottom-left-radius: 20px;
-	border-bottom-right-radius: 20px;
+	border-collapse: collapse;
+	font-family: 'Arial', sans-serif;
+	background-color: #0b0b12;
+	border-radius: 10px;
 	overflow: hidden;
 
-	& thead {
-		background: rgba(0, 0, 0, 0.8);
-		position: absolute;
-		top: 82px;
-		left: 0;
-		height: 90px;
-		display: table;
-		width: 100%;
-		table-layout: fixed;
+	thead {
+		background-color: #181823;
+		color: white;
+		text-transform: uppercase;
+		font-size: 16px;
+		font-weight: 600;
+		position: sticky;
+		top: 0;
 		z-index: 1;
 	}
 
-	& tbody {
-		display: block;
-		height: 610px;
-		overflow-y: auto;
-		width: 100%;
-		margin-top: 75px;
+	th, td {
+		padding: 20px;
+		text-align: center;
+		border-bottom: 1px solid #2e2e3d;
 	}
 
-	& tbody tr {
-		opacity: 0;
-		transform: translateY(-10px);
-		transition: opacity 1s ease-out, transform 1s ease-out;
+	tbody {
+		display: block;
+		max-height: 600px;
+		overflow-y: auto;
+		width: 100%;
+
+		::-webkit-scrollbar {
+			width: 10px;
+		}
+
+		::-webkit-scrollbar-thumb {
+			background-color: #ff005c;
+			border-radius: 10px;
+		}
+
+		::-webkit-scrollbar-track {
+			background-color: #181823;
+		}
+	}
+
+	thead, tbody tr {
 		display: table;
 		width: 100%;
 		table-layout: fixed;
 	}
 
-	& tbody tr.visible {
-		opacity: 1;
-		transform: translateY(0);
+	tbody tr {
+		background-color: #101018;
 	}
 
-	& td {
-		padding: 16px;
+	tbody tr.visible {
+		background-color: #292933;
+	}
+
+	td {
 		font-size: 18px;
-		color: rgba(255, 255, 255, 0.85);
-		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+		color: #b5b5c5;
 	}
 
-	& tbody > tr:nth-child(even) {
-		background: linear-gradient(90deg, rgba(40, 40, 40, 0.8) 0%, rgba(20, 20, 20, 0.6) 100%);
-	}
-
-	& tbody > tr:nth-child(odd) {
-		background: linear-gradient(90deg, rgba(20, 20, 20, 0.8) 0%, rgba(40, 40, 40, 0.6) 100%);
+	th {
+		font-size: 18px;
+		color: #ccccdd;
 	}
 `;
 

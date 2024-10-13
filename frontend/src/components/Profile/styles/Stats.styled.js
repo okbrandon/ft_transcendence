@@ -7,7 +7,11 @@ export const DonutStatsContainer = styled.div`
 
 export const LineStatsContainer = styled.div`
 	margin-top: 20px;
-	color: #000;
+	color: #fff;
+	background-color: #0a0a13;
+	border-radius: 10px;
+	padding: 20px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 `;
 
 export const WinrateContainer = styled.div`
