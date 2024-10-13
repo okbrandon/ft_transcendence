@@ -1,4 +1,9 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+
+const popIn = keyframes`
+	0% { transform: scale(0.8); opacity: 0; }
+	100% { transform: scale(1); opacity: 1; }
+`;
 
 const DirectMessageContainer = styled.div`
 	flex: 1;
@@ -97,6 +102,20 @@ export const ChatMessages = styled.div`
 	flex-direction: column;
 	overflow-y: auto;
 	transition: all 0.3s ease;
+
+	&::-webkit-scrollbar {
+		width: 8px;
+	}
+
+	&::-webkit-scrollbar-track {
+		background: #f5f5f5;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background-color: #6a0dad;
+		border-radius: 4px;
+		border: 2px solid #f5f5f5;
+	}
 `;
 
 export const ChatInputContainer = styled.div`
@@ -148,28 +167,54 @@ export const NewConversationMessage = styled.div`
 	font-size: 0.9rem;
 `;
 
-export const SenderBubble = styled.div`
+const BaseBubble = styled.div`
+	padding: 10px;
+	margin: 5px;
+	max-width: calc(100% - 60px);
+	word-wrap: break-word;
+	white-space: pre-wrap;
+	font-family: 'Arial', sans-serif;
+	font-size: 14px;
+	line-height: 1.4;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+	transition: all 0.3s ease;
+	animation: popIn 0.3s ease-out;
+	role: log;
+	aria-live: polite;
+
+	&:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	}
+
+	&::after {
+		content: attr(data-time);
+		display: block;
+		font-size: 0.8em;
+		margin-top: 5px;
+		opacity: 0.7;
+	}
+
+	@keyframes popIn {
+		0% { transform: scale(0.8); opacity: 0; }
+		100% { transform: scale(1); opacity: 1; }
+	}
+`;
+
+export const SenderBubble = styled(BaseBubble)`
 	background-color: #6a0dad;
 	color: #fff;
 	border-radius: 10px 10px 0 10px;
-	padding: 10px;
-	margin: 5px 5px 5px auto;
-	max-width: 70%;
+	margin-left: auto;
 	align-self: flex-end;
-	word-wrap: break-word;
-	white-space: pre-wrap;
 `;
 
-export const HostBubble = styled.div`
+export const HostBubble = styled(BaseBubble)`
 	background-color: #E8E2E2;
 	color: #333;
 	border-radius: 10px 10px 10px 0;
-	padding: 10px;
-	margin: 5px auto 5px 5px;
-	max-width: 70%;
+	margin-right: auto;
 	align-self: flex-start;
-	word-wrap: break-word;
-	white-space: pre-wrap;
 `;
 
 export default DirectMessageContainer;

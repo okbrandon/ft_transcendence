@@ -6,38 +6,22 @@
 	- Make Chat messages direct message work again [x]
 	- Fix default avatar picture [x]
 	- Enable blocking feature, where we cannot see the chat again [x]
-	- if user is unblocked, re-fetch conversation with <targetuser> []
-		- Use notification context for warning user that <targetuser> has been blocked. []
-		- If user has been blocked already => notify: <targetuser> has been already blocked. []
+	- if user is unblocked, re-fetch conversation with <targetuser> [x]
+		- Use notification context for warning user that <targetuser> has been blocked. [x]
+		- If user has been blocked already => notify: <targetuser> has been already blocked. [x]
 	- Enable game invite (gameserver) []
 		- Use notification Context for enabling sending game invite notification []
 	- The tournament system should be able to warn users expected for the next game []
-	- If a friend is removed, remove/hide the conversation correctly []
-	{
-		// when removing a friend
-
-			const handleRemove = relationID => {
-		API.delete(`users/@me/relationships/${relationID}`)
-			.then(() => {
-				addNotification("success", "Friend removed");
-				setIsRefetch(true);
-			})
-			.catch(err => {
-				addNotification("error", `${err?.response?.data?.error || "An error occurred."}`);
-			});
-	};
-
-
-	}
+	- If a friend is removed, remove/hide the conversation correctly [x]
 
 - Search friends component:
-	- Fix the feature.
-		- Map through the list of friends.
+	- Fix the feature. [x]
+		- Map through the list of friends. [x]
 	- Implement the Invite button, (TODO LATER : waiting for gameserver)
-	- Block button,
-	- Profile button,
+	- Block button, [x]
+	- Profile button,[x]
 
-- Implement status (online, offline)
+- Implement status (online, offline) [x]
 
 - Implement notification:
 	- When message received from any user:
