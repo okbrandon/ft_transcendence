@@ -4,14 +4,17 @@ from rest_framework import status
 from django.utils import timezone
 from ..models import Tournament
 from ..serializers import TournamentSerializer
+from ..util import generate_id
+from datetime import datetime, timezone as pytz_timezone
 
 class Tournaments(APIView):
     def get(self, request):
         # Get all public tournaments that haven't started yet
+        current_time = datetime.now(pytz_timezone.utc)
         pending_tournaments = Tournament.objects.filter(
             isPublic=True,
             status='PENDING',
-            startDate__gt=timezone.now()
+            startDate__gt=current_time
         )
 
         serializer = TournamentSerializer(pending_tournaments, many=True)
@@ -37,8 +40,11 @@ class Tournaments(APIView):
             return Response({"error": "Tournament name is too long"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            start_date = timezone.datetime.fromisoformat(start_date)
-            if start_date > timezone.now() + timezone.timedelta(hours=24):
+            start_date = datetime.fromisoformat(start_date).replace(tzinfo=pytz_timezone.utc)
+            now = datetime.now(pytz_timezone.utc)
+            if start_date < now + timezone.timedelta(hours=1):
+                return Response({"error": "Start date must be at least 1 hour in the future"}, status=status.HTTP_400_BAD_REQUEST)
+            if start_date > now + timezone.timedelta(hours=24):
                 return Response({"error": "Start date cannot be more than 24 hours in the future"}, status=status.HTTP_400_BAD_REQUEST)
         except ValueError:
             return Response({"error": "Invalid start date format"}, status=status.HTTP_400_BAD_REQUEST)
@@ -51,6 +57,7 @@ class Tournaments(APIView):
 
         try:
             tournament = Tournament.objects.create(
+                tournamentID=generate_id("tournament"),
                 name=name,
                 startDate=start_date,
                 isPublic=is_public,
