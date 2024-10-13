@@ -1,19 +1,16 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import ScoreTable from './ScoreTable';
-import Podium from './Podium';
-import { GetLeaderboard } from '../../api/leaderboard';  // Adjusted import
-import {
-	WrapContainer,
-	LeaderboardContainer
-} from './styles/Leaderboard.styled';
+import React, { useCallback, useEffect, useState } from 'react';
+import { WrapContainer, LeaderboardContainer } from './styles/Leaderboard.styled';
 import TimeFrameButtons from './tools/TimeFrameButtons';
+import Podium from './Podium';
+import ScoreTable from './ScoreTable';
+import StatsDropdown from './tools/StatsDropdown'; // Import the new component
+import { GetLeaderboard } from '../../api/leaderboard';
 
 const Leaderboard = () => {
-	const [timeFrame, setTimeFrame] = useState('lifetime');
-	const [stats, setStats] = useState('gamesWon');  // Default to 'gamesWon', can be changed as needed
+	const [timeFrame, setTimeFrame] = useState('daily');
+	const [stats, setStats] = useState('gamesPlayed');
 	const [leaderboardData, setLeaderboardData] = useState([]);
 
-	// Fetch leaderboard data based on current timeFrame and stats
 	const fetchLeaderboardData = useCallback(async () => {
 		const data = await GetLeaderboard(timeFrame, stats);
 		setLeaderboardData(data);
@@ -29,7 +26,7 @@ const Leaderboard = () => {
 		setTimeFrame(newTimeFrame);
 	};
 
-	// Optional: Handle stats change if needed (e.g., 'gamesPlayed', 'gamesLost')
+	// Handle stats change (e.g., 'gamesPlayed', 'gamesWon', 'gamesLost')
 	const handleStatsChange = (newStats) => {
 		setStats(newStats);
 	};
@@ -38,6 +35,9 @@ const Leaderboard = () => {
 		<WrapContainer>
 			{/* TimeFrameButtons to change timeFrame */}
 			<TimeFrameButtons timeFrame={timeFrame} handleTimeFrameChange={handleTimeFrameChange} />
+
+			{/* StatsDropdown to change stats */}
+			<StatsDropdown stats={stats} handleStatsChange={handleStatsChange} />
 
 			{/* Podium component for top 3 users */}
 			<Podium leaderboardData={leaderboardData} />
