@@ -5,9 +5,12 @@ import PodiumPlayer from './tools/PodiumPlayer';
 const Podium = ({ leaderboardData }) => {
     const topThree = leaderboardData.slice(0, 3);
 
+    // Rearrange the order: second player first, then first, then third
+    const rearrangedTopThree = [topThree[1], topThree[0], topThree[2]];
+
     return (
         <PodiumContainer>
-            {topThree.map((player, index) => (
+            {rearrangedTopThree.map((player, index) => (
                 <PodiumPlayer key={index} player={player} position={index} />
             ))}
         </PodiumContainer>

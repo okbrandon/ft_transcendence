@@ -231,8 +231,10 @@ export const GetLeaderboard = async (timeFrame, stats) => {
 		// const res = await API.get(`leaderboards/${timeFrame}?stats=${stats}`);			// Uncomment this line when there is games data to fetch
 
 		// Return template data for testing
-		return templateLeaderboardData;
-		return res.data; // Return the leaderboard data already sorted by the backend
+		const filteredData = templateLeaderboardData.filter(item => item.period.type === timeFrame);
+		const sortedData = filteredData.sort((a, b) => b.stats[stats] - a.stats[stats]);
+		return sortedData;
+		// return res.data; // Return the leaderboard data already sorted by the backend
 	} catch (err) {
 		console.error(err.response?.data?.error || 'An error occurred fetching leaderboard');
 		return [];
