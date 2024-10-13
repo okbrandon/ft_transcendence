@@ -102,6 +102,11 @@ export const DirectMessage = ({
 		}
 	}, [realConvo?.messages]);
 
+	useEffect(() => {
+		if (!isMinimized && messagesEndRef.current) {
+			messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+		}
+	}, [isMinimized]);
 
 	const handleMessage = () => {
 		if (content.trim() === '') return;
