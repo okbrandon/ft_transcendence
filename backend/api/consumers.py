@@ -366,6 +366,8 @@ class TournamentConsumer(AsyncJsonWebsocketConsumer):
             await self.send_json({"e": "HEARTBEAT_ACK"})
         elif event_type == 'IDENTIFY':
             await self.handle_identify(data)
+        elif event_type == 'TOURNAMENT_INVITE':
+            await self.handle_tournament_invite(data)
 
     async def handle_identify(self, data):
         token = data.get('token')
@@ -400,20 +402,38 @@ class TournamentConsumer(AsyncJsonWebsocketConsumer):
                 await self.close()
                 break
 
+    #TODO: handle blocked and not friends
+    async def handle_tournament_invite(self, data):
+        logger.info(f"[{self.__class__.__name__}] Handling tournament invite")
+        target_user_id = data.get('target_user_id')
+        tournament_id = data.get('tournament_id')
+
+        if not target_user_id or not tournament_id:
+            logger.warning(f"[{self.__class__.__name__}] Invalid tournament invite data: target_user_id={target_user_id}, tournament_id={tournament_id}")
+            return
+
+        conversation = await self.get_or_create_conversation(self.user.userID, target_user_id)
+        await self.send_tournament_invite_message(conversation.conversationID, tournament_id)
+        await self.notify_new_message(conversation.conversationID, self.user.username)
+
+        await self.channel_layer.group_send(
+            f"tournament_{target_user_id}",
+            {
+                "type": "tournament_invite",
+                "tournament_data": {
+                    "tournament_id": tournament_id,
+                    "inviter_id": self.user.userID,
+                    "inviter_username": self.user.username
+                }
+            }
+        )
+        logger.info(f"[{self.__class__.__name__}] Tournament invite handling completed")
+
     async def tournament_invite(self, event):
         await self.send_json({
             "e": "TOURNAMENT_INVITE",
             "d": event["tournament_data"]
         })
-        
-        # Create or get conversation
-        conversation = await self.get_or_create_conversation(self.user.userID, event["tournament_data"]["target_user_id"])
-        
-        # Send tournament invite message
-        await self.send_tournament_invite_message(conversation.conversationID, event["tournament_data"]["tournament_id"])
-        
-        # Notify target user of new message
-        await self.notify_new_message(conversation.conversationID, self.user.username)
 
     async def tournament_start(self, event):
         await self.send_json({
