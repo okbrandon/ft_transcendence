@@ -11,7 +11,7 @@ import {
 } from '../styles/Podium.styled';
 
 const PodiumPlayer = ({ player, position }) => {
-	const positionClass = position === 0 ? 'first' : position === 1 ? 'second' : 'third';
+	const positionClass = position === 0 ? 'second' : position === 1 ? 'first' : 'third';
 	const playerName = player?.name || 'N/A';
 	const playerAvatar = player?.avatar || 'images/default-profile.png';
 	const playerScore = player?.stats.gamesWon || 0;
