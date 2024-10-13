@@ -22,7 +22,6 @@ const GameLocal = () => {
 	const hit = useRef(null);
 	const intervalRef = useRef(null);
 
-
 	const terrain = useMemo(() => ({
 		WIDTH: 1200,
 		HEIGHT: 750,
@@ -38,16 +37,18 @@ const GameLocal = () => {
 	// Paddle movement speed
 	const paddleSpeed = 0.1;
 
+	// Setting up paddle movement
 	const movePaddle = useCallback((direction, paddle) => {
 		if (!paddle.current) return;
 		if (direction === 'up') {
-			paddle.current.position.y = Math.min(terrain.SCENEHEIGHT / 2 - 1.37, paddle.current.position.y + paddleSpeed); // Move up, ensure it doesn't go beyond top bound
+			paddle.current.position.y = Math.min(terrain.SCENEHEIGHT / 2 - 1.37, paddle.current.position.y + paddleSpeed);
 		}
 		if (direction === 'down') {
-			paddle.current.position.y = Math.max(-terrain.SCENEHEIGHT / 2 + 1.45, paddle.current.position.y - paddleSpeed); // Move down, ensure it doesn't go beyond bottom bound
+			paddle.current.position.y = Math.max(-terrain.SCENEHEIGHT / 2 + 1.45, paddle.current.position.y - paddleSpeed);
 		}
 	}, [terrain.SCENEHEIGHT, paddleSpeed]);
 
+	// Keyboard event listeners
 	useEffect(() => {
 		const handleKeyDown = event => {
 			if (!isGameStarted && !activateTimer) {
@@ -92,6 +93,7 @@ const GameLocal = () => {
 		}
 	}, []);
 
+	// Ball hit effect
 	useEffect(() => {
 		if (!isHit) return;
 		const timeoutID = setTimeout(() => setIsHit(false), 500);
@@ -143,12 +145,12 @@ const GameLocal = () => {
 		}
 
 		if (ball.current.position.x < -terrain.SCENEWIDTH / 2) {
-			setScoreB((prev) => prev + 1);
+			setScoreB(prev => prev + 1);
 			resetBall();
 		}
 
 		if (ball.current.position.x > terrain.SCENEWIDTH / 2) {
-			setScoreA((prev) => prev + 1);
+			setScoreA(prev => prev + 1);
 			resetBall();
 		}
 
