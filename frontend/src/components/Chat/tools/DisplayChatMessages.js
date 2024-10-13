@@ -8,6 +8,14 @@ import {
 } from '../styles/DirectMessage/DirectMessage.styled.js';
 
 const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) => {
+	const formatTimestamp = (timestamp) => {
+		const date = new Date(timestamp);
+		if (isNaN(date.getTime())) {
+			return 'Invalid Date';
+		}
+		return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+	};
+
 	if (!realConvo || realConvo.messages.length === 0) {
 		return (
 			<NewConversationMessage>
@@ -22,9 +30,7 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 						{message.sender.userID === userID ? (
 							<>
 								<MessageUsername $isHost={false}>You</MessageUsername>
-								<SenderBubble
-									data-time={new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-								>
+								<SenderBubble data-time={formatTimestamp(message.createdAt)}>
 									{message.content}
 								</SenderBubble>
 							</>
@@ -34,9 +40,7 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 									<Avatar src={message.sender.avatarID || 'images/default-profile.png'} alt={message.sender.username} />
 									{message.sender.username}
 								</MessageUsername>
-								<HostBubble
-									data-time={new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-								>
+								<HostBubble data-time={formatTimestamp(message.createdAt)}>
 									{message.content}
 								</HostBubble>
 							</>
