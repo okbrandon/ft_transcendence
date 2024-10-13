@@ -114,6 +114,7 @@ class Message(models.Model):
     content = models.CharField(max_length=256)
     sender = models.ForeignKey(User, null=True, related_name='sent_messages', on_delete=models.CASCADE)
     createdAt = models.DateTimeField(null=True, auto_now_add=True)
+    messageType = models.IntegerField(default=0)
 
     def __str__(self):
         return f"Message(messageID={self.messageID}, conversationID={self.conversation.conversationID})"
