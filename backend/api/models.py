@@ -83,7 +83,7 @@ class User(AbstractUser):
         return self.userID
 
 class Tournament(models.Model):
-    tournamentID = models.CharField(max_length=48, unique=True, default=generate_id)
+    tournamentID = models.CharField(max_length=48, unique=True)
     name = models.CharField(max_length=16)
     startDate = models.DateTimeField()
     endDate = models.DateTimeField(null=True, default=None)
