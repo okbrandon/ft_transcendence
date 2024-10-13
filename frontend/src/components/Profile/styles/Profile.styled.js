@@ -80,12 +80,8 @@ export const UserInfoItemContainer = styled.div`
 `;
 
 export const UserInfoItemTitle = styled.h3`
-	font-size: 1.6rem;
-	font-weight: 700;
 	color: rgba(255, 255, 255, 0.95);
 	letter-spacing: 0.05em;
-	text-transform: uppercase;
-	text-align: center;
 `;
 
 export const StyledCanvas = styled.canvas`

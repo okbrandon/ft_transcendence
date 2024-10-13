@@ -33,7 +33,7 @@ const MatchHistory = ({ matchArray }) => {
 
 	return (
 		<>
-			<h2>{t('profile.matchHistory.title')}</h2>
+			<h2>Match History</h2>
 			<MatchHistoryContainer>
 				{matchArray.length === 0 ? (
 					<p>{t('profile.matchHistory.noResults')}</p>

@@ -9,7 +9,7 @@ const Winrate = ({ matchArray }) => {
 
 	return (
 		<UserInfoItemContainer>
-			<UserInfoItemTitle>{t('profile.winRate.title')}</UserInfoItemTitle>
+			<UserInfoItemTitle>Winrate</UserInfoItemTitle>
 			<WinrateContainer>
 				<WinrateCard>
 					<h3>{t('profile.winRate.lifetime.title')}</h3>

@@ -98,7 +98,7 @@ const DisplaySkin = ({ currentSkin }) => {
 
     return (
         <UserInfoItemContainer>
-            <UserInfoItemTitle>{t('profile.skinDisplay.title')}</UserInfoItemTitle>
+            <UserInfoItemTitle>Paddle Skin</UserInfoItemTitle>
 			<StyledCanvas ref={canvasRef} />
         </UserInfoItemContainer>
     );
