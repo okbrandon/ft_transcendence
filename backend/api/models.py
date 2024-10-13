@@ -82,6 +82,26 @@ class User(AbstractUser):
     def __str__(self):
         return self.userID
 
+class Tournament(models.Model):
+    tournamentID = models.CharField(max_length=48, unique=True, default=generate_id)
+    name = models.CharField(max_length=16)
+    startDate = models.DateTimeField()
+    endDate = models.DateTimeField(null=True, default=None)
+    maxParticipants = models.IntegerField(default=8)
+    participants = models.ManyToManyField(User, related_name='tournaments')
+    status = models.CharField(max_length=20, choices=[
+        ('PENDING', 'Pending'),
+        ('ONGOING', 'Ongoing'),
+        ('COMPLETED', 'Completed'),
+        ('CANCELLED', 'Cancelled')
+    ], default='PENDING')
+    winnerID = models.CharField(max_length=48, null=True, default=None)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    isPublic = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.tournamentID})"
+
 class VerificationCode(models.Model):
     userID = models.CharField(max_length=48)
     code = models.CharField(max_length=48)

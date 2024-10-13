@@ -13,6 +13,7 @@ from .views.verification import *
 from .views.conversations import *
 from .views.leaderboards import *
 from .views.matches import *
+from .views.tournaments import *
 
 from django.http import JsonResponse
 from django.urls import path
@@ -64,6 +65,7 @@ urlpatterns = [
 	path('chat/conversations', ConversationListView.as_view()),
 
     path('matches', MatchCreate.as_view()),
+    path('tournaments', Tournaments.as_view()),
 
     path('health', HealthCheck.as_view()),
 ]

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from .models import User, Match, Message, Conversation, Token, Relationship, UserSettings, StoreItem, Purchase, VerificationCode
+from .models import User, Match, Message, Conversation, Token, Relationship, UserSettings, StoreItem, Purchase, VerificationCode, Tournament
+from .util import get_safe_profile
 
 class UserSerializer(serializers.ModelSerializer):
     status = serializers.JSONField()
@@ -69,3 +70,13 @@ class ConversationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Conversation
         fields = ['conversationID', 'conversationType', 'receipientID', 'participants', 'messages']
+
+class TournamentSerializer(serializers.ModelSerializer):
+    participants = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Tournament
+        fields = ['tournamentID', 'name', 'startDate', 'endDate', 'maxParticipants', 'participants', 'status', 'winnerID', 'createdAt', 'isPublic']
+
+    def get_participants(self, obj):
+        return [get_safe_profile(UserSerializer(participant).data, me=False) for participant in obj.participants.all()]
