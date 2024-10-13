@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import FilterButton from './tools/FilterButton';
+import React, { useState, useEffect, useCallback } from 'react';
 import ScoreTable from './ScoreTable';
 import Podium from './Podium';
 import {
@@ -10,21 +9,15 @@ import {
 
 import {
 	WrapContainer,
-	LeaderboardContainer,
-	BackgroundContainer,
-	TimeFrameButton,
-	TimeFrameContainer
+	LeaderboardContainer
 } from './styles/Leaderboard.styled';
+import TimeFrameButtons from './tools/TimeFrameButtons';
 
 const Leaderboard = () => {
 	const [timeFrame, setTimeFrame] = useState('lifetime');
 	const [leaderboardData, setLeaderboardData] = useState([]);
 
-	useEffect(() => {
-		fetchLeaderboardData();
-	}, [timeFrame]);
-
-	const fetchLeaderboardData = async () => {
+	const fetchLeaderboardData = useCallback(async () => {
 		let data;
 		switch (timeFrame) {
 			case 'daily':
@@ -37,7 +30,11 @@ const Leaderboard = () => {
 				data = await GetLeaderboardLifetime();
 		}
 		setLeaderboardData(data);
-	};
+	}, [timeFrame]);
+
+	useEffect(() => {
+		fetchLeaderboardData();
+	}, [fetchLeaderboardData]);
 
 	const handleTimeFrameChange = (newTimeFrame) => {
 		setTimeFrame(newTimeFrame);
@@ -45,31 +42,9 @@ const Leaderboard = () => {
 
 	return (
 		<WrapContainer>
-			<TimeFrameContainer>
-				<BackgroundContainer>
-					<TimeFrameButton
-						onClick={() => handleTimeFrameChange('lifetime')}
-						$isActive={timeFrame === 'lifetime'}
-					>
-						Lifetime
-					</TimeFrameButton>
-					<TimeFrameButton
-						onClick={() => handleTimeFrameChange('daily')}
-						$isActive={timeFrame === 'daily'}
-					>
-						Daily
-					</TimeFrameButton>
-					<TimeFrameButton
-						onClick={() => handleTimeFrameChange('weekly')}
-						$isActive={timeFrame === 'weekly'}
-					>
-						Weekly
-					</TimeFrameButton>
-				</BackgroundContainer>
-			</TimeFrameContainer>
-			<Podium leaderboardData={leaderboardData}/>
+			<TimeFrameButtons timeFrame={timeFrame} handleTimeFrameChange={handleTimeFrameChange} />
+			<Podium leaderboardData={leaderboardData} />
 			<LeaderboardContainer>
-				<FilterButton />
 				<ScoreTable data={leaderboardData} />
 			</LeaderboardContainer>
 		</WrapContainer>
