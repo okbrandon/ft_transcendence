@@ -115,7 +115,7 @@ export const ProfileName = styled.h2`
 	color: #fff;
 `;
 
-export const TimerContainer = styled.div`
+export const OverlayContainer = styled.div`
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -123,9 +123,23 @@ export const TimerContainer = styled.div`
 	width: 100%;
 	height: 100%;
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	gap: 20px;
 	z-index: 100;
+
+	h1 {
+		font-family: 'Orbitron', sans-serif;
+		font-size: 3rem;
+		color: #fff;
+	}
+
+	p {
+		font-family: 'Orbitron', sans-serif;
+		font-size: 2rem;
+		color: #fff;
+	}
 `;
 
 export const Timer = styled.div`
