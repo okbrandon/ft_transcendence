@@ -3,7 +3,7 @@ import { WrapContainer, LeaderboardContainer } from './styles/Leaderboard.styled
 import TimeFrameButtons from './tools/TimeFrameButtons';
 import Podium from './Podium';
 import ScoreTable from './ScoreTable';
-import StatsDropdown from './tools/StatsDropdown'; // Import the new component
+import StatsDropdown from './tools/StatsDropdown';
 import { GetLeaderboard } from '../../api/leaderboard';
 
 const Leaderboard = () => {
@@ -33,18 +33,14 @@ const Leaderboard = () => {
 
 	return (
 		<WrapContainer>
-			{/* TimeFrameButtons to change timeFrame */}
 			<TimeFrameButtons timeFrame={timeFrame} handleTimeFrameChange={handleTimeFrameChange} />
 
-			{/* StatsDropdown to change stats */}
 			<StatsDropdown stats={stats} handleStatsChange={handleStatsChange} />
 
-			{/* Podium component for top 3 users */}
-			<Podium leaderboardData={leaderboardData} />
+			<Podium leaderboardData={leaderboardData} selectedStat={stats} />
 
-			{/* LeaderboardContainer to display the entire leaderboard */}
 			<LeaderboardContainer>
-				<ScoreTable data={leaderboardData} />
+				<ScoreTable data={leaderboardData} selectedStat={stats} />
 			</LeaderboardContainer>
 		</WrapContainer>
 	);

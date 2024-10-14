@@ -3,13 +3,22 @@ import {
 	ScoreTableStyled,
 } from './styles/ScoreTable.styled';
 
-const ScoreTable = ({ data }) => {
+const ScoreTable = ({ data, selectedStat }) => {
 	const topPlayers = data;
 
-	// temporary sorting function
-	topPlayers.sort((a, b) => {
-		return b.stats.gamesWon - a.stats.gamesWon;
-	});
+	// Determine the header based on the selectedStat
+	const getHeader = (stat) => {
+		switch (stat) {
+			case 'gamesPlayed':
+				return 'Games Played';
+			case 'gamesWon':
+				return 'Games Won';
+			case 'gamesLost':
+				return 'Games Lost';
+			default:
+				return 'Score';
+		}
+	};
 
 	return (
 		<ScoreTableStyled>
@@ -17,7 +26,7 @@ const ScoreTable = ({ data }) => {
 				<tr>
 					<th>Pos</th>
 					<th>Player Name</th>
-					<th>Score</th>
+					<th>{getHeader(selectedStat)}</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -25,7 +34,7 @@ const ScoreTable = ({ data }) => {
 					<tr key={index}>
 						<td><i className="bi bi-trophy-fill" /> {index + 1}</td>
 						<td>{player.name}</td>
-						<td>{player.stats.gamesWon}</td>
+						<td>{player.stats[selectedStat]}</td>
 					</tr>
 				))}
 			</tbody>
