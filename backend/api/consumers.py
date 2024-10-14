@@ -698,11 +698,12 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         TERRAIN_WIDTH = 1200
         TERRAIN_HEIGHT = 750
         PADDLE_WIDTH = 10
-        PADDLE_HEIGHT = 60
+        PADDLE_HEIGHT = 60 # Paddle height is actually 120 but we're using half of it
         BALL_RADIUS = 25 / 2
         BALL_SPEED = 0.6
         BALL_MAX_SPEED = 17
         MAX_SCORE = 10
+        REFRESH_RATE = 1 / 60
 
         while match_id in self.active_matches:
             match_state = self.active_matches[match_id]
@@ -724,6 +725,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                     match_state['ball']['dx'] *= 1.1
                 if abs(match_state['ball']['dy']) < BALL_MAX_SPEED:
                     match_state['ball']['dy'] *= 1.1
+                match_state['ball']['x'] = PADDLE_WIDTH + BALL_RADIUS
                 await self.send_paddle_hit(match_state['playerA'], match_state['ball'])
 
             elif (match_state['ball']['x'] + BALL_RADIUS >= TERRAIN_WIDTH - PADDLE_WIDTH and  # Right side of ball hits Player B's paddle
@@ -734,6 +736,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                     match_state['ball']['dx'] *= 1.1
                 if abs(match_state['ball']['dy']) < BALL_MAX_SPEED:
                     match_state['ball']['dy'] *= 1.1
+                match_state['ball']['x'] = TERRAIN_WIDTH - PADDLE_WIDTH - BALL_RADIUS
                 await self.send_paddle_hit(match_state['playerB'], match_state['ball'])
 
             # Check for scoring
@@ -754,7 +757,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                 break
 
             await self.send_match_update()
-            await asyncio.sleep(1 / 60) # 120 FPS
+            await asyncio.sleep(REFRESH_RATE)
 
     async def send_paddle_hit(self, player, ball):
         await self.channel_layer.group_send(
