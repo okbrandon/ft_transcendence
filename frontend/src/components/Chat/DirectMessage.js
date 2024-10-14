@@ -118,64 +118,64 @@ export const DirectMessage = ({
 
 	return (
 		<>
-		<DirectMessageContainer $isOpen={isOpen} $isMinimized={isMinimized}>
-			<Header onClick={toggleMinimization}>
-				<ProfilePicture src={proPic} alt={`${otherUser.username}'s profile picture`} $header />
-				<OnlineStatus $status={otherUser.status?.online || false} />
-				<Username onClick={toggleDropdown}>{username}</Username>
-				<Dropdown ref={dropdownRef} $isOpen={isDropdownOpen}>
-					<DropdownItem data-action="profile" onClick={() => handleDropdownAction('profile')}>Profile</DropdownItem>
-					<DropdownItem data-action="invite" onClick={() => handleDropdownAction('invite')}>Invite</DropdownItem>
-					<DropdownItem data-action="block" onClick={() => handleDropdownAction('block')}>Block</DropdownItem>
-				</Dropdown>
-				<ActionButtonContainer>
-					<Arrow ArrowAnimate={!isMinimized} />
-					<CloseButton variant='white' onClick={onClose} />
-				</ActionButtonContainer>
-			</Header>
+			<DirectMessageContainer $isOpen={isOpen} $isMinimized={isMinimized}>
+				<Header onClick={toggleMinimization}>
+					<ProfilePicture src={proPic} alt={`${otherUser.username}'s profile picture`} $header />
+					<OnlineStatus $status={otherUser.status?.online || false} />
+					<Username onClick={toggleDropdown}>{username}</Username>
+					<Dropdown ref={dropdownRef} $isOpen={isDropdownOpen}>
+						<DropdownItem data-action="profile" onClick={() => handleDropdownAction('profile')}>Profile</DropdownItem>
+						<DropdownItem data-action="invite" onClick={() => handleDropdownAction('invite')}>Invite</DropdownItem>
+						<DropdownItem data-action="block" onClick={() => handleDropdownAction('block')}>Block</DropdownItem>
+					</Dropdown>
+					<ActionButtonContainer>
+						<Arrow ArrowAnimate={!isMinimized} />
+						<CloseButton variant='white' onClick={onClose} />
+					</ActionButtonContainer>
+				</Header>
 
-			{isOpen && !isMinimized && (
-				<>
-					<ChatMessages>
-						<DisplayChatMessages
-							realConvo={realConvo}
-							userID={userID}
-							messagesEndRef={messagesEndRef}
-							otherUser={username}
-						/>
-					</ChatMessages>
+				{isOpen && !isMinimized && (
+					<>
+						<ChatMessages>
+							<DisplayChatMessages
+								realConvo={realConvo}
+								userID={userID}
+								messagesEndRef={messagesEndRef}
+								otherUser={username}
+							/>
+						</ChatMessages>
 
-					<ChatInputContainer>
-						<ChatInput
-							as="textarea"
-							placeholder="Type a message..."
-							value={content}
-							onChange={e => setContent(e.target.value)}
-							onKeyDown={e => {
-								if (e.key === 'Enter') {
-									e.preventDefault();
-									handleMessage();
-								}
-							}}
-							maxLength={256}
-							rows={1}
-							style={{ resize: 'none', overflow: 'hidden' }}
-						/>
-						<SendButton onClick={handleMessage} disabled={content.trim() === ''}>
-							<i className="bi bi-send-fill" />
-						</SendButton>
-					</ChatInputContainer>
-				</>
-			)}
-		</DirectMessageContainer>
+						<ChatInputContainer>
+							<ChatInput
+								as="textarea"
+								placeholder="Type a message..."
+								value={content}
+								onChange={e => setContent(e.target.value)}
+								onKeyDown={e => {
+									if (e.key === 'Enter') {
+										e.preventDefault();
+										handleMessage();
+									}
+								}}
+								maxLength={256}
+								rows={1}
+								style={{ resize: 'none', overflow: 'hidden' }}
+							/>
+							<SendButton onClick={handleMessage} disabled={content.trim() === ''}>
+								<i className="bi bi-send-fill" />
+							</SendButton>
+						</ChatInputContainer>
+					</>
+				)}
+			</DirectMessageContainer>
 
-		<ConfirmationModal
-			isOpen={isBlockModalOpen}
-			onClose={() => setIsBlockModalOpen(false)}
-			onConfirm={handleBlockUser}
-			title="Block User"
-			message={`Are you sure you want to block ${username}? You won't be able to see their messages or receive invitations from them.`}
-		/>
-	  </>
+			<ConfirmationModal
+				isOpen={isBlockModalOpen}
+				onClose={() => setIsBlockModalOpen(false)}
+				onConfirm={handleBlockUser}
+				title="Block User"
+				message={`Are you sure you want to block ${username}? You won't be able to see their messages or receive invitations from them.`}
+			/>
+		</>
 	);
 };

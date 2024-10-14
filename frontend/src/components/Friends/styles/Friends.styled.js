@@ -131,7 +131,7 @@ export const ProfileStatus = styled.span`
 	background: ${({ $status }) => $status === true ? "#00ff88" : "#ff5555"};
 	border-radius: 50%;
 	margin-right: 2rem;
-	box-shadow: 0 0 10px ${({ $status }) => ($status === "online" ? "#00ff88" : "#ff5555")};
+	box-shadow: 0 0 10px ${({ $status }) => ($status === true ? "#00ff88" : "#ff5555")};
 `;
 
 export const ProfileInfoContainer = styled.div`
