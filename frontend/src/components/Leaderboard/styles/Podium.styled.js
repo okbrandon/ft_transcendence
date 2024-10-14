@@ -56,6 +56,7 @@ export const PlayerAvatar = styled.img`
 	border: 3px solid #3f3f3f;
 	box-shadow: 0 0 100px rgba(255, 255, 255, 0.7);
 	position: relative;
+	object-fit: cover;
 	top: ${({ $position }) =>
 		$position === 'first' ? calculateTop(320, 400) :
 		$position === 'second' ? calculateTop(280, 380) :

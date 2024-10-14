@@ -9,34 +9,15 @@ import {
 	PodiumBase,
 	Badge,
 } from '../styles/Podium.styled';
-import { GetUsers } from '../../../api/user';
 
 const PodiumPlayer = ({ player, position, selectedStat }) => {
-	const [avatar, setAvatar] = useState('images/default-profile.png');
 	const positionClass = position === 0 ? 'second' : position === 1 ? 'first' : 'third';
-	const playerName = player?.name || 'N/A';
+	const playerName = player?.user.username || 'N/A';
 	const playerScore = player?.stats[selectedStat] || 0;
-
-	// DON'T USE THIS CODE
-	// useEffect(() => {
-	// 	const fetchUserAvatar = async () => {
-	// 		try {
-	// 			const users = await GetUsers();
-	// 			const matchedUser = users.find(user => user.id === player.userID);
-	// 			if (matchedUser) {
-	// 				setAvatar(matchedUser.avatar);
-	// 			}
-	// 		} catch (error) {
-	// 			console.error('Error fetching user avatar:', error);
-	// 		}
-	// 	};
-
-	// 	fetchUserAvatar();
-	// }, [player.userID]);
 
 	return (
 		<PodiumBase className={positionClass}>
-			<PlayerAvatar src={avatar} alt={playerName} $position={positionClass} />
+			<PlayerAvatar src={player?.user.avatarID ? player?.user.avatarID : 'images/default-profile.png'} alt={playerName} $position={positionClass} />
 			<PlayerInfo $position={positionClass}>
 				<PlayerName>{playerName}</PlayerName>
 				<TrophyContainer $position={positionClass}>

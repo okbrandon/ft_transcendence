@@ -27,7 +27,7 @@ const ScoreTable = ({ data, selectedStat }) => (
 				<Trophy className="bi bi-trophy-fill" position={index + 1} />
 				{index + 1}
 			</td>
-			<td>{player.name}</td>
+			<td>{player.user.username}</td>
 			<td>{player.stats[selectedStat]}</td>
 			</tr>
 		))}
