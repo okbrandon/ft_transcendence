@@ -29,11 +29,24 @@ export const ScoreTableStyled = styled.table`
 		table-layout: fixed;
 	}
 
-	& td {
+	& th, & td {
 		padding: 16px;
 		color: rgba(255, 255, 255, 0.85);
 		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 		font-size: 16px;
+		text-align: left;
+	}
+
+	& th:nth-child(1), & td:nth-child(1) {
+		width: 10%;
+	}
+
+	& th:nth-child(2), & td:nth-child(2) {
+		width: 45%;
+	}
+
+	& th:nth-child(3), & td:nth-child(3) {
+		width: 45%;
 	}
 
 	& tbody > tr:nth-child(even) {
