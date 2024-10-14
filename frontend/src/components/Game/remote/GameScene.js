@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { GameSceneContainer, Score, ScoresContainer, StyledCanvas, Timer, OverlayContainer } from "../styles/Game.styled";
 import GameCanvas from "../../../scripts/game";
-import { useNavigate } from "react-router-dom";
+import PongButton from "../../../styles/shared/PongButton.styled";
 
-const GameScene = ({ matchState, hitPos, sendMessage, activateTimer, setActivateTimer }) => {
+const GameScene = ({ matchState, hitPos, sendMessage, activateTimer, setActivateTimer, gameOver, won }) => {
 	const navigate = useNavigate();
 
 	const [keyPressed, setKeyPressed] = useState(null);
@@ -142,11 +143,21 @@ const GameScene = ({ matchState, hitPos, sendMessage, activateTimer, setActivate
 				<Score>{scoreA}</Score>
 				<Score>{scoreB}</Score>
 			</ScoresContainer>
-			{activateTimer && (
-				<OverlayContainer>
-					<Timer>{timer}</Timer>
-				</OverlayContainer>
-			)}
+				{gameOver ? (
+					<OverlayContainer>
+						<h1>Game Over!</h1>
+						<p>{won ? 'You won' : 'You lost'}</p>
+						<PongButton onClick={() => navigate('/playmenu')}>Go Back to Main Menu</PongButton>
+					</OverlayContainer>
+				) : (
+					<>
+						{activateTimer && (
+							<OverlayContainer>
+								<Timer>{timer}</Timer>
+							</OverlayContainer>
+						)}
+					</>
+				)}
 		</GameSceneContainer>
 	);
 };

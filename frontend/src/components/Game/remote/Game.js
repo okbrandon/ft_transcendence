@@ -17,6 +17,8 @@ const Game = () => {
 		opponent: null,
 		playerSide: null,
 	});
+	const [gameOver, setGameOver] = useState(false);
+	const [won, setWon] = useState(false);
 
 	const [heartbeatIntervalTime, setHeartbeatIntervalTime] = useState(null);
 	const [hitPos, setHitPos] = useState(null);
@@ -96,8 +98,8 @@ const Game = () => {
 					setGameState(prevState => ({ ...prevState, matchState: data.d }));
 					break;
 				case 'MATCH_END':
-					alert(data.d.won ? 'You won!' : 'You lost!');
-					navigate('/');
+					setGameOver(true);
+					setWon(data.d.won);
 					break;
 				case 'HEARTBEAT_ACK':
 					handleHeartbeatAck();
@@ -137,6 +139,8 @@ const Game = () => {
 				sendMessage={sendMessage}
 				activateTimer={activateTimer}
 				setActivateTimer={setActivateTimer}
+				gameOver={gameOver}
+				won={won}
 			/>
 		</PageContainer>
 	)

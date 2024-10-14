@@ -250,7 +250,7 @@ const GameLocal = () => {
 					<OverlayContainer>
 						<h1>Game Over!</h1>
 						<p>{scoreA >= 10 ? 'Player 1 Wins' : 'Player 2 Wins'}</p>
-						<PongButton onClick={() => navigate('/')}>Go Back to Main Menu</PongButton>
+						<PongButton onClick={() => navigate('/playmenu')}>Go Back to Main Menu</PongButton>
 					</OverlayContainer>
 				) : (
 					<>
