@@ -356,9 +356,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         event_type = content.get('e')
         data = content.get('d')
 
-
         if event_type != 'HEARTBEAT':
-            # logger.info(f"[{self.__class__.__name__}] Received event: {event_type}")
             pass
 
         if event_type == 'HEARTBEAT':
@@ -379,7 +377,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         while True:
             await asyncio.sleep(2)  # Check every 2 seconds
             current_time = time.time()
-            if current_time - self.last_heartbeat > 10000:  # No heartbeat for 10 seconds
+            if current_time - self.last_heartbeat > 10:  # No heartbeat for 10 seconds
                 logger.warning(f"[{self.__class__.__name__}] User {self.user.userID} missed heartbeat too many times, closing connection")
                 await self.close()
                 break
@@ -536,24 +534,26 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         await self.start_match(match)
 
     async def match_ready(self, event):
-        await self.send_json({
-            "e": "MATCH_READY",
-            "d": event["match_state"]
-        })
+        try:
+            await self.send_json({
+                "e": "MATCH_READY",
+                "d": event["match_state"]
+            })
+        except Exception as _:
+            pass
 
     async def handle_paddle_move(self, data):
         direction = data.get('direction')
         match_state = self.active_matches[self.match.matchID]
         player_key = 'playerA' if match_state['playerA']['id'] == self.user.userID else 'playerB'
 
-        paddle_speed = 20  # Appropriate paddle speed (adjust as needed)
+        paddle_speed = 5  # Appropriate paddle speed (adjust as needed)
 
         if direction == 'up':
             match_state[player_key]['paddle_y'] = min(682, match_state[player_key]['paddle_y'] + paddle_speed)
         elif direction == 'down':
             match_state[player_key]['paddle_y'] = max(73, match_state[player_key]['paddle_y'] - paddle_speed)
 
-        logger.debug(f"[MatchConsumer] Paddle moved: {player_key} - {direction}")
         await self.send_match_update()
 
     async def handle_player_quit(self):
@@ -564,16 +564,12 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         logger.info(f"[{self.__class__.__name__}] Player {self.user.userID} quit the match {self.match.matchID}")
 
         if self.match.playerB is not None and self.match.playerA is not None:
-            await self.end_match(self.match.matchID, self.user.userID)
+            winner_id = self.match.playerA['id'] if self.match.playerB['id'] == self.user.userID else self.match.playerB['id']
+            await self.send_match_end(winner_id)
 
         if self.match.playerB is None or self.match.playerA is None:
             if self.match.finishedAt is None:
                 await self.delete_match(self.match.matchID)
-
-        await self.end_match(self.match.matchID, self.user.userID)
-        if self.match.matchID in self.active_matches:
-            del self.active_matches[self.match.matchID]
-
 
     @database_sync_to_async
     def delete_match(self, match_id):
@@ -624,7 +620,6 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             new_match = Match.objects.create(
                 matchID=generate_id("match"),
                 playerA={"id": self.user.userID, "platform": "web"},
-                # playerB={"id": "ai", "platform": "server"},
                 winnerID=None,
                 finishedAt=None,
                 scores={},
@@ -642,13 +637,11 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         if match.playerB is None:
             return None
         opponent_id = match.playerB['id'] if match.playerA['id'] == user.userID else match.playerA['id']
-        if opponent_id == 'ai':
-            return {"userID": "ai", "username": "AI Opponent", "displayName": "AI", "avatarID": "ai_avatar"}
         try:
             opponent = User.objects.get(userID=opponent_id)
             opponent_data = UserSerializer(opponent).data
             safe_profile = get_safe_profile(opponent_data, me=False)
-            opponent_settings, created = UserSettings.objects.get_or_create(userID=opponent_id)
+            opponent_settings, _ = UserSettings.objects.get_or_create(userID=opponent_id)
             opponent_settings_data = UserSettingsSerializer(opponent_settings).data
             safe_profile['paddle_skin'] = opponent_settings_data['selectedPaddleSkin']
             logger.info(f"[{self.__class__.__name__}] Opponent info retrieved for: {opponent_id}")
@@ -666,19 +659,24 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                 "match_state": match_state
             }
         )
-        # logger.debug(f"[{self.__class__.__name__}] Match update sent for match: {self.match.matchID}")
 
     async def match_update(self, event):
-        await self.send_json({
-            "e": "MATCH_UPDATE",
-            "d": event["match_state"]
-        })
+        try:
+            await self.send_json({
+                "e": "MATCH_UPDATE",
+                "d": event["match_state"]
+            })
+        except Exception as _:
+            pass
 
     async def match_begin(self, event):
-        await self.send_json({
-            "e": "MATCH_BEGIN",
-            "d": event["match_state"]
-        })
+        try:
+            await self.send_json({
+                "e": "MATCH_BEGIN",
+                "d": event["match_state"]
+            })
+        except Exception as _:
+            pass
 
     @database_sync_to_async
     def start_match(self, match):
@@ -700,32 +698,34 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         TERRAIN_WIDTH = 1200
         TERRAIN_HEIGHT = 750
         PADDLE_WIDTH = 10
-        PADDLE_HEIGHT = 60
+        PADDLE_HEIGHT = 60 # Paddle height is actually 120 but we're using half of it
         BALL_RADIUS = 25 / 2
         BALL_SPEED = 0.6
         BALL_MAX_SPEED = 17
         MAX_SCORE = 10
+        REFRESH_RATE = 1 / 60
 
         while match_id in self.active_matches:
             match_state = self.active_matches[match_id]
 
             # Update ball position
-            match_state['ball']['x'] += match_state['ball']['dx']
-            match_state['ball']['y'] += match_state['ball']['dy']
+            match_state['ball']['x'] += match_state['ball']['dx'] * BALL_SPEED
+            match_state['ball']['y'] += match_state['ball']['dy'] * BALL_SPEED
 
             # Check for collisions with top and bottom walls
             if match_state['ball']['y'] - BALL_RADIUS <= 0 or match_state['ball']['y'] + BALL_RADIUS >= TERRAIN_HEIGHT:
                 match_state['ball']['dy'] *= -1
 
             # Check for collisions with paddles
-            if (match_state['ball']['x'] <= PADDLE_WIDTH and
-                match_state['ball']['y'] + BALL_SIZE >= match_state['playerA']['paddle_y'] and
-                match_state['ball']['y'] <= match_state['playerA']['paddle_y'] + PADDLE_HEIGHT):
+            if (match_state['ball']['x'] - BALL_RADIUS <= PADDLE_WIDTH and  # Left side of ball hits Player A's paddle
+                match_state['ball']['y'] - BALL_RADIUS <= match_state['playerA']['paddle_y'] + PADDLE_HEIGHT and  # Ball's bottom is above paddle's bottom
+                match_state['ball']['y'] + BALL_RADIUS >= match_state['playerA']['paddle_y'] - PADDLE_HEIGHT):  # Ball's top is below paddle's top
                 match_state['ball']['dx'] *= -1
                 if abs(match_state['ball']['dx']) < BALL_MAX_SPEED:
                     match_state['ball']['dx'] *= 1.1
                 if abs(match_state['ball']['dy']) < BALL_MAX_SPEED:
                     match_state['ball']['dy'] *= 1.1
+                match_state['ball']['x'] = PADDLE_WIDTH + BALL_RADIUS
                 await self.send_paddle_hit(match_state['playerA'], match_state['ball'])
 
             elif (match_state['ball']['x'] + BALL_RADIUS >= TERRAIN_WIDTH - PADDLE_WIDTH and  # Right side of ball hits Player B's paddle
@@ -736,6 +736,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                     match_state['ball']['dx'] *= 1.1
                 if abs(match_state['ball']['dy']) < BALL_MAX_SPEED:
                     match_state['ball']['dy'] *= 1.1
+                match_state['ball']['x'] = TERRAIN_WIDTH - PADDLE_WIDTH - BALL_RADIUS
                 await self.send_paddle_hit(match_state['playerB'], match_state['ball'])
 
             # Check for scoring
@@ -756,7 +757,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                 break
 
             await self.send_match_update()
-            await asyncio.sleep(1 / 60) # 120 FPS
+            await asyncio.sleep(REFRESH_RATE)
 
     async def send_paddle_hit(self, player, ball):
         await self.channel_layer.group_send(
@@ -769,11 +770,14 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         )
 
     async def paddle_hit(self, event):
-        await self.send_json({
-            "e": "PADDLE_HIT",
-            "d": {"player": event["player"], "ball": event["ball"]}
-        })
-        logger.info(f"[{self.__class__.__name__}] Paddle hit event sent for player: {event['player']['id']}")
+        try:
+            await self.send_json({
+                "e": "PADDLE_HIT",
+                "d": {"player": event["player"], "ball": event["ball"]}
+            })
+            logger.info(f"[{self.__class__.__name__}] Paddle hit event sent for player: {event['player']['id']}")
+        except Exception as _:
+            pass
 
     async def send_ball_scored(self, player):
         await self.channel_layer.group_send(
@@ -785,11 +789,14 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         )
 
     async def ball_scored(self, event):
-        await self.send_json({
-            "e": "BALL_SCORED",
-            "d": {"player": event["player"]}
-        })
-        logger.info(f"[{self.__class__.__name__}] Ball scored event processed for player: {event['player']['id']}")
+        try:
+            await self.send_json({
+                "e": "BALL_SCORED",
+                "d": {"player": event["player"]}
+            })
+            logger.info(f"[{self.__class__.__name__}] Ball scored event processed for player: {event['player']['id']}")
+        except Exception as _:
+            pass
 
     def reset_ball(self, match_state):
         if self.match.flags & (1 << 1):
@@ -809,6 +816,11 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             self.match.finishedAt = timezone.now()
             self.match.scores = self.active_matches[match_id]['scores']
             await self.save_match()
+
+            if self.match.matchID in self.active_matches:
+                logger.info(f"[{self.__class__.__name__}] Deleting match state for match: {self.match.matchID}")
+                del self.active_matches[self.match.matchID]
+
             logger.info(f"[{self.__class__.__name__}] Match {match_id} ended. Winner: {winner_id}")
             return {
                 "type": "match.ended",
@@ -820,24 +832,40 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         await loop.run_in_executor(None, self.match.save)
 
     async def send_match_end(self, winner_id):
-        end_match_data = await self.end_match(self.match.matchID, winner_id)
-        await self.channel_layer.group_send(
-            f"match_{self.match.matchID}",
-            end_match_data
-        )
-        logger.info(f"[{self.__class__.__name__}] Match end event sent for match: {self.match.matchID}")
+        try:
+            end_match_data = await self.end_match(self.match.matchID, winner_id)
+            await self.channel_layer.group_send(
+                f"match_{self.match.matchID}",
+                end_match_data
+            )
+            logger.info(f"[{self.__class__.__name__}] Match end event sent for match: {self.match.matchID}")
+        except Exception as _:
+            pass
 
     async def match_ended(self, event):
-        await self.send_json({
-            "e": "MATCH_END",
-            "d": {"won": event["winner"] == self.user.userID}
-        })
-        logger.info(f"[{self.__class__.__name__}] Match end event processed for user: {self.user.userID}")
-        await self.close()
+        try:
+            await self.send_json({
+                "e": "MATCH_END",
+                "d": {"won": event["winner"] == self.user.userID}
+            })
+            logger.info(f"[{self.__class__.__name__}] Match end event processed for user: {self.user.userID}")
+            await self.close()
+        except Exception as _:
+            pass
 
     async def player_join(self, event):
-        await self.send_json({
-            "e": "PLAYER_JOIN",
-            "d": event["player"]
-        })
-        logger.info(f"[MatchConsumer] Player join event sent for match: {self.match.matchID}")
+        player_data = event["player"]
+
+        if player_data['userID'] == self.user.userID:
+            return
+
+        self.match.playerB = {"id": player_data['userID'], "platform": ("web" if player_data['userID'] != 'user_ai' else "server")}
+
+        try:
+            await self.send_json({
+                "e": "PLAYER_JOIN",
+                "d": player_data
+            })
+            logger.info(f"[{self.__class__.__name__}] Player join event sent for match: {self.match.matchID}")
+        except Exception as _:
+            pass

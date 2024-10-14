@@ -243,7 +243,7 @@ class UserSettingsMe(APIView):
         serializer = UserSettingsSerializer(settings)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-class UserSettings(APIView):
+class UserSettingsOther(APIView):
     def get_object(self, identifier):
         try:
             return User.objects.get(models.Q(userID=identifier) | models.Q(username=identifier))
@@ -353,7 +353,8 @@ class UserRelationshipsMe(APIView):
         )
 
         if relationship.status == 0:
-            self.notify_chat_websocket(relationship, status="rejected")
+            if me.userID != relationship.userA:
+                self.notify_chat_websocket(relationship, status="rejected")
 
         relationship.delete()
 
