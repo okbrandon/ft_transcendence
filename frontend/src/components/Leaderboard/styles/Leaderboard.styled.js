@@ -36,7 +36,6 @@ export const ButtonsFilterContainer = styled.div`
 export const TimeFrameContainer = styled.div`
 	display: flex;
 	justify-content: center;
-	margin-bottom: 70px;
 `;
 
 export const BackgroundContainer = styled.div`
