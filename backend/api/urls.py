@@ -66,6 +66,13 @@ urlpatterns = [
 
     path('matches', MatchCreate.as_view()),
     path('tournaments', Tournaments.as_view()),
+    path('tournaments/<str:tournamentID>', TournamentDetail.as_view()),
+    path('tournaments/<str:tournamentID>/join', JoinPublicTournament.as_view()),
+    path('tournaments/<str:tournamentID>/invite', Tournaments.as_view()),
+    path('tournaments/<str:tournamentID>/invite/<str:action>', TournamentInviteResponse.as_view()),
+    path('tournaments/<str:tournamentID>/kick', KickUserFromTournament.as_view()),
+    path('tournaments/<str:tournamentID>/start', ForceTournamentStart.as_view()),
+    path('tournaments/@me', UserCurrentTournament.as_view()),
 
     path('health', HealthCheck.as_view()),
 ]

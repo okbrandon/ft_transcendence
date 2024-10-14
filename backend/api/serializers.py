@@ -76,7 +76,7 @@ class TournamentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tournament
-        fields = ['tournamentID', 'name', 'startDate', 'endDate', 'maxParticipants', 'participants', 'status', 'winnerID', 'createdAt', 'isPublic']
+        fields = ['tournamentID', 'name', 'startDate', 'endDate', 'maxParticipants', 'participants', 'status', 'winnerID', 'createdAt', 'isPublic', 'owner']
 
     def get_participants(self, obj):
         return [get_safe_profile(UserSerializer(participant).data, me=False) for participant in obj.participants.all()]

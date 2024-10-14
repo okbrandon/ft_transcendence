@@ -98,9 +98,25 @@ class Tournament(models.Model):
     winnerID = models.CharField(max_length=48, null=True, default=None)
     createdAt = models.DateTimeField(auto_now_add=True)
     isPublic = models.BooleanField(default=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='owned_tournaments')
 
     def __str__(self):
         return f"{self.name} ({self.tournamentID})"
+
+class TournamentInvite(models.Model):
+    inviteID = models.CharField(max_length=48, unique=True)
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name='invites')
+    inviter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_invites')
+    invitee = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_invites')
+    status = models.CharField(max_length=20, choices=[
+        ('PENDING', 'Pending'),
+        ('ACCEPTED', 'Accepted'),
+        ('DECLINED', 'Declined')
+    ], default='PENDING')
+    createdAt = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Invite to {self.tournament.name} for {self.invitee.username}"
 
 class VerificationCode(models.Model):
     userID = models.CharField(max_length=48)

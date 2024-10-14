@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
 	AvailableTournamentsContainer,
@@ -11,33 +11,47 @@ import {
 	BackButton
 } from "../styles/Tournament/AvailableTournaments.styled";
 import PongButton from "../../../styles/shared/PongButton.styled";
-
-const initialTournaments = [
-	{ id: 1, name: "Summer Cup", players: "5/8" },
-	{ id: 2, name: "Winter Clash", players: "6/8" },
-	{ id: 3, name: "Pro League", players: "8/8" },
-	{ id: 4, name: "Fun Tournament", players: "3/8" },
-	{ id: 5, name: "Hanmin", players: "5/8" },
-	{ id: 6, name: "Doomin", players: "6/8" },
-	{ id: 7, name: "No", players: "8/8" },
-	{ id: 8, name: "Yes", players: "3/8" },
-	{ id: 9, name: "Pro Valo", players: "8/8" },
-];
+import API from "../../../api/api";
 
 const AvailableTournaments = ({ setOptions }) => {
 	const navigate = useNavigate();
 	const [searchQuery, setSearchQuery] = useState("");
-	const [tournaments, setTournaments] = useState(initialTournaments);
+	const [tournaments, setTournaments] = useState([]);
+
+	useEffect(() => {
+		fetchTournaments();
+	}, []);
+
+	const fetchTournaments = async () => {
+		try {
+			const response = await API.get('/tournaments');
+			setTournaments(response.data);
+		} catch (error) {
+			console.error("Error fetching tournaments:", error);
+		}
+	};
 
 	// Filter tournaments based on search input
 	const filteredTournaments = tournaments.filter((tournament) =>
 		tournament.name.toLowerCase().includes(searchQuery.toLowerCase())
 	);
 
-	const handleJoinTournament = (tournamentName) => {
-		// Logic to handle joining a tournament (e.g., API call)
-		// After joining, you can redirect the user to a confirmation page or tournament room
-		navigate("/tournament-room");
+	const handleJoinTournament = async (tournamentID) => {
+		try {
+			const response = await API.get(`/tournaments/${tournamentID}`);
+			const tournament = response.data;
+
+			if (tournament.isPublic) {
+				await API.post(`/tournaments/${tournamentID}/join`);
+				navigate(`/tournaments/${tournamentID}`);
+			} else {
+				// For private tournaments, we might need to handle invites differently
+				console.log("This is a private tournament. Invite handling not implemented.");
+			}
+		} catch (error) {
+			console.error("Error joining tournament:", error);
+			// Handle errors (e.g., tournament full, already joined, etc.)
+		}
 	};
 
 	return (
@@ -56,12 +70,16 @@ const AvailableTournaments = ({ setOptions }) => {
 			<AvailableTournamentsContainer>
 				<TournamentList>
 					{filteredTournaments.map((tournament) => (
-						<TournamentCard key={tournament.id}>
+						<TournamentCard key={tournament.tournamentID}>
 							<h3>{tournament.name}</h3>
-							<p>Players: {tournament.players}</p>
-							<PongButton onClick={() => handleJoinTournament(tournament.name)}>
-								Join
-							</PongButton>
+							<p>Players: {tournament.participants.length}/{tournament.maxParticipants}</p>
+							<p>Start Date: {new Date(tournament.startDate).toLocaleString()}</p>
+							<p>Status: {tournament.status}</p>
+							{tournament.status === 'PENDING' && (
+								<PongButton onClick={() => handleJoinTournament(tournament.tournamentID)}>
+									Join
+								</PongButton>
+							)}
 						</TournamentCard>
 					))}
 				</TournamentList>

@@ -7,7 +7,8 @@ import { GetBlockedUsers, GetFriends, GetRequests } from "../scripts/relation";
 import { useNotification } from "./NotificationContext";
 
 const WS_CHAT_URL = process.env.REACT_APP_ENV === 'production' ? '/ws/chat/?token=' : 'ws://localhost:8000/ws/chat/?token=';
-const WS_STATUS_URL =  process.env.REACT_APP_ENV === 'production' ? '/ws/status/?token=' : 'ws://localhost:8000/ws/status/?token='
+const WS_STATUS_URL =  process.env.REACT_APP_ENV === 'production' ? '/ws/status/?token=' : 'ws://localhost:8000/ws/status/?token=';
+const WS_TOURNAMENT_URL = process.env.REACT_APP_ENV === 'production' ? '/ws/tournament/?token=' : 'ws://localhost:8000/ws/tournament/?token=';
 
 export const RelationContext = createContext({
 	conversations: [],
@@ -18,6 +19,7 @@ const RelationProvider = ({ children }) => {
 	const { addNotification } = useNotification();
 	const socketStatus = useRef(null);
 	const socketChat = useRef(null);
+	const socketTournament = useRef(null);
 	const pathnameRef = useRef(location.pathname);
 	const [conversations, setConversations] = useState([]);
 	const [relations, setRelations] = useState([]);
@@ -137,6 +139,43 @@ const RelationProvider = ({ children }) => {
 			if (socketStatus.current && socketStatus.current.readyState === WebSocket.OPEN) {
 				socketStatus.current.close();
 				logger('WebSocket for Status closed');
+			}
+		};
+	}, []);
+
+	useEffect(() => {
+		socketTournament.current = new WebSocket(WS_TOURNAMENT_URL + localStorage.getItem('token'));
+		socketTournament.current.onopen = () => {
+			logger('WebSocket for Tournament connection opened');
+			socketTournament.current.send(JSON.stringify({
+				"e": "IDENTIFY",
+				"d": { "token": localStorage.getItem('token') }
+			}));
+		};
+		socketTournament.current.onmessage = event => {
+			const response = JSON.parse(event.data);
+			if (response.e === "HELLO") {
+				// Start heartbeat
+				setInterval(() => {
+					socketTournament.current.send(JSON.stringify({
+						"e": "HEARTBEAT"
+					}));
+				}, response.d.heartbeat_interval);
+			} else if (response.e === "HEARTBEAT_ACK") {
+				// Heartbeat acknowledged
+			} else {
+				// Handle other tournament-related messages here
+				console.log('Tournament message received:', response);
+			}
+		};
+		socketTournament.current.onerror = error => {
+			console.error('WebSocket for Tournament encountered an error:', error);
+		};
+
+		return () => {
+			if (socketTournament.current && socketTournament.current.readyState === WebSocket.OPEN) {
+				socketTournament.current.close();
+				logger('WebSocket for Tournament closed');
 			}
 		};
 	}, []);

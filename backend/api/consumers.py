@@ -341,15 +341,16 @@ class TournamentConsumer(AsyncJsonWebsocketConsumer):
         self.last_heartbeat = time.time()
         self.heartbeat_task = asyncio.create_task(self.heartbeat_check())
         self.user = None
+        self.tournament = None
         logger.info(f"[{self.__class__.__name__}] Connection accepted, heartbeat check task started")
 
     async def disconnect(self, close_code):
         logger.info(f"[{self.__class__.__name__}] Disconnecting with close code: {close_code}")
         if hasattr(self, 'heartbeat_task'):
             self.heartbeat_task.cancel()
-        if self.user:
+        if self.user and self.tournament:
             await self.channel_layer.group_discard(
-                f"tournament_{self.user.userID}",
+                f"tournament_{self.tournament.tournamentID}",
                 self.channel_name
             )
         logger.info(f"[{self.__class__.__name__}] Disconnected, cleanup completed")
@@ -366,8 +367,6 @@ class TournamentConsumer(AsyncJsonWebsocketConsumer):
             await self.send_json({"e": "HEARTBEAT_ACK"})
         elif event_type == 'IDENTIFY':
             await self.handle_identify(data)
-        elif event_type == 'TOURNAMENT_INVITE':
-            await self.handle_tournament_invite(data)
 
     async def handle_identify(self, data):
         token = data.get('token')
@@ -384,12 +383,33 @@ class TournamentConsumer(AsyncJsonWebsocketConsumer):
 
         try:
             self.user = await sync_to_async(User.objects.get)(userID=user_id)
+            
+            # Check if user is subscribed to a tournament
+            self.tournament = await sync_to_async(Tournament.objects.filter)(
+                participants=self.user,
+                status='PENDING'
+            ).first()
+
+            if not self.tournament:
+                logger.warning(f"[{self.__class__.__name__}] User {self.user.userID} is not subscribed to any tournament")
+                await self.close()
+                return
+
             await self.channel_layer.group_add(
-                f"tournament_{self.user.userID}",
+                f"tournament_{self.tournament.tournamentID}",
                 self.channel_name
             )
-            await self.send_json({"e": "READY", "d": {"user_id": self.user.userID}})
-            logger.info(f"[{self.__class__.__name__}] User identified: {self.user.userID}")
+            
+            # Get safe profile for the user
+            safe_profile = await sync_to_async(get_safe_profile)(self.user.__dict__, True)
+            
+            # Send TOURNAMENT_JOIN event with safe profile
+            await self.send_json({
+                "e": "TOURNAMENT_JOIN",
+                "d": safe_profile
+            })
+            
+            logger.info(f"[{self.__class__.__name__}] User identified and subscribed to tournament: {self.user.userID}")
         except User.DoesNotExist:
             logger.error(f"[{self.__class__.__name__}] User not found for ID: {user_id}")
             await self.close()
@@ -402,91 +422,19 @@ class TournamentConsumer(AsyncJsonWebsocketConsumer):
                 await self.close()
                 break
 
-    #TODO: handle blocked and not friends
-    async def handle_tournament_invite(self, data):
-        logger.info(f"[{self.__class__.__name__}] Handling tournament invite")
-        target_user_id = data.get('target_user_id')
-        tournament_id = data.get('tournament_id')
-
-        if not target_user_id or not tournament_id:
-            logger.warning(f"[{self.__class__.__name__}] Invalid tournament invite data: target_user_id={target_user_id}, tournament_id={tournament_id}")
-            return
-
-        conversation = await self.get_or_create_conversation(self.user.userID, target_user_id)
-        await self.send_tournament_invite_message(conversation.conversationID, tournament_id)
-        await self.notify_new_message(conversation.conversationID, self.user.username)
-
-        await self.channel_layer.group_send(
-            f"tournament_{target_user_id}",
-            {
-                "type": "tournament_invite",
-                "tournament_data": {
-                    "tournament_id": tournament_id,
-                    "inviter_id": self.user.userID,
-                    "inviter_username": self.user.username
-                }
-            }
-        )
-        logger.info(f"[{self.__class__.__name__}] Tournament invite handling completed")
-
-    async def tournament_invite(self, event):
-        await self.send_json({
-            "e": "TOURNAMENT_INVITE",
-            "d": event["tournament_data"]
-        })
-
-    async def tournament_start(self, event):
-        await self.send_json({
-            "e": "TOURNAMENT_START",
-            "d": event["tournament_data"]
-        })
-
-    @database_sync_to_async
-    def get_or_create_conversation(self, user_id_a, user_id_b):
-        user_a = User.objects.get(userID=user_id_a)
-        user_b = User.objects.get(userID=user_id_b)
-        
-        conversation = Conversation.objects.filter(
-            participants__userID__in=[user_id_a, user_id_b],
-            conversationType='private_message'
-        ).annotate(participant_count=Count('participants')).filter(participant_count=2).first()
-        
-        if not conversation:
-            conversation = Conversation.objects.create(
-                conversationID=generate_id("conv"),
-                conversationType='private_message',
-                receipientID=user_id_b
-            )
-            conversation.participants.add(user_a, user_b)
-            conversation.save()
-        
-        return conversation
-
-    @database_sync_to_async
-    def send_tournament_invite_message(self, conversation_id, tournament_id):
-        conversation = Conversation.objects.get(conversationID=conversation_id)
-        conversation.messages.create(
-            messageID=generate_id("msg"),
-            sender=self.user,
-            content=tournament_id,
-            messageType=1
-        )
-        conversation.save()
-
-    async def notify_new_message(self, conversation_id, sender_username):
-        conversation = await sync_to_async(Conversation.objects.get)(conversationID=conversation_id)
-        participants = await sync_to_async(list)(conversation.participants.all())
-
-        for participant in participants:
-            if participant.userID != self.user.userID:
-                await self.channel_layer.group_send(
-                    f"chat_{participant.userID}",
-                    {
-                        "type": "conversation_update",
-                        "senderUsername": sender_username,
-                        "messagePreview": "Tournament invite"
-                    }
-                )
+    async def tournament_kick(self, event):
+        kicked_user = event['user']
+        if kicked_user['userID'] == self.user.userID:
+            await self.send_json({
+                "e": "TOURNAMENT_KICK",
+                "d": {"message": "You have been kicked from the tournament"}
+            })
+            await self.close()
+        else:
+            await self.send_json({
+                "e": "TOURNAMENT_KICK",
+                "d": {"user": kicked_user}
+            })
 
 class MatchConsumer(AsyncJsonWebsocketConsumer):
     active_matches = {}
