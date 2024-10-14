@@ -55,7 +55,7 @@ const AddToScene = (scene, terrain, paddle1, paddle2, ball, walls) => {
 	const wallHeight = terrain.SCENEHEIGHT + wallThickness * 2 + 5;
 
 	const wallMaterial = new THREE.MeshPhysicalMaterial({
-		color: 0xffffff,
+		color: 0x666666,
 		reflectivity: 0.9,
 		roughness: 0.05,
 		thickness: 1.0,

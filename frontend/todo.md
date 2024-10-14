@@ -1,7 +1,6 @@
 # TODO
-- relation: Add friend bug
-- Profile: Add friend remove friend websocket `rejected` problem
-- Game -> scores animation
+- Game -> Ending page
+- Sound: Add sound
 - tournaments
 - Game: send invite
 - Profile: `users/@me/stats` -> win / loss / ratio
