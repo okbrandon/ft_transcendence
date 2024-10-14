@@ -32,16 +32,13 @@ export const PaddleAttributes = (terrain, textureUrl = undefined) => {
 		emissiveIntensity: 0.5,
 		reflectivity: 0.9,
 		roughness: 0.05,
-		ior: 1.5,
-		wireframe: false,
-		flatShading: false,
 	});
 	return {paddleGeometry, paddleMaterial};
 }
 
 export const BallAttributes = terrain => {
 	const ballGeometry = new THREE.SphereGeometry(25 * terrain.SCALEX / 2, 32, 32);
-	const ballMaterial = new THREE.MeshPhysicalMaterial({ color: 0x6FFFE9 });
+	const ballMaterial = new THREE.MeshPhysicalMaterial({ color: 0xffffff });
 	return {ballGeometry, ballMaterial};
 }
 

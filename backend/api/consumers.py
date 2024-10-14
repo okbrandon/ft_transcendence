@@ -719,7 +719,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
 
             # Check for collisions with paddles
             if (match_state['ball']['x'] <= PADDLE_WIDTH and
-                match_state['ball']['y'] + BALL_SIZE >= match_state['playerA']['paddle_y'] and
+                match_state['ball']['y'] + BALL_RADIUS >= match_state['playerA']['paddle_y'] and
                 match_state['ball']['y'] <= match_state['playerA']['paddle_y'] + PADDLE_HEIGHT):
                 match_state['ball']['dx'] *= -1
                 if abs(match_state['ball']['dx']) < BALL_MAX_SPEED:

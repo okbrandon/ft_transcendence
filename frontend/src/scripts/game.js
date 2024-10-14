@@ -6,17 +6,17 @@ const Lightning = (scene, terrain, ball) => {
 	const ambientLight = new THREE.AmbientLight(0xffffff, 2);
 	scene.add(ambientLight);
 	// Light intensity and distance configuration
-	const lightIntensity = 100;
-	const lightDistance = 200;
+	const lightIntensity = 80;
+	const lightDistance = 30;
 
 	const lightColors = ['#FF6F91', '#6FFFE9', '#B983FF', '#FFD700'];
 
 	// Positions for the four corner lights
 	const cornerPositions = [
-		{ x: -terrain.SCENEWIDTH / 2, y: terrain.SCENEHEIGHT / 2, z: 20 },  // Top-left
-		{ x: terrain.SCENEWIDTH / 2, y: terrain.SCENEHEIGHT / 2, z: 20 },   // Top-right
-		{ x: -terrain.SCENEWIDTH / 2, y: -terrain.SCENEHEIGHT / 2, z: 20 }, // Bottom-left
-		{ x: terrain.SCENEWIDTH / 2, y: -terrain.SCENEHEIGHT / 2, z: 20 }   // Bottom-right
+		{ x: -terrain.SCENEWIDTH / 2, y: terrain.SCENEHEIGHT / 2, z: 5 },  // Top-left
+		{ x: terrain.SCENEWIDTH / 2, y: terrain.SCENEHEIGHT / 2, z: 5 },   // Top-right
+		{ x: -terrain.SCENEWIDTH / 2, y: -terrain.SCENEHEIGHT / 2, z: 5 }, // Bottom-left
+		{ x: terrain.SCENEWIDTH / 2, y: -terrain.SCENEHEIGHT / 2, z: 5 }   // Bottom-right
 	];
 
 	// Add 4 corner lights
@@ -28,14 +28,7 @@ const Lightning = (scene, terrain, ball) => {
 		return pointLight;
 	});
 
-	// Spotlight that follows the ball
-	const spotlight = new THREE.SpotLight(0x6FFFE9, 200, 300, Math.PI / 15, 0.5, 1);
-	spotlight.position.set(0, 0, 10);  // Positioned high above the game
-	spotlight.target = ball.current;    // The ball is the target
-	spotlight.castShadow = true;
-	scene.add(spotlight);
-
-	return { ambientLight, cornerLights, spotlight };
+	return { ambientLight, cornerLights };
 };
 
 const AddToScene = (scene, terrain, paddle1, paddle2, ball, walls) => {
@@ -72,18 +65,16 @@ const AddToScene = (scene, terrain, paddle1, paddle2, ball, walls) => {
 		opacity: 0.8,
 	});
 
-	// Left wall
 	const leftWall = new THREE.Mesh(new THREE.BoxGeometry(wallThickness, wallHeight, 2), wallMaterial);
 	leftWall.position.set(-terrain.SCENEWIDTH / 2 - 1.5 - wallThickness / 2, 0, 0);
 	scene.add(leftWall);
-	walls.push(leftWall); // Store in walls array
+	walls.push(leftWall);
 
-	// Right wall
 	const rightWall = new THREE.Mesh(new THREE.BoxGeometry(wallThickness, wallHeight, 2), wallMaterial);
 	rightWall.position.set(terrain.SCENEWIDTH / 2 + 1.5 + wallThickness / 2, 0, 0);
 	rightWall.rotateZ(Math.PI);
 	scene.add(rightWall);
-	walls.push(rightWall); // Store in walls array
+	walls.push(rightWall);
 }
 
 const GameCanvas = (canvas, paddle1, paddle2, ball, terrain, hit) => {
@@ -161,8 +152,6 @@ const GameCanvas = (canvas, paddle1, paddle2, ball, terrain, hit) => {
 			scene.remove(light);
 			light.dispose();
 		});
-		scene.remove(lights.spotlight);
-		lights.spotlight.dispose();
 
 		particles.dispose();
 		dashedLine.dispose();
