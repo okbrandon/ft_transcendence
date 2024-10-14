@@ -353,7 +353,8 @@ class UserRelationshipsMe(APIView):
         )
 
         if relationship.status == 0:
-            self.notify_chat_websocket(relationship, status="rejected")
+            if me.userID != relationship.userA:
+                self.notify_chat_websocket(relationship, status="rejected")
 
         relationship.delete()
 
