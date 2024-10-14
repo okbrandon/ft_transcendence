@@ -18,6 +18,7 @@ const Game = () => {
 		playerSide: null,
 	});
 	const [gameOver, setGameOver] = useState(false);
+	const [gameStarted, setGameStarted] = useState(false);
 	const [won, setWon] = useState(false);
 
 	const [heartbeatIntervalTime, setHeartbeatIntervalTime] = useState(null);
@@ -95,6 +96,9 @@ const Game = () => {
 					setActivateTimer(true);
 					setGameState(prevState => ({ ...prevState, matchState: data.d }));
 					break;
+				case 'MATCH_BEGIN':
+					setGameStarted(true);
+					break;
 				case 'MATCH_UPDATE':
 					setGameState(prevState => ({ ...prevState, matchState: data.d }));
 					break;
@@ -145,6 +149,7 @@ const Game = () => {
 				sendMessage={sendMessage}
 				activateTimer={activateTimer}
 				setActivateTimer={setActivateTimer}
+				gameStarted={gameStarted}
 				gameOver={gameOver}
 				won={won}
 			/>

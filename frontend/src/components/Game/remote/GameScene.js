@@ -4,7 +4,7 @@ import { GameSceneContainer, Score, ScoresContainer, StyledCanvas, Timer, Overla
 import GameCanvas from "../../../scripts/game";
 import PongButton from "../../../styles/shared/PongButton.styled";
 
-const GameScene = ({ matchState, playerSide, hitPos, borderScore, sendMessage, activateTimer, setActivateTimer, gameOver, won }) => {
+const GameScene = ({ matchState, playerSide, hitPos, borderScore, sendMessage, activateTimer, setActivateTimer, gameStarted, gameOver, won }) => {
 	const navigate = useNavigate();
 
 	const [keyPressed, setKeyPressed] = useState(null);
@@ -83,13 +83,15 @@ const GameScene = ({ matchState, playerSide, hitPos, borderScore, sendMessage, a
 		let animationFrameId;
 
 		const move = () => {
-			handlePaddleMove(keyPressed);
+			if (gameStarted && !gameOver) {
+				handlePaddleMove(keyPressed);
+			}
 			animationFrameId = requestAnimationFrame(move);
 		};
 		move();
 
 		return () => cancelAnimationFrame(animationFrameId);
-	}, [keyPressed, handlePaddleMove]);
+	}, [keyPressed, handlePaddleMove, gameStarted, gameOver]);
 
 	useEffect(() => {
 		if (!hitPos) return;
