@@ -4,11 +4,12 @@ import { GameSceneContainer, Score, ScoresContainer, StyledCanvas, Timer, Overla
 import GameCanvas from "../../../scripts/game";
 import PongButton from "../../../styles/shared/PongButton.styled";
 
-const GameScene = ({ matchState, hitPos, sendMessage, activateTimer, setActivateTimer, gameOver, won }) => {
+const GameScene = ({ matchState, playerSide, hitPos, borderScore, sendMessage, activateTimer, setActivateTimer, gameOver, won }) => {
 	const navigate = useNavigate();
 
 	const [keyPressed, setKeyPressed] = useState(null);
 	const [isHit, setIsHit] = useState(false);
+	const [borderColor, setBorderColor] = useState(null);
 	const [timer, setTimer] = useState(5);
 
 	const [scoreA, setScoreA] = useState(0);
@@ -99,6 +100,15 @@ const GameScene = ({ matchState, hitPos, sendMessage, activateTimer, setActivate
 	}, [hitPos, terrain]);
 
 	useEffect(() => {
+		if (!borderScore) return;
+		const side = borderScore.pos === 'A' ? 'left' : 'right';
+		if (side === playerSide) setBorderColor('green');
+		else setBorderColor('red');
+		const timeoutID = setTimeout(() => setBorderColor(null), 500);
+		return () => clearTimeout(timeoutID);
+	}, [borderScore, playerSide]);
+
+	useEffect(() => {
 		if (!canvas.current) return;
 
 		const { renderer, camera, dispose } = GameCanvas(canvas.current, paddle1, paddle2, ball, terrain, hit);
@@ -137,7 +147,7 @@ const GameScene = ({ matchState, hitPos, sendMessage, activateTimer, setActivate
 	}, [terrain, matchState]);
 
 	return (
-		<GameSceneContainer className={isHit ? "hit" : ""}>
+		<GameSceneContainer className={`${isHit ? "hit" : ""} ${borderColor}`}>
 			<StyledCanvas ref={canvas}/>
 			<ScoresContainer>
 				<Score>{scoreA}</Score>

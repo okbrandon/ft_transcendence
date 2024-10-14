@@ -27,21 +27,55 @@ export const GameSceneContainer = styled.div`
 
 	@keyframes borderHit {
 		0% {
-			border: 3px solid rgba(255, 255, 255, 0.5);
-			box-shadow: 0 0 20px rgba(164, 69, 178, 1), 0 0 30px rgba(59, 130, 246, 0.7);
+			border: 3px solid rgba(255, 255, 255, 0.7); /* Slightly stronger border */
+			box-shadow: 0 0 30px rgba(164, 69, 178, 1), 0 0 40px rgba(59, 130, 246, 0.8);
 		}
 		50% {
-			border: 3px solid rgba(255, 255, 255, 0.3);
-			box-shadow: 0 0 20px rgba(164, 69, 178, 0.8), 0 0 30px rgba(59, 130, 246, 0.5);
+			border: 3px solid rgba(255, 255, 255, 0.4); /* Softer border */
+			box-shadow: 0 0 25px rgba(164, 69, 178, 0.8), 0 0 35px rgba(59, 130, 246, 0.6);
 		}
 		100% {
-			border: 3px solid rgba(255, 255, 255, 0.2);
-			box-shadow: 0 0 20px rgba(164, 69, 178, 0.7), 0 0 30px rgba(59, 130, 246, 0.4);
+			border: 3px solid rgba(255, 255, 255, 0.2); /* Faint border */
+			box-shadow: 0 0 20px rgba(164, 69, 178, 0.6), 0 0 30px rgba(59, 130, 246, 0.4);
+		}
+	}
+
+	@keyframes borderHitGreen {
+		0% {
+			border: 3px solid rgba(50, 205, 50, 0.7);
+			box-shadow: 0 0 30px rgba(50, 205, 50, 1), 0 0 40px rgba(34, 139, 34, 0.8);
+			transform: scale(1.005);
+		}
+		100% {
+			border: 3px solid rgba(255, 255, 255, 0.2); /* Faint border */
+			box-shadow: 0 0 20px rgba(164, 69, 178, 0.6), 0 0 30px rgba(59, 130, 246, 0.4);
+			transform: scale(1);
+		}
+	}
+
+	@keyframes borderHitRed {
+		0% {
+			border: 3px solid rgba(255, 0, 0, 0.7); /* Stronger red border */
+			box-shadow: 0 0 30px rgba(255, 0, 0, 1), 0 0 40px rgba(139, 0, 0, 0.8);
+			transform: scale(1.005);
+		}
+		100% {
+			border: 3px solid rgba(255, 255, 255, 0.2); /* Faint border */
+			box-shadow: 0 0 20px rgba(164, 69, 178, 0.6), 0 0 30px rgba(59, 130, 246, 0.4);
+			transform: scale(1);
 		}
 	}
 
 	&.hit {
 		animation: borderHit 0.5s ease-in-out;
+	}
+
+	&.green {
+		animation: borderHitGreen 0.5s ease-in-out;
+	}
+
+	&.red {
+		animation: borderHitRed 0.5s ease-in-out;
 	}
 `;
 

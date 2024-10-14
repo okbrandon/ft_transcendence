@@ -22,6 +22,7 @@ const Game = () => {
 
 	const [heartbeatIntervalTime, setHeartbeatIntervalTime] = useState(null);
 	const [hitPos, setHitPos] = useState(null);
+	const [borderScore, setBorderScore] = useState(null);
 
 	const [activateTimer, setActivateTimer] = useState(false);
 
@@ -97,6 +98,9 @@ const Game = () => {
 				case 'MATCH_UPDATE':
 					setGameState(prevState => ({ ...prevState, matchState: data.d }));
 					break;
+				case 'BALL_SCORED':
+					setBorderScore(data.d.player);
+					break;
 				case 'MATCH_END':
 					setGameOver(true);
 					setWon(data.d.won);
@@ -135,7 +139,9 @@ const Game = () => {
 			/>
 			<GameScene
 				matchState={gameState.matchState}
+				playerSide={gameState.playerSide}
 				hitPos={hitPos}
+				borderScore={borderScore}
 				sendMessage={sendMessage}
 				activateTimer={activateTimer}
 				setActivateTimer={setActivateTimer}
