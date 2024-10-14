@@ -12,26 +12,27 @@ import {
 import { GetUsers } from '../../../api/user';
 
 const PodiumPlayer = ({ player, position, selectedStat }) => {
-	const [avatar, setAvatar] = useState('images/default-profile.png'); // Default avatar
+	const [avatar, setAvatar] = useState('images/default-profile.png');
 	const positionClass = position === 0 ? 'second' : position === 1 ? 'first' : 'third';
 	const playerName = player?.name || 'N/A';
 	const playerScore = player?.stats[selectedStat] || 0;
 
-	useEffect(() => {
-		const fetchUserAvatar = async () => {
-			try {
-				const users = await GetUsers();
-				const matchedUser = users.find(user => user.id === player.userID);
-				if (matchedUser) {
-					setAvatar(matchedUser.avatar);
-				}
-			} catch (error) {
-				console.error('Error fetching user avatar:', error);
-			}
-		};
+	// DON'T USE THIS CODE
+	// useEffect(() => {
+	// 	const fetchUserAvatar = async () => {
+	// 		try {
+	// 			const users = await GetUsers();
+	// 			const matchedUser = users.find(user => user.id === player.userID);
+	// 			if (matchedUser) {
+	// 				setAvatar(matchedUser.avatar);
+	// 			}
+	// 		} catch (error) {
+	// 			console.error('Error fetching user avatar:', error);
+	// 		}
+	// 	};
 
-		fetchUserAvatar();
-	}, [player.userID]);
+	// 	fetchUserAvatar();
+	// }, [player.userID]);
 
 	return (
 		<PodiumBase className={positionClass}>

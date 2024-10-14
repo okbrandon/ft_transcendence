@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { WrapContainer, LeaderboardContainer } from './styles/Leaderboard.styled';
 import TimeFrameButtons from './tools/TimeFrameButtons';
 import Podium from './Podium';
@@ -7,7 +7,7 @@ import StatsDropdown from './tools/StatsDropdown';
 import { GetLeaderboard } from '../../api/leaderboard';
 
 const Leaderboard = () => {
-	const [timeFrame, setTimeFrame] = useState('daily');
+	const [timeFrame, setTimeFrame] = useState('lifetime');
 	const [stats, setStats] = useState('gamesPlayed');
 	const [leaderboardData, setLeaderboardData] = useState([]);
 
@@ -34,11 +34,8 @@ const Leaderboard = () => {
 	return (
 		<WrapContainer>
 			<TimeFrameButtons timeFrame={timeFrame} handleTimeFrameChange={handleTimeFrameChange} />
-
 			<StatsDropdown stats={stats} handleStatsChange={handleStatsChange} />
-
 			<Podium leaderboardData={leaderboardData} selectedStat={stats} />
-
 			<LeaderboardContainer>
 				<ScoreTable data={leaderboardData} selectedStat={stats} />
 			</LeaderboardContainer>

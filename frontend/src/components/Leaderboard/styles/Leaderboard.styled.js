@@ -5,10 +5,16 @@ export const WrapContainer = styled.div`
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	margin: 100px auto 0 auto;
-	max-width: 100%;
-	padding: 0 50px;
+	padding: 80px 50px 0 50px;
 	box-sizing: border-box;
+	width: 100vw;
+	min-height: 100vh;
+	background: radial-gradient(circle at 20% 20%, rgba(75, 0, 130, 0.2), transparent 50%),
+				radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.2), transparent 50%),
+				linear-gradient(135deg, #000000 0%, #111111 100%);
+	background-size: cover;
+	background-position: center;
+	position: relative;
 `;
 
 
@@ -34,6 +40,7 @@ export const ButtonsFilterContainer = styled.div`
 `;
 
 export const TimeFrameContainer = styled.div`
+	padding: 10px 0;
 	display: flex;
 	justify-content: center;
 `;
@@ -44,7 +51,7 @@ export const BackgroundContainer = styled.div`
 	background-color: #f0f0f0;
 	background-color: rgb(255, 255, 255, 0.1);
 	border-radius: 5px;
-	padding: 5px 10px 5px 10px;
+	padding: 10px;
 `;
 
 export const TimeFrameButton = styled.button`

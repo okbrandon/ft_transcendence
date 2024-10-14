@@ -16,17 +16,10 @@ export const PodiumBase = styled.div`
 	flex-direction: column;
 	justify-content: flex-start;
 	align-items: center;
-	background-image:
-		linear-gradient(
-			to top,
-			rgba(0, 0, 0, 1) 0%,
-			rgba(0, 0, 0, 0) 100%
-		),
-		url('/images/podium.png');
+	background-image: url('/images/podium.png');
 	background-size: contain;
 	background-position: center;
 	background-repeat: no-repeat;
-	border-radius: 10px;
 	width: 200px;
 
 	&.first {

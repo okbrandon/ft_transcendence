@@ -1,45 +1,38 @@
 import React from 'react';
 import {
 	ScoreTableStyled,
+	Trophy
 } from './styles/ScoreTable.styled';
 
-const ScoreTable = ({ data, selectedStat }) => {
-	const topPlayers = data;
-
-	// Determine the header based on the selectedStat
-	const getHeader = (stat) => {
-		switch (stat) {
-			case 'gamesPlayed':
-				return 'Games Played';
-			case 'gamesWon':
-				return 'Games Won';
-			case 'gamesLost':
-				return 'Games Lost';
-			default:
-				return 'Score';
-		}
-	};
-
-	return (
-		<ScoreTableStyled>
-			<thead>
-				<tr>
-					<th>Pos</th>
-					<th>Player Name</th>
-					<th>{getHeader(selectedStat)}</th>
-				</tr>
-			</thead>
-			<tbody>
-				{topPlayers.map((player, index) => (
-					<tr key={index}>
-						<td><i className="bi bi-trophy-fill" /> {index + 1}</td>
-						<td>{player.name}</td>
-						<td>{player.stats[selectedStat]}</td>
-					</tr>
-				))}
-			</tbody>
-		</ScoreTableStyled>
-	);
+const statHeaders = {
+	gamesPlayed: 'Games Played',
+	gamesWon: 'Games Won',
+	gamesLost: 'Games Lost',
+	score: 'Score'
 };
+
+const ScoreTable = ({ data, selectedStat }) => (
+	<ScoreTableStyled>
+		<thead>
+		<tr>
+			<th>Pos</th>
+			<th>Player Name</th>
+			<th>{statHeaders[selectedStat] || 'Score'}</th>
+		</tr>
+		</thead>
+		<tbody>
+		{data.map((player, index) => (
+			<tr key={player.id || index}>
+			<td>
+				<Trophy className="bi bi-trophy-fill" position={index + 1} />
+				{index + 1}
+			</td>
+			<td>{player.name}</td>
+			<td>{player.stats[selectedStat]}</td>
+			</tr>
+		))}
+		</tbody>
+	</ScoreTableStyled>
+);
 
 export default ScoreTable;
