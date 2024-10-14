@@ -144,10 +144,12 @@ const RelationProvider = ({ children }) => {
 	const [isRefetch, setIsRefetch] = useState(false);
 
 	const setActivity = location => {
-		if (location === '/vs-ai' || location === '/vs-player') {
-			return 'QUEUEING';
-		} else if (location === '/game') {
+		if (location.state?.mode === 'ai') {
 			return 'PLAYING_VS_AI';
+		} else if (location.state?.mode === '1v1') {
+			return 'PLAYING_MULTIPLAYER';
+		} else if (location === '/game-local') {
+			return 'PLAYING_LOCAL';
 		}
 		return 'HOME';
 	};
@@ -184,17 +186,21 @@ const RelationProvider = ({ children }) => {
 						console.error('Failed to update conversations:', error);
 					});
 			} else if (response.type === 'friend_request') {
-				const user = formatUserData({
+				const userFrom = formatUserData({
 					...response.data.from,
 					status: response.status
 				});
+				const userTo = formatUserData({
+					...response.data.to,
+					status: response.status
+				});
 				setIsRefetch(true);
-				if (user.status === 'pending') {
-					addNotification('info', `You have a friend request from ${user.displayName}.`);
-				} else if (user.status === 'rejected') {
-					addNotification('info', `${user.displayName} rejected your friend request.`);
-				} else if (user.status === 'accepted') {
-					addNotification('info', `${user.displayName} accepted your friend request.`);
+				if (userFrom.status === 'pending') {
+					addNotification('info', `You have a friend request from ${userFrom.displayName}.`);
+				} else if (userFrom.status === 'rejected') {
+					addNotification('info', `${userTo.displayName} rejected your friend request.`);
+				} else if (userFrom.status === 'accepted') {
+					addNotification('info', `${userTo.displayName} accepted your friend request.`);
 				};
 			}
 		};

@@ -22,10 +22,12 @@ const FriendsList = ({ friends, setIsRefetch }) => {
 	const { t } = useTranslation();
 
 	const setActivityDescription = activity => {
-		if (activity === "QUEUEING") {
-			return "In queue";
-		} else if (activity === "PLAYING_VS_AI") {
+		if (activity === "PLAYING_VS_AI") {
 			return "Playing vs AI";
+		} else if (activity === "PLAYING_MULTIPLAYER") {
+			return "Playing multiplayer";
+		} else if (activity === "PLAYING_LOCAL") {
+			return "Playing local";
 		} else if (activity === "HOME") {
 			return "In lobby";
 		}

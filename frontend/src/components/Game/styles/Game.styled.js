@@ -58,14 +58,21 @@ export const ScoresContainer = styled.div`
 	justify-content: center;
 	align-items: center;
 	gap: 120px;
-	font-family: 'Orbitron'	, sans-serif;
+	font-family: 'Orbitron', sans-serif;
 	color: #fff;
 `;
 
 export const Score = styled.div`
 	font-size: 5rem;
 	font-weight: bold;
-	text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+	color: #00ffff; /* Neon cyan color */
+
+	/* Add neon glow effect */
+	text-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 20px rgba(255, 255, 255, 0.5),
+	             0 0 30px rgba(255, 255, 255, 0.3), 0 0 40px rgba(255, 255, 255, 0.2);
+
+	/* Add an animated glow effect */
+	animation: neonPulse 1.5s ease-in-out infinite alternate;
 `;
 
 export const ProfilesContainer = styled.div`

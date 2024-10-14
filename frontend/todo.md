@@ -1,4 +1,5 @@
 # TODO
+- relation: Add friend bug
 - Profile: Add friend remove friend websocket `rejected` problem
 - Game -> scores animation
 - tournaments
