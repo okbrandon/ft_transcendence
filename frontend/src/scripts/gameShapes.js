@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-const roundedRectShape = (width, height, radius) => {
+export const roundedRectShape = (width, height, radius) => {
 	const shape = new THREE.Shape();
 	const w = width / 2;
 	const h = height / 2;
@@ -25,24 +25,20 @@ export const PaddleAttributes = (terrain, textureUrl = undefined) => {
 	const paddleShape = roundedRectShape(20 * terrain.SCALEX, 120 * terrain.SCALEY, 10 * terrain.SCALEX);
 	const extrudeSettings = { depth: 0.5, bevelEnabled: false };
 	const paddleGeometry = new THREE.ExtrudeGeometry(paddleShape, extrudeSettings);
-	const paddleMaterial = new THREE.MeshPhongMaterial({
+	const paddleMaterial = new THREE.MeshPhysicalMaterial({
 		map: paddleTexture,
 		color: !paddleTexture ? 0xffffff : undefined,
-		shininess: 150,
-		specular: 0xaaaaaa,
 		emissive: 0x333333,
 		emissiveIntensity: 0.5,
-		wireframe: false,
-		flatShading: false
+		reflectivity: 0.9,
+		roughness: 0.05,
 	});
 	return {paddleGeometry, paddleMaterial};
 }
 
 export const BallAttributes = terrain => {
 	const ballGeometry = new THREE.SphereGeometry(25 * terrain.SCALEX / 2, 32, 32);
-	const ballMaterial = new THREE.MeshPhysicalMaterial({
-		color: 0xffffff,
-	});
+	const ballMaterial = new THREE.MeshPhysicalMaterial({ color: 0xffffff });
 	return {ballGeometry, ballMaterial};
 }
 

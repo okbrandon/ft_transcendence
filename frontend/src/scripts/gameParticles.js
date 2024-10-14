@@ -84,7 +84,7 @@ export const Particles = scene => {
 };
 
 export const createParticleBurst = (scene, position) => {
-	const particleCount = 20;
+	const particleCount = 100;
 	const particleGeometry = new THREE.BufferGeometry();
 	const positions = new Float32Array(particleCount * 3);
 	const velocities = new Float32Array(particleCount * 3);
@@ -94,9 +94,9 @@ export const createParticleBurst = (scene, position) => {
 		positions[i * 3 + 1] = position.y;
 		positions[i * 3 + 2] = position.z;
 
-		velocities[i * 3] = (Math.random() - 0.5) * 2;
-		velocities[i * 3 + 1] = (Math.random() - 0.5) * 2;
-		velocities[i * 3 + 2] = (Math.random() - 0.5) * 2;
+		velocities[i * 3] = (Math.random() - 0.5) * 3;
+		velocities[i * 3 + 1] = (Math.random() - 0.5) * 3;
+		velocities[i * 3 + 2] = (Math.random() - 0.5) * 3;
 	}
 
 	particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -104,7 +104,7 @@ export const createParticleBurst = (scene, position) => {
 
 	const particleMaterial = new THREE.PointsMaterial({
 		color: 0xffffff,
-		size: 0.1,
+		size: 0.15,
 		transparent: true,
 		opacity: 1.0,
 	});
@@ -124,10 +124,16 @@ export const createParticleBurst = (scene, position) => {
 			positions[i * 3] += velocities[i * 3] * 0.05;
 			positions[i * 3 + 1] += velocities[i * 3 + 1] * 0.05;
 			positions[i * 3 + 2] += velocities[i * 3 + 2] * 0.05;
+
+			velocities[i * 3] += (Math.random() - 0.5) * 0.01;
+			velocities[i * 3 + 2] += (Math.random() - 0.5) * 0.01;
 		}
 
-		particleMaterial.opacity *= 0.95;
-		particleGeometry.attributes.position.needsUpdate = true;
+		// Update geometry attributes
+        particleGeometry.attributes.position.needsUpdate = true;
+
+        // Gradually fade out the particles by reducing opacity
+        particleMaterial.opacity *= 0.95;
 
 		if (particleMaterial.opacity > 0.01) {
 			allInvisible = false;

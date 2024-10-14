@@ -1,7 +1,20 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { GameSceneContainer, PageContainer, ProfilesContainer, Score, ScoresContainer, StyledCanvas, Timer, TimerContainer } from "../styles/Game.styled";
-import GameCanvas from "../../../scripts/game";
 import { useNavigate } from "react-router-dom";
+import GameCanvas from "../../../scripts/game";
+import {
+	GameSceneContainer,
+	PageContainer,
+	Profile,
+	ProfileImage,
+	ProfileName,
+	ProfilesContainer,
+	Score,
+	ScoresContainer,
+	StyledCanvas,
+	Timer,
+	OverlayContainer
+} from "../styles/Game.styled";
+import PongButton from "../../../styles/shared/PongButton.styled";
 
 const GameLocal = () => {
 	const navigate = useNavigate();
@@ -14,6 +27,7 @@ const GameLocal = () => {
 	const [scoreB, setScoreB] = useState(0);
 	const [isGameStarted, setIsGameStarted] = useState(false);
 	const [activateTimer, setActivateTimer] = useState(false);
+	const [gameOver, setGameOver] = useState(false);
 
 	const canvas = useRef(null);
 	const paddle1 = useRef(null);
@@ -21,7 +35,6 @@ const GameLocal = () => {
 	const ball = useRef(null);
 	const hit = useRef(null);
 	const intervalRef = useRef(null);
-
 
 	const terrain = useMemo(() => ({
 		WIDTH: 1200,
@@ -39,16 +52,18 @@ const GameLocal = () => {
 	// Paddle movement speed
 	const paddleSpeed = 0.1;
 
+	// Setting up paddle movement
 	const movePaddle = useCallback((direction, paddle) => {
 		if (!paddle.current) return;
 		if (direction === 'up') {
-			paddle.current.position.y = Math.min(terrain.SCENEHEIGHT / 2 - 1.37, paddle.current.position.y + paddleSpeed); // Move up, ensure it doesn't go beyond top bound
+			paddle.current.position.y = Math.min(terrain.SCENEHEIGHT / 2 - 1.37, paddle.current.position.y + paddleSpeed);
 		}
 		if (direction === 'down') {
-			paddle.current.position.y = Math.max(-terrain.SCENEHEIGHT / 2 + 1.45, paddle.current.position.y - paddleSpeed); // Move down, ensure it doesn't go beyond bottom bound
+			paddle.current.position.y = Math.max(-terrain.SCENEHEIGHT / 2 + 1.45, paddle.current.position.y - paddleSpeed);
 		}
 	}, [terrain.SCENEHEIGHT, paddleSpeed]);
 
+	// Keyboard event listeners
 	useEffect(() => {
 		const handleKeyDown = event => {
 			if (!isGameStarted && !activateTimer) {
@@ -93,6 +108,7 @@ const GameLocal = () => {
 		}
 	}, []);
 
+	// Ball hit effect
 	useEffect(() => {
 		if (!isHit) return;
 		const timeoutID = setTimeout(() => setIsHit(false), 500);
@@ -148,19 +164,19 @@ const GameLocal = () => {
 		}
 
 		if (ball.current.position.x < -terrain.SCENEWIDTH / 2) {
-			setScoreB((prev) => prev + 1);
+			setScoreB(prev => prev + 1);
 			resetBall();
 		}
 
 		if (ball.current.position.x > terrain.SCENEWIDTH / 2) {
-			setScoreA((prev) => prev + 1);
+			setScoreA(prev => prev + 1);
 			resetBall();
 		}
 
 		if (scoreA >= 10 || scoreB >= 10) {
-			navigate('/');
+			setGameOver(true);
 		}
-	}, [terrain, resetBall, scoreA, scoreB, navigate]);
+	}, [terrain, resetBall, scoreA, scoreB]);
 
 	// Timer logic
 	useEffect(() => {
@@ -203,7 +219,7 @@ const GameLocal = () => {
 		let animationFrameId;
 
 		const gameLoop = () => {
-			if (isGameStarted) {
+			if (isGameStarted && !gameOver) {
 				if (keyPressedA) movePaddle(keyPressedA, paddle1);
 				if (keyPressedB) movePaddle(keyPressedB, paddle2);
 				updateBallPosition();
@@ -214,12 +230,20 @@ const GameLocal = () => {
 		gameLoop();
 
 		return () => cancelAnimationFrame(animationFrameId);
-	}, [updateBallPosition, movePaddle, keyPressedA, keyPressedB, isGameStarted]);
+	}, [updateBallPosition, movePaddle, keyPressedA, keyPressedB, isGameStarted, gameOver]);
 
 	return (
 		<PageContainer>
 			<ProfilesContainer>
+				<Profile>
+					<ProfileImage src='/images/default-profile.png' alt='Player 1'/>
+					<ProfileName>Player 1</ProfileName>
+				</Profile>
 				<p style={{margin: '0 auto'}}>Press <b>Q</b> to quit game</p>
+				<Profile>
+					<ProfileImage src='/images/default-profile.png' alt='Player 2'/>
+					<ProfileName>Player 2</ProfileName>
+				</Profile>
 			</ProfilesContainer>
 			<GameSceneContainer className={isHit ? "hit" : ""}>
 				<StyledCanvas ref={canvas}/>
@@ -227,15 +251,26 @@ const GameLocal = () => {
 					<Score>{scoreA}</Score>
 					<Score>{scoreB}</Score>
 				</ScoresContainer>
-				{!isGameStarted && !activateTimer && (
-					<TimerContainer>
-						Press any key to start the game
-					</TimerContainer>
-				)}
-				{activateTimer && (
-					<TimerContainer>
-						<Timer>{timer}</Timer>
-					</TimerContainer>
+				{gameOver ? (
+					<OverlayContainer>
+						<h1>Game Over!</h1>
+						<p>{scoreA >= 10 ? 'Player 1 Wins' : 'Player 2 Wins'}</p>
+						<PongButton onClick={() => navigate('/playmenu')}>Go Back to Main Menu</PongButton>
+					</OverlayContainer>
+				) : (
+					<>
+						{activateTimer ? (
+							<OverlayContainer>
+								<Timer>{timer}</Timer>
+							</OverlayContainer>
+						) : (
+							!isGameStarted && (
+								<OverlayContainer>
+									Press any key to start the game
+								</OverlayContainer>
+							)
+						)}
+					</>
 				)}
 			</GameSceneContainer>
 		</PageContainer>

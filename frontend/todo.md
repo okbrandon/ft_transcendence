@@ -1,4 +1,7 @@
 # TODO
+- Game -> Ending page
+- Sound: Add sound
+- tournaments
 - Game: send invite
 - Profile: `users/@me/stats` -> win / loss / ratio
 

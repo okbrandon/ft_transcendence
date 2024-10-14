@@ -24,7 +24,7 @@ const ScoreTable = ({ data, selectedStat }) => (
 		{data.map((player, index) => (
 			<tr key={player.id || index}>
 			<td>
-				<Trophy className="bi bi-trophy-fill" position={index + 1} />
+				<Trophy className="bi bi-trophy-fill" $position={index + 1} />
 				{index + 1}
 			</td>
 			<td>{player.user.username}</td>

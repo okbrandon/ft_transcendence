@@ -18,6 +18,7 @@ const LineStats = ({ matchArray }) => {
 		chart: {
 			type: 'line',
 			toolbar: { show: false },
+			background: '#0a0a13',
 		},
 		dataLabels: {
 			enabled: false,
@@ -28,12 +29,30 @@ const LineStats = ({ matchArray }) => {
 		title: {
 			text: t('profile.stats.line.subTitle'),
 			align: 'left',
+			style: {
+				color: '#ffffff',
+			},
 		},
 		xaxis: {
 			categories: months.map(month => t(`profile.stats.line.categories.months.${month}`)),
+			labels: {
+				style: {
+					colors: '#ffffff',
+				},
+			},
 		},
-		colors: ['#fff'],
-	}
+		yaxis: {
+			labels: {
+				style: {
+					colors: '#ffffff',
+				},
+			},
+		},
+		colors: ['#ff005c'],
+		grid: {
+			borderColor: '#2e2e3d',
+		},
+	};
 
 	return (
 		<LineStatsContainer>
@@ -41,6 +60,7 @@ const LineStats = ({ matchArray }) => {
 				options={options}
 				series={series}
 				type='line'
+				height={300}
 			/>
 		</LineStatsContainer>
 	);

@@ -17,9 +17,13 @@ const Game = () => {
 		opponent: null,
 		playerSide: null,
 	});
+	const [gameOver, setGameOver] = useState(false);
+	const [gameStarted, setGameStarted] = useState(false);
+	const [won, setWon] = useState(false);
 
 	const [heartbeatIntervalTime, setHeartbeatIntervalTime] = useState(null);
 	const [hitPos, setHitPos] = useState(null);
+	const [borderScore, setBorderScore] = useState(null);
 
 	const [activateTimer, setActivateTimer] = useState(false);
 
@@ -92,12 +96,18 @@ const Game = () => {
 					setActivateTimer(true);
 					setGameState(prevState => ({ ...prevState, matchState: data.d }));
 					break;
+				case 'MATCH_BEGIN':
+					setGameStarted(true);
+					break;
 				case 'MATCH_UPDATE':
 					setGameState(prevState => ({ ...prevState, matchState: data.d }));
 					break;
+				case 'BALL_SCORED':
+					setBorderScore(data.d.player);
+					break;
 				case 'MATCH_END':
-					alert(data.d.won ? 'You won!' : 'You lost!');
-					navigate('/');
+					setGameOver(true);
+					setWon(data.d.won);
 					break;
 				case 'HEARTBEAT_ACK':
 					handleHeartbeatAck();
@@ -133,10 +143,15 @@ const Game = () => {
 			/>
 			<GameScene
 				matchState={gameState.matchState}
+				playerSide={gameState.playerSide}
 				hitPos={hitPos}
+				borderScore={borderScore}
 				sendMessage={sendMessage}
 				activateTimer={activateTimer}
 				setActivateTimer={setActivateTimer}
+				gameStarted={gameStarted}
+				gameOver={gameOver}
+				won={won}
 			/>
 		</PageContainer>
 	)

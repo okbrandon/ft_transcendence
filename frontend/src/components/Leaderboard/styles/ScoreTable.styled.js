@@ -64,9 +64,9 @@ export const ScoreTableStyled = styled.table`
 
 export const Trophy = styled.i`
 	color: ${props => {
-		if (props.position === 1) return '#ffd700';
-		if (props.position === 2) return '#c0c0c0';
-		if (props.position === 3) return '#cd7f32';
+		if (props.$position === 1) return '#ffd700';
+		if (props.$position === 2) return '#c0c0c0';
+		if (props.$position === 3) return '#cd7f32';
 		return 'white';
 	}};
 	margin-right: 8px;
