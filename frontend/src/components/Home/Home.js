@@ -1,5 +1,5 @@
 import React from "react";
-import Banner from "./Banner";
+import Banner from "./Hero";
 import Presentation from "./Presentation";
 import Contributors from "./Contributors";
 import Features from "./Features";

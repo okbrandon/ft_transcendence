@@ -1,22 +1,22 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import {
-	BannerPaddle,
-	BannerPaddlesContainer,
-	BannerSection,
+	HeroPaddle,
+	HeroPaddlesContainer,
+	HeroSection,
 	PlayButton,
-} from "./styles/Banner.styled";
+} from "./styles/Hero.styled";
 import { useTranslation } from "react-i18next";
 
-const Banner = () => {
+const Hero = () => {
 	const navigate = useNavigate();
 	const { t } = useTranslation();
 
 	return (
 		<>
-			<BannerSection>
-				<BannerPaddlesContainer>
-					<BannerPaddle
+			<HeroSection>
+				<HeroPaddlesContainer>
+					<HeroPaddle
 						$left={10}
 						$blurPx={2}
 						$rotation={30}
@@ -24,7 +24,7 @@ const Banner = () => {
 						$direction={360}
 						$animationDuration={23}
 					/>
-					<BannerPaddle
+					<HeroPaddle
 						$left={30}
 						$blurPx={4}
 						$rotation={10}
@@ -32,7 +32,7 @@ const Banner = () => {
 						$direction={-360}
 						$animationDuration={10}
 					/>
-					<BannerPaddle
+					<HeroPaddle
 						$left={50}
 						$blurPx={6}
 						$rotation={85}
@@ -40,7 +40,7 @@ const Banner = () => {
 						$direction={360}
 						$animationDuration={16}
 					/>
-					<BannerPaddle
+					<HeroPaddle
 						$left={70}
 						$blurPx={8}
 						$rotation={55}
@@ -48,7 +48,7 @@ const Banner = () => {
 						$direction={-360}
 						$animationDuration={22}
 					/>
-					<BannerPaddle
+					<HeroPaddle
 						$left={90}
 						$blurPx={10}
 						$rotation={10}
@@ -56,14 +56,14 @@ const Banner = () => {
 						$direction={360}
 						$animationDuration={11}
 					/>
-				</BannerPaddlesContainer>
+				</HeroPaddlesContainer>
 				<h1>{t('home.welcome')}</h1>
 				<PlayButton variant="light" onClick={() => navigate("/game")}>
 					{t('home.playButton')}
 				</PlayButton>
-			</BannerSection>
+			</HeroSection>
 		</>
 	);
 };
 
-export default Banner;
+export default Hero;

@@ -1,7 +1,7 @@
 import styled, { keyframes } from "styled-components";
 import Button from "react-bootstrap/Button";
 
-export const BannerSection = styled.section`
+export const HeroSection = styled.section`
 	display: flex;
 	position: relative;
 	flex-direction: column;
@@ -56,7 +56,7 @@ const getRotationAnimation = (scale, direction) => keyframes`
 	}
 `;
 
-export const BannerPaddle = styled.div`
+export const HeroPaddle = styled.div`
 	position: absolute;
 	width: 70px;
 	height: 350px;
@@ -70,7 +70,7 @@ export const BannerPaddle = styled.div`
 	border-radius: 100px;
 `;
 
-export const BannerPaddlesContainer = styled.div`
+export const HeroPaddlesContainer = styled.div`
 	position: absolute;
 	width: 100%;
 	height: 120vh;
