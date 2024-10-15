@@ -91,8 +91,8 @@ class StatusConsumer(AsyncWebsocketConsumer):
 
                     if activity is None:
                         raise Exception("Missing activity")
-                    if activity not in ["HOME", "QUEUEING", "PLAYING_VS_AI", "PLAYING_MULTIPLAYER"]:
-                        raise Exception("Invalid activity, not in [HOME, QUEUEING, PLAYING_VS_AI, PLAYING_MULTIPLAYER]")
+                    if activity not in ["HOME", "QUEUEING", "PLAYING_VS_AI", "PLAYING_MULTIPLAYER", "PLAYING_LOCAL"]:
+                        raise Exception("Invalid activity, not in [HOME, QUEUEING, PLAYING_VS_AI, PLAYING_MULTIPLAYER, PLAYING_LOCAL]")
 
                     self.failed_heartbeats = 0
                     await self.update_user_status(True, activity)
