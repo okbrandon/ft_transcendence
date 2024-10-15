@@ -5,18 +5,18 @@ const popIn = keyframes`
 	100% { transform: scale(1); opacity: 1; }
 `;
 
-const DirectMessageContainer = styled.div`
+export const DirectMessageContainer = styled.div`
 	flex: 1;
 	display: flex;
 	flex-direction: column;
 	position: relative !important;
 	margin-right: 1%;
-	max-width: 320px;
-	height: ${({ $isOpen, $isMinimized }) => $isOpen ? ($isMinimized ? '45px' : '500px') : '45px'};
+	max-width: 350px;
+	height: ${({ $isOpen, $isMinimized }) => $isOpen ? ($isMinimized ? '70px' : '500px') : '45px'};
 	transition: height 0.3s ease;
-	border: 1px solid #ddd;
+	border: 1px solid rgba(255, 255, 255, 0.1);
 	border-radius: 10px 10px 0 0;
-	z-index: 1; /* Ensure the content is above the pseudo-element */
+	background-color: rgba(28, 28, 40, 0.9);
 
 	&::before {
 		content: '';
@@ -25,16 +25,17 @@ const DirectMessageContainer = styled.div`
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background-color: rgba(255, 255, 255, 0.5);
+		background-color: rgba(255, 255, 255, 0.1);
 		backdrop-filter: blur(10px);
 		border-radius: 10px 10px 0 0;
 		z-index: -1;
 	}
 `;
 
+
 export const Username = styled.span`
 	cursor: pointer;
-	index: 1000;
+	z-index: 1000;
 	transition: all 0.3s ease;
 
 	&:hover {
@@ -107,34 +108,39 @@ export const ChatMessages = styled.div`
 		width: 8px;
 	}
 
-	&::-webkit-scrollbar-track {
-		background: #f5f5f5;
-	}
-
 	&::-webkit-scrollbar-thumb {
 		background-color: #6a0dad;
 		border-radius: 4px;
-		border: 2px solid #f5f5f5;
 	}
 `;
 
 export const ChatInputContainer = styled.div`
-	display: flex;
+	display: ${({ $isMinimized }) => ($isMinimized ? 'none' : 'flex')};
 	align-items: center;
 	padding: 10px;
-	background-color: rgba(255, 255, 255, 0.1);
-	border-top: 1px solid #ddd;
-	display: ${({ $isMinimized }) => ($isMinimized ? 'none' : 'flex')};
+	background-color: #1e1e28;
+	border-top: 1px solid rgba(255, 255, 255, 0.1);
 	transition: all 0.3s ease;
 `;
 
 export const ChatInput = styled.input`
 	flex: 1;
 	padding: 10px;
-	border: 1px solid #ddd;
+	border: 1px solid rgba(255, 255, 255, 0.2);
 	border-radius: 4px;
 	margin-right: 10px;
-	width: 100%;
+	background-color: #2a2a37;
+	color: #fff;
+	font-size: 1rem;
+
+	&::placeholder {
+		color: #aaa;
+	}
+
+	&:focus {
+		background-color: #333344;
+		outline: none;
+	}
 `;
 
 export const ActionButtonContainer = styled.div`
@@ -168,7 +174,7 @@ export const NewConversationMessage = styled.div`
 `;
 
 const BaseBubble = styled.div`
-	padding: 10px;
+	padding: 10px 15px;
 	margin: 5px;
 	max-width: calc(100% - 60px);
 	word-wrap: break-word;
@@ -179,13 +185,6 @@ const BaseBubble = styled.div`
 	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 	transition: all 0.3s ease;
 	animation: ${popIn} 0.3s ease-out;
-	role: log;
-	aria-live: polite;
-
-	&:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-	}
 
 	&::after {
 		content: attr(data-time);
@@ -206,26 +205,17 @@ export const SenderBubble = styled(BaseBubble)`
 	color: #fff;
 	border-radius: 18px 18px 0 18px;
 	margin-left: auto;
-	align-self: flex-end;
-
-	&::before {
-		right: -10px;
-		border-left: 10px solid #6a0dad;
-		border-bottom-left-radius: 16px 14px;
+	text-align: right;
+	width: fit-content;
 `;
 
 export const HostBubble = styled(BaseBubble)`
-	background-color: #E8E2E2;
+	background-color: #e0e0e0;
 	color: #333;
-	border-radius: 10px 10px 10px 0;
-	margin-right: auto;
-	align-self: flex-start;
-
-	&::before {
-		left: -10px;
-		border-right: 10px solid #E8E2E2;
-		border-bottom-right-radius: 16px 14px;
-	}
+	border-radius: 18px 18px 18px 0;
+	margin: 10px 0;
+	max-width: 70%;
+	width: fit-content;
 `;
 
 export const Avatar = styled.img`
@@ -240,7 +230,7 @@ export const MessageUsername = styled.span`
 	font-size: 0.65em;
 	font-weight: bold;
 	margin-bottom: 4px;
-	color: ${props => props.$isHost ? '#333' : '#6a0dad'};
+	color: ${props => props.$isHost ? '#fff' : '#6a0dad'};
 	display: block;
 	text-align: ${props => props.$isHost ? 'left' : 'right'};
 `;

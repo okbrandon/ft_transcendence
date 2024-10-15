@@ -1,6 +1,9 @@
 # TODO
-- Game -> Ending page
-- Sound: Add sound
+- Chat ->
+	- maybe bubble colors
+	- no status bar in the preview part
+	- maybe the profile info for each message sent is not necessary
+- Sound: Add sound (?)
 - tournaments
 - Game: send invite
 - Profile: `users/@me/stats` -> win / loss / ratio
