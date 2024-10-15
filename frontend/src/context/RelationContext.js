@@ -27,7 +27,6 @@ const RelationProvider = ({ children }) => {
 	const [isRefetch, setIsRefetch] = useState(false);
 
 	const setActivity = location => {
-		console.log(location);
 		if (location === '/game-ai') {
 			return 'PLAYING_VS_AI';
 		} else if (location === '/game-classic') {
