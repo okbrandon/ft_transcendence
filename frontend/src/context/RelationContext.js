@@ -27,9 +27,10 @@ const RelationProvider = ({ children }) => {
 	const [isRefetch, setIsRefetch] = useState(false);
 
 	const setActivity = location => {
-		if (location.state?.mode === 'ai') {
+		console.log(location);
+		if (location === '/game-ai') {
 			return 'PLAYING_VS_AI';
-		} else if (location.state?.mode === '1v1') {
+		} else if (location === '/game-classic') {
 			return 'PLAYING_MULTIPLAYER';
 		} else if (location === '/game-local') {
 			return 'PLAYING_LOCAL';

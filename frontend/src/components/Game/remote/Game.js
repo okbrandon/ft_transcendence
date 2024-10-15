@@ -10,7 +10,6 @@ import { PageContainer } from "../styles/Game.styled";
 const Game = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const gameMode = location.state?.mode;
 	const [gameState, setGameState] = useState({
 		matchState: null,
 		player: null,
@@ -60,15 +59,22 @@ const Game = () => {
 		}));
 	}, [sendMessage]);
 
+	const retreiveGameMode = () => {
+		console.log(location.pathname);
+		if (location.pathname === '/game-ai') return 'ai';
+		if (location.pathname === '/game-classic') return '1v1';
+		return '';
+	}
+
 	const handleHeartbeatAck = useCallback(() => {
 		heartbeatAckCount.current += 1;
 		if (heartbeatAckCount.current === 2) {
 			sendMessage(JSON.stringify({
 				e: 'MATCHMAKE_REQUEST',
-				d: { match_type: gameMode }
+				d: { match_type: retreiveGameMode() }
 			}));
 		}
-	}, [sendMessage, gameMode]);
+	}, [sendMessage]);
 
 	// Send IDENTIFY message on connection open
 	useEffect(() => {
