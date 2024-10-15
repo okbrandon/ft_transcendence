@@ -1,13 +1,15 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { GameSceneContainer, Score, ScoresContainer, StyledCanvas, Timer, TimerContainer } from "../styles/Game.styled";
-import GameCanvas from "../../../scripts/game";
 import { useNavigate } from "react-router-dom";
+import { GameSceneContainer, Score, ScoresContainer, StyledCanvas, Timer, OverlayContainer } from "../styles/Game.styled";
+import GameCanvas from "../../../scripts/game";
+import PongButton from "../../../styles/shared/PongButton.styled";
 
-const GameScene = ({ matchState, hitPos, sendMessage, activateTimer, setActivateTimer }) => {
+const GameScene = ({ matchState, playerSide, hitPos, borderScore, sendMessage, activateTimer, setActivateTimer, gameStarted, gameOver, won }) => {
 	const navigate = useNavigate();
 
 	const [keyPressed, setKeyPressed] = useState(null);
 	const [isHit, setIsHit] = useState(false);
+	const [borderColor, setBorderColor] = useState(null);
 	const [timer, setTimer] = useState(5);
 
 	const [scoreA, setScoreA] = useState(0);
@@ -81,13 +83,15 @@ const GameScene = ({ matchState, hitPos, sendMessage, activateTimer, setActivate
 		let animationFrameId;
 
 		const move = () => {
-			handlePaddleMove(keyPressed);
+			if (gameStarted && !gameOver) {
+				handlePaddleMove(keyPressed);
+			}
 			animationFrameId = requestAnimationFrame(move);
 		};
 		move();
 
 		return () => cancelAnimationFrame(animationFrameId);
-	}, [keyPressed, handlePaddleMove]);
+	}, [keyPressed, handlePaddleMove, gameStarted, gameOver]);
 
 	useEffect(() => {
 		if (!hitPos) return;
@@ -96,6 +100,15 @@ const GameScene = ({ matchState, hitPos, sendMessage, activateTimer, setActivate
 		const timeoutID = setTimeout(() => setIsHit(false), 500);
 		return () => clearTimeout(timeoutID);
 	}, [hitPos, terrain]);
+
+	useEffect(() => {
+		if (!borderScore) return;
+		const side = borderScore.pos === 'A' ? 'left' : 'right';
+		if (side === playerSide) setBorderColor('green');
+		else setBorderColor('red');
+		const timeoutID = setTimeout(() => setBorderColor(null), 500);
+		return () => clearTimeout(timeoutID);
+	}, [borderScore, playerSide]);
 
 	useEffect(() => {
 		if (!canvas.current) return;
@@ -136,17 +149,27 @@ const GameScene = ({ matchState, hitPos, sendMessage, activateTimer, setActivate
 	}, [terrain, matchState]);
 
 	return (
-		<GameSceneContainer className={isHit ? "hit" : ""}>
+		<GameSceneContainer className={`${isHit ? "hit" : ""} ${borderColor}`}>
 			<StyledCanvas ref={canvas}/>
 			<ScoresContainer>
 				<Score>{scoreA}</Score>
 				<Score>{scoreB}</Score>
 			</ScoresContainer>
-			{activateTimer && (
-				<TimerContainer>
-					<Timer>{timer}</Timer>
-				</TimerContainer>
-			)}
+				{gameOver ? (
+					<OverlayContainer>
+						<h1>Game Over!</h1>
+						<p>{won ? 'You won' : 'You lost'}</p>
+						<PongButton onClick={() => navigate('/playmenu')}>Go Back to Main Menu</PongButton>
+					</OverlayContainer>
+				) : (
+					<>
+						{activateTimer && (
+							<OverlayContainer>
+								<Timer>{timer}</Timer>
+							</OverlayContainer>
+						)}
+					</>
+				)}
 		</GameSceneContainer>
 	);
 };

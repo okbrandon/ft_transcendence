@@ -10,16 +10,19 @@ import { PageContainer } from "../styles/Game.styled";
 const Game = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const gameMode = location.state?.mode;
 	const [gameState, setGameState] = useState({
 		matchState: null,
 		player: null,
 		opponent: null,
 		playerSide: null,
 	});
+	const [gameOver, setGameOver] = useState(false);
+	const [gameStarted, setGameStarted] = useState(false);
+	const [won, setWon] = useState(false);
 
 	const [heartbeatIntervalTime, setHeartbeatIntervalTime] = useState(null);
 	const [hitPos, setHitPos] = useState(null);
+	const [borderScore, setBorderScore] = useState(null);
 
 	const [activateTimer, setActivateTimer] = useState(false);
 
@@ -56,15 +59,22 @@ const Game = () => {
 		}));
 	}, [sendMessage]);
 
+	const retreiveGameMode = () => {
+		console.log(location.pathname);
+		if (location.pathname === '/game-ai') return 'ai';
+		if (location.pathname === '/game-classic') return '1v1';
+		return '';
+	}
+
 	const handleHeartbeatAck = useCallback(() => {
 		heartbeatAckCount.current += 1;
 		if (heartbeatAckCount.current === 2) {
 			sendMessage(JSON.stringify({
 				e: 'MATCHMAKE_REQUEST',
-				d: { match_type: gameMode }
+				d: { match_type: retreiveGameMode() }
 			}));
 		}
-	}, [sendMessage, gameMode]);
+	}, [sendMessage]);
 
 	// Send IDENTIFY message on connection open
 	useEffect(() => {
@@ -92,12 +102,18 @@ const Game = () => {
 					setActivateTimer(true);
 					setGameState(prevState => ({ ...prevState, matchState: data.d }));
 					break;
+				case 'MATCH_BEGIN':
+					setGameStarted(true);
+					break;
 				case 'MATCH_UPDATE':
 					setGameState(prevState => ({ ...prevState, matchState: data.d }));
 					break;
+				case 'BALL_SCORED':
+					setBorderScore(data.d.player);
+					break;
 				case 'MATCH_END':
-					alert(data.d.won ? 'You won!' : 'You lost!');
-					navigate('/');
+					setGameOver(true);
+					setWon(data.d.won);
 					break;
 				case 'HEARTBEAT_ACK':
 					handleHeartbeatAck();
@@ -133,10 +149,15 @@ const Game = () => {
 			/>
 			<GameScene
 				matchState={gameState.matchState}
+				playerSide={gameState.playerSide}
 				hitPos={hitPos}
+				borderScore={borderScore}
 				sendMessage={sendMessage}
 				activateTimer={activateTimer}
 				setActivateTimer={setActivateTimer}
+				gameStarted={gameStarted}
+				gameOver={gameOver}
+				won={won}
 			/>
 		</PageContainer>
 	)

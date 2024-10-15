@@ -1,5 +1,5 @@
 import React from "react";
-import { ProfilesContainer } from "./styles/Game.styled";
+import { PressQContainer, ProfilesContainer } from "./styles/Game.styled";
 import GameProfile from "./GameProfile";
 
 const GameProfiles = ({ player, opponent, playerSide }) => {
@@ -11,7 +11,9 @@ const GameProfiles = ({ player, opponent, playerSide }) => {
 				player={player}
 				opponent={opponent}
 			/>
-			<p>Press <b>Q</b> to quit game</p>
+			<PressQContainer>
+				<p>Press <b>Q</b> to quit game</p>
+			</PressQContainer>
 			<GameProfile
 				side="right"
 				playerSide={playerSide}

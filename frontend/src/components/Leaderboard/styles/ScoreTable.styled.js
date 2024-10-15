@@ -2,45 +2,72 @@ import styled from 'styled-components';
 
 export const ScoreTableStyled = styled.table`
 	width: 100%;
-	border-collapse: collapse;
-	border-spacing: 0;
+	border-collapse: separate;
+	border-spacing: 0 5px;
 	color: #fff;
-	font-size: 18px;
+	font-size: 16px;
 
-	& thead {
-		background: rgb(10, 10, 10);
-		height: 60px;
-		display: table;
-		width: 100%;
-		table-layout: fixed;
+	thead {
+		background: rgba(10, 10, 10, 0.9);
+		position: sticky;
+		top: 0;
+		z-index: 1;
 	}
 
-	& tbody {
+	tbody {
 		display: block;
 		height: 500px;
 		overflow-y: auto;
-		width: 100%;
-		margin-top: 5px;
+		scrollbar-width: thin;
+		scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+
+		&::-webkit-scrollbar {
+			width: 6px;
+		}
+
+		&::-webkit-scrollbar-thumb {
+			background-color: rgba(255, 255, 255, 0.3);
+			border-radius: 3px;
+		}
 	}
 
-	& tbody tr {
+	tr {
 		display: table;
 		width: 100%;
 		table-layout: fixed;
 	}
 
-	& td {
+	th, td {
 		padding: 16px;
-		color: rgba(255, 255, 255, 0.85);
-		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-		font-size: 16px;
+		text-align: left;
+		transition: background-color 0.3s ease;
 	}
 
-	& tbody > tr:nth-child(even) {
-		background: linear-gradient(90deg, rgba(40, 40, 40, 0.8) 0%, rgba(20, 20, 20, 0.6) 100%);
+	th {
+		font-weight: bold;
+		text-transform: uppercase;
+		letter-spacing: 1px;
 	}
 
-	& tbody > tr:nth-child(odd) {
-		background: linear-gradient(90deg, rgba(20, 20, 20, 0.8) 0%, rgba(40, 40, 40, 0.6) 100%);
+	td {
+		background-color: rgba(30, 30, 30, 0.7);
 	}
+
+	tr:hover td {
+		background-color: rgba(50, 50, 50, 0.8);
+	}
+
+	th:nth-child(1), td:nth-child(1) { width: 10%; }
+	th:nth-child(2), td:nth-child(2) { width: 45%; }
+	th:nth-child(3), td:nth-child(3) { width: 45%; }
+`;
+
+export const Trophy = styled.i`
+	color: ${props => {
+		if (props.$position === 1) return '#ffd700';
+		if (props.$position === 2) return '#c0c0c0';
+		if (props.$position === 3) return '#cd7f32';
+		return 'white';
+	}};
+	margin-right: 8px;
 `;

@@ -6,7 +6,6 @@ export const PodiumContainer = styled.div`
 	justify-content: center;
 	height: 400px;
 	width: 100%;
-	margin-top: 60px;
 	gap: 100px;
 	perspective: 1000px;
 `;
@@ -15,19 +14,12 @@ export const PodiumBase = styled.div`
 	position: relative;
 	display: flex;
 	flex-direction: column;
-	justify-content: start;
+	justify-content: flex-start;
 	align-items: center;
-	background-image:
-		linear-gradient(
-			to top,
-			rgba(0, 0, 0, 1) 0%,
-			rgba(0, 0, 0, 0) 100%
-		),
-		url('/images/podium.png');
+	background-image: url('/images/podium.png');
 	background-size: contain;
 	background-position: center;
 	background-repeat: no-repeat;
-	border-radius: 10px;
 	width: 200px;
 
 	&.first {
@@ -41,14 +33,20 @@ export const PodiumBase = styled.div`
 	&.third {
 		height: 270px;
 	}
-
 `;
+
+const calculateTop = (height, offset) => `${height - offset}px`;
 
 export const PlayerInfo = styled.div`
 	display: flex;
 	flex-direction: column;
 	text-align: center;
 	color: #fff;
+	position: relative;
+	top: ${({ $position }) =>
+		$position === 'first' ? calculateTop(320, 400) :
+		$position === 'second' ? calculateTop(280, 380) :
+		calculateTop(270, 370)};
 `;
 
 export const PlayerAvatar = styled.img`
@@ -57,6 +55,12 @@ export const PlayerAvatar = styled.img`
 	border-radius: 25%;
 	border: 3px solid #3f3f3f;
 	box-shadow: 0 0 100px rgba(255, 255, 255, 0.7);
+	position: relative;
+	object-fit: cover;
+	top: ${({ $position }) =>
+		$position === 'first' ? calculateTop(320, 400) :
+		$position === 'second' ? calculateTop(280, 380) :
+		calculateTop(270, 370)};
 `;
 
 export const PlayerName = styled.div`
@@ -70,7 +74,12 @@ export const PlayerScore = styled.div`
 	align-items: center;
 	font-size: 1em;
 	color: #e0e0e0;
+	position: relative;
 	font-weight: bold;
+	top: ${({ $position }) =>
+		$position === 'first' ? calculateTop(320, 250) :
+		$position === 'second' ? calculateTop(280, 210) :
+		calculateTop(270, 200)};
 `;
 
 export const TrophyContainer = styled.div`
@@ -78,7 +87,10 @@ export const TrophyContainer = styled.div`
 	justify-content: center;
 	align-items: center;
 	position: relative;
-	top: 15px;
+	top: ${({ $position }) =>
+		$position === 'first' ? calculateTop(320, 295) :
+		$position === 'second' ? calculateTop(280, 255) :
+		calculateTop(270, 250)};
 `;
 
 export const Separator = styled.hr`
@@ -86,6 +98,11 @@ export const Separator = styled.hr`
 	border: 0.5px solid #ccc;
 	margin: 10px 0;
 	box-sizing: border-box;
+	position: relative;
+	top: ${({ $position }) =>
+		$position === 'first' ? calculateTop(320, 250) :
+		$position === 'second' ? calculateTop(280, 210) :
+		calculateTop(270, 200)};
 `;
 
 export const Badge = styled.div`

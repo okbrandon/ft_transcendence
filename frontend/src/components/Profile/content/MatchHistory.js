@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
-import { MatchHistoryContainer, MatchCardTable } from "../styles/content/MatchHistory.styled";
-import { CardTitle } from "../styles/Profile.styled";
 import { getDuration, getDate } from "../../../scripts/match";
 import { useTranslation } from "react-i18next";
+import { MatchCardTable, MatchHistoryContainer } from "../styles/Profile.styled";
 
 const MatchHistory = ({ matchArray }) => {
 	const [visibleRows, setVisibleRows] = useState([]);
@@ -30,13 +29,13 @@ const MatchHistory = ({ matchArray }) => {
 		container.addEventListener('scroll', handleScroll);
 		handleScroll();
 		return () => container.removeEventListener('scroll', handleScroll);
-	}, [])
+	}, []);
 
 	return (
-		<MatchHistoryContainer>
-			<CardTitle>{t('profile.matchHistory.title')}</CardTitle>
-			{
-				matchArray.length === 0 ? (
+		<>
+			<h2>Match History</h2>
+			<MatchHistoryContainer>
+				{matchArray.length === 0 ? (
 					<p>{t('profile.matchHistory.noResults')}</p>
 				) : (
 					<MatchCardTable>
@@ -64,9 +63,9 @@ const MatchHistory = ({ matchArray }) => {
 							))}
 						</tbody>
 					</MatchCardTable>
-				)
-			}
-		</MatchHistoryContainer>
+				)}
+			</MatchHistoryContainer>
+		</>
 	);
 };
 

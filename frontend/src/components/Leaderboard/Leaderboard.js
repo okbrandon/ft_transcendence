@@ -1,76 +1,43 @@
-import React, { useState, useEffect } from 'react';
-import FilterButton from './tools/FilterButton';
-import ScoreTable from './ScoreTable';
+import React, { useEffect, useState, useCallback } from 'react';
+import { WrapContainer, LeaderboardContainer } from './styles/Leaderboard.styled';
+import TimeFrameButtons from './tools/TimeFrameButtons';
 import Podium from './Podium';
-import {
-	GetLeaderboardLifetime,
-	GetLeaderboardDaily,
-	GetLeaderboardWeekly
-} from '../../api/leaderboard';
-
-import {
-	WrapContainer,
-	LeaderboardContainer,
-	BackgroundContainer,
-	TimeFrameButton,
-	TimeFrameContainer
-} from './styles/Leaderboard.styled';
+import ScoreTable from './ScoreTable';
+import StatsDropdown from './tools/StatsDropdown';
+import { GetLeaderboard } from '../../api/leaderboard';
 
 const Leaderboard = () => {
 	const [timeFrame, setTimeFrame] = useState('lifetime');
+	const [stats, setStats] = useState('gamesPlayed');
 	const [leaderboardData, setLeaderboardData] = useState([]);
 
+	const fetchLeaderboardData = useCallback(async () => {
+		const data = await GetLeaderboard(timeFrame, stats);
+		setLeaderboardData(data);
+	}, [timeFrame, stats]);
+
+	// Trigger fetching when timeFrame or stats change
 	useEffect(() => {
 		fetchLeaderboardData();
-	}, [timeFrame]);
+	}, [fetchLeaderboardData]);
 
-	const fetchLeaderboardData = async () => {
-		let data;
-		switch (timeFrame) {
-			case 'daily':
-				data = await GetLeaderboardDaily();
-				break;
-			case 'weekly':
-				data = await GetLeaderboardWeekly();
-				break;
-			default:
-				data = await GetLeaderboardLifetime();
-		}
-		setLeaderboardData(data);
-	};
-
+	// Handle time frame change (e.g., 'daily', 'weekly', 'lifetime')
 	const handleTimeFrameChange = (newTimeFrame) => {
 		setTimeFrame(newTimeFrame);
 	};
 
+	// Handle stats change (e.g., 'gamesPlayed', 'gamesWon', 'gamesLost')
+	const handleStatsChange = (newStats) => {
+		setStats(newStats);
+	};
+
 	return (
 		<WrapContainer>
-			<TimeFrameContainer>
-				<BackgroundContainer>
-					<TimeFrameButton
-						onClick={() => handleTimeFrameChange('lifetime')}
-						$isActive={timeFrame === 'lifetime'}
-					>
-						Lifetime
-					</TimeFrameButton>
-					<TimeFrameButton
-						onClick={() => handleTimeFrameChange('daily')}
-						$isActive={timeFrame === 'daily'}
-					>
-						Daily
-					</TimeFrameButton>
-					<TimeFrameButton
-						onClick={() => handleTimeFrameChange('weekly')}
-						$isActive={timeFrame === 'weekly'}
-					>
-						Weekly
-					</TimeFrameButton>
-				</BackgroundContainer>
-			</TimeFrameContainer>
-			<Podium leaderboardData={leaderboardData}/>
+			<TimeFrameButtons timeFrame={timeFrame} handleTimeFrameChange={handleTimeFrameChange} />
+			<StatsDropdown stats={stats} handleStatsChange={handleStatsChange} />
+			<Podium leaderboardData={leaderboardData} selectedStat={stats} />
 			<LeaderboardContainer>
-				<FilterButton />
-				<ScoreTable data={leaderboardData} />
+				<ScoreTable data={leaderboardData} selectedStat={stats} />
 			</LeaderboardContainer>
 		</WrapContainer>
 	);

@@ -5,12 +5,16 @@ import { useChat } from '../../context/ChatContext';
 import { truncateText } from './tools/TruncateText';
 
 const PreviewContainer = styled.div`
-	padding: 10px;
-	border-top: 1px solid #ddd;
-	color: #333;
+	padding: 20px;
+	color: #fff;
 	display: flex;
 	align-items: center;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 	cursor: pointer;
+
+	&:hover {
+		background: #29293d;
+	}
 `;
 
 const MessageContent = styled.div`
@@ -82,7 +86,9 @@ export const MessagePreview = ({ handleSelectChat }) => {
 					}
 					const lastMessage = convo.messages[convo.messages.length - 1];
 					return renderFriendPreview(other, index, lastMessage.content);
-				}})}
+				}
+				return null;
+			})}
 		</ScrollableComponent>
 	);
 };

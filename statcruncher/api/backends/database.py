@@ -70,10 +70,19 @@ class StatDatabase():
 		try:
 			self.cursor.execute(query)
 			rows = self.cursor.fetchall()
+			column_names = [desc[0] for desc in self.cursor.description]
 		except Exception as err:
 			logger.error(f"Query execution failed: {err}")
 			return None, err
 
-		matches = [dict(row) for row in rows]
+		fields_to_keep = [
+			"matchID", "playerA", "playerB", "winnerID",
+			"finishedAt", "createdAt", "updatedAt"
+		]
+
+		matches = [
+			{key: match.get(key) for key in fields_to_keep if key in column_names}
+			for match in [dict(zip(column_names, row)) for row in rows]
+		]
 
 		return matches, None

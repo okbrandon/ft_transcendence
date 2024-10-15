@@ -1,17 +1,19 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import MainBar from './main/MainBar';
-import About from './content/About';
+import Balance from './content/Balance';
 import API from '../../api/api'
 import MatchHistory from './content/MatchHistory';
 import Winrate from './content/Winrate';
 import DisplaySkin from './content/DisplaySkin';
-import { GetUserByUsername } from '../../api/user';
+import { GetUser, GetUserByUsername } from '../../api/user';
 import { useRelation } from '../../context/RelationContext';
 import { GetUserFromRelation } from '../../scripts/relation';
 import { useNotification } from '../../context/NotificationContext';
-import { ProfileContainer, UserContainer, UserProfileBanner } from './styles/Profile.styled';
+import { ProfileContainer, UserContainer, UserInfoContainer, UserMainInfoContainer, UserProfileBanner, UserProfileBannerContainer } from './styles/Profile.styled';
 import Loader from '../../styles/shared/Loader.styled';
+import ProfileMainInfo from './main/ProfileMainInfo';
+import Activity from './content/Activity';
 
 const matchArray = [
 	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Brandon"}, scores: {playerA: 9, playerB: 10}, startedAt: "2021-09-01T12:28:01Z", finishedAt: "2021-09-01T12:30:38Z"},
@@ -36,25 +38,6 @@ const Profile = () => {
 	const userID = localStorage.getItem('userID');
 
 	useEffect(() => {
-		let selectedSkinId;
-		API.get('/users/@me/settings')
-			.then(response => {
-				selectedSkinId = response.data.selectedPaddleSkin;
-				if (selectedSkinId) {
-					return API.get('/store/items');
-				}
-				return Promise.reject('No skin selected');
-			})
-			.then(response => {
-				const selectedSkin = response.data.find(item => item.itemID === selectedSkinId);
-				if (selectedSkin) {
-					setCurrentSkin(selectedSkin.assetID);
-				}
-			})
-			.catch(error => console.error('Error fetching skin:', error));
-	}, []);
-
-	useEffect(() => {
 		setIsRefetch(true);
 	}, [setIsRefetch]);
 
@@ -62,8 +45,12 @@ const Profile = () => {
 		if (username && relations) {
 			GetUserByUsername(username)
 				.then(user => {
-					setProfileUser(user);
-					return GetUserFromRelation(relations, user.username);
+					if (user.userID === userID) return GetUser();
+					return user;
+				})
+				.then(meUser => {
+					setProfileUser(meUser);
+					return GetUserFromRelation(relations, meUser.username);
 				})
 				.then(relationData => {
 					setRelation(relationData);
@@ -71,9 +58,35 @@ const Profile = () => {
 				.catch(err => {
 					addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 					navigate('/404');
-			});
+				});
 		}
-	}, [relations, username, navigate, addNotification]);
+	}, [relations, username, navigate, addNotification, userID]);
+
+	useEffect(() => {
+		if (!profileUser) return;
+		let selectedSkinId;
+		API.get(`/users/${profileUser.userID}/settings`)
+			.then(response => {
+				selectedSkinId = response.data.selectedPaddleSkin;
+				if (selectedSkinId) {
+					return API.get('/store/items');
+				}
+				setCurrentSkin(null);
+				return null;
+			})
+			.then(response => {
+				if (!response) return;
+				const selectedSkin = response.data.find(item => item.itemID === selectedSkinId);
+				if (selectedSkin) {
+					setCurrentSkin(selectedSkin.assetID);
+				} else {
+					setCurrentSkin(null);
+				}
+			})
+			.catch(err => {
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
+			});
+	}, [addNotification, profileUser]);
 
 	useEffect(() => {
 		if (relation) {
@@ -93,7 +106,7 @@ const Profile = () => {
 				<Loader/>
 			</ProfileContainer>
 		);
-	};
+	}
 
 	return (
 		<ProfileContainer>
@@ -101,21 +114,26 @@ const Profile = () => {
 				<Loader $profilePicture={profileUser.avatarID}/>
 			) : (
 				<>
-					<UserProfileBanner $path={profileUser.bannerID}/>
-					<UserContainer>
-						<MainBar
+					<UserProfileBannerContainer>
+						<UserProfileBanner $path={profileUser.bannerID}/>
+						<ProfileMainInfo
 							profileUser={profileUser}
-							matchArray={matchArray}
 							relation={relation}
-							setIsRefetch={setIsRefetch}
-						/>
-						<About
-							profileUser={profileUser}
-							matchArray={matchArray}
-						/>
-						<DisplaySkin currentSkin={currentSkin}/>
-						<Winrate matchArray={matchArray}/>
-						<MatchHistory matchArray={matchArray}/>
+							setIsRefetch={setIsRefetch}/>
+					</UserProfileBannerContainer>
+					<MainBar profileUser={profileUser} matchArray={matchArray}/>
+					<UserContainer>
+						<UserMainInfoContainer>
+							<MatchHistory matchArray={matchArray}/>
+							<Activity matchArray={matchArray}/>
+						</UserMainInfoContainer>
+						<UserInfoContainer>
+							<Winrate matchArray={matchArray}/>
+							<DisplaySkin currentSkin={currentSkin}/>
+							{profileUser.userID === userID && (
+								<Balance profileUser={profileUser}/>
+							)}
+						</UserInfoContainer>
 					</UserContainer>
 				</>
 			)}

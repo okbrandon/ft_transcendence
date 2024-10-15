@@ -1,36 +1,38 @@
 import React from 'react';
 import {
 	ScoreTableStyled,
+	Trophy
 } from './styles/ScoreTable.styled';
 
-const ScoreTable = ({ data }) => {
-	const topPlayers = data;
-
-	// temporary sorting function
-	topPlayers.sort((a, b) => {
-		return b.stats.gamesWon - a.stats.gamesWon;
-	});
-
-	return (
-		<ScoreTableStyled>
-			<thead>
-				<tr>
-					<th>Pos</th>
-					<th>Player Name</th>
-					<th>Score</th>
-				</tr>
-			</thead>
-			<tbody>
-				{topPlayers.map((player, index) => (
-					<tr key={index}>
-						<td><i className="bi bi-trophy-fill" /> {index + 1}</td>
-						<td>{player.name}</td>
-						<td>{player.stats.gamesWon}</td>
-					</tr>
-				))}
-			</tbody>
-		</ScoreTableStyled>
-	);
+const statHeaders = {
+	gamesPlayed: 'Games Played',
+	gamesWon: 'Games Won',
+	gamesLost: 'Games Lost',
+	score: 'Score'
 };
+
+const ScoreTable = ({ data, selectedStat }) => (
+	<ScoreTableStyled>
+		<thead>
+		<tr>
+			<th>Pos</th>
+			<th>Player Name</th>
+			<th>{statHeaders[selectedStat] || 'Score'}</th>
+		</tr>
+		</thead>
+		<tbody>
+		{data.map((player, index) => (
+			<tr key={player.id || index}>
+			<td>
+				<Trophy className="bi bi-trophy-fill" $position={index + 1} />
+				{index + 1}
+			</td>
+			<td>{player.user.username}</td>
+			<td>{player.stats[selectedStat]}</td>
+			</tr>
+		))}
+		</tbody>
+	</ScoreTableStyled>
+);
 
 export default ScoreTable;

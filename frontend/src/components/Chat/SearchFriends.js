@@ -9,11 +9,12 @@ import SearchFriendsContainer, {
 } from './styles/Chat/SearchFriends.styled';
 import { useNavigate } from 'react-router-dom';
 import { useRelation } from '../../context/RelationContext.js';
+import { useChat } from '../../context/ChatContext.js';
 import { useNotification } from '../../context/NotificationContext';
 import API from '../../api/api';
 import ConfirmationModal from './tools/ConfirmationModal';
 
-export const SearchFriends = () => {
+export const SearchFriends = ({ toggleMinimization, handleSelectChat }) => {
 	const [searchQuery, setSearchQuery] = useState('');
 	const [isBlockModalOpen, setIsBlockModalOpen] = useState(false);
 	const [selectedFriend, setSelectedFriend] = useState(null);
@@ -21,18 +22,37 @@ export const SearchFriends = () => {
 	const userID = localStorage.getItem('userID');
 	const { friends, setIsRefetch } = useRelation();
 	const { addNotification } = useNotification();
+	const { conversations } = useChat();
 
-	const handleProfile = (friend) => {
+	const handleSelectFriend = (friend) => {
+		const convo = conversations.find((convo) => {
+			const other = convo.participants.find(participant => participant.userID !== userID);
+			return other.username === friend.username;
+		});
+
+		handleSelectChat(friend.username, convo ? convo.conversationID : null);
+		setSearchQuery('');
+	};
+
+	const handleProfile = (friend, e) => {
+		e.stopPropagation();
 		navigate(`/profile/${friend.username}`);
+		setSearchQuery('');
+		toggleMinimization();
 	};
 
-	const handleInvite = (friend) => {
+	const handleInvite = (friend, e) => {
+		e.stopPropagation();
 		console.log('Invite', friend); // Leader: implement game invite functionality here
+		setSearchQuery('');
+		toggleMinimization();
 	};
 
-	const handleBlock = (friend) => {
+	const handleBlock = (friend, e) => {
+		e.stopPropagation();
 		setSelectedFriend(friend);
 		setIsBlockModalOpen(true);
+		setSearchQuery('');
 	};
 
 	const handleBlockUser = () => {
@@ -51,6 +71,7 @@ export const SearchFriends = () => {
 				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 			});
 		setIsBlockModalOpen(false);
+		toggleMinimization();
 	};
 
 	return (
@@ -62,18 +83,19 @@ export const SearchFriends = () => {
 					placeholder="Search for Friends..."
 					value={searchQuery}
 					onChange={(e) => setSearchQuery(e.target.value)}
+					autoComplete='off'
 				/>
 				{searchQuery && (
 					<Dropdown>
 						{friends
 							.filter(friend => friend.username.toLowerCase().includes(searchQuery.toLowerCase()))
 							.map((friend, index) => (
-								<FriendItem key={index}>
-									<Username>{friend.username}</Username>
+								<FriendItem key={index} onClick={() => handleSelectFriend(friend)}>
+									<Username >{friend.username}</Username>
 									<ButtonContainer>
-										<ActionButton color="#6a0dad" onClick={() => handleProfile(friend)}>Profile</ActionButton>
-										<ActionButton color="#9AE66E" onClick={() => handleInvite(friend)}>Invite</ActionButton>
-										<ActionButton color="#EE4266" onClick={() => handleBlock(friend)}>Block</ActionButton>
+										<ActionButton color="#6a0dad" onClick={(e) => handleProfile(friend, e)}>Profile</ActionButton>
+										<ActionButton color="#9AE66E" onClick={(e) => handleInvite(friend, e)}>Invite</ActionButton>
+										<ActionButton color="#EE4266" onClick={(e) => handleBlock(friend, e)}>Block</ActionButton>
 									</ButtonContainer>
 								</FriendItem>
 							))}

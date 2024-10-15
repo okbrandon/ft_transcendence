@@ -126,9 +126,9 @@ const SignUp = () => {
 						/>
 						<span>{t('auth.signUp.passwordTitle')}</span>
 						{showPassword ? (
-							<i className="bi bi-eye-fill" onClick={() => setShowPassword(!showPassword)}/>
+							<i className="bi bi-eye-fill" onClick={() => setShowPassword(false)}/>
 						) : (
-							<i className="bi bi-eye" onClick={() => setShowPassword(!showPassword)}/>
+							<i className="bi bi-eye" onClick={() => setShowPassword(true)}/>
 						)}
 					</FormContainer.Group>
 					<FormContainer.Group className="mb-3">
@@ -143,9 +143,9 @@ const SignUp = () => {
 						/>
 						<span>{t('auth.signUp.confirmPasswordTitle')}</span>
 						{showCfPassword ? (
-							<i className="bi bi-eye-fill" onClick={() => setShowCfPassword(!showCfPassword)}/>
+							<i className="bi bi-eye-fill" onClick={() => setShowCfPassword(false)}/>
 						) : (
-							<i className="bi bi-eye" onClick={() => setShowCfPassword(!showCfPassword)}/>
+							<i className="bi bi-eye" onClick={() => setShowCfPassword(true)}/>
 						)}
 					</FormContainer.Group>
 					<p>{t('auth.signUp.alreadyRegistered')}<Link to="/signin">{t('auth.signUp.loginButton')}</Link></p>

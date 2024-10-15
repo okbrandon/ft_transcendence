@@ -1,17 +1,22 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
-const DirectMessageContainer = styled.div`
+const popIn = keyframes`
+	0% { transform: scale(0.8); opacity: 0; }
+	100% { transform: scale(1); opacity: 1; }
+`;
+
+export const DirectMessageContainer = styled.div`
 	flex: 1;
 	display: flex;
 	flex-direction: column;
 	position: relative !important;
 	margin-right: 1%;
-	max-width: 320px;
-	height: ${({ $isOpen, $isMinimized }) => $isOpen ? ($isMinimized ? '45px' : '500px') : '45px'};
+	max-width: 350px;
+	height: ${({ $isOpen, $isMinimized }) => $isOpen ? ($isMinimized ? '70px' : '500px') : '45px'};
 	transition: height 0.3s ease;
-	border: 1px solid #ddd;
+	border: 1px solid rgba(255, 255, 255, 0.1);
 	border-radius: 10px 10px 0 0;
-	z-index: 1; /* Ensure the content is above the pseudo-element */
+	background-color: rgba(28, 28, 40, 0.9);
 
 	&::before {
 		content: '';
@@ -20,16 +25,17 @@ const DirectMessageContainer = styled.div`
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background-color: rgba(255, 255, 255, 0.5);
+		background-color: rgba(255, 255, 255, 0.1);
 		backdrop-filter: blur(10px);
 		border-radius: 10px 10px 0 0;
 		z-index: -1;
 	}
 `;
 
+
 export const Username = styled.span`
 	cursor: pointer;
-	index: 1000;
+	z-index: 1000;
 	transition: all 0.3s ease;
 
 	&:hover {
@@ -97,25 +103,44 @@ export const ChatMessages = styled.div`
 	flex-direction: column;
 	overflow-y: auto;
 	transition: all 0.3s ease;
+
+	&::-webkit-scrollbar {
+		width: 8px;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background-color: #6a0dad;
+		border-radius: 4px;
+	}
 `;
 
 export const ChatInputContainer = styled.div`
-	display: flex;
+	display: ${({ $isMinimized }) => ($isMinimized ? 'none' : 'flex')};
 	align-items: center;
 	padding: 10px;
-	background-color: rgba(255, 255, 255, 0.1);
-	border-top: 1px solid #ddd;
-	display: ${({ $isMinimized }) => ($isMinimized ? 'none' : 'flex')};
+	background-color: #1e1e28;
+	border-top: 1px solid rgba(255, 255, 255, 0.1);
 	transition: all 0.3s ease;
 `;
 
 export const ChatInput = styled.input`
 	flex: 1;
 	padding: 10px;
-	border: 1px solid #ddd;
+	border: 1px solid rgba(255, 255, 255, 0.2);
 	border-radius: 4px;
 	margin-right: 10px;
-	width: 100%;
+	background-color: #2a2a37;
+	color: #fff;
+	font-size: 1rem;
+
+	&::placeholder {
+		color: #aaa;
+	}
+
+	&:focus {
+		background-color: #333344;
+		outline: none;
+	}
 `;
 
 export const ActionButtonContainer = styled.div`
@@ -148,28 +173,66 @@ export const NewConversationMessage = styled.div`
 	font-size: 0.9rem;
 `;
 
-export const SenderBubble = styled.div`
-	background-color: #6a0dad;
-	color: #fff;
-	border-radius: 10px 10px 0 10px;
-	padding: 10px;
-	margin: 5px 5px 5px auto;
-	max-width: 70%;
-	align-self: flex-end;
+const BaseBubble = styled.div`
+	padding: 10px 15px;
+	margin: 5px;
+	max-width: calc(100% - 60px);
 	word-wrap: break-word;
 	white-space: pre-wrap;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	font-size: 14px;
+	line-height: 1.4;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+	transition: all 0.3s ease;
+	animation: ${popIn} 0.3s ease-out;
+
+	&::after {
+		content: attr(data-time);
+		display: block;
+		font-size: 0.8em;
+		margin-top: 5px;
+		opacity: 0.7;
+	}
+
+	@keyframes popIn {
+		0% { transform: scale(0.8); opacity: 0; }
+		100% { transform: scale(1); opacity: 1; }
+	}
 `;
 
-export const HostBubble = styled.div`
-	background-color: #E8E2E2;
+export const SenderBubble = styled(BaseBubble)`
+	background-color: #6a0dad;
+	color: #fff;
+	border-radius: 18px 18px 0 18px;
+	margin-left: auto;
+	text-align: right;
+	width: fit-content;
+`;
+
+export const HostBubble = styled(BaseBubble)`
+	background-color: #e0e0e0;
 	color: #333;
-	border-radius: 10px 10px 10px 0;
-	padding: 10px;
-	margin: 5px auto 5px 5px;
+	border-radius: 18px 18px 18px 0;
+	margin: 10px 0;
 	max-width: 70%;
-	align-self: flex-start;
-	word-wrap: break-word;
-	white-space: pre-wrap;
+	width: fit-content;
+`;
+
+export const Avatar = styled.img`
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	margin-right: 8px;
+	vertical-align: middle;
+`;
+
+export const MessageUsername = styled.span`
+	font-size: 0.65em;
+	font-weight: bold;
+	margin-bottom: 4px;
+	color: ${props => props.$isHost ? '#fff' : '#6a0dad'};
+	display: block;
+	text-align: ${props => props.$isHost ? 'left' : 'right'};
 `;
 
 export const TournamentInviteBubble = styled.div`

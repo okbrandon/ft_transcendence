@@ -6,17 +6,21 @@ import { SearchBarContainer } from './styles/Navigation.styled';
 import { GetUsers } from '../../api/user';
 import { useNotification } from '../../context/NotificationContext';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 const SearchBar = () => {
+	const navigate = useNavigate();
 	const [input, setInput] = useState('');
 	const { addNotification } = useNotification();
 	const [results, setResults] = useState(null);
 	const searchBarRef = useRef(null);
+	const [activeIndex, setActiveIndex] = useState(-1);
 	const { t } = useTranslation();
 
 	const handleClickOutside = e => {
 		if (searchBarRef.current && !searchBarRef.current.contains(e.target)) {
 			setResults(null);
+			setActiveIndex(-1);
 		}
 	};
 
@@ -51,10 +55,35 @@ const SearchBar = () => {
 
 	const handleInput = event => {
 		setInput(event.target.value);
+		setActiveIndex(-1);
 	};
 
 	const handleSubmit = e => {
 		e.preventDefault();
+	};
+
+	const handleKeyDown = e => {
+		if (results && results.length > 0) {
+			if (e.key === 'ArrowDown') {
+				e.preventDefault();
+				setActiveIndex(prevIndex => (prevIndex + 1) % results.length);
+			} else if (e.key === 'ArrowUp') {
+				e.preventDefault();
+				setActiveIndex(prevIndex => (prevIndex - 1 + results.length) % results.length);
+			} else if (e.key === 'Tab') {
+				e.preventDefault();
+				setActiveIndex(prevIndex => (prevIndex + 1) % results.length);
+			} else if (e.key === 'Enter' && activeIndex !== -1) {
+				e.preventDefault();
+				handleSelect(results[activeIndex].username);
+			}
+		}
+	};
+
+	const handleSelect = username => {
+		setInput('');
+		setResults(null);
+		navigate(`/profile/${username}`);
 	};
 
 	return (
@@ -69,9 +98,16 @@ const SearchBar = () => {
 				className="mr-sm-2"
 				value={input}
 				onChange={handleInput}
+				onKeyDown={handleKeyDown}
 				autoComplete='off'
 			/>
-			{results && <SearchList results={results} setInput={setInput} setResults={setResults}/>}
+			{results && (
+				<SearchList
+					results={results}
+					activeIndex={activeIndex}
+					handleSelect={handleSelect}
+				/>
+			)}
 		</SearchBarContainer>
 	);
 };

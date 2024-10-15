@@ -27,21 +27,55 @@ export const GameSceneContainer = styled.div`
 
 	@keyframes borderHit {
 		0% {
-			border: 3px solid rgba(255, 255, 255, 0.5);
-			box-shadow: 0 0 20px rgba(164, 69, 178, 1), 0 0 30px rgba(59, 130, 246, 0.7);
+			border: 3px solid rgba(255, 255, 255, 0.7); /* Slightly stronger border */
+			box-shadow: 0 0 30px rgba(164, 69, 178, 1), 0 0 40px rgba(59, 130, 246, 0.8);
 		}
 		50% {
-			border: 3px solid rgba(255, 255, 255, 0.3);
-			box-shadow: 0 0 20px rgba(164, 69, 178, 0.8), 0 0 30px rgba(59, 130, 246, 0.5);
+			border: 3px solid rgba(255, 255, 255, 0.4); /* Softer border */
+			box-shadow: 0 0 25px rgba(164, 69, 178, 0.8), 0 0 35px rgba(59, 130, 246, 0.6);
 		}
 		100% {
-			border: 3px solid rgba(255, 255, 255, 0.2);
-			box-shadow: 0 0 20px rgba(164, 69, 178, 0.7), 0 0 30px rgba(59, 130, 246, 0.4);
+			border: 3px solid rgba(255, 255, 255, 0.2); /* Faint border */
+			box-shadow: 0 0 20px rgba(164, 69, 178, 0.6), 0 0 30px rgba(59, 130, 246, 0.4);
+		}
+	}
+
+	@keyframes borderHitGreen {
+		0% {
+			border: 3px solid rgba(50, 205, 50, 0.7);
+			box-shadow: 0 0 30px rgba(50, 205, 50, 1), 0 0 40px rgba(34, 139, 34, 0.8);
+			transform: scale(1.005);
+		}
+		100% {
+			border: 3px solid rgba(255, 255, 255, 0.2); /* Faint border */
+			box-shadow: 0 0 20px rgba(164, 69, 178, 0.6), 0 0 30px rgba(59, 130, 246, 0.4);
+			transform: scale(1);
+		}
+	}
+
+	@keyframes borderHitRed {
+		0% {
+			border: 3px solid rgba(255, 0, 0, 0.7); /* Stronger red border */
+			box-shadow: 0 0 30px rgba(255, 0, 0, 1), 0 0 40px rgba(139, 0, 0, 0.8);
+			transform: scale(1.005);
+		}
+		100% {
+			border: 3px solid rgba(255, 255, 255, 0.2); /* Faint border */
+			box-shadow: 0 0 20px rgba(164, 69, 178, 0.6), 0 0 30px rgba(59, 130, 246, 0.4);
+			transform: scale(1);
 		}
 	}
 
 	&.hit {
 		animation: borderHit 0.5s ease-in-out;
+	}
+
+	&.green {
+		animation: borderHitGreen 0.5s ease-in-out;
+	}
+
+	&.red {
+		animation: borderHitRed 0.5s ease-in-out;
 	}
 `;
 
@@ -58,14 +92,17 @@ export const ScoresContainer = styled.div`
 	justify-content: center;
 	align-items: center;
 	gap: 120px;
-	font-family: 'Orbitron'	, sans-serif;
+	font-family: 'Orbitron', sans-serif;
 	color: #fff;
 `;
 
 export const Score = styled.div`
 	font-size: 5rem;
 	font-weight: bold;
-	text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+	color: #ffffff;
+
+	text-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 20px rgba(255, 255, 255, 0.5),
+	             0 0 30px rgba(255, 255, 255, 0.3), 0 0 40px rgba(255, 255, 255, 0.2);
 `;
 
 export const ProfilesContainer = styled.div`
@@ -74,8 +111,9 @@ export const ProfilesContainer = styled.div`
 	align-items: center;
 	width: 1200px;
 	margin-bottom: 20px;
+	position: relative;
 
-	& > p {
+	p {
 		font-size: 1.5rem;
 		font-family: 'Orbitron', sans-serif;
 		color: rgba(255, 255, 255, 0.2);
@@ -83,6 +121,12 @@ export const ProfilesContainer = styled.div`
 		background-clip: text;
 		-webkit-background-clip: text;
 	}
+`;
+
+export const PressQContainer = styled.div`
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
 `;
 
 export const Profile = styled.div`
@@ -105,7 +149,7 @@ export const ProfileName = styled.h2`
 	color: #fff;
 `;
 
-export const TimerContainer = styled.div`
+export const OverlayContainer = styled.div`
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -113,9 +157,23 @@ export const TimerContainer = styled.div`
 	width: 100%;
 	height: 100%;
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	gap: 20px;
 	z-index: 100;
+
+	h1 {
+		font-family: 'Orbitron', sans-serif;
+		font-size: 3rem;
+		color: #fff;
+	}
+
+	p {
+		font-family: 'Orbitron', sans-serif;
+		font-size: 2rem;
+		color: #fff;
+	}
 `;
 
 export const Timer = styled.div`
