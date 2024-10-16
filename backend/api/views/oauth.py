@@ -54,7 +54,7 @@ class OAuth42Callback(APIView):
             'userID': generate_id('user'),
             'email': user_info['email'],
             'avatarID': user_info['image']['link'] if 'image' in user_info else None,
-            'lang': 'en',
+            'lang': 'EN',
             'oauthAccountID': user_info['id'],
             'flags': 1, # EMAIL_VERIFIED
         })

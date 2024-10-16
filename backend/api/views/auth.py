@@ -81,7 +81,7 @@ class AuthRegister(APIView):
         if not validate_password(password):
             raise ValidationError("Invalid password. It must be at least 8 characters long, contain at least one lowercase letter, one uppercase letter, one digit, and one special character.")
         if not validate_lang(lang):
-            raise ValidationError("Unsupported language. Supported languages are 'en', 'fr' or 'es'.")
+            raise ValidationError("Unsupported language. Supported languages are 'EN', 'FR' or 'ES'.")
 
         return {
             "username": username,
