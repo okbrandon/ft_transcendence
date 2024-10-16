@@ -167,8 +167,8 @@ class BotProgram:
 				while True:
 					message = await ws.recv()
 					await self.handle_message(message)
-		except websockets.exceptions.ConnectionClosedError:
-			logger.info(f"[{self.__class__.__name__} | MatchID: {self.match_id}] Connection closed")
+		except websockets.exceptions.ConnectionClosedError as e:
+			logger.info(f"[{self.__class__.__name__} | MatchID: {self.match_id}] Connection closed with code: {e.code}")
 		except Exception as e:
 			logger.error(f"[{self.__class__.__name__} | MatchID: {self.match_id}] Error: {type(e).__name__} - {e}")
 		finally:
