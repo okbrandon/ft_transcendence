@@ -9,7 +9,7 @@ import Language from './LanguageDropdown';
 import { useTranslation } from 'react-i18next';
 
 const NavBar = () => {
-	const [language, setLanguage] = useState(localStorage.getItem('i18nextLng') || 'en');
+	const [language, setLanguage] = useState(localStorage.getItem('i18nextLng') || 'EN');
 	const { t, i18n } = useTranslation();
 
 	const handleChangeLoggedOut = (e) => {
