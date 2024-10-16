@@ -64,7 +64,7 @@ class UserProfileMe(APIView):
                         if User.objects.filter(email=data[field]).exclude(id=me.id).exists():
                             return Response({"error": "Email is already in use"}, status=status.HTTP_409_CONFLICT)
                     elif field == 'lang' and not validate_lang(data[field]):
-                        return Response({"error": "Invalid language. Supported languages are 'en', 'fr', and 'es'."}, status=status.HTTP_400_BAD_REQUEST)
+                        return Response({"error": "Invalid language. Supported languages are 'EN', 'FR', and 'ES'."}, status=status.HTTP_400_BAD_REQUEST)
                     elif field in ['avatarID', 'bannerID'] and not validate_image(data[field]):
                         return Response({"error": f"Invalid {field}. Image must be a valid base64 encoded string and no larger than 1MB."}, status=status.HTTP_400_BAD_REQUEST)
                     elif field == 'phone_number' and not validate_phone_number(data[field]):

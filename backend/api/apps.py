@@ -38,7 +38,7 @@ def create_ai_account(sender, **kwargs):
             displayName='Prune',
             email='prune@brandoncodes.dev',
             password='',
-            lang='en',
+            lang='EN',
             flags=3
         )
 
