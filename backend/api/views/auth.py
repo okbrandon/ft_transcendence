@@ -29,7 +29,7 @@ class AuthRegister(APIView):
         try:
             data = self.validate_request_data(request.data)
         except ValidationError as ex:
-            return Response({"error": str(ex)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": ex}, status=status.HTTP_400_BAD_REQUEST)
 
         if User.objects.filter(username=data['username']).exists():
             return Response({"error": "Username is already taken"}, status=status.HTTP_409_CONFLICT)
