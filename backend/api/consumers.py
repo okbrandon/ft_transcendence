@@ -486,6 +486,16 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             })
             return
 
+        if match.flags != 2:
+            logger.error(f"[{self.__class__.__name__}] Match {match_id} is not an AI match")
+            await self.send_json({
+                "e": "MATCH_FORCE_JOIN_FAILED",
+                "d": {
+                    "reason": "Match is not an AI match"
+                }
+            })
+            return
+
         match.playerB = {"id": self.user.userID, "platform": "server"}
         sync_to_async(match.save)()
 
