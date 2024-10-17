@@ -15,9 +15,11 @@ import {
 	OverlayContainer
 } from "../styles/Game.styled";
 import PongButton from "../../../styles/shared/PongButton.styled";
+import { GetSkin } from "../../../api/user";
 
 const GameLocal = () => {
 	const navigate = useNavigate();
+	const userID = localStorage.getItem('userID');
 	const [keyPressedA, setKeyPressedA] = useState(null);
 	const [keyPressedB, setKeyPressedB] = useState(null);
 	const [isHit, setIsHit] = useState(false);
@@ -28,6 +30,7 @@ const GameLocal = () => {
 	const [isGameStarted, setIsGameStarted] = useState(false);
 	const [activateTimer, setActivateTimer] = useState(false);
 	const [gameOver, setGameOver] = useState(false);
+	const [paddleSkin, setPaddleSkin] = useState(null);
 
 	const canvas = useRef(null);
 	const paddle1 = useRef(null);
@@ -62,6 +65,14 @@ const GameLocal = () => {
 			paddle.current.position.y = Math.max(-terrain.SCENEHEIGHT / 2 + 1.45, paddle.current.position.y - paddleSpeed);
 		}
 	}, [terrain.SCENEHEIGHT, paddleSpeed]);
+
+	useEffect(() => {
+		if (!userID) return;
+		GetSkin(userID)
+			.then(skin => {
+				setPaddleSkin(skin);
+			});
+	}, [userID]);
 
 	// Keyboard event listeners
 	useEffect(() => {
@@ -198,7 +209,7 @@ const GameLocal = () => {
 	useEffect(() => {
 		if (!canvas.current) return;
 
-		const { renderer, camera, dispose } = GameCanvas(canvas.current, paddle1, paddle2, ball, terrain, hit);
+		const { renderer, camera, dispose } = GameCanvas(canvas.current, paddle1, paddle2, paddleSkin, paddleSkin, ball, terrain, hit);
 
 		const handleResize = () => {
 			renderer.setSize(terrain.WIDTH, terrain.HEIGHT);
@@ -212,7 +223,7 @@ const GameLocal = () => {
 			window.removeEventListener('resize', handleResize);
 			dispose();
 		}
-	}, [terrain]);
+	}, [terrain, paddleSkin]);
 
 	// Animate ball and game logic
 	useEffect(() => {
