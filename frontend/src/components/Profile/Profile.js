@@ -5,7 +5,7 @@ import Balance from './content/Balance';
 import MatchHistory from './content/MatchHistory';
 import Winrate from './content/Winrate';
 import DisplaySkin from './content/DisplaySkin';
-import { getSkin, getUser, getUserById } from '../../api/user';
+import { getMatchHistory, getSkin, getUser, getUserById } from '../../api/user';
 import { useRelation } from '../../context/RelationContext';
 import { getRelationFromUsername } from '../../scripts/relation';
 import { useNotification } from '../../context/NotificationContext';
@@ -13,17 +13,6 @@ import { ProfileContainer, UserContainer, UserInfoContainer, UserMainInfoContain
 import Loader from '../../styles/shared/Loader.styled';
 import ProfileMainInfo from './main/ProfileMainInfo';
 import Activity from './content/Activity';
-
-const matchArray = [
-	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Brandon"}, scores: {playerA: 9, playerB: 10}, startedAt: "2021-09-01T12:28:01Z", finishedAt: "2021-09-01T12:30:38Z"},
-	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Evan"}, scores: {playerA: 10, playerB: 8}, startedAt: "2021-09-01T12:31:08Z", finishedAt: "2021-09-01T12:35:40Z"},
-	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Kian"}, scores: {playerA: 10, playerB: 9}, startedAt: "2021-09-01T12:38:48Z", finishedAt: "2021-09-01T12:40:51Z"},
-	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Brandon"}, scores: {playerA: 9, playerB: 10}, startedAt: "2021-09-01T12:28:01Z", finishedAt: "2021-09-01T12:30:38Z"},
-	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Evan"}, scores: {playerA: 10, playerB: 8}, startedAt: "2021-09-01T12:31:08Z", finishedAt: "2021-09-01T12:35:40Z"},
-	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Kian"}, scores: {playerA: 10, playerB: 9}, startedAt: "2021-09-01T12:38:48Z", finishedAt: "2021-09-01T12:40:51Z"},
-	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Brandon"}, scores: {playerA: 9, playerB: 10}, startedAt: "2021-09-01T12:28:01Z", finishedAt: "2021-09-01T12:30:38Z"},
-	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Evan"}, scores: {playerA: 10, playerB: 8}, startedAt: "2021-09-01T12:31:08Z", finishedAt: "2021-09-01T12:35:40Z"},
-];
 
 const Profile = () => {
 	const navigate = useNavigate();
@@ -34,11 +23,20 @@ const Profile = () => {
 	const [currentSkin, setCurrentSkin] = useState(null);
 	const [relation, setRelation] = useState(null);
 	const [isBlocked, setIsBlocked] = useState(false);
+	const [matches, setMatches] = useState(null);
 	const userID = localStorage.getItem('userID');
 
 	useEffect(() => {
 		setIsRefetch(true);
 	}, [setIsRefetch]);
+
+	useEffect(() => {
+		if (!profileUser) return;
+		getMatchHistory(profileUser.userID, userID)
+			.then(data => {
+				setMatches(data);
+			});
+	}, [profileUser, userID]);
 
 	// Get user data and relation data of the user
 	useEffect(() => {
@@ -82,7 +80,7 @@ const Profile = () => {
 		}
 	}, [relation, profileUser, userID, addNotification]);
 
-	if (!profileUser || !relation) {
+	if (!profileUser || !relation || !matches) {
 		return (
 			<ProfileContainer>
 				<Loader/>
@@ -103,14 +101,14 @@ const Profile = () => {
 							relation={relation}
 							setIsRefetch={setIsRefetch}/>
 					</UserProfileBannerContainer>
-					<MainBar profileUser={profileUser} matchArray={matchArray}/>
+					<MainBar profileUser={profileUser} matches={matches}/>
 					<UserContainer>
 						<UserMainInfoContainer>
-							<MatchHistory matchArray={matchArray}/>
-							<Activity matchArray={matchArray}/>
+							<MatchHistory matches={matches}/>
+							<Activity matches={matches}/>
 						</UserMainInfoContainer>
 						<UserInfoContainer>
-							<Winrate matchArray={matchArray}/>
+							<Winrate matches={matches}/>
 							<DisplaySkin currentSkin={currentSkin}/>
 							{profileUser.userID === userID && (
 								<Balance profileUser={profileUser}/>
