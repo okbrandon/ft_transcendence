@@ -58,6 +58,8 @@ class UserProfileMe(APIView):
                             return Response({"error": "Username is already taken"}, status=status.HTTP_409_CONFLICT)
                     elif field == 'displayName' and not validate_displayname(data[field]):
                         return Response({"error": "Invalid display name. Display name must be 4-16 characters long and contain only alphanumeric characters or null."}, status=status.HTTP_400_BAD_REQUEST)
+                    elif field == 'bio' and not validate_bio(data[field]):
+                        return Response({"error": "Invalid bio. Bio must be 280 characters or less."}, status=status.HTTP_400_BAD_REQUEST)
                     elif field == 'email':
                         if not validate_email(data[field]):
                             return Response({"error": "Invalid email. Email must be a valid format and no longer than 64 characters."}, status=status.HTTP_400_BAD_REQUEST)
