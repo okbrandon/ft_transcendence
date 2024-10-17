@@ -1,3 +1,5 @@
+import base64
+
 from django.apps import AppConfig
 from django.db.models.signals import post_migrate
 
@@ -32,13 +34,18 @@ def create_ai_account(sender, **kwargs):
     from .models import User
 
     if not User.objects.filter(userID="user_ai").exists():
+        encoded_avatar = None
+        with open("static/ai_avatar.jpg", "rb") as f:
+            encoded_avatar = base64.b64encode(f.read()).decode('utf-8')
+
         User.objects.create(
             userID="user_ai",
             username='ai',
             displayName='Prune',
             email='prune@brandoncodes.dev',
             password='',
-            lang='en',
+            lang='EN',
+            avatarID=f"data:image/jpeg;base64,{encoded_avatar}",
             flags=3
         )
 

@@ -91,8 +91,8 @@ class StatusConsumer(AsyncWebsocketConsumer):
 
                     if activity is None:
                         raise Exception("Missing activity")
-                    if activity not in ["HOME", "QUEUEING", "PLAYING_VS_AI", "PLAYING_MULTIPLAYER"]:
-                        raise Exception("Invalid activity, not in [HOME, QUEUEING, PLAYING_VS_AI, PLAYING_MULTIPLAYER]")
+                    if activity not in ["HOME", "QUEUEING", "PLAYING_VS_AI", "PLAYING_MULTIPLAYER", "PLAYING_LOCAL"]:
+                        raise Exception("Invalid activity, not in [HOME, QUEUEING, PLAYING_VS_AI, PLAYING_MULTIPLAYER, PLAYING_LOCAL]")
 
                     self.failed_heartbeats = 0
                     await self.update_user_status(True, activity)
@@ -396,7 +396,10 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                 await self.close()
         else:
             self.user = await self.get_user_from_id('user_ai')
-            await self.send_json({"e": "READY", "d": get_safe_profile(UserSerializer(self.user).data, me=True)})
+            user_data = UserSerializer(self.user).data
+            safe_profile = get_safe_profile(user_data, me=True)
+            safe_profile.pop('avatarID', None)
+            await self.send_json({"e": "READY", "d": safe_profile})
             logger.info(f"[{self.__class__.__name__}] AI identified: {self.user.userID}")
 
     async def get_user_profile(self, token):
