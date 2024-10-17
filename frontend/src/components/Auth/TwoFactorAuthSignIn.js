@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { useNotification } from "../../context/NotificationContext";
-import { ApiLogin } from "../../api/auth";
+import { apiLogin } from "../../api/auth";
 import { useAuth } from "../../context/AuthContext";
 import OTPInputComponent from "./OTPInput";
 import { FormContainer } from "./styles/Authentication.styled";
@@ -43,7 +43,7 @@ const TwoFactorAuthSignIn = ({ username, password, setIsTwoFactorAuth, available
 		setDisableVerify(true);
 		setError("");
 
-		ApiLogin(username, password, authCode)
+		apiLogin(username, password, authCode)
 			.then(() => {
 				setIsLoggedIn(true);
 				navigate("/");

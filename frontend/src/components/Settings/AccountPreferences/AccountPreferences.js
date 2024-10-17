@@ -3,7 +3,7 @@ import ProfileImage from './ProfileImage';
 import AccountManagement from './AccountManagement';
 import ProfileInformation from './ProfileInformation';
 import API from '../../../api/api';
-import { GetUser } from '../../../api/user';
+import { getUser } from '../../../api/user';
 import {
 	Form,
 	SectionHeading,
@@ -84,7 +84,7 @@ const AccountPreferences = ({ user, setUser }) => {
 				.then(() => {
 					setSuccess(t('settings.accountPreferences.successMessage'));
 					setError('');
-					GetUser()
+					getUser()
 						.then(user => {
 							setUser(user);
 						})

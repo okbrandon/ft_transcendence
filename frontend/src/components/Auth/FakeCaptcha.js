@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ApiSignup } from "../../api/auth";
+import { apiSignup } from "../../api/auth";
 import {
 	Cursor,
 	FakeCaptchaContainer,
@@ -31,7 +31,7 @@ const FakeCaptcha = ({ formData, setShowFakeCaptcha, setErrorSignUp }) => {
 	const handleSubmit = e => {
 		e.preventDefault();
 		if (inputValue === correctText) {
-			ApiSignup(formData)
+			apiSignup(formData)
 				.then(() => {
 					addNotification('success', 'Account created successfully. Please verify your email.');
 					navigate("/signin");

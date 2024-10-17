@@ -5,9 +5,9 @@ import Balance from './content/Balance';
 import MatchHistory from './content/MatchHistory';
 import Winrate from './content/Winrate';
 import DisplaySkin from './content/DisplaySkin';
-import { GetSkin, GetUser, GetUserByUsername } from '../../api/user';
+import { getSkin, getUser, getUserById } from '../../api/user';
 import { useRelation } from '../../context/RelationContext';
-import { GetUserFromRelation } from '../../scripts/relation';
+import { getUseFromRelation } from '../../scripts/relation';
 import { useNotification } from '../../context/NotificationContext';
 import { ProfileContainer, UserContainer, UserInfoContainer, UserMainInfoContainer, UserProfileBanner, UserProfileBannerContainer } from './styles/Profile.styled';
 import Loader from '../../styles/shared/Loader.styled';
@@ -43,14 +43,14 @@ const Profile = () => {
 	// Get user data and relation data of the user
 	useEffect(() => {
 		if (username && relations) {
-			GetUserByUsername(username)
+			getUserById(username)
 				.then(user => {
-					if (user.userID === userID) return GetUser();
+					if (user.userID === userID) return getUser();
 					return user;
 				})
 				.then(meUser => {
 					setProfileUser(meUser);
-					return GetUserFromRelation(relations, meUser.username);
+					return getUseFromRelation(relations, meUser.username);
 				})
 				.then(relationData => {
 					setRelation(relationData);
@@ -65,7 +65,7 @@ const Profile = () => {
 	// Get selected skin of the user
 	useEffect(() => {
 		if (!profileUser) return;
-		GetSkin(profileUser.userID)
+		getSkin(profileUser.userID)
 			.then(skin => {
 				setCurrentSkin(skin)
 			})

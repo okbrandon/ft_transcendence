@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import GameCanvas from "../../../scripts/game";
+import gameCanvas from "../../../scripts/game";
 import {
 	GameSceneContainer,
 	PageContainer,
@@ -15,7 +15,7 @@ import {
 	OverlayContainer
 } from "../styles/Game.styled";
 import PongButton from "../../../styles/shared/PongButton.styled";
-import { GetSkin } from "../../../api/user";
+import { getSkin } from "../../../api/user";
 
 const GameLocal = () => {
 	const navigate = useNavigate();
@@ -68,7 +68,7 @@ const GameLocal = () => {
 
 	useEffect(() => {
 		if (!userID) return;
-		GetSkin(userID)
+		getSkin(userID)
 			.then(skin => {
 				setPaddleSkin(skin);
 			});
@@ -209,7 +209,7 @@ const GameLocal = () => {
 	useEffect(() => {
 		if (!canvas.current) return;
 
-		const { renderer, camera, dispose } = GameCanvas(canvas.current, paddle1, paddle2, paddleSkin, paddleSkin, ball, terrain, hit);
+		const { renderer, camera, dispose } = gameCanvas(canvas.current, paddle1, paddle2, paddleSkin, paddleSkin, ball, terrain, hit);
 
 		const handleResize = () => {
 			renderer.setSize(terrain.WIDTH, terrain.HEIGHT);

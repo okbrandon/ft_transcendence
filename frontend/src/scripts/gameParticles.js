@@ -30,7 +30,7 @@ const computeGeometry = () => {
 	return geometry;
 }
 
-export const Particles = scene => {
+export const addParticles = scene => {
 	const geometry = computeGeometry();
 	const material = new THREE.PointsMaterial({ size: 0.15, vertexColors: true });
 	const mesh = new THREE.Points(geometry, material);

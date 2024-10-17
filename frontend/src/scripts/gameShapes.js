@@ -18,7 +18,7 @@ export const roundedRectShape = (width, height, radius) => {
 	return shape;
 };
 
-export const PaddleAttributes = (terrain, textureUrl = null) => {
+export const setPaddleAttributes = (terrain, textureUrl = null) => {
 	const textureLoader = new THREE.TextureLoader();
 	let paddleMaterial;
 
@@ -44,13 +44,32 @@ export const PaddleAttributes = (terrain, textureUrl = null) => {
 	return {paddleGeometry, paddleMaterial};
 }
 
-export const BallAttributes = terrain => {
+export const setBallAttributes = terrain => {
 	const ballGeometry = new THREE.SphereGeometry(25 * terrain.SCALEX / 2, 32, 32);
 	const ballMaterial = new THREE.MeshPhysicalMaterial({ color: 0xffffff });
 	return {ballGeometry, ballMaterial};
 }
 
-export const DashedLine = (scene, terrain) => {
+export const setWallAttributes = terrain => {
+	const wallHeight = terrain.SCENEHEIGHT + 5;
+
+	const wallMaterial = new THREE.MeshPhysicalMaterial({
+		color: 0x666666,
+		reflectivity: 0.9,
+		roughness: 0.05,
+		thickness: 1.0,
+		transmission: 0.9,
+		ior: 1.5,
+		transparent: true,
+		opacity: 0.8,
+	});
+
+	const wallGeometry = new THREE.BoxGeometry(0, wallHeight, 2);
+
+	return { wallGeometry, wallMaterial };
+}
+
+export const addDashedLine = (scene, terrain) => {
 	const lineMaterial = new THREE.LineDashedMaterial({
 		color: 0x3f3944,
 		dashSize: 0.5,
