@@ -58,7 +58,7 @@ const Hero = () => {
 					/>
 				</HeroPaddlesContainer>
 				<h1>{t('home.welcome')}</h1>
-				<PlayButton variant="light" onClick={() => navigate("/game")}>
+				<PlayButton variant="light" onClick={() => navigate("/playmenu")}>
 					{t('home.playButton')}
 				</PlayButton>
 			</HeroSection>
