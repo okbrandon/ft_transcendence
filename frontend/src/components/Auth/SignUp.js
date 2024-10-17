@@ -40,6 +40,8 @@ const SignUp = () => {
 			return t('restrictions.username.invalidLength');
 		} else if (/[^a-zA-Z0-9]/.test(data.username)) {
 			return t('restrictions.username.invalidCharacters');
+		} else if (/42$/.test(data.username)) {
+			return ('Username cannot end with 42');
 		} else if (!data.email) { // email
 			return t('restrictions.email.required');
 		} else if (data.email.length > 64) {
