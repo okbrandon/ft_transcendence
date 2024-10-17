@@ -1,5 +1,6 @@
 # TODO
-- GameLocal: Fix the math
+- Profile: remove friend / cancel friend request
+- Profile: xp
 - tournaments
 - Game: send invite
 - Profile: `users/@me/stats` -> win / loss / ratio
