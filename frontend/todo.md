@@ -1,9 +1,6 @@
 # TODO
-- Chat ->
-	- maybe bubble colors
-	- no status bar in the preview part
-	- maybe the profile info for each message sent is not necessary
-- Sound: Add sound (?)
+- Game: Add skin to the paddles
+- GameLocal: Fix the math
 - tournaments
 - Game: send invite
 - Profile: `users/@me/stats` -> win / loss / ratio
