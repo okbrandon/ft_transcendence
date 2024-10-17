@@ -5,6 +5,9 @@ import {
 	HostBubble,
 	Avatar,
 	MessageUsername,
+	ChatBubbleContainer,
+	MessageWrapper,
+	BubbleDetails
 } from '../styles/DirectMessage/DirectMessage.styled.js';
 
 const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) => {
@@ -26,22 +29,22 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 		let previousSenderID = null;
 
 		return (
-			<>
+			<ChatBubbleContainer>
 				{realConvo.messages.map((message, index) => {
 					const isSameSender = message.sender.userID === previousSenderID;
 					previousSenderID = message.sender.userID;
 
 					return (
-						<div key={index}>
+						<MessageWrapper key={index} isHost={message.sender.userID === userID}>
 							{message.sender.userID === userID ? (
-								<>
+								<BubbleDetails>
 									{!isSameSender && <MessageUsername $isHost={false}>You</MessageUsername>}
 									<HostBubble data-time={formatTimestamp(message.createdAt)} $isRounded={isSameSender}>
 										{message.content}
 									</HostBubble>
-								</>
+								</BubbleDetails>
 							) : (
-								<>
+								<BubbleDetails>
 									{!isSameSender && (
 										<MessageUsername $isHost={true}>
 											<Avatar src={message.sender.avatarID || 'images/default-profile.png'} alt={message.sender.username} />
@@ -51,13 +54,13 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 									<SenderBubble data-time={formatTimestamp(message.createdAt)} $isRounded={isSameSender}>
 										{message.content}
 									</SenderBubble>
-								</>
+								</BubbleDetails>
 							)}
-						</div>
+						</MessageWrapper>
 					);
 				})}
 				<div ref={messagesEndRef} />
-			</>
+			</ChatBubbleContainer>
 		);
 	}
 };

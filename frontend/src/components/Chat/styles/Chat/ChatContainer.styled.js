@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 const ChatContainer = styled.div`
 	width: 100%;
+	height: 0%;
 	position: fixed;
 	z-index: 10000;
 	bottom: 0;
