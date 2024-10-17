@@ -3,7 +3,6 @@
 - Profile: xp
 - tournaments
 - Game: send invite
-- Profile: `users/@me/stats` -> win / loss / ratio
 
 # localhost:8888 -> things to change
 - api.js			x1
