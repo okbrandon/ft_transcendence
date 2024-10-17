@@ -44,6 +44,8 @@ const FakeCaptcha = ({ formData, setShowFakeCaptcha, setErrorSignUp }) => {
 			setErrorMessage(t('auth.fakeCaptcha.errorMessage'));
 		}
 		inputRef.current.focus();
+		setInputValue("");
+		setCursorIndex(0);
 	};
 
 	const handleKeyDown = e => {
@@ -57,8 +59,19 @@ const FakeCaptcha = ({ formData, setShowFakeCaptcha, setErrorSignUp }) => {
 				color = "gray";
 			} else if (inputValue[index] === char) {
 				color = "green";
+			} else if (char === " " && inputValue[index] !== char) {
+				color = "bg-red";
 			} else {
 				color = "red";
+			}
+
+			if (color === "bg-red") {
+				return (
+					<span key={index} style={{ backgroundColor: 'rgba(255, 0, 0, 0.2)' }}>
+						{cursorIndex === index && <Cursor/>}
+						{char}
+					</span>
+				);
 			}
 			return (
 				<span key={index} style={{ color }}>
