@@ -2,7 +2,7 @@ import React from "react";
 import { BioContainer, FormInput, SubSectionHeading, TextArea } from "../styles/Settings.styled";
 import { useTranslation } from "react-i18next";
 
-const ProfileInformation = ({ error, bioByteLength, formData, handleChange }) => {
+const ProfileInformation = ({ error, formData, handleChange }) => {
 	const { t } = useTranslation();
 
 	return (
@@ -38,7 +38,7 @@ const ProfileInformation = ({ error, bioByteLength, formData, handleChange }) =>
 					cols="50"
 					onChange={handleChange}
 				/>
-				<p>{bioByteLength} / 280</p>
+				<p>{formData?.bio?.length || 0} / 280</p>
 			</BioContainer>
 		</>
 	);
