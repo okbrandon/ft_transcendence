@@ -4,10 +4,10 @@ import {
 	MainBarContainer,
 } from '../styles/main/MainBar.styled';
 
-const MainBar = ({ profileUser, matchArray }) => {
+const MainBar = ({ profileUser, matches }) => {
 	return (
 		<MainBarContainer>
-			<MainStats matchArray={matchArray}/>
+			<MainStats matches={matches}/>
 			<p>{profileUser.bio}</p>
 		</MainBarContainer>
 	);

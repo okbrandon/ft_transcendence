@@ -1,22 +1,22 @@
-export const calculateTotalWins = (matchArray) => {
-	return matchArray.filter((match) => match.scores.playerA > match.scores.playerB).length;
+export const calculateTotalWins = (matches, userID) => {
+	return matches.filter(match => match.winner.userID === userID).length;
 };
 
-export const calculateTotalDefeats = (matchArray) => {
-	return matchArray.filter((match) => match.scores.playerA < match.scores.playerB).length;
+export const calculateTotalDefeats = (matches, userID) => {
+	return matches.filter(match => match.winner.userID !== userID).length;
 };
 
-export const calculateWinDefeatRatio = (matchArray) => {
-	const wins = calculateTotalWins(matchArray);
+export const calculateWinDefeatRatio = (matches, userID) => {
+	const wins = calculateTotalWins(matches, userID);
 
-	return (wins / matchArray.length).toFixed(2);
+	return (wins / matches.length).toFixed(2);
 };
 
-export const getNumberOfMatchesPerMonth = (matchArray) => {
+export const getNumberOfMatchesPerMonth = matches => {
 	const matchesPerMonth = Array.from({length: 12}, () => 0);
 
-	matchArray.forEach(match => {
-		const month = new Date(match.startedAt).getMonth();
+	matches.forEach(match => {
+		const month = new Date(match.date).getMonth();
 		matchesPerMonth[month]++;
 	});
 

@@ -1,3 +1,4 @@
+import { getDate, getDuration } from '../scripts/match';
 import API from './api';
 import logger from './logger'
 
@@ -99,5 +100,36 @@ export const getSkin = async (id) => {
 	} catch (err) {
 		console.error(err?.response?.data?.error || 'An error occurred');
 		return null;
+	}
+}
+
+export const getMatchHistory = async (id, userID) => {
+	try {
+		const res = await API.get(`/users/${id}/matches`);
+		const rawMatches = res.data;
+		const matches = await Promise.all(rawMatches.map(async match => {
+			const duration = getDuration(match.startedAt, match.finishedAt);
+			const date = getDate(match.finishedAt);
+			const [playerA, playerB] = await Promise.all([getUserById(match.playerA.id), getUserById(match.playerB.id)]);
+
+			const me = playerA.userID === userID ? playerA : playerB;
+			const opponent = playerA.userID === userID ? playerB : playerA;
+			const meScore = match.scores?.[`${me.userID}`] || 0;
+			const opponentScore = match.scores?.[`${opponent.userID}`] || 0;
+			const winner = match.winnerID === userID ? me : opponent;
+
+			return {
+				...match,
+				duration,
+				me: { ...me, score: meScore },
+				opponent: { ...opponent, score: opponentScore },
+				winner,
+				date
+			};
+		}))
+		return matches;
+	} catch (err) {
+		console.error(err?.response?.data?.error || 'An error occurred');
+		return [];
 	}
 }
