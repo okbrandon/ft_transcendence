@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import MainBar from './main/MainBar';
 import Balance from './content/Balance';
-import API from '../../api/api'
 import MatchHistory from './content/MatchHistory';
 import Winrate from './content/Winrate';
 import DisplaySkin from './content/DisplaySkin';
-import { GetUser, GetUserByUsername } from '../../api/user';
+import { GetSkin, GetUser, GetUserByUsername } from '../../api/user';
 import { useRelation } from '../../context/RelationContext';
 import { GetUserFromRelation } from '../../scripts/relation';
 import { useNotification } from '../../context/NotificationContext';
@@ -41,6 +40,7 @@ const Profile = () => {
 		setIsRefetch(true);
 	}, [setIsRefetch]);
 
+	// Get user data and relation data of the user
 	useEffect(() => {
 		if (username && relations) {
 			GetUserByUsername(username)
@@ -62,43 +62,25 @@ const Profile = () => {
 		}
 	}, [relations, username, navigate, addNotification, userID]);
 
+	// Get selected skin of the user
 	useEffect(() => {
 		if (!profileUser) return;
-		let selectedSkinId;
-		API.get(`/users/${profileUser.userID}/settings`)
-			.then(response => {
-				selectedSkinId = response.data.selectedPaddleSkin;
-				if (selectedSkinId) {
-					return API.get('/store/items');
-				}
-				setCurrentSkin(null);
-				return null;
-			})
-			.then(response => {
-				if (!response) return;
-				const selectedSkin = response.data.find(item => item.itemID === selectedSkinId);
-				if (selectedSkin) {
-					setCurrentSkin(selectedSkin.assetID);
-				} else {
-					setCurrentSkin(null);
-				}
+		GetSkin(profileUser.userID)
+			.then(skin => {
+				setCurrentSkin(skin)
 			})
 			.catch(err => {
-				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`)
 			});
-	}, [addNotification, profileUser]);
+	}, [profileUser, addNotification]);
 
+	// Check if the user is blocked
 	useEffect(() => {
-		if (relation) {
-			setIsBlocked(relation.length && relation[0].status === 2 && relation[0].target.userID === userID && profileUser.userID !== userID);
-		}
-	}, [relation, profileUser, userID]);
-
-	useEffect(() => {
-		if (isBlocked) {
+		if (relation && relation.length && relation[0].status === 2 && relation[0].target.userID === userID && profileUser.userID !== userID) {
+			setIsBlocked(true);
 			addNotification('error', 'An error occurred.');
 		}
-	}, [isBlocked, addNotification]);
+	}, [relation, profileUser, userID, addNotification]);
 
 	if (!profileUser || !relation) {
 		return (
