@@ -4,9 +4,9 @@ const getOtherFromRelationship = (relationship, userID) => {
 	return relationship.sender.userID === userID ? { ...relationship.target, is: 'target' } : { ...relationship.sender , is: 'sender' };
 };
 
-export const getUseFromRelation = (relations, profileUsername) => {
-	const user = relations.filter(relation => relation.sender.username === profileUsername || relation.target.username === profileUsername);
-	return user;
+export const getRelationFromUsername = (relations, profileUsername) => {
+	const relation = relations.filter(relation => relation.sender.username === profileUsername || relation.target.username === profileUsername);
+	return relation;
 }
 
 export const getFriends = relations => {
