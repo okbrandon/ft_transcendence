@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SearchFriends } from './SearchFriends.js';
 import { MessagePreview } from './MessagePreview.js';
 import { DirectMessage } from './DirectMessage.js';
@@ -8,7 +8,7 @@ import ChatHeader from './tools/ChatHeader.js';
 import { ChatProvider } from '../../context/ChatContext.js';
 
 const Chat = () => {
-	const { conversations, blockedUsers, friends, relations, setIsRefetch } = useRelation();
+	const { conversations, blockedUsers, friends, relations } = useRelation();
 	const [isOverlayMinimized, setIsOverlayMinimized] = useState(true);
 	const [mainWinArrow, setMainWinArrow] = useState(false);
 	const [directMessage, setDirectMessage] = useState({
@@ -49,6 +49,15 @@ const Chat = () => {
 		setMainWinArrow(!mainWinArrow);
 	};
 
+	useEffect(() => {
+		if (relations && relations.length > 0) {
+			const relation = relations.find((relation) => relation.status === 2);
+			if (relation) {
+				handleSelectChat(relation.username, null);
+			}
+		}
+	}, [relations]);
+
 	return (
 		<ChatProvider conversations={conversations} friends={friends} blockedUsers={blockedUsers}>
 			<ChatContainer>
@@ -61,7 +70,7 @@ const Chat = () => {
 						</>
 					)}
 				</MainChatContainer>
-				{directMessage.username &&  (
+				{directMessage.username && (
 					<DirectMessage
 						{...directMessage}
 						conversations={conversations}
