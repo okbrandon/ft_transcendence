@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import API from "../../../api/api";
-import { GetUser } from "../../../api/user";
+import { getUser } from "../../../api/user";
 import TwoFactorAuthToggle from "./2FA/TwoFactorAuthToggle";
 import TwoFactorAuthSecurity from "./2FA/TwoFactorAuthSecurity";
 import ContactInformation from "./ContactInformation";
@@ -101,7 +101,7 @@ const Security = ({ user, setUser }) => {
 				.then(() => {
 					setSuccess(t('settings.security.successMessage'));
 					setError('');
-					GetUser()
+					getUser()
 						.then(user => {
 							setUser(user);
 						})

@@ -3,7 +3,7 @@ import FormControl from 'react-bootstrap/FormControl';
 import debounce from 'lodash/debounce';
 import SearchList from './SearchList';
 import { SearchBarContainer } from './styles/Navigation.styled';
-import { GetUsers } from '../../api/user';
+import { getUsers } from '../../api/user';
 import { useNotification } from '../../context/NotificationContext';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -34,7 +34,7 @@ const SearchBar = () => {
 	useEffect(() => {
 		const debouncedSearch = debounce(query => {
 			if (query) {
-				GetUsers(query)
+				getUsers(query)
 					.then(users => {
 						setResults(users);
 					})

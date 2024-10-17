@@ -14,7 +14,7 @@ export const formatUserData = user => {
 	return user;
 };
 
-export const GetUser = async () => {
+export const getUser = async () => {
 	try {
 		logger('Getting current user...');
 		const res = await API.get(`users/@me/profile`);
@@ -26,7 +26,7 @@ export const GetUser = async () => {
 	}
 };
 
-export const GetUserByUsername = async (id) => {
+export const getUserById = async (id) => {
 	try {
 		logger('Getting user by username...');
 		const res = await API.get(`users/${id}/profile`);
@@ -39,7 +39,7 @@ export const GetUserByUsername = async (id) => {
 	}
 };
 
-export const GetUsers = async (input) => {
+export const getUsers = async (input) => {
 	try {
 		const res = await API.get(`users/search?content=${input}`);
 		const users = res.data.map(formatUserData);
@@ -50,7 +50,7 @@ export const GetUsers = async (input) => {
 	}
 }
 
-export const GetImage = async (file) => {
+export const getImage = async (file) => {
 	return new Promise((resolve, reject) => {
 		const reader = new FileReader();
 
@@ -84,7 +84,7 @@ export const GetImage = async (file) => {
 	});
 }
 
-export const GetSkin = async (id) => {
+export const getSkin = async (id) => {
 	try {
 		const res = await API.get(`/users/${id}/settings`);
 		const selectedSkinId = res.data.selectedPaddleSkin;

@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GameSceneContainer, Score, ScoresContainer, StyledCanvas, Timer, OverlayContainer } from "../styles/Game.styled";
-import GameCanvas from "../../../scripts/game";
+import gameCanvas from "../../../scripts/game";
 import PongButton from "../../../styles/shared/PongButton.styled";
-import { GetSkin } from "../../../api/user";
+import { getSkin } from "../../../api/user";
 
 const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderScore, sendMessage, activateTimer, setActivateTimer, gameStarted, gameOver, won }) => {
 	const navigate = useNavigate();
@@ -36,7 +36,7 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 
 	useEffect(() => {
 		if (player && playerSide) {
-			GetSkin(player.userID)
+			getSkin(player.userID)
 				.then(skin => {
 					if (playerSide === 'left' && !skin1) {
 						setSkin1(skin);
@@ -46,7 +46,7 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 				});
 		}
 		if (opponent && playerSide) {
-			GetSkin(opponent.userID)
+			getSkin(opponent.userID)
 				.then(skin => {
 					if (playerSide === 'left' && !skin2) {
 						setSkin2(skin);
@@ -139,7 +139,7 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 	useEffect(() => {
 		if (!canvas.current) return;
 
-		const { renderer, camera, dispose } = GameCanvas(canvas.current, paddle1, paddle2, skin1, skin2, ball, terrain, hit);
+		const { renderer, camera, dispose } = gameCanvas(canvas.current, paddle1, paddle2, skin1, skin2, ball, terrain, hit);
 
 		const handleResize = () => {
 			renderer.setSize(terrain.WIDTH, terrain.HEIGHT);

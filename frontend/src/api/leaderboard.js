@@ -6,7 +6,7 @@ import API from './api';
  * @param {string} stats - gamesPlayed, gamesWon, gamesLost
  * @returns leaderboard data
  */
-export const GetLeaderboard = async (timeFrame, stats) => {
+export const getLeaderboard = async (timeFrame, stats) => {
 	try {
 		// API call using the timeFrame and stats parameters
 		const res = await API.get(`leaderboards/${timeFrame}?stats=${stats}`);

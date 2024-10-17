@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Image from 'react-bootstrap/Image';
 import Button from 'react-bootstrap/Button';
-import { ApiLogin } from '../../api/auth';
+import { apiLogin } from '../../api/auth';
 import {
 	AuthenticationSection,
 	FormContainer,
@@ -29,7 +29,7 @@ const SignIn = () => {
 		if (!username || !password) {
 			setError(t('auth.signIn.errorMessage'));
 		} else {
-			ApiLogin(username, password)
+			apiLogin(username, password)
 				.then(() => {
 					setIsLoggedIn(true);
 					navigate('/');
