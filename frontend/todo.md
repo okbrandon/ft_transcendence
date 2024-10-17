@@ -1,5 +1,6 @@
 # TODO
 - Game: Add skin to the paddles
+- captcha: fix auto focus
 - GameLocal: Fix the math
 - tournaments
 - Game: send invite

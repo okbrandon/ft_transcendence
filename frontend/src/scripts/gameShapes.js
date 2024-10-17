@@ -18,21 +18,29 @@ export const roundedRectShape = (width, height, radius) => {
 	return shape;
 };
 
-export const PaddleAttributes = (terrain, textureUrl = undefined) => {
+export const PaddleAttributes = (terrain, textureUrl = null) => {
 	const textureLoader = new THREE.TextureLoader();
-	const paddleTexture = textureUrl ? textureLoader.load(textureUrl) : null;
+	let paddleMaterial;
+
+	if (textureUrl) {
+		const paddleTexture = textureLoader.load(`/images/skins/${textureUrl}`, texture => {
+			texture.wrapS = THREE.RepeatWrapping;
+			texture.wrapT = THREE.RepeatWrapping;
+			texture.flipY = false;
+			texture.repeat.set(1, 1);
+		});
+
+		paddleMaterial = new THREE.MeshLambertMaterial({
+			color: 0xffffff,
+			map: paddleTexture
+		});
+	} else {
+		paddleMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
+	}
 
 	const paddleShape = roundedRectShape(20 * terrain.SCALEX, 120 * terrain.SCALEY, 10 * terrain.SCALEX);
 	const extrudeSettings = { depth: 0.5, bevelEnabled: false };
 	const paddleGeometry = new THREE.ExtrudeGeometry(paddleShape, extrudeSettings);
-	const paddleMaterial = new THREE.MeshPhysicalMaterial({
-		map: paddleTexture,
-		color: !paddleTexture ? 0xffffff : undefined,
-		emissive: 0x333333,
-		emissiveIntensity: 0.5,
-		reflectivity: 0.9,
-		roughness: 0.05,
-	});
 	return {paddleGeometry, paddleMaterial};
 }
 
