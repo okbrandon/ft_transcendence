@@ -23,30 +23,39 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 			</NewConversationMessage>
 		);
 	} else {
+		let previousSenderID = null;
+
 		return (
 			<>
-				{realConvo.messages.map((message, index) => (
-					<div key={index}>
-						{message.sender.userID === userID ? (
-							<>
-								<MessageUsername $isHost={false}>You</MessageUsername>
-								<SenderBubble data-time={formatTimestamp(message.createdAt)}>
-									{message.content}
-								</SenderBubble>
-							</>
-						) : (
-							<>
-								<MessageUsername $isHost={true}>
-									<Avatar src={message.sender.avatarID || 'images/default-profile.png'} alt={message.sender.username} />
-									{message.sender.username}
-								</MessageUsername>
-								<HostBubble data-time={formatTimestamp(message.createdAt)}>
-									{message.content}
-								</HostBubble>
-							</>
-						)}
-					</div>
-				))}
+				{realConvo.messages.map((message, index) => {
+					const isSameSender = message.sender.userID === previousSenderID;
+					previousSenderID = message.sender.userID;
+
+					return (
+						<div key={index}>
+							{message.sender.userID === userID ? (
+								<>
+									{!isSameSender && <MessageUsername $isHost={false}>You</MessageUsername>}
+									<HostBubble data-time={formatTimestamp(message.createdAt)} $isRounded={isSameSender}>
+										{message.content}
+									</HostBubble>
+								</>
+							) : (
+								<>
+									{!isSameSender && (
+										<MessageUsername $isHost={true}>
+											<Avatar src={message.sender.avatarID || 'images/default-profile.png'} alt={message.sender.username} />
+											{message.sender.username}
+										</MessageUsername>
+									)}
+									<SenderBubble data-time={formatTimestamp(message.createdAt)} $isRounded={isSameSender}>
+										{message.content}
+									</SenderBubble>
+								</>
+							)}
+						</div>
+					);
+				})}
 				<div ref={messagesEndRef} />
 			</>
 		);

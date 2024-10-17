@@ -200,22 +200,24 @@ const BaseBubble = styled.div`
 	}
 `;
 
-export const SenderBubble = styled(BaseBubble)`
+export const HostBubble = styled(BaseBubble)`
 	background-color: #6a0dad;
 	color: #fff;
-	border-radius: 18px 18px 0 18px;
+	border-radius: ${({ $isRounded }) => $isRounded ? '18px' : '18px 0 18px 18px'};
 	margin-left: auto;
 	text-align: right;
 	width: fit-content;
+	margin-bottom: -1px;
 `;
 
-export const HostBubble = styled(BaseBubble)`
+export const SenderBubble = styled(BaseBubble)`
 	background-color: #e0e0e0;
 	color: #333;
-	border-radius: 18px 18px 18px 0;
+	border-radius: ${({ $isRounded }) => $isRounded ? '18px' : '0 18px 18px 18px'};
 	margin: 10px 0;
 	max-width: 70%;
 	width: fit-content;
+	margin-bottom: -6px;
 `;
 
 export const Avatar = styled.img`

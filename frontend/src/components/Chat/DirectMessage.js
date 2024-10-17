@@ -36,6 +36,7 @@ export const DirectMessage = ({
 }) => {
 	const userID = localStorage.getItem('userID');
 	const [content, setContent] = useState('');
+	const [charCount, setCharCount] = useState(0);
 	const { sendMessage, setIsRefetch } = useRelation();
 	const { addNotification } = useNotification();
 	const messagesEndRef = useRef(null);
@@ -114,7 +115,15 @@ export const DirectMessage = ({
 		// Check for user relationship
 		sendMessage(JSON.stringify({ type: 'send_message', conversationID: conversationID, content: content, }))
 		setContent('');
+		setCharCount(0);
 	};
+
+	const handleInputChange = (e) => {
+		setContent(e.target.value);
+		setCharCount(e.target.value.length);
+	};
+
+	console.log('DirectMessage conversations: ', conversations);
 
 	return (
 		<>
@@ -150,7 +159,7 @@ export const DirectMessage = ({
 								as="textarea"
 								placeholder="Type a message..."
 								value={content}
-								onChange={e => setContent(e.target.value)}
+								onChange={handleInputChange}
 								onKeyDown={e => {
 									if (e.key === 'Enter') {
 										e.preventDefault();
@@ -164,6 +173,15 @@ export const DirectMessage = ({
 							<SendButton onClick={handleMessage} disabled={content.trim() === ''}>
 								<i className="bi bi-send-fill" />
 							</SendButton>
+							<span style={{
+								position: 'absolute',
+								bottom: '12px',
+								right: '60px',
+								fontSize: '7px',
+								color: 'rgba(255, 255, 255, 0.5)'
+							}}>
+								{charCount}/256
+                            </span>
 						</ChatInputContainer>
 					</>
 				)}

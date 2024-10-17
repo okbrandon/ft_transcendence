@@ -8,7 +8,7 @@ import ChatHeader from './tools/ChatHeader.js';
 import { ChatProvider } from '../../context/ChatContext.js';
 
 const Chat = () => {
-	const { conversations, blockedUsers, friends } = useRelation();
+	const { conversations, blockedUsers, friends, relations, setIsRefetch } = useRelation();
 	const [isOverlayMinimized, setIsOverlayMinimized] = useState(true);
 	const [mainWinArrow, setMainWinArrow] = useState(false);
 	const [directMessage, setDirectMessage] = useState({
@@ -61,7 +61,7 @@ const Chat = () => {
 						</>
 					)}
 				</MainChatContainer>
-				{directMessage.username && (
+				{directMessage.username &&  (
 					<DirectMessage
 						{...directMessage}
 						conversations={conversations}
