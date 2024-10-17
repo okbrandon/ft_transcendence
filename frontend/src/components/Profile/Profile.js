@@ -7,7 +7,7 @@ import Winrate from './content/Winrate';
 import DisplaySkin from './content/DisplaySkin';
 import { getSkin, getUser, getUserById } from '../../api/user';
 import { useRelation } from '../../context/RelationContext';
-import { getUseFromRelation } from '../../scripts/relation';
+import { getRelationFromUsername } from '../../scripts/relation';
 import { useNotification } from '../../context/NotificationContext';
 import { ProfileContainer, UserContainer, UserInfoContainer, UserMainInfoContainer, UserProfileBanner, UserProfileBannerContainer } from './styles/Profile.styled';
 import Loader from '../../styles/shared/Loader.styled';
@@ -50,7 +50,7 @@ const Profile = () => {
 				})
 				.then(meUser => {
 					setProfileUser(meUser);
-					return getUseFromRelation(relations, meUser.username);
+					return getRelationFromUsername(relations, meUser.username);
 				})
 				.then(relationData => {
 					setRelation(relationData);
