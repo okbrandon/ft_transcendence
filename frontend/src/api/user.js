@@ -83,3 +83,21 @@ export const GetImage = async (file) => {
 		reader.readAsDataURL(file);
 	});
 }
+
+export const GetSkin = async (id) => {
+	try {
+		const res = await API.get(`/users/${id}/settings`);
+		const selectedSkinId = res.data.selectedPaddleSkin;
+		let selectedSkin = null;
+
+		if (selectedSkinId) {
+			const skins = await API.get(`/store/items`);
+			selectedSkin = skins.data.find(item => item.itemID === selectedSkinId);
+		}
+
+		return selectedSkin?.assetID || null;
+	} catch (err) {
+		console.error(err?.response?.data?.error || 'An error occurred');
+		return null;
+	}
+}
