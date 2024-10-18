@@ -61,7 +61,7 @@ const MatchHistory = ({ userID, matches }) => {
 									key={index}
 									className={`match-card ${visibleRows.includes(index) ? "visible" : ""}`}
 								>
-									<td>{match.opponent.displayName}</td>
+									<td onClick={() => {}}>{match.opponent.displayName}</td>
 									<td>{match.duration}</td>
 									<td>{match.me.score} - {match.opponent.score}</td>
 									<td>{match.winner.userID === userID ? t('profile.matchHistory.table.victoryLabel') : t('profile.matchHistory.table.defeatLabel')}</td>

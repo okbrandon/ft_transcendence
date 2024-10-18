@@ -37,7 +37,7 @@ const Shop = () => {
 			.catch(err => {
 				addNotification('error', err?.response?.data?.error || 'An error occurred');
 			});
-	}, [addNotification]);
+	}, [addNotification, setUser]);
 
 	useEffect(() => {
 		API.get('/users/@me/settings')

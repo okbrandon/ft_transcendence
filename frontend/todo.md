@@ -1,5 +1,8 @@
 # TODO
-- Friends: websocket when friend is removed
+- match history -> goofiaids
+- game smooth animation
+- match history -> click on username and go to profile
+- test token after each call
 - tournaments
 - Game: send invite
 
