@@ -37,19 +37,25 @@ const MatchHistory = ({ matches }) => {
 		<>
 			<h2>Match History</h2>
 			<MatchHistoryContainer>
-				{matches.length === 0 ? (
-					<p>{t('profile.matchHistory.noResults')}</p>
-				) : (
-					<MatchCardTable>
-						<thead>
-							<tr>
-								<th>{t('profile.matchHistory.table.opponent')}</th>
-								<th>{t('profile.matchHistory.table.duration')}</th>
-								<th>{t('profile.matchHistory.table.scores')}</th>
-								<th>{t('profile.matchHistory.table.results')}</th>
-								<th>{t('profile.matchHistory.table.date')}</th>
+				<MatchCardTable>
+					<thead>
+						<tr>
+							<th>{t('profile.matchHistory.table.opponent')}</th>
+							<th>{t('profile.matchHistory.table.duration')}</th>
+							<th>{t('profile.matchHistory.table.scores')}</th>
+							<th>{t('profile.matchHistory.table.results')}</th>
+							<th>{t('profile.matchHistory.table.date')}</th>
+						</tr>
+					</thead>
+					{matches.length === 0 ? (
+						<tbody>
+							<tr rowSpan="5">
+								<td>
+									{t('profile.matchHistory.noResults')}
+								</td>
 							</tr>
-						</thead>
+						</tbody>
+					) : (
 						<tbody ref={containerRef}>
 							{matches.map((match, index) => (
 								<tr
@@ -64,8 +70,8 @@ const MatchHistory = ({ matches }) => {
 								</tr>
 							))}
 						</tbody>
-					</MatchCardTable>
-				)}
+					)}
+				</MatchCardTable>
 			</MatchHistoryContainer>
 		</>
 	);
