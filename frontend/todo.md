@@ -1,5 +1,4 @@
 # TODO
-- Profile: remove friend / cancel friend request
 - Friends: websocket when friend is removed
 - tournaments
 - Game: send invite
