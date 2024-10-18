@@ -78,37 +78,47 @@ const RelationProvider = ({ children }) => {
 				});
 		};
 
-		socketChat.current = new WebSocket(WS_CHAT_URL + localStorage.getItem('token'));
-		socketChat.current.onopen = () => {
-			logger('WebSocket for Chat connection opened');
-			fetchConversations();
-		};
-		socketChat.current.onmessage = event => {
-			const response = JSON.parse(event.data);
-			if (response.type === 'conversation_update') {
+		const connectWSChat = () => {
+			socketChat.current = new WebSocket(WS_CHAT_URL + localStorage.getItem('token'));
+			socketChat.current.onopen = () => {
+				logger('WebSocket for Chat connection opened');
 				fetchConversations();
-			} else if (response.type === 'friend_request') {
-				const userFrom = formatUserData({
-					...response.data.from,
-					status: response.status
-				});
-				const userTo = formatUserData({
-					...response.data.to,
-					status: response.status
-				});
-				setIsRefetch(true);
-				if (userFrom.status === 'pending') {
-					addNotification('info', `You have a friend request from ${userFrom.displayName}.`);
-				} else if (userFrom.status === 'rejected') {
-					addNotification('info', `${userTo.displayName} rejected your friend request.`);
-				} else if (userFrom.status === 'accepted') {
-					addNotification('info', `${userTo.displayName} accepted your friend request.`);
-				};
-			}
-		};
-		socketChat.current.onerror = error => {
-			console.error('WebSocket for Chat encountered an error:', error);
-		};
+			};
+			socketChat.current.onmessage = event => {
+				const response = JSON.parse(event.data);
+				if (response.type === 'conversation_update') {
+					fetchConversations();
+				} else if (response.type === 'friend_request') {
+					const userFrom = formatUserData({
+						...response.data.from,
+						status: response.status
+					});
+					const userTo = formatUserData({
+						...response.data.to,
+						status: response.status
+					});
+					setIsRefetch(true);
+					if (userFrom.status === 'pending') {
+						addNotification('info', `You have a friend request from ${userFrom.displayName}.`);
+					} else if (userFrom.status === 'rejected') {
+						addNotification('info', `${userTo.displayName} rejected your friend request.`);
+					} else if (userFrom.status === 'accepted') {
+						addNotification('info', `${userTo.displayName} accepted your friend request.`);
+					};
+				}
+			};
+			socketChat.current.onerror = error => {
+				console.error('WebSocket for Chat encountered an error:', error);
+			};
+			socketChat.current.onclose = event => {
+				if (event.code === 1006) {
+					logger('WebSocket for Chat encountered an error: Connection closed unexpectedly');
+					connectWSChat();
+				}
+			};
+		}
+
+		connectWSChat();
 
 		return () => {
 			if (socketChat.current && socketChat.current.readyState === WebSocket.OPEN) {
@@ -119,24 +129,34 @@ const RelationProvider = ({ children }) => {
 	}, [addNotification]);
 
 	useEffect(() => {
-		socketStatus.current = new WebSocket(WS_STATUS_URL + localStorage.getItem('token'));
-		socketStatus.current.onopen = () => {
-			logger('WebSocket for Status connection opened');
-		};
-		socketStatus.current.onmessage = event => {
-			const response = JSON.parse(event.data);
-			if (response.type === 'heartbeat') {
-				socketStatus.current.send(JSON.stringify({
-					type: 'heartbeat',
-					activity: setActivity(pathnameRef.current)
-				}));
-			} else if (response.type === 'connection_event') {
-				setIsRefetch(true);
+		const connectWSStatus = () => {
+			socketStatus.current = new WebSocket(WS_STATUS_URL + localStorage.getItem('token'));
+			socketStatus.current.onopen = () => {
+				logger('WebSocket for Status connection opened');
+			};
+			socketStatus.current.onmessage = event => {
+				const response = JSON.parse(event.data);
+				if (response.type === 'heartbeat') {
+					socketStatus.current.send(JSON.stringify({
+						type: 'heartbeat',
+						activity: setActivity(pathnameRef.current)
+					}));
+				} else if (response.type === 'connection_event') {
+					setIsRefetch(true);
+				}
+			};
+			socketStatus.current.onerror = error => {
+				console.error('WebSocket for Status encountered an error:', error);
+			};
+			socketStatus.current.onclose = event => {
+				if (event.code === 1006) {
+					logger('WebSocket for Status encountered an error: Connection closed unexpectedly');
+					connectWSStatus();
+				}
 			}
-		};
-		socketStatus.current.onerror = error => {
-			console.error('WebSocket for Status encountered an error:', error);
-		};
+		}
+
+		connectWSStatus();
 
 		return () => {
 			if (socketStatus.current && socketStatus.current.readyState === WebSocket.OPEN) {
