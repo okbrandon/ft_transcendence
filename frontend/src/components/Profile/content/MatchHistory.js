@@ -2,10 +2,9 @@ import React, { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { MatchCardTable, MatchHistoryContainer } from "../styles/Profile.styled";
 
-const MatchHistory = ({ matches }) => {
+const MatchHistory = ({ userID, matches }) => {
 	const [visibleRows, setVisibleRows] = useState([]);
 	const containerRef = useRef(null);
-	const userID = localStorage.getItem('userID');
 	const { t } = useTranslation();
 
 	const handleScroll = () => {

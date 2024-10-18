@@ -5,9 +5,8 @@ import DonutStats from "../stats/DonutStats";
 import { useTranslation } from "react-i18next";
 import { calculateTotalDefeats, calculateTotalWins } from "../../../scripts/match";
 
-const Winrate = ({ matches }) => {
+const Winrate = ({ userID, matches }) => {
 	const { t } = useTranslation();
-	const userID = localStorage.getItem('userID');
 	const seriesLifetime = [calculateTotalWins(matches, userID), calculateTotalDefeats(matches, userID)];
 	const seriesLastFive = [calculateTotalWins(matches.slice(0, 5), userID), calculateTotalDefeats(matches.slice(0, 5), userID)];
 	const percentageLifetime = seriesLifetime[0] ? Math.round(seriesLifetime[0] / matches.length * 100) : 0;
