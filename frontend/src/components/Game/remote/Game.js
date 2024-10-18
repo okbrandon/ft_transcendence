@@ -7,12 +7,6 @@ import { formatUserData } from "../../../api/user";
 import logger from "../../../api/logger";
 import { PageContainer } from "../styles/Game.styled";
 
-/*
-** Lastmessage:
-** MATH_JOIN = side and opponent could be null for the person who created the match
-** PLAYER_JOIN = only concerning the opponent joining the match
-*/
-
 const Game = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -65,12 +59,11 @@ const Game = () => {
 		}));
 	}, [sendMessage]);
 
-	const retreiveGameMode = () => {
-		console.log(location.pathname);
+	const retreiveGameMode = useCallback(() => {
 		if (location.pathname === '/game-ai') return 'ai';
 		if (location.pathname === '/game-classic') return '1v1';
 		return '';
-	}
+	}, [location.pathname]);
 
 	const handleHeartbeatAck = useCallback(() => {
 		heartbeatAckCount.current += 1;
@@ -80,7 +73,7 @@ const Game = () => {
 				d: { match_type: retreiveGameMode() }
 			}));
 		}
-	}, [sendMessage]);
+	}, [sendMessage, retreiveGameMode]);
 
 	// Send IDENTIFY message on connection open
 	useEffect(() => {
