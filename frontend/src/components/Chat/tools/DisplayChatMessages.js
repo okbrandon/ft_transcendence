@@ -35,7 +35,7 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 					previousSenderID = message.sender.userID;
 
 					return (
-						<MessageWrapper key={index} isHost={message.sender.userID === userID}>
+						<MessageWrapper key={index} $isHost={message.sender.userID === userID}>
 							{message.sender.userID === userID ? (
 								<BubbleDetails>
 									{!isSameSender && <MessageUsername $isHost={false}>You</MessageUsername>}
