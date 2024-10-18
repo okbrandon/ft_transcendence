@@ -32,7 +32,7 @@ const Profile = () => {
 
 	useEffect(() => {
 		if (!profileUser) return;
-		getMatchHistory(profileUser.userID, userID)
+		getMatchHistory(profileUser.userID)
 			.then(data => {
 				setMatches(data);
 			});

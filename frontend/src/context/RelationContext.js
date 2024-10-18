@@ -66,7 +66,7 @@ const RelationProvider = ({ children }) => {
 			})
 			.finally(() => {
 				setIsRefetch(false);
-			})
+			});
 	}, [isRefetch]);
 
 	useEffect(() => {
