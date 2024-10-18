@@ -80,6 +80,7 @@ class BotActionPredictor:
 			self.should_move_up = False
 			self.should_move_down = False
 			self.config = get_config()
+			self.last_move_sent = 0
 
 		def reset(self):
 			logger.info(f"[{self.__class__.__name__}] Target reached, resetting paddle state")
@@ -98,11 +99,15 @@ class BotActionPredictor:
 
 		def move_paddle(self, direction, condition):
 			if condition:
-				self.imaginary_y += self.config['paddle']['speed'] if direction == 'up' else -self.config['paddle']['speed']
+				self.last_move_sent = self.config['paddle']['speed'] if direction == 'up' else -self.config['paddle']['speed']
+				self.imaginary_y += self.last_move_sent
 				return direction
 			else:
 				self.reset()
 				return None
+
+		def refund_last_move(self):
+			self.imaginary_y -= self.last_move_sent
 
 	def __init__(self):
 		self.config = get_config()
