@@ -50,7 +50,7 @@ const GameLocal = () => {
 
 	// Ball speed and direction
 	const ballVelocity = useRef({ x: 0.1, y: 0.1 });
-	const maxBallSpeed = 0.17;
+	const maxBallSpeed = 0.19;
 
 	// Paddle movement speed
 	const paddleSpeed = 0.1;
