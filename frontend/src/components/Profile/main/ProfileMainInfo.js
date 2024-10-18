@@ -74,7 +74,7 @@ const ProfilePicture = ({ profileUser, relation, setIsRefetch }) => {
 				/>
 				<div>
 					<CircularProgressbar
-						value={20}
+						value={profileUser.xp % 1000 / 1000 * 100}
 						strokeWidth={4}
 						styles={buildStyles({
 							rotation: 0.5,

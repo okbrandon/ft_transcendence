@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from "react";
-import { getDate } from "../../../scripts/match";
 import { useTranslation } from "react-i18next";
 import { MatchCardTable, MatchHistoryContainer } from "../styles/Profile.styled";
 

@@ -1,6 +1,6 @@
 # TODO
 - Profile: remove friend / cancel friend request
-- Profile: xp
+- Profile: xp -> not moving after a match
 - tournaments
 - Game: send invite
 
