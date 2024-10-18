@@ -7,7 +7,7 @@ import {
 const MainBar = ({ profileUser, matches }) => {
 	return (
 		<MainBarContainer>
-			<MainStats matches={matches}/>
+			<MainStats userID={profileUser.userID} matches={matches}/>
 			<p>{profileUser.bio}</p>
 		</MainBarContainer>
 	);

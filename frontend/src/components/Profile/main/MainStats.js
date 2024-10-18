@@ -3,9 +3,8 @@ import { MainStatsItem, MainStatsContainer } from "../styles/main/MainBar.styled
 import { calculateTotalDefeats, calculateTotalWins, calculateWinDefeatRatio } from '../../../scripts/match';
 import { useTranslation } from 'react-i18next';
 
-const MainStats = ({ matches }) => {
+const MainStats = ({ userID, matches }) => {
 	const { t } = useTranslation();
-	const userID = localStorage.getItem('userID');
 
 	return (
 		<MainStatsContainer>

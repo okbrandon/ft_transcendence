@@ -104,11 +104,11 @@ const Profile = () => {
 					<MainBar profileUser={profileUser} matches={matches}/>
 					<UserContainer>
 						<UserMainInfoContainer>
-							<MatchHistory matches={matches}/>
+							<MatchHistory userID={profileUser.userID} matches={matches}/>
 							<Activity matches={matches}/>
 						</UserMainInfoContainer>
 						<UserInfoContainer>
-							<Winrate matches={matches}/>
+							<Winrate userID={profileUser.userID} matches={matches}/>
 							<DisplaySkin currentSkin={currentSkin}/>
 							{profileUser.userID === userID && (
 								<Balance profileUser={profileUser}/>
