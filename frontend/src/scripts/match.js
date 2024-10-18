@@ -1,12 +1,16 @@
 export const calculateTotalWins = (matches, userID) => {
+	if (!matches.length) return 0;
 	return matches.filter(match => match.winner.userID === userID).length;
 };
 
 export const calculateTotalDefeats = (matches, userID) => {
+	if (!matches.length) return 0;
 	return matches.filter(match => match.winner.userID !== userID).length;
 };
 
 export const calculateWinDefeatRatio = (matches, userID) => {
+	if (!matches.length) return 0;
+
 	const wins = calculateTotalWins(matches, userID);
 
 	return (wins / matches.length).toFixed(2);
