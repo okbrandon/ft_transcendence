@@ -13,17 +13,31 @@ import {
 } from "./styles/Shop.styled";
 import { useAuth } from "../../context/AuthContext";
 import API from "../../api/api";
+import { getUser } from "../../api/user";
 import Loader from "../../styles/shared/Loader.styled";
 import { useNotification } from "../../context/NotificationContext";
 import { useTranslation } from "react-i18next";
 
 const Shop = () => {
-	const { user, setUser, loading } = useAuth();
+	const { setUser, loading } = useAuth();
 	const { addNotification } = useNotification();
+	const [meUser, setMeUser] = useState(null);
 	const [purchasedItems, setPurchasedItems] = useState([]);
 	const [storeItems, setStoreItems] = useState([]);
 	const [selectedSkin, setSelectedSkin] = useState(null);
 	const { t } = useTranslation();
+
+	useEffect(() => {
+		getUser()
+			.then(response => {
+				console.log(response);
+				setMeUser(response);
+				setUser(response);
+			})
+			.catch(err => {
+				addNotification('error', err?.response?.data?.error || 'An error occurred');
+			});
+	}, [addNotification]);
 
 	useEffect(() => {
 		API.get('/users/@me/settings')
@@ -83,7 +97,7 @@ const Shop = () => {
 			});
 	};
 
-	if (loading) {
+	if (loading || !meUser) {
 		return (
 			<ShopContainer>
 				<Loader/>
@@ -95,7 +109,7 @@ const Shop = () => {
 		<ShopContainer>
 			<Header>
 				<h1>{t('store.title')}</h1>
-				<CoinsDisplay>{t('store.currentBalance', {balance: `${user.money}`})}</CoinsDisplay>
+				<CoinsDisplay>{t('store.currentBalance', {balance: `${meUser.money}`})}</CoinsDisplay>
 			</Header>
 			<SubtitleSection>
 				<p>{t('store.subTitle')}</p>
