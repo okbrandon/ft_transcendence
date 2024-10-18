@@ -10,7 +10,8 @@ const Winrate = ({ matches }) => {
 	const userID = localStorage.getItem('userID');
 	const seriesLifetime = [calculateTotalWins(matches, userID), calculateTotalDefeats(matches, userID)];
 	const seriesLastFive = [calculateTotalWins(matches.slice(0, 5), userID), calculateTotalDefeats(matches.slice(0, 5), userID)];
-	const [percentageLifetime, percentageLastFive] = [Math.round(seriesLifetime[0] / matches.length * 100), Math.round(seriesLastFive[0] / matches.slice(0, 5).length * 100)];
+	const percentageLifetime = seriesLifetime[0] ? Math.round(seriesLifetime[0] / matches.length * 100) : 0;
+	const percentageLastFive = seriesLastFive[0] ? Math.round(seriesLastFive[0] / matches.slice(0, 5).length * 100) : 0;
 
 	return (
 		<UserInfoItemContainer>
