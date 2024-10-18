@@ -35,7 +35,7 @@ const Game = () => {
 
 	const { sendMessage, lastMessage, readyState } = useWebSocket(process.env.REACT_APP_ENV === 'production' ? '/ws/match' : 'ws://localhost:8000/ws/match', {
 		onClose: event => { if (event.code === 1006) handleReconnect() },
-		shouldReconnect: () => true,
+		shouldReconnect: () => !gameOver,
 	});
 
 	const handleReconnect = useCallback(() => {
