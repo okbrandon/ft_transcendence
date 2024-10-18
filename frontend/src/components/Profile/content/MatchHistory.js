@@ -5,6 +5,7 @@ import { MatchCardTable, MatchHistoryContainer } from "../styles/Profile.styled"
 const MatchHistory = ({ userID, matches }) => {
 	const [visibleRows, setVisibleRows] = useState([]);
 	const containerRef = useRef(null);
+	const sortedMatches = [...matches].sort((a, b) => new Date(b.finishedAt) - new Date(a.finishedAt));
 	const { t } = useTranslation();
 
 	const handleScroll = () => {
@@ -55,7 +56,7 @@ const MatchHistory = ({ userID, matches }) => {
 						</tbody>
 					) : (
 						<tbody ref={containerRef}>
-							{matches.map((match, index) => (
+							{sortedMatches.map((match, index) => (
 								<tr
 									key={index}
 									className={`match-card ${visibleRows.includes(index) ? "visible" : ""}`}
