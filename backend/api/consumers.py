@@ -601,18 +601,23 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         if self.match is None:
             logger.error(f"[{self.__class__.__name__}] Player {self.user.userID} attempted to move paddle without being in a match")
             return
+        if self.match.matchID not in self.active_matches:
+            logger.error(f"[{self.__class__.__name__}] Match state not found for match: {self.match.matchID}")
+            return
 
         paddle_speed = 5 # Appropriate paddle speed (adjust as needed)
         direction = data.get('direction')
         match_state = self.active_matches[self.match.matchID]
         now = time.time()
 
-        if match_state is None:
-            logger.error(f"[{self.__class__.__name__}] Match state not found for match: {self.match.matchID}")
-            return
-
         if now - self.last_paddle_move < 0.015: # 15ms minimum time between paddle moves
             logger.error(f"[{self.__class__.__name__}] Player {self.user.userID} moved paddle too quickly")
+            try:
+                await self.send_json({
+                    "e": "PADDLE_RATE_LIMIT"
+                })
+            except Exception as e:
+                logger.error(f"[{self.__class__.__name__}] Failed to send error event: {str(e)}")
             return
 
         player_key = 'playerA' if match_state['playerA']['id'] == self.user.userID else 'playerB'
