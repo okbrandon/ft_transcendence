@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import GameCanvas from "../../../scripts/game";
+import gameCanvas from "../../../scripts/game";
 import {
 	GameSceneContainer,
 	PageContainer,
@@ -15,9 +15,11 @@ import {
 	OverlayContainer
 } from "../styles/Game.styled";
 import PongButton from "../../../styles/shared/PongButton.styled";
+import { getSkin } from "../../../api/user";
 
 const GameLocal = () => {
 	const navigate = useNavigate();
+	const userID = localStorage.getItem('userID');
 	const [keyPressedA, setKeyPressedA] = useState(null);
 	const [keyPressedB, setKeyPressedB] = useState(null);
 	const [isHit, setIsHit] = useState(false);
@@ -28,6 +30,7 @@ const GameLocal = () => {
 	const [isGameStarted, setIsGameStarted] = useState(false);
 	const [activateTimer, setActivateTimer] = useState(false);
 	const [gameOver, setGameOver] = useState(false);
+	const [paddleSkin, setPaddleSkin] = useState(null);
 
 	const canvas = useRef(null);
 	const paddle1 = useRef(null);
@@ -62,6 +65,14 @@ const GameLocal = () => {
 			paddle.current.position.y = Math.max(-terrain.SCENEHEIGHT / 2 + 1.45, paddle.current.position.y - paddleSpeed);
 		}
 	}, [terrain.SCENEHEIGHT, paddleSpeed]);
+
+	useEffect(() => {
+		if (!userID) return;
+		getSkin(userID)
+			.then(skin => {
+				setPaddleSkin(skin);
+			});
+	}, [userID]);
 
 	// Keyboard event listeners
 	useEffect(() => {
@@ -142,10 +153,11 @@ const GameLocal = () => {
 			ball.current.position.y - ballRadius <= paddle1Top &&
 			ball.current.position.y + ballRadius >= paddle1Bottom) {
 			ballVelocity.current.x *= -1;
-			if (Math.abs(ballVelocity.current.x) < maxBallSpeed)
-				ballVelocity.current.x *= 1.1;
-			if (Math.abs(ballVelocity.current.y) < maxBallSpeed)
-				ballVelocity.current.y *= 1.1;
+
+			ball.current.position.x = paddle1.current.position.x + paddleWidth / 2 + ballRadius + 0.01;
+
+			if (Math.abs(ballVelocity.current.x) < maxBallSpeed) ballVelocity.current.x *= 1.1;
+			if (Math.abs(ballVelocity.current.y) < maxBallSpeed) ballVelocity.current.y *= 1.1;
 			hit.current = { x: ball.current.position.x, y: ball.current.position.y };
 			setIsHit(true);
 		}
@@ -155,10 +167,11 @@ const GameLocal = () => {
 			ball.current.position.y - ballRadius <= paddle2Top &&
 			ball.current.position.y + ballRadius >= paddle2Bottom) {
 			ballVelocity.current.x *= -1;
-			if (Math.abs(ballVelocity.current.x) < maxBallSpeed)
-				ballVelocity.current.x *= 1.1;
-			if (Math.abs(ballVelocity.current.y) < maxBallSpeed)
-				ballVelocity.current.y *= 1.1;
+
+			ball.current.position.x = paddle2.current.position.x - paddleWidth / 2 - ballRadius - 0.01;
+
+			if (Math.abs(ballVelocity.current.x) < maxBallSpeed) ballVelocity.current.x *= 1.1;
+			if (Math.abs(ballVelocity.current.y) < maxBallSpeed) ballVelocity.current.y *= 1.1;
 			hit.current = { x: ball.current.position.x, y: ball.current.position.y };
 			setIsHit(true);
 		}
@@ -198,7 +211,7 @@ const GameLocal = () => {
 	useEffect(() => {
 		if (!canvas.current) return;
 
-		const { renderer, camera, dispose } = GameCanvas(canvas.current, paddle1, paddle2, ball, terrain, hit);
+		const { renderer, camera, dispose } = gameCanvas(canvas.current, paddle1, paddle2, paddleSkin, paddleSkin, ball, terrain, hit);
 
 		const handleResize = () => {
 			renderer.setSize(terrain.WIDTH, terrain.HEIGHT);
@@ -212,7 +225,7 @@ const GameLocal = () => {
 			window.removeEventListener('resize', handleResize);
 			dispose();
 		}
-	}, [terrain]);
+	}, [terrain, paddleSkin]);
 
 	// Animate ball and game logic
 	useEffect(() => {

@@ -24,8 +24,8 @@ export const SectionContainer = styled.div`
 `;
 
 export const ProfilePictureContainer = styled.div`
-	width: 190px;
-	height: 190px;
+	width: 195px;
+	height: 195px;
 	position: relative;
 
 	& > div {
@@ -52,6 +52,9 @@ export const ProfilePictureContainer = styled.div`
 
 export const ProfileImage = styled(Image)`
 	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 	width: 190px;
 	height: 190px;
 	object-fit: cover;

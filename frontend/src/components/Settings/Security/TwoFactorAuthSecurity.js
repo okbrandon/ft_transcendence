@@ -4,7 +4,7 @@ import logger from '../../../api/logger';
 import OTPInputComponent from '../../Auth/OTPInput';
 import { ErrorMessage } from '../../Auth/styles/Authentication.styled';
 import { AvailablePlatformsContainer, PlatformButton } from '../../Auth/styles/TwoFactorAuth.styled';
-import { GetUser } from '../../../api/user';
+import { getUser } from '../../../api/user';
 import { Backdrop, FormContainer } from '../styles/TwoFactorAuthSecurity.styled';
 import PongButton from '../../../styles/shared/PongButton.styled';
 
@@ -51,7 +51,7 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactor
 			.then(res => {
 				logger('2FA: Success');
 				setSuccess('Security updated successfully');
-				GetUser()
+				getUser()
 					.then(res => {
 						setUser(res.data);
 						logger('User data refetched and updated in context:', res.data);

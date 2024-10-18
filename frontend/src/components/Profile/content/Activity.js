@@ -2,11 +2,11 @@ import React from "react";
 import LineStats from "../stats/LineStats";
 import { ActivityContainer } from "../styles/Profile.styled";
 
-const Activity = ({ matchArray }) => {
+const Activity = ({ matches }) => {
 	return (
 		<ActivityContainer>
 			<h2>Acitivity History</h2>
-			<LineStats matchArray={matchArray}/>
+			<LineStats matches={matches}/>
 		</ActivityContainer>
 	);
 };

@@ -74,16 +74,16 @@ const ProfilePicture = ({ profileUser, relation, setIsRefetch }) => {
 				/>
 				<div>
 					<CircularProgressbar
-						value={20}
-						strokeWidth={4}
+						value={profileUser.xp % 1000 / 1000 * 100}
+						strokeWidth={5}
 						styles={buildStyles({
 							rotation: 0.5,
-							pathColor: `#FFD700`,
-							trailColor: 'rgba(255,255,255,0.4)',
+							pathColor: 'rgba(164, 69, 178, 1)',
+							trailColor: 'rgba(220, 220, 220, 1)',
 						})}
 					/>
 				</div>
-				<p>0</p>
+				<p>{Math.floor(profileUser.xp / 1000)}</p>
 			</ProfilePictureContainer>
 			<ProfileActionContainer>
 				<ProfileUsername>{profileUser.displayName}</ProfileUsername>
@@ -112,7 +112,7 @@ const ProfilePicture = ({ profileUser, relation, setIsRefetch }) => {
 									onClick={handleRemoveFriend}
 								>
 									<i className="bi bi-person-dash-fill"/>
-									Remove Friend
+									{relation[0].status === 0 ? 'Cancel Request' : 'Remove Friend'}
 								</ActionButton>
 							) : (
 								<ActionButton

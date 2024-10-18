@@ -3,7 +3,7 @@ import API from '../api/api';
 import { useLocation } from "react-router-dom";
 import logger from "../api/logger";
 import { formatUserData } from "../api/user";
-import { GetBlockedUsers, GetFriends, GetRequests } from "../scripts/relation";
+import { getBlockedUsers, getFriends, getRequests } from "../scripts/relation";
 import { useNotification } from "./NotificationContext";
 
 const WS_CHAT_URL = process.env.REACT_APP_ENV === 'production' ? '/ws/chat/?token=' : 'ws://localhost:8000/ws/chat/?token=';
@@ -49,9 +49,9 @@ const RelationProvider = ({ children }) => {
 		API.get('users/@me/relationships')
 			.then(relationships => {
 				setRelations(relationships.data);
-				setFriends(GetFriends(relationships.data));
-				setRequests(GetRequests(relationships.data));
-				setBlockedUsers(GetBlockedUsers(relationships.data));
+				setFriends(getFriends(relationships.data));
+				setRequests(getRequests(relationships.data));
+				setBlockedUsers(getBlockedUsers(relationships.data));
 
 				// handle conversations when there is a change in relation status
 				return API.get('chat/conversations');

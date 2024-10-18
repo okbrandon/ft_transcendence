@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import API from '../../../../api/api';
-import { GetUser } from '../../../../api/user';
+import { getUser } from '../../../../api/user';
 import OTPInputComponent from '../../../Auth/OTPInput';
 import { AvailablePlatformsContainer, PlatformButton } from '../../../Auth/styles/TwoFactorAuth.styled';
 import { Backdrop, FormContainer } from '../../styles/TwoFactorAuth.styled';
@@ -47,7 +47,7 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactor
 		API.patch('users/@me/profile', { ...submissionData, otp: authCode })
 			.then(() => {
 				setSuccess('Security updated successfully');
-				GetUser()
+				getUser()
 					.then(res => {
 						setUser(res.data);
 					})

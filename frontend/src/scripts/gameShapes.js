@@ -18,31 +18,58 @@ export const roundedRectShape = (width, height, radius) => {
 	return shape;
 };
 
-export const PaddleAttributes = (terrain, textureUrl = undefined) => {
+export const setPaddleAttributes = (terrain, textureUrl = null) => {
 	const textureLoader = new THREE.TextureLoader();
-	const paddleTexture = textureUrl ? textureLoader.load(textureUrl) : null;
+	let paddleMaterial;
+
+	if (textureUrl) {
+		const paddleTexture = textureLoader.load(`/images/skins/${textureUrl}`, texture => {
+			texture.wrapS = THREE.RepeatWrapping;
+			texture.wrapT = THREE.RepeatWrapping;
+			texture.flipY = false;
+			texture.repeat.set(1, 1);
+		});
+
+		paddleMaterial = new THREE.MeshLambertMaterial({
+			color: 0xffffff,
+			map: paddleTexture
+		});
+	} else {
+		paddleMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
+	}
 
 	const paddleShape = roundedRectShape(20 * terrain.SCALEX, 120 * terrain.SCALEY, 10 * terrain.SCALEX);
 	const extrudeSettings = { depth: 0.5, bevelEnabled: false };
 	const paddleGeometry = new THREE.ExtrudeGeometry(paddleShape, extrudeSettings);
-	const paddleMaterial = new THREE.MeshPhysicalMaterial({
-		map: paddleTexture,
-		color: !paddleTexture ? 0xffffff : undefined,
-		emissive: 0x333333,
-		emissiveIntensity: 0.5,
-		reflectivity: 0.9,
-		roughness: 0.05,
-	});
 	return {paddleGeometry, paddleMaterial};
 }
 
-export const BallAttributes = terrain => {
+export const setBallAttributes = terrain => {
 	const ballGeometry = new THREE.SphereGeometry(25 * terrain.SCALEX / 2, 32, 32);
 	const ballMaterial = new THREE.MeshPhysicalMaterial({ color: 0xffffff });
 	return {ballGeometry, ballMaterial};
 }
 
-export const DashedLine = (scene, terrain) => {
+export const setWallAttributes = terrain => {
+	const wallHeight = terrain.SCENEHEIGHT + 5;
+
+	const wallMaterial = new THREE.MeshPhysicalMaterial({
+		color: 0x666666,
+		reflectivity: 0.9,
+		roughness: 0.05,
+		thickness: 1.0,
+		transmission: 0.9,
+		ior: 1.5,
+		transparent: true,
+		opacity: 0.8,
+	});
+
+	const wallGeometry = new THREE.BoxGeometry(0, wallHeight, 2);
+
+	return { wallGeometry, wallMaterial };
+}
+
+export const addDashedLine = (scene, terrain) => {
 	const lineMaterial = new THREE.LineDashedMaterial({
 		color: 0x3f3944,
 		dashSize: 0.5,

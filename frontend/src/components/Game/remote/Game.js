@@ -7,6 +7,12 @@ import { formatUserData } from "../../../api/user";
 import logger from "../../../api/logger";
 import { PageContainer } from "../styles/Game.styled";
 
+/*
+** Lastmessage:
+** MATH_JOIN = side and opponent could be null for the person who created the match
+** PLAYER_JOIN = only concerning the opponent joining the match
+*/
+
 const Game = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -148,6 +154,8 @@ const Game = () => {
 				playerSide={gameState.playerSide}
 			/>
 			<GameScene
+				player={gameState.player}
+				opponent={gameState.opponent}
 				matchState={gameState.matchState}
 				playerSide={gameState.playerSide}
 				hitPos={hitPos}

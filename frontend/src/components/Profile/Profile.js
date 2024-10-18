@@ -2,29 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import MainBar from './main/MainBar';
 import Balance from './content/Balance';
-import API from '../../api/api'
 import MatchHistory from './content/MatchHistory';
 import Winrate from './content/Winrate';
 import DisplaySkin from './content/DisplaySkin';
-import { GetUser, GetUserByUsername } from '../../api/user';
+import { getMatchHistory, getSkin, getUser, getUserById } from '../../api/user';
 import { useRelation } from '../../context/RelationContext';
-import { GetUserFromRelation } from '../../scripts/relation';
+import { getRelationFromUsername } from '../../scripts/relation';
 import { useNotification } from '../../context/NotificationContext';
 import { ProfileContainer, UserContainer, UserInfoContainer, UserMainInfoContainer, UserProfileBanner, UserProfileBannerContainer } from './styles/Profile.styled';
 import Loader from '../../styles/shared/Loader.styled';
 import ProfileMainInfo from './main/ProfileMainInfo';
 import Activity from './content/Activity';
-
-const matchArray = [
-	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Brandon"}, scores: {playerA: 9, playerB: 10}, startedAt: "2021-09-01T12:28:01Z", finishedAt: "2021-09-01T12:30:38Z"},
-	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Evan"}, scores: {playerA: 10, playerB: 8}, startedAt: "2021-09-01T12:31:08Z", finishedAt: "2021-09-01T12:35:40Z"},
-	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Kian"}, scores: {playerA: 10, playerB: 9}, startedAt: "2021-09-01T12:38:48Z", finishedAt: "2021-09-01T12:40:51Z"},
-	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Brandon"}, scores: {playerA: 9, playerB: 10}, startedAt: "2021-09-01T12:28:01Z", finishedAt: "2021-09-01T12:30:38Z"},
-	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Evan"}, scores: {playerA: 10, playerB: 8}, startedAt: "2021-09-01T12:31:08Z", finishedAt: "2021-09-01T12:35:40Z"},
-	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Kian"}, scores: {playerA: 10, playerB: 9}, startedAt: "2021-09-01T12:38:48Z", finishedAt: "2021-09-01T12:40:51Z"},
-	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Brandon"}, scores: {playerA: 9, playerB: 10}, startedAt: "2021-09-01T12:28:01Z", finishedAt: "2021-09-01T12:30:38Z"},
-	{playerA: {displayName: "hanmin"}, playerB: {displayName: "Evan"}, scores: {playerA: 10, playerB: 8}, startedAt: "2021-09-01T12:31:08Z", finishedAt: "2021-09-01T12:35:40Z"},
-];
 
 const Profile = () => {
 	const navigate = useNavigate();
@@ -35,6 +23,7 @@ const Profile = () => {
 	const [currentSkin, setCurrentSkin] = useState(null);
 	const [relation, setRelation] = useState(null);
 	const [isBlocked, setIsBlocked] = useState(false);
+	const [matches, setMatches] = useState(null);
 	const userID = localStorage.getItem('userID');
 
 	useEffect(() => {
@@ -42,15 +31,24 @@ const Profile = () => {
 	}, [setIsRefetch]);
 
 	useEffect(() => {
+		if (!profileUser) return;
+		getMatchHistory(profileUser.userID, userID)
+			.then(data => {
+				setMatches(data);
+			});
+	}, [profileUser, userID]);
+
+	// Get user data and relation data of the user
+	useEffect(() => {
 		if (username && relations) {
-			GetUserByUsername(username)
+			getUserById(username)
 				.then(user => {
-					if (user.userID === userID) return GetUser();
+					if (user.userID === userID) return getUser();
 					return user;
 				})
 				.then(meUser => {
 					setProfileUser(meUser);
-					return GetUserFromRelation(relations, meUser.username);
+					return getRelationFromUsername(relations, meUser.username);
 				})
 				.then(relationData => {
 					setRelation(relationData);
@@ -62,45 +60,27 @@ const Profile = () => {
 		}
 	}, [relations, username, navigate, addNotification, userID]);
 
+	// Get selected skin of the user
 	useEffect(() => {
 		if (!profileUser) return;
-		let selectedSkinId;
-		API.get(`/users/${profileUser.userID}/settings`)
-			.then(response => {
-				selectedSkinId = response.data.selectedPaddleSkin;
-				if (selectedSkinId) {
-					return API.get('/store/items');
-				}
-				setCurrentSkin(null);
-				return null;
-			})
-			.then(response => {
-				if (!response) return;
-				const selectedSkin = response.data.find(item => item.itemID === selectedSkinId);
-				if (selectedSkin) {
-					setCurrentSkin(selectedSkin.assetID);
-				} else {
-					setCurrentSkin(null);
-				}
+		getSkin(profileUser.userID)
+			.then(skin => {
+				setCurrentSkin(skin)
 			})
 			.catch(err => {
-				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`)
 			});
-	}, [addNotification, profileUser]);
+	}, [profileUser, addNotification]);
 
+	// Check if the user is blocked
 	useEffect(() => {
-		if (relation) {
-			setIsBlocked(relation.length && relation[0].status === 2 && relation[0].target.userID === userID && profileUser.userID !== userID);
-		}
-	}, [relation, profileUser, userID]);
-
-	useEffect(() => {
-		if (isBlocked) {
+		if (relation && relation.length && relation[0].status === 2 && relation[0].target.userID === userID && profileUser.userID !== userID) {
+			setIsBlocked(true);
 			addNotification('error', 'An error occurred.');
 		}
-	}, [isBlocked, addNotification]);
+	}, [relation, profileUser, userID, addNotification]);
 
-	if (!profileUser || !relation) {
+	if (!profileUser || !relation || !matches) {
 		return (
 			<ProfileContainer>
 				<Loader/>
@@ -121,14 +101,14 @@ const Profile = () => {
 							relation={relation}
 							setIsRefetch={setIsRefetch}/>
 					</UserProfileBannerContainer>
-					<MainBar profileUser={profileUser} matchArray={matchArray}/>
+				<MainBar profileUser={profileUser} matches={matches}/>
 					<UserContainer>
 						<UserMainInfoContainer>
-							<MatchHistory matchArray={matchArray}/>
-							<Activity matchArray={matchArray}/>
+							<MatchHistory userID={profileUser.userID} matches={matches}/>
+							<Activity matches={matches}/>
 						</UserMainInfoContainer>
 						<UserInfoContainer>
-							<Winrate matchArray={matchArray}/>
+							<Winrate userID={profileUser.userID} matches={matches}/>
 							<DisplaySkin currentSkin={currentSkin}/>
 							{profileUser.userID === userID && (
 								<Balance profileUser={profileUser}/>

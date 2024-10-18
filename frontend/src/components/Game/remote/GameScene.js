@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GameSceneContainer, Score, ScoresContainer, StyledCanvas, Timer, OverlayContainer } from "../styles/Game.styled";
-import GameCanvas from "../../../scripts/game";
+import gameCanvas from "../../../scripts/game";
 import PongButton from "../../../styles/shared/PongButton.styled";
+import { getSkin } from "../../../api/user";
 
-const GameScene = ({ matchState, playerSide, hitPos, borderScore, sendMessage, activateTimer, setActivateTimer, gameStarted, gameOver, won }) => {
+const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderScore, sendMessage, activateTimer, setActivateTimer, gameStarted, gameOver, won }) => {
 	const navigate = useNavigate();
 
 	const [keyPressed, setKeyPressed] = useState(null);
@@ -17,7 +18,9 @@ const GameScene = ({ matchState, playerSide, hitPos, borderScore, sendMessage, a
 
 	const canvas = useRef(null);
 	const paddle1 = useRef(null);
+	const [skin1, setSkin1] = useState(null);
 	const paddle2 = useRef(null);
+	const [skin2, setSkin2] = useState(null);
 	const ball = useRef(null);
 	const hit = useRef(null);
 	const intervalRef = useRef(null); // Store interval reference
@@ -30,6 +33,29 @@ const GameScene = ({ matchState, playerSide, hitPos, borderScore, sendMessage, a
 		SCALEX: 22 / 1200,
 		SCALEY: 15 / 750,
 	}), []);
+
+	useEffect(() => {
+		if (player && playerSide) {
+			getSkin(player.userID)
+				.then(skin => {
+					if (playerSide === 'left' && !skin1) {
+						setSkin1(skin);
+					} else if (playerSide === 'right' && !skin2) {
+						setSkin2(skin);
+					}
+				});
+		}
+		if (opponent && playerSide) {
+			getSkin(opponent.userID)
+				.then(skin => {
+					if (playerSide === 'left' && !skin2) {
+						setSkin2(skin);
+					} else if (playerSide === 'right' && !skin1) {
+						setSkin1(skin);
+					}
+				})
+		}
+	}, [player, opponent, playerSide, skin1, skin2]);
 
 	useEffect(() => {
 		if (activateTimer && timer > 0) {
@@ -113,7 +139,7 @@ const GameScene = ({ matchState, playerSide, hitPos, borderScore, sendMessage, a
 	useEffect(() => {
 		if (!canvas.current) return;
 
-		const { renderer, camera, dispose } = GameCanvas(canvas.current, paddle1, paddle2, ball, terrain, hit);
+		const { renderer, camera, dispose } = gameCanvas(canvas.current, paddle1, paddle2, skin1, skin2, ball, terrain, hit);
 
 		const handleResize = () => {
 			renderer.setSize(terrain.WIDTH, terrain.HEIGHT);
@@ -127,7 +153,7 @@ const GameScene = ({ matchState, playerSide, hitPos, borderScore, sendMessage, a
 			window.removeEventListener("resize", handleResize);
 			dispose();
 		}
-	}, [terrain]);
+	}, [terrain, skin1, skin2]);
 
 	useEffect(() => {
 		if (!matchState) return;

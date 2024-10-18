@@ -1,5 +1,5 @@
 import React from "react";
-import Banner from "./Banner";
+import Hero from "./Hero";
 import Presentation from "./Presentation";
 import Contributors from "./Contributors";
 import Features from "./Features";
@@ -7,7 +7,7 @@ import Features from "./Features";
 const Home = () => {
 	return (
 		<>
-			<Banner/>
+			<Hero/>
 			<Presentation/>
 			<Features/>
 			<Contributors/>

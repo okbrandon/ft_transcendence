@@ -3,7 +3,7 @@ import ProfileImage from './ProfileImage';
 import AccountManagement from './AccountManagement';
 import ProfileInformation from './ProfileInformation';
 import API from '../../../api/api';
-import { GetUser } from '../../../api/user';
+import { getUser } from '../../../api/user';
 import {
 	Form,
 	SectionHeading,
@@ -20,7 +20,6 @@ const AccountPreferences = ({ user, setUser }) => {
 		bio: user.bio,
 		lang: user.lang,
 	});
-	const [bioByteLength, setBioByteLength] = useState(0);
 	const [loading, setLoading] = useState(false);
 	const [success, setSuccess] = useState('');
 	const [error, setError] = useState('');
@@ -30,9 +29,7 @@ const AccountPreferences = ({ user, setUser }) => {
 		const { id, value } = e.target;
 
 		if (id === 'bio') {
-			const byteSize = new Blob([value]).size;
-			if (byteSize <= 280) {
-				setBioByteLength(byteSize);
+			if (value.length <= 280) {
 				setFormData(data => ({
 					...data,
 					[id]: value,
@@ -84,7 +81,7 @@ const AccountPreferences = ({ user, setUser }) => {
 				.then(() => {
 					setSuccess(t('settings.accountPreferences.successMessage'));
 					setError('');
-					GetUser()
+					getUser()
 						.then(user => {
 							setUser(user);
 						})
@@ -108,7 +105,6 @@ const AccountPreferences = ({ user, setUser }) => {
 			<SectionHeading>{t('settings.accountPreferences.title')}</SectionHeading>
 			<ProfileInformation
 				error={error}
-				bioByteLength={bioByteLength}
 				formData={formData}
 				handleChange={handleChange}
 			/>
