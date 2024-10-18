@@ -17,7 +17,7 @@ from django.utils import timezone
 
 from .models import Conversation, User, Relationship, Match, UserSettings
 from .util import generate_id, get_safe_profile, get_user_id_from_token
-from .serializers import UserSerializer, MatchSerializer, UserSettingsSerializer
+from .serializers import UserSerializer, UserSettingsSerializer
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -104,11 +104,14 @@ class StatusConsumer(AsyncWebsocketConsumer):
                     raise Exception(f"Invalid message type: {message_type}")
 
         except Exception as err:
-            await self.send(json.dumps({
-                "type": "error",
-                "message": "Invalid JSON",
-                "more_info": str(err)
-            }))
+            try:
+                await self.send(json.dumps({
+                    "type": "error",
+                    "message": "Invalid JSON",
+                    "more_info": str(err)
+                }))
+            except Exception as _:
+                pass
 
     @sync_to_async
     def update_user_status(self, online, activity):
@@ -149,10 +152,13 @@ class StatusConsumer(AsyncWebsocketConsumer):
             )
 
     async def connection_event(self, event):
-        await self.send(json.dumps({
-            "type": "connection_event",
-            "user": event["user"]
-        }))
+        try:
+            await self.send(json.dumps({
+                "type": "connection_event",
+                "user": event["user"]
+            }))
+        except Exception as _:
+            pass
 
     async def check_heartbeat(self):
         while True:
@@ -163,9 +169,12 @@ class StatusConsumer(AsyncWebsocketConsumer):
                 await self.close(code=4000)
                 break
 
-            await self.send(json.dumps({
-                "type": "heartbeat"
-            }))
+            try:
+                await self.send(json.dumps({
+                    "type": "heartbeat"
+                }))
+            except Exception as _:
+                pass
             await asyncio.sleep(2)
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -245,11 +254,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 case _:
                     raise Exception(f"Invalid message type: {message_type}")
         except Exception as err:
-            await self.send(json.dumps({
-                "type": "error",
-                "message": "Invalid JSON",
-                "more_info": str(err)
-            }))
+            try:
+                await self.send(json.dumps({
+                    "type": "error",
+                    "message": "Invalid JSON",
+                    "more_info": str(err)
+                }))
+            except Exception as _:
+                pass
 
     async def notify_new_message(self, conversation_id, sender_username, message):
         conversation = await sync_to_async(Conversation.objects.get)(conversationID=conversation_id)
@@ -272,18 +284,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
 
     async def conversation_update(self, event):
-        await self.send(json.dumps({
-            "type": "conversation_update",
-            "senderUsername": event["senderUsername"],
-            "messagePreview": event["messagePreview"]
-        }))
+        try:
+            await self.send(json.dumps({
+                "type": "conversation_update",
+                "senderUsername": event["senderUsername"],
+                "messagePreview": event["messagePreview"]
+            }))
+        except Exception as _:
+            pass
 
     async def friend_request(self, event):
-        await self.send(json.dumps({
-            "type": "friend_request",
-            "status": event["status"],
-            "data": event["data"]
-        }))
+        try:
+            await self.send(json.dumps({
+                "type": "friend_request",
+                "status": event["status"],
+                "data": event["data"]
+            }))
+        except Exception as _:
+            pass
 
     @sync_to_async
     def add_message_to_conversation(self, conversation_id, user, content):
@@ -339,6 +357,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             "e": "HELLO",
             "d": {"heartbeat_interval": 1000}
         })
+        self.last_paddle_move = time.time()
         self.last_heartbeat = time.time()
         self.heartbeat_task = asyncio.create_task(self.heartbeat_check())
         self.match = None
@@ -388,7 +407,11 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             user_profile = await self.get_user_profile(token)
             if user_profile:
                 self.user = await self.get_user_from_id(user_profile['userID'])
-                await self.send_json({"e": "READY", "d": user_profile})
+                try:
+                    await self.send_json({"e": "READY", "d": user_profile})
+                except Exception as e:
+                    logger.error(f"[{self.__class__.__name__}] Failed to send READY event: {str(e)}")
+                    await self.close()
                 logger.info(f"[{self.__class__.__name__}] User identified: {self.user.userID}")
             else:
                 logger.warning(f"[{self.__class__.__name__}] Invalid token, closing connection")
@@ -398,7 +421,11 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             user_data = UserSerializer(self.user).data
             safe_profile = get_safe_profile(user_data, me=True)
             safe_profile.pop('avatarID', None)
-            await self.send_json({"e": "READY", "d": safe_profile})
+            try:
+                await self.send_json({"e": "READY", "d": safe_profile})
+            except Exception as e:
+                logger.error(f"[{self.__class__.__name__}] Failed to send READY event: {str(e)}")
+                await self.close()
             logger.info(f"[{self.__class__.__name__}] AI identified: {self.user.userID}")
 
     async def get_user_profile(self, token):
@@ -440,14 +467,19 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             self.reset_ball(self.active_matches[match.matchID])
             logger.info(f"[{self.__class__.__name__}] New match state initialized for match: {match.matchID}")
 
-        await self.send_json({
-            "e": "MATCH_JOIN",
-            "d": {
-                "match_id": match.matchID,
-                "side": "left" if match.playerA['id'] == self.user.userID else "right",
-                "opponent": await self.get_opponent_info(match, self.user)
-            }
-        })
+        try:
+            await self.send_json({
+                "e": "MATCH_JOIN",
+                "d": {
+                    "match_id": match.matchID,
+                    "side": "left" if match.playerA['id'] == self.user.userID else "right",
+                    "opponent": await self.get_opponent_info(match, self.user)
+                }
+            })
+        except Exception as e:
+            logger.error(f"[{self.__class__.__name__}] Failed to send MATCH_JOIN event: {str(e)}")
+            await self.close()
+
         if match.playerB:
             # Update playerB id in active match state
             self.active_matches[match.matchID]['playerB']['id'] = match.playerB['id']
@@ -477,22 +509,28 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
 
         if not match:
             logger.error(f"[{self.__class__.__name__}] Match {match_id} not found")
-            await self.send_json({
-                "e": "MATCH_FORCE_JOIN_FAILED",
-                "d": {
-                    "reason": "Match not found"
-                }
-            })
+            try:
+                await self.send_json({
+                    "e": "MATCH_FORCE_JOIN_FAILED",
+                    "d": {
+                        "reason": "Match not found"
+                    }
+                })
+            except Exception as e:
+                logger.error(f"[{self.__class__.__name__}] Failed to send MATCH_FORCE_JOIN_FAILED event: {str(e)}")
             return
 
         if match.flags != 2:
             logger.error(f"[{self.__class__.__name__}] Match {match_id} is not an AI match")
-            await self.send_json({
-                "e": "MATCH_FORCE_JOIN_FAILED",
-                "d": {
-                    "reason": "Match is not an AI match"
-                }
-            })
+            try:
+                await self.send_json({
+                    "e": "MATCH_FORCE_JOIN_FAILED",
+                    "d": {
+                        "reason": "Match is not an AI match"
+                    }
+                })
+            except Exception as e:
+                logger.error(f"[{self.__class__.__name__}] Failed to send MATCH_FORCE_JOIN_FAILED event: {str(e)}")
             return
 
         match.playerB = {"id": self.user.userID, "platform": "server"}
@@ -504,14 +542,19 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             self.channel_name
         )
 
-        await self.send_json({
-            "e": "MATCH_JOIN",
-            "d": {
-                "match_id": match.matchID,
-                "side": "left" if match.playerA['id'] == self.user.userID else "right",
-                "opponent": await self.get_opponent_info(match, self.user)
-            }
-        })
+        try:
+            await self.send_json({
+                "e": "MATCH_JOIN",
+                "d": {
+                    "match_id": match.matchID,
+                    "side": "left" if match.playerA['id'] == self.user.userID else "right",
+                    "opponent": await self.get_opponent_info(match, self.user)
+                }
+            })
+        except Exception as e:
+            logger.error(f"[{self.__class__.__name__}] Failed to send MATCH_JOIN event: {str(e)}")
+            await self.close()
+
         if match.playerB:
             # Update playerB id in active match state
             self.active_matches[match.matchID]['playerB']['id'] = match.playerB['id']
@@ -555,17 +598,31 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             pass
 
     async def handle_paddle_move(self, data):
+        if self.match is None:
+            logger.error(f"[{self.__class__.__name__}] Player {self.user.userID} attempted to move paddle without being in a match")
+            return
+
+        paddle_speed = 5 # Appropriate paddle speed (adjust as needed)
         direction = data.get('direction')
         match_state = self.active_matches[self.match.matchID]
-        player_key = 'playerA' if match_state['playerA']['id'] == self.user.userID else 'playerB'
+        now = time.time()
 
-        paddle_speed = 5  # Appropriate paddle speed (adjust as needed)
+        if match_state is None:
+            logger.error(f"[{self.__class__.__name__}] Match state not found for match: {self.match.matchID}")
+            return
+
+        if now - self.last_paddle_move < 0.015: # 15ms minimum time between paddle moves
+            logger.error(f"[{self.__class__.__name__}] Player {self.user.userID} moved paddle too quickly")
+            return
+
+        player_key = 'playerA' if match_state['playerA']['id'] == self.user.userID else 'playerB'
 
         if direction == 'up':
             match_state[player_key]['paddle_y'] = min(682, match_state[player_key]['paddle_y'] + paddle_speed)
         elif direction == 'down':
             match_state[player_key]['paddle_y'] = max(73, match_state[player_key]['paddle_y'] - paddle_speed)
 
+        self.last_paddle_move = time.time()
         await self.send_match_update()
 
     async def handle_player_quit(self):
