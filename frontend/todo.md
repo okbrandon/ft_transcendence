@@ -1,6 +1,6 @@
 # TODO
 - Profile: remove friend / cancel friend request
-- Profile: xp -> not moving after a match
+- Friends: websocket when friend is removed
 - tournaments
 - Game: send invite
 

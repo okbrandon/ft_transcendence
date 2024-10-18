@@ -19,7 +19,6 @@ const ProfilePicture = ({ profileUser, relation, setIsRefetch }) => {
 	const { addNotification } = useNotification();
 	const disableAddFriend = !!relation.length;
 	const disableBlockUser = !!(relation.length && relation[0].status === 2);
-	const percentage = profileUser.xp % 1000 / 1000 * 100;
 	const userID = localStorage.getItem('userID');
 
 	const handleAddFriend = () => {
@@ -79,7 +78,7 @@ const ProfilePicture = ({ profileUser, relation, setIsRefetch }) => {
 						strokeWidth={5}
 						styles={buildStyles({
 							rotation: 0.5,
-							pathColor: `rgba(164, 69, 178, 1)`,
+							pathColor: 'rgba(164, 69, 178, 1)',
 							trailColor: 'rgba(220, 220, 220, 1)',
 						})}
 					/>
@@ -113,7 +112,7 @@ const ProfilePicture = ({ profileUser, relation, setIsRefetch }) => {
 									onClick={handleRemoveFriend}
 								>
 									<i className="bi bi-person-dash-fill"/>
-									Remove Friend
+									{relation[0].status === 0 ? 'Cancel Request' : 'Remove Friend'}
 								</ActionButton>
 							) : (
 								<ActionButton

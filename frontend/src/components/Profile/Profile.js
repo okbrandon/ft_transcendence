@@ -101,7 +101,7 @@ const Profile = () => {
 							relation={relation}
 							setIsRefetch={setIsRefetch}/>
 					</UserProfileBannerContainer>
-					<MainBar profileUser={profileUser} matches={matches}/>
+				<MainBar profileUser={profileUser} matches={matches}/>
 					<UserContainer>
 						<UserMainInfoContainer>
 							<MatchHistory userID={profileUser.userID} matches={matches}/>
