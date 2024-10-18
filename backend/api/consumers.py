@@ -775,7 +775,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         PADDLE_HEIGHT = 60 # Paddle height is actually 120 but we're using half of it
         BALL_RADIUS = 25 / 2
         BALL_SPEED = 0.6
-        BALL_MAX_SPEED = 17
+        BALL_MAX_SPEED = 19
         MAX_SCORE = 10
         REFRESH_RATE = 1 / 60
 
