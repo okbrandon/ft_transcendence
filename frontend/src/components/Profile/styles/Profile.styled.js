@@ -207,6 +207,10 @@ export const MatchCardTable = styled.table`
 		color: #b5b5c5;
 	}
 
+	td.profile {
+		cursor: pointer;
+	}
+
 	th {
 		font-size: 18px;
 		color: #ccccdd;
