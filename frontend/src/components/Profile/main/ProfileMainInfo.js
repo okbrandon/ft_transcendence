@@ -19,6 +19,7 @@ const ProfilePicture = ({ profileUser, relation, setIsRefetch }) => {
 	const { addNotification } = useNotification();
 	const disableAddFriend = !!relation.length;
 	const disableBlockUser = !!(relation.length && relation[0].status === 2);
+	const percentage = profileUser.xp % 1000 / 1000 * 100;
 	const userID = localStorage.getItem('userID');
 
 	const handleAddFriend = () => {
@@ -75,15 +76,15 @@ const ProfilePicture = ({ profileUser, relation, setIsRefetch }) => {
 				<div>
 					<CircularProgressbar
 						value={profileUser.xp % 1000 / 1000 * 100}
-						strokeWidth={4}
+						strokeWidth={5}
 						styles={buildStyles({
 							rotation: 0.5,
-							pathColor: `#FFD700`,
-							trailColor: 'rgba(255,255,255,0.4)',
+							pathColor: `rgba(164, 69, 178, 1)`,
+							trailColor: 'rgba(220, 220, 220, 1)',
 						})}
 					/>
 				</div>
-				<p>0</p>
+				<p>{Math.floor(profileUser.xp / 1000)}</p>
 			</ProfilePictureContainer>
 			<ProfileActionContainer>
 				<ProfileUsername>{profileUser.displayName}</ProfileUsername>
