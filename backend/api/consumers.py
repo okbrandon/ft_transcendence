@@ -839,6 +839,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                 loop = asyncio.get_event_loop()
                 user = await loop.run_in_executor(None, lambda: User.objects.get(userID=winner_id))
                 user.xp += random.randint(15, 25)
+                user.money += random.randint(5, 10)
                 await loop.run_in_executor(None, user.save)
             except User.DoesNotExist:
                 logger.error(f"[{self.__class__.__name__}] Cannot give {winner_id} xp, user not found")

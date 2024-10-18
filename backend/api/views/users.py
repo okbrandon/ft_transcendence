@@ -358,6 +358,8 @@ class UserRelationshipsMe(APIView):
             if me.userID != relationship.userA:
                 self.notify_chat_websocket(relationship, status="rejected")
 
+        self.notify_chat_websocket(relationship, status="deleted")
+
         relationship.delete()
 
         return Response({"status": "Relationship deleted"}, status=status.HTTP_200_OK)
@@ -367,7 +369,7 @@ class UserRelationshipsMe(APIView):
 
         if status == "accepted" or status == "rejected":
             group_name = f"chat_{relationship.userA}"
-        elif status == "pending":
+        elif status == "pending" or status == "deleted":
             group_name = f"chat_{relationship.userB}"
         else:
             return
