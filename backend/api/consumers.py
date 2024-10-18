@@ -6,7 +6,6 @@ import asyncio
 import random
 import os
 import time
-import ssl
 
 from channels.generic.websocket import AsyncWebsocketConsumer, AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
@@ -1001,6 +1000,15 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                 del self.active_matches[self.match.matchID]
 
             logger.info(f"[{self.__class__.__name__}] Match {match_id} ended. Winner: {winner_id}")
+
+            try:
+                loop = asyncio.get_event_loop()
+                user = await loop.run_in_executor(None, lambda: User.objects.get(userID=winner_id))
+                user.xp += random.randint(15, 25)
+                await loop.run_in_executor(None, user.save)
+            except User.DoesNotExist:
+                logger.error(f"[{self.__class__.__name__}] Cannot give {winner_id} xp, user not found")
+
             return {
                 "type": "match.ended",
                 "winner": winner_id
