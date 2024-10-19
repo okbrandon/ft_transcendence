@@ -4,6 +4,7 @@ import { GameSceneContainer, Score, ScoresContainer, StyledCanvas, Timer, Overla
 import gameCanvas from "../../../scripts/game";
 import PongButton from "../../../styles/shared/PongButton.styled";
 import { getSkin } from "../../../api/user";
+import { lerp } from "../../../scripts/math";
 
 const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderScore, sendMessage, activateTimer, setActivateTimer, gameStarted, gameOver, won }) => {
 	const navigate = useNavigate();
@@ -24,6 +25,12 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 	const ball = useRef(null);
 	const hit = useRef(null);
 	const intervalRef = useRef(null); // Store interval reference
+
+	const [ballPosition, setBallPosition] = useState({ x: 0, y: 0 });
+	const [ballVelocity, setBallVelocity] = useState({ dx: 0, dy: 0 });
+	const lastUpdateTime = useRef(Date.now());
+	const targetBallPosition = useRef({ x: 0, y: 0 });
+	const lastLerpValue = useRef(0);
 
 	const terrain = useMemo(() => ({
 		WIDTH: 1200,
@@ -153,7 +160,7 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 			window.removeEventListener("resize", handleResize);
 			dispose();
 		}
-	}, [terrain, skin1, skin2]);
+	}, [terrain, skin1, skin2, ball]);
 
 	useEffect(() => {
 		if (!matchState) return;
@@ -167,12 +174,51 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 		paddle1.current.position.y = (matchState.playerA.paddle_y - 375) * terrain.SCALEY;
 		paddle2.current.position.y = (matchState.playerB.paddle_y - 375) * terrain.SCALEY;
 
-		ball.current.position.set(
-			(matchState.ball.x - 600) * terrain.SCALEX,
-			(matchState.ball.y - 375) * terrain.SCALEY,
-			0
-		);
+		targetBallPosition.current = {
+			x: (matchState.ball.x - 600) * terrain.SCALEX,
+			y: (matchState.ball.y - 375) * terrain.SCALEY,
+		};
+		setBallVelocity({
+			dx: matchState.ball.dx * terrain.SCALEX,
+			dy: matchState.ball.dy * terrain.SCALEY,
+		});
+		lastUpdateTime.current = Date.now();
 	}, [terrain, matchState]);
+
+	useEffect(() => {
+		let animationFrameId;
+
+		const updateBallPosition = () => {
+			const currentTime = Date.now();
+			const deltaTime = (currentTime - lastUpdateTime.current) / 1000;
+
+			const predictedX = ballPosition.x + ballVelocity.dx * deltaTime;
+			const predictedY = ballPosition.y + ballVelocity.dy * deltaTime;
+
+			const ballSpeed = Math.sqrt(ballVelocity.dx ** 2 + ballVelocity.dy ** 2);
+			const maxSpeed = 0.56;
+			const minLerpFactor = 0.03;
+			const maxLerpFactor = 0.06;
+			const lerpFactor = maxLerpFactor - (ballSpeed / maxSpeed) * (maxLerpFactor - minLerpFactor);
+
+			if (lerpFactor !== lastLerpValue.current) {
+				console.log(`ballSpeed: ${ballSpeed} lerpFactor: ${lerpFactor}`);
+			}
+			lastLerpValue.current = lerpFactor;
+
+			const newX = lerp(predictedX, targetBallPosition.current.x, lerpFactor);
+			const newY = lerp(predictedY, targetBallPosition.current.y, lerpFactor);
+
+			setBallPosition({ x: newX, y: newY });
+			ball.current.position.set(newX, newY, 0);
+
+			animationFrameId = requestAnimationFrame(updateBallPosition);
+		}
+
+		updateBallPosition();
+
+		return () => cancelAnimationFrame(animationFrameId);
+	}, [ballPosition, ballVelocity]);
 
 	return (
 		<GameSceneContainer className={`${isHit ? "hit" : ""} ${borderColor}`}>
