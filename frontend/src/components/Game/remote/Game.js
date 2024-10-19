@@ -133,6 +133,8 @@ const Game = () => {
 				case 'PADDLE_HIT':
 					setHitPos(data.d.ball);
 					break;
+				case 'PADDLE_RATE_LIMIT': // ignoring
+					break;
 				default:
 					console.log('Unhandled message:', data);
 			}
