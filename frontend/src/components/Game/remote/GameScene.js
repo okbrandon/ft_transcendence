@@ -26,8 +26,8 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 	const hit = useRef(null);
 	const intervalRef = useRef(null); // Store interval reference
 
-	const [ballPosition, setBallPosition] = useState({ x: 0, y: 0 });
-	const [ballVelocity, setBallVelocity] = useState({ dx: 0, dy: 0 });
+	const ballPosition = useRef({ x: 0, y: 0 });
+	const ballVelocity = useRef({ dx: 0, dy: 0 });
 	const lastUpdateTime = useRef(Date.now());
 	const targetBallPosition = useRef({ x: 0, y: 0 });
 	const lastLerpValue = useRef(0);
@@ -178,10 +178,10 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 			x: (matchState.ball.x - 600) * terrain.SCALEX,
 			y: (matchState.ball.y - 375) * terrain.SCALEY,
 		};
-		setBallVelocity({
+		ballVelocity.current = {
 			dx: matchState.ball.dx * terrain.SCALEX,
 			dy: matchState.ball.dy * terrain.SCALEY,
-		});
+		};
 		lastUpdateTime.current = Date.now();
 	}, [terrain, matchState]);
 
@@ -192,13 +192,13 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 			const currentTime = Date.now();
 			const deltaTime = (currentTime - lastUpdateTime.current) / 1000;
 
-			const predictedX = ballPosition.x + ballVelocity.dx * deltaTime;
-			const predictedY = ballPosition.y + ballVelocity.dy * deltaTime;
+			const predictedX = ballPosition.current.x + ballVelocity.current.dx * deltaTime;
+			const predictedY = ballPosition.current.y + ballVelocity.current.dy * deltaTime;
 
-			const ballSpeed = Math.sqrt(ballVelocity.dx ** 2 + ballVelocity.dy ** 2);
-			const maxSpeed = 0.56;
-			const minLerpFactor = 0.03;
-			const maxLerpFactor = 0.06;
+			const ballSpeed = Math.sqrt(ballVelocity.current.dx ** 2 + ballVelocity.current.dy ** 2);
+			const maxSpeed = 0.53;
+			const minLerpFactor = 0.1;
+			const maxLerpFactor = 0.3;
 			const lerpFactor = maxLerpFactor - (ballSpeed / maxSpeed) * (maxLerpFactor - minLerpFactor);
 
 			if (lerpFactor !== lastLerpValue.current) {
@@ -209,11 +209,14 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 			const newX = lerp(predictedX, targetBallPosition.current.x, lerpFactor);
 			const newY = lerp(predictedY, targetBallPosition.current.y, lerpFactor);
 
-			setBallPosition({ x: newX, y: newY });
+			ballPosition.current.x = newX;
+			ballPosition.current.y = newY;
 			ball.current.position.set(newX, newY, 0);
 
 			animationFrameId = requestAnimationFrame(updateBallPosition);
 		}
+
+		console.log(`gameStarted: ${gameStarted} gameOver: ${gameOver}`);
 
 		updateBallPosition();
 
