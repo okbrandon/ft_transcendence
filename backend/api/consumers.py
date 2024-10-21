@@ -955,6 +955,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             # Check for collisions with top and bottom walls
             if match_state['ball']['y'] - BALL_RADIUS <= 0 or match_state['ball']['y'] + BALL_RADIUS >= TERRAIN_HEIGHT:
                 match_state['ball']['dy'] *= -1
+                await self.send_ball_hit(match_state['ball'])
 
             # Check for collisions with paddles
             if (match_state['ball']['x'] - BALL_RADIUS <= PADDLE_WIDTH and  # Left side of ball hits Player A's paddle
@@ -1008,6 +1009,24 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                 "ball": ball
             }
         )
+
+    async def send_ball_hit(self, ball):
+        await self.channel_layer.group_send(
+            f"match_{self.match.matchID}",
+            {
+                "type": "ball.hit",
+                "ball": ball
+            }
+        )
+
+    async def ball_hit(self, event):
+        try:
+            await self.send_json({
+                "e": "BALL_HIT",
+                "d": {"ball": event["ball"]}
+            })
+        except Exception as _:
+            pass
 
     async def paddle_hit(self, event):
         try:

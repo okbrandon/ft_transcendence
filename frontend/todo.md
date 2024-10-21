@@ -1,8 +1,5 @@
 # TODO
-- match history -> goofiaids
-- game smooth animation
-- match history -> click on username and go to profile
-- test token after each call
+- game -> wave animation DONT RESET IT
 - tournaments
 - Game: send invite
 
