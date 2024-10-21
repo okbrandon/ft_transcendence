@@ -94,7 +94,7 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 			else if (event.key === 'ArrowDown') keyPressed.current.down = true;
 			if (event.key === 'q') {
 				sendMessage(JSON.stringify({ e: 'PLAYER_QUIT' }));
-				navigate('/');
+				navigate('/playmenu');
 			}
 		};
 
@@ -119,7 +119,7 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 		const move = () => {
 			if (gameStarted && !gameOver) {
 				if (keyPressed.current.up || keyPressed.current.down) {
-					handlePaddleMove(keyPressed);
+					handlePaddleMove(keyPressed.current);
 				}
 			}
 			animationFrameId = requestAnimationFrame(move);
