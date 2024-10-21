@@ -30,7 +30,7 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 	const ballVelocity = useRef({ dx: 0, dy: 0 });
 	const lastUpdateTime = useRef(Date.now());
 	const targetBallPosition = useRef({ x: 0, y: 0 });
-	const lastLerpValue = useRef(0);
+	const lastBallScored = useRef(Date.now());
 
 	const terrain = useMemo(() => ({
 		WIDTH: 1200,
@@ -164,8 +164,14 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 
 	useEffect(() => {
 		if (!matchState) return;
-		if (matchState.scores[`${matchState.playerA.id}`] !== scoreA) setScoreA(matchState.scores[`${matchState.playerA.id}`]);
-		if (matchState.scores[`${matchState.playerB.id}`] !== scoreB) setScoreB(matchState.scores[`${matchState.playerB.id}`]);
+		if (matchState.scores[`${matchState.playerA.id}`] !== scoreA) {
+			setScoreA(matchState.scores[`${matchState.playerA.id}`]);
+			lastBallScored.current = Date.now();
+		}
+		if (matchState.scores[`${matchState.playerB.id}`] !== scoreB) {
+			setScoreB(matchState.scores[`${matchState.playerB.id}`]);
+			lastBallScored.current = Date.now();
+		}
 	}, [matchState, scoreA, scoreB]);
 
 	useEffect(() => {
@@ -190,38 +196,33 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 
 		const updateBallPosition = () => {
 			const currentTime = Date.now();
-			const deltaTime = (currentTime - lastUpdateTime.current) / 1000;
+			let deltaTime = (currentTime - lastUpdateTime.current) / 1000;
+
+			if (!gameStarted || gameOver)
+				return;
+
+			if (deltaTime > 0.016)
+				deltaTime = 0.016;
+
+			lastUpdateTime.current = currentTime;
 
 			const predictedX = ballPosition.current.x + ballVelocity.current.dx * deltaTime;
 			const predictedY = ballPosition.current.y + ballVelocity.current.dy * deltaTime;
 
-			const ballSpeed = Math.sqrt(ballVelocity.current.dx ** 2 + ballVelocity.current.dy ** 2);
-			const maxSpeed = 0.53;
-			const minLerpFactor = 0.1;
-			const maxLerpFactor = 0.3;
-			const lerpFactor = maxLerpFactor - (ballSpeed / maxSpeed) * (maxLerpFactor - minLerpFactor);
-
-			if (lerpFactor !== lastLerpValue.current) {
-				console.log(`ballSpeed: ${ballSpeed} lerpFactor: ${lerpFactor}`);
-			}
-			lastLerpValue.current = lerpFactor;
-
-			const newX = lerp(predictedX, targetBallPosition.current.x, lerpFactor);
-			const newY = lerp(predictedY, targetBallPosition.current.y, lerpFactor);
+			const newX = lerp(predictedX, targetBallPosition.current.x, 0.4);
+			const newY = lerp(predictedY, targetBallPosition.current.y, 0.4);
 
 			ballPosition.current.x = newX;
 			ballPosition.current.y = newY;
 			ball.current.position.set(newX, newY, 0);
 
 			animationFrameId = requestAnimationFrame(updateBallPosition);
-		}
+		};
 
-		console.log(`gameStarted: ${gameStarted} gameOver: ${gameOver}`);
-
-		updateBallPosition();
+		animationFrameId = requestAnimationFrame(updateBallPosition);
 
 		return () => cancelAnimationFrame(animationFrameId);
-	}, [ballPosition, ballVelocity]);
+	}, [ballPosition, ballVelocity, gameStarted, gameOver]);
 
 	return (
 		<GameSceneContainer className={`${isHit ? "hit" : ""} ${borderColor}`}>
