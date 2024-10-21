@@ -23,7 +23,7 @@ const GameLocal = () => {
 
 	const keyPressedA = useRef({ up: false, down: false });
 	const keyPressedB = useRef({ up: false, down: false });
-	const isHit = useRef(false);
+	const [isHit, setIsHit] = useState(false);
 
 	const [timer, setTimer] = useState(5);
 	const [scoreA, setScoreA] = useState(0);
@@ -171,8 +171,8 @@ const GameLocal = () => {
 			if (Math.abs(ballVelocity.current.x) < maxBallSpeed) ballVelocity.current.x *= 1.1;
 			if (Math.abs(ballVelocity.current.y) < maxBallSpeed) ballVelocity.current.y *= 1.1;
 			hit.current = { x: ball.current.position.x, y: ball.current.position.y };
-			isHit.current = true;
-			setTimeout(() => isHit.current = false, 500);
+			setIsHit(true);
+			setTimeout(() => setIsHit(false), 500);
 		}
 
 		if (ball.current.position.x + ballRadius >= paddle2.current.position.x - paddleWidth / 2 &&
@@ -186,8 +186,8 @@ const GameLocal = () => {
 			if (Math.abs(ballVelocity.current.x) < maxBallSpeed) ballVelocity.current.x *= 1.1;
 			if (Math.abs(ballVelocity.current.y) < maxBallSpeed) ballVelocity.current.y *= 1.1;
 			hit.current = { x: ball.current.position.x, y: ball.current.position.y };
-			isHit.current = true;
-			setTimeout(() => isHit.current = false, 500);
+			setIsHit(true);
+			setTimeout(() => setIsHit(false), 500);
 		}
 
 		if (ball.current.position.x < -terrain.SCENEWIDTH / 2) {
@@ -275,7 +275,7 @@ const GameLocal = () => {
 					<ProfileName>Player 2</ProfileName>
 				</Profile>
 			</ProfilesContainer>
-			<GameSceneContainer className={isHit.current ? "hit" : ""}>
+			<GameSceneContainer className={isHit ? "hit" : ""}>
 				<StyledCanvas ref={canvas}/>
 				<ScoresContainer>
 					<Score>{scoreA}</Score>
