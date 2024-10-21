@@ -133,6 +133,9 @@ const Game = () => {
 				case 'PADDLE_HIT':
 					setHitPos(data.d.ball);
 					break;
+				case 'BALL_HIT':
+					setHitPos(data.d.ball);
+					break;
 				default:
 					console.log('Unhandled message:', data);
 			}
