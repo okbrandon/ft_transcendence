@@ -26,6 +26,11 @@ const MatchHistory = ({ userID, matches }) => {
 		setVisibleRows(newVisibleRows);
 	};
 
+	const handleProfileClick = (username) => {
+		window.scrollTo(0, 0);
+		navigate(`/profile/${username}`);
+	}
+
 	useEffect(() => {
 		if (!containerRef.current) return;
 		const container = containerRef.current;
@@ -63,7 +68,7 @@ const MatchHistory = ({ userID, matches }) => {
 									key={index}
 									className={`match-card ${visibleRows.includes(index) ? "visible" : ""}`}
 								>
-									<td className="profile" onClick={() => {navigate(`/profile/${match.opponent.username}`)}}>{match.opponent.displayName}</td>
+									<td className="profile hover" onClick={() => handleProfileClick(match.opponent.username)}>{match.opponent.displayName}</td>
 									<td>{match.duration}</td>
 									<td>{match.me.score} - {match.opponent.score}</td>
 									<td>{match.winner.userID === userID ? t('profile.matchHistory.table.victoryLabel') : t('profile.matchHistory.table.defeatLabel')}</td>
