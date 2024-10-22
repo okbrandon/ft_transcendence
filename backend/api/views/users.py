@@ -159,14 +159,6 @@ class UserProfile(APIView):
 
         return Response(profile, status=status.HTTP_200_OK)
 
-class UserMatches(APIView):
-    def get(self, request, userID, *args, **kwargs):
-        user = User.objects.get(userID=userID)
-        matches = Match.objects.all()
-        matches = [match for match in matches if match.playerA['id'] == user.userID or match.playerB['id'] == user.userID]
-        serializer = MatchSerializer(matches, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
 class UserDeleteMe(APIView):
     def get(self, request, *args, **kwargs):
         me = request.user
@@ -401,14 +393,61 @@ class UserRelationshipsMe(APIView):
         except Exception as _:
             logger.error(f"Failed to send friend request notification. Group: {group_name}")
 
+class UserMatches(APIView):
+    def get(self, request, userID, *args, **kwargs):
+        user = User.objects.get(userID=userID)
+        matches = Match.objects.all()
+        matches = [match for match in matches if match.playerA['id'] == user.userID or match.playerB['id'] == user.userID]
+
+        tempered_matches = []
+        for match in matches:
+            match_data = MatchSerializer(match).data
+            serialized_playerA = UserSerializer(User.objects.get(userID=match_data['playerA']['id'])).data
+            serialized_playerB = UserSerializer(User.objects.get(userID=match_data['playerB']['id'])).data
+            match_playerA = get_safe_profile(serialized_playerA, me=False)
+            match_playerB = get_safe_profile(serialized_playerB, me=False)
+
+            tempered_matches.append({
+                "matchID": match_data['matchID'],
+                "playerA": match_playerA,
+                "playerB": match_playerB,
+                "scores": match_data['scores'],
+                "winnerID": match_data['winnerID'],
+                "startedAt": match_data['startedAt'],
+                "finishedAt": match_data['finishedAt'],
+                "flags": match_data['flags']
+            })
+
+        tempered_matches.sort(key=lambda x: x['finishedAt'], reverse=True)
+        return Response(tempered_matches, status=status.HTTP_200_OK)
 
 class UserMatchesMe(APIView):
     def get(self, request, *args, **kwargs):
         me = request.user
         matches = Match.objects.all()
         matches = [match for match in matches if match.playerA['id'] == me.userID or match.playerB['id'] == me.userID]
-        serializer = MatchSerializer(matches, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+
+        tempered_matches = []
+        for match in matches:
+            match_data = MatchSerializer(match).data
+            serialized_playerA = UserSerializer(User.objects.get(userID=match_data['playerA']['id'])).data
+            serialized_playerB = UserSerializer(User.objects.get(userID=match_data['playerB']['id'])).data
+            match_playerA = get_safe_profile(serialized_playerA, me=False)
+            match_playerB = get_safe_profile(serialized_playerB, me=False)
+
+            tempered_matches.append({
+                "matchID": match_data['matchID'],
+                "playerA": match_playerA,
+                "playerB": match_playerB,
+                "scores": match_data['scores'],
+                "winnerID": match_data['winnerID'],
+                "startedAt": match_data['startedAt'],
+                "finishedAt": match_data['finishedAt'],
+                "flags": match_data['flags']
+            })
+
+        tempered_matches.sort(key=lambda x: x['finishedAt'], reverse=True)
+        return Response(tempered_matches, status=status.HTTP_200_OK)
 
 class UserSearch(APIView):
     def get(self, request, *args, **kwargs):
