@@ -1093,7 +1093,11 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
 
             return {
                 "type": "match.ended",
-                "winner": winner_id
+                "winner": winner_id,
+                "rewards": {
+                    "winner": winner_earnings,
+                    "loser": loser_earnings
+                }
             }
 
     async def reward_user(self, user_id, xp, money):
@@ -1131,9 +1135,12 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         else:
             try:
                 await self.send_json({
-                        "e": "MATCH_END",
-                        "d": {"won": event["winner"] == self.user.userID}
-                    })
+                    "e": "MATCH_END",
+                    "d": {
+                        "won": event["winner"] == self.user.userID,
+                        "rewards": event["rewards"]
+                    }
+                })
                 logger.info(f"[{self.__class__.__name__}] Match end event processed for user: {self.user.userID}")
                 await self.close()
             except Exception as _:
