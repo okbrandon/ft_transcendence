@@ -36,11 +36,9 @@ class AuthRegister(APIView):
 
         if User.objects.filter(email=data['email']).exists():
             return Response({"error": "Email is already in use"}, status=status.HTTP_409_CONFLICT)
-        
+
         if re.search(r'42$', data['username']):
             return Response({"error": "Username cannot end with '42'"}, status=status.HTTP_400_BAD_REQUEST)
-
-        skip_email_verification = os.environ.get('SKIP_EMAIL_VERIFICATION', '').lower() == 'true'
 
         skip_email_verification = os.environ.get('SKIP_EMAIL_VERIFICATION', '').lower() == 'true'
 
@@ -53,7 +51,6 @@ class AuthRegister(APIView):
             money=100000 if skip_email_verification else 0,
             flags=1 if skip_email_verification else 0  # Set EMAIL_VERIFIED flag if skipping verification
         )
-        serializer = UserSerializer(user)
 
         if not skip_email_verification:
             verification_code = generate_id('code')
@@ -238,7 +235,7 @@ class CheckOTP(APIView):
     def get(self, request, *args, **kwargs):
         user = request.user
         has_otp = user.mfaToken is not None and user.mfaToken != ""
-        
+
         return Response({
             "has_otp": has_otp
         }, status=status.HTTP_200_OK)
