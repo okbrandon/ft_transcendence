@@ -8,10 +8,11 @@ import { getSkin } from "../../../api/user";
 const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderScore, sendMessage, activateTimer, setActivateTimer, gameStarted, gameOver, won }) => {
 	const navigate = useNavigate();
 
-	const [keyPressed, setKeyPressed] = useState(null);
-	const [isHit, setIsHit] = useState(false);
 	const [borderColor, setBorderColor] = useState(null);
 	const [timer, setTimer] = useState(5);
+	const [isHit, setIsHit] = useState(false);
+
+	const keyPressed = useRef({ up: false, down: false });
 
 	const [scoreA, setScoreA] = useState(0);
 	const [scoreB, setScoreB] = useState(0);
@@ -73,26 +74,33 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 	}, [activateTimer, timer, setActivateTimer]);
 
 	const handlePaddleMove = useCallback(direction => {
-		if (!direction) return;
-		sendMessage(JSON.stringify({
-			e: 'PADDLE_MOVE',
-			d: { direction }
-		}));
+		if (direction.up) {
+			sendMessage(JSON.stringify({
+				e: 'PADDLE_MOVE',
+				d: { direction: 'up' }
+			}));
+		}
+		if (direction.down) {
+			sendMessage(JSON.stringify({
+				e: 'PADDLE_MOVE',
+				d: { direction: 'down' }
+			}));
+		}
 	}, [sendMessage]);
 
 	useEffect(() => {
 		const handleKeydown = event => {
-			if (event.key === 'ArrowUp') setKeyPressed('up');
-			else if (event.key === 'ArrowDown') setKeyPressed('down');
-			else if (event.key === 'q') {
+			if (event.key === 'ArrowUp') keyPressed.current.up = true;
+			else if (event.key === 'ArrowDown') keyPressed.current.down = true;
+			if (event.key === 'q') {
 				sendMessage(JSON.stringify({ e: 'PLAYER_QUIT' }));
-				navigate('/');
+				navigate('/playmenu');
 			}
 		};
 
 		const handleKeyup = event => {
-			if (event.key === 'ArrowUp' && keyPressed === 'up') setKeyPressed(null);
-			if (event.key === 'ArrowDown' && keyPressed === 'down') setKeyPressed(null);
+			if (event.key === 'ArrowUp') keyPressed.current.up = false;
+			if (event.key === 'ArrowDown') keyPressed.current.down = false;
 		};
 
 		window.addEventListener('keydown', handleKeydown);
@@ -102,7 +110,7 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 			window.removeEventListener('keydown', handleKeydown);
 			window.removeEventListener('keyup', handleKeyup);
 		};
-	}, [keyPressed, navigate, sendMessage]);
+	}, [navigate, sendMessage]);
 
 	useEffect(() => {
 		if (!keyPressed) return;
@@ -110,7 +118,9 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 
 		const move = () => {
 			if (gameStarted && !gameOver) {
-				handlePaddleMove(keyPressed);
+				if (keyPressed.current.up || keyPressed.current.down) {
+					handlePaddleMove(keyPressed.current);
+				}
 			}
 			animationFrameId = requestAnimationFrame(move);
 		};

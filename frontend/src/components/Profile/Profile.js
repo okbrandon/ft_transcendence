@@ -19,6 +19,7 @@ const Profile = () => {
 	const { username } = useParams();
 	const { addNotification } = useNotification();
 	const { relations, setIsRefetch } = useRelation();
+	const [showLoader, setShowLoader] = useState(true);
 	const [profileUser, setProfileUser] = useState(null);
 	const [currentSkin, setCurrentSkin] = useState(null);
 	const [relation, setRelation] = useState(null);
@@ -31,11 +32,23 @@ const Profile = () => {
 	}, [setIsRefetch]);
 
 	useEffect(() => {
+		if (!profileUser || !relation || !matches) {
+			setShowLoader(true);
+		} else {
+			setShowLoader(false);
+		}
+	}, [profileUser, relation, matches]);
+
+	useEffect(() => {
 		if (!profileUser) return;
-		getMatchHistory(profileUser.userID, userID)
+		setShowLoader(true);
+		getMatchHistory(profileUser.userID)
 			.then(data => {
 				setMatches(data);
-			});
+			})
+			.finally(() => {
+				setShowLoader(false);
+			})
 	}, [profileUser, userID]);
 
 	// Get user data and relation data of the user
@@ -80,7 +93,7 @@ const Profile = () => {
 		}
 	}, [relation, profileUser, userID, addNotification]);
 
-	if (!profileUser || !relation || !matches) {
+	if (showLoader) {
 		return (
 			<ProfileContainer>
 				<Loader/>
@@ -104,7 +117,10 @@ const Profile = () => {
 				<MainBar profileUser={profileUser} matches={matches}/>
 					<UserContainer>
 						<UserMainInfoContainer>
-							<MatchHistory userID={profileUser.userID} matches={matches}/>
+							<MatchHistory
+								userID={profileUser.userID}
+								matches={matches}
+							/>
 							<Activity matches={matches}/>
 						</UserMainInfoContainer>
 						<UserInfoContainer>

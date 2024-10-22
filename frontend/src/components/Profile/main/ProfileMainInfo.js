@@ -51,7 +51,7 @@ const ProfilePicture = ({ profileUser, relation, setIsRefetch }) => {
 			})
 			.catch(err => {
 				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
-			})
+			});
 	};
 
 	const handleBlockUser = () => {

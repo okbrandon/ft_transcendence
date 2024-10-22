@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { MatchCardTable, MatchHistoryContainer } from "../styles/Profile.styled";
+import { useNavigate } from "react-router-dom";
 
 const MatchHistory = ({ userID, matches }) => {
+	const navigate = useNavigate();
 	const [visibleRows, setVisibleRows] = useState([]);
 	const containerRef = useRef(null);
 	const sortedMatches = [...matches].sort((a, b) => new Date(b.finishedAt) - new Date(a.finishedAt));
@@ -23,6 +25,11 @@ const MatchHistory = ({ userID, matches }) => {
 		});
 		setVisibleRows(newVisibleRows);
 	};
+
+	const handleProfileClick = (username) => {
+		window.scrollTo(0, 0);
+		navigate(`/profile/${username}`);
+	}
 
 	useEffect(() => {
 		if (!containerRef.current) return;
@@ -61,7 +68,7 @@ const MatchHistory = ({ userID, matches }) => {
 									key={index}
 									className={`match-card ${visibleRows.includes(index) ? "visible" : ""}`}
 								>
-									<td>{match.opponent.displayName}</td>
+									<td className="profile hover" onClick={() => handleProfileClick(match.opponent.username)}>{match.opponent.displayName}</td>
 									<td>{match.duration}</td>
 									<td>{match.me.score} - {match.opponent.score}</td>
 									<td>{match.winner.userID === userID ? t('profile.matchHistory.table.victoryLabel') : t('profile.matchHistory.table.defeatLabel')}</td>

@@ -103,7 +103,7 @@ export const getSkin = async (id) => {
 	}
 }
 
-export const getMatchHistory = async (id, userID) => {
+export const getMatchHistory = async (id) => {
 	try {
 		const res = await API.get(`/users/${id}/matches`);
 		const rawMatches = res.data;
@@ -112,11 +112,11 @@ export const getMatchHistory = async (id, userID) => {
 			const date = getDate(match.finishedAt);
 			const [playerA, playerB] = await Promise.all([getUserById(match.playerA.id), getUserById(match.playerB.id)]);
 
-			const me = playerA.userID === userID ? playerA : playerB;
-			const opponent = playerA.userID === userID ? playerB : playerA;
+			const me = playerA.userID === id ? playerA : playerB;
+			const opponent = playerA.userID === id ? playerB : playerA;
 			const meScore = match.scores?.[`${me.userID}`] || 0;
 			const opponentScore = match.scores?.[`${opponent.userID}`] || 0;
-			const winner = match.winnerID === userID ? me : opponent;
+			const winner = match.winnerID === id ? me : opponent;
 
 			return {
 				...match,
