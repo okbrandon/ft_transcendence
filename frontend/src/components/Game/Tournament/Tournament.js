@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import OptionsTournament from "./OptionsTournament";
 import CreateTournament from "./CreateTournament";
 import AvailableTournaments from "./AvailableTournament";
-import FinishedTournament from "./FinishedTournament";
+import WinnerTournament from "./WinnerTournament";
 
 const Tournament = () => {
 	const [options, setOptions] = useState('');
 
 	return (
-		<FinishedTournament />
+		<WinnerTournament />
 		// <>
 		// 	{!options && <OptionsTournament setOptions={setOptions}/>}
 		// 	{options === 'create' && <CreateTournament setOptions={setOptions}/>}
