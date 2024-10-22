@@ -1,4 +1,15 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+
+const fadeIn = keyframes`
+	from {
+		opacity: 0;
+		transform: translateY(-20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+`;
 
 export const WinnerPageContainer = styled.div`
 	display: flex;
@@ -29,6 +40,7 @@ export const WinnerContainer = styled.div`
 export const WinnerText = styled.h1`
 	font-size: 2rem;
 	color: #fff;
+	animation: ${fadeIn} 1s ease-in-out;
 `;
 
 export const WinnerImage = styled.img`
@@ -38,11 +50,13 @@ export const WinnerImage = styled.img`
 	border-radius: 20px;
 	object-fit: cover;
 	object-position: center;
+	animation: ${fadeIn} 1s ease-in-out;
 `;
 
 export const WinnerUsername = styled.h2`
 	font-size: 1.5rem;
 	color: #fff;
+	animation: ${fadeIn} 1s ease-in-out;
 `;
 
 export const WinnerPrize = styled.div`
@@ -50,4 +64,5 @@ export const WinnerPrize = styled.div`
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
+	animation: ${fadeIn} 1s ease-in-out;
 `;
