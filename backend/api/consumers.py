@@ -462,7 +462,8 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                 'playerA': {'id': match.playerA['id'], 'paddle_y': 375, 'pos': 'A'},
                 'playerB': {'id': match.playerB['id'] if match.playerB else None, 'paddle_y': 375, 'pos': 'B'},
                 'ball': {},
-                'scores': {match.playerA['id']: 0}
+                'scores': {match.playerA['id']: 0},
+                'rewards': {match.playerA['id']: {'xp': 0, 'money': 0}},
             }
             self.reset_ball(self.active_matches[match.matchID])
             logger.info(f"[{self.__class__.__name__}] New match state initialized for match: {match.matchID}")
@@ -481,11 +482,10 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             await self.close()
 
         if match.playerB:
-            # Update playerB id in active match state
             self.active_matches[match.matchID]['playerB']['id'] = match.playerB['id']
-            # Add playerB to active match game state scores
             self.active_matches[match.matchID]['scores'][match.playerB['id']] = 0
-            # Send PLAYER_JOIN to playerA with playerB data
+            self.active_matches[match.matchID]['rewards'][match.playerB['id']] = {'xp': 0, 'money': 0}
+
             playerB_info = await self.get_opponent_info(match, await self.get_user_from_id(match.playerA['id']))
             await self.channel_layer.group_send(
                 f"match_{match.matchID}",
@@ -556,11 +556,10 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             await self.close()
 
         if match.playerB:
-            # Update playerB id in active match state
             self.active_matches[match.matchID]['playerB']['id'] = match.playerB['id']
-            # Add playerB to active match game state scores
             self.active_matches[match.matchID]['scores'][match.playerB['id']] = 0
-            # Send PLAYER_JOIN to playerA with playerB data
+            self.active_matches[match.matchID]['rewards'][match.playerB['id']] = {'xp': 0, 'money': 0}
+
             playerB_info = await self.get_opponent_info(match, await self.get_user_from_id(match.playerA['id']))
             await self.channel_layer.group_send(
                 f"match_{match.matchID}",
@@ -817,10 +816,14 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             # Check for scoring
             if match_state['ball']['x'] <= 0:
                 match_state['scores'][match_state['playerB']['id']] += 1
+                match_state['rewards'][match_state['playerB']['id']]['xp'] += random.randint(5, 10)
+                match_state['rewards'][match_state['playerB']['id']]['money'] += random.randint(2, 5)
                 self.reset_ball(match_state)
                 await self.send_ball_scored(match_state['playerB'])
             elif match_state['ball']['x'] + BALL_RADIUS >= TERRAIN_WIDTH:
                 match_state['scores'][match_state['playerA']['id']] += 1
+                match_state['rewards'][match_state['playerA']['id']]['xp'] += random.randint(5, 10)
+                match_state['rewards'][match_state['playerA']['id']]['money'] += random.randint(2, 5)
                 self.reset_ball(match_state)
                 await self.send_ball_scored(match_state['playerA'])
 
@@ -910,25 +913,33 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             self.match.scores = self.active_matches[match_id]['scores']
             await self.save_match()
 
+            winner_earnings = self.active_matches[match_id]['rewards'][winner_id]
+            loser_id = self.match.playerA['id'] if self.match.playerB['id'] == winner_id else self.match.playerB['id']
+            loser_earnings = self.active_matches[match_id]['rewards'][loser_id]
+
             if self.match.matchID in self.active_matches:
                 logger.info(f"[{self.__class__.__name__}] Deleting match state for match: {self.match.matchID}")
                 del self.active_matches[self.match.matchID]
 
+            await self.reward_user(winner_id, winner_earnings['xp'], winner_earnings['money'])
+            await self.reward_user(loser_id, loser_earnings['xp'], loser_earnings['money'])
             logger.info(f"[{self.__class__.__name__}] Match {match_id} ended. Winner: {winner_id}")
-
-            try:
-                loop = asyncio.get_event_loop()
-                user = await loop.run_in_executor(None, lambda: User.objects.get(userID=winner_id))
-                user.xp += random.randint(15, 25)
-                user.money += random.randint(5, 10)
-                await loop.run_in_executor(None, user.save)
-            except User.DoesNotExist:
-                logger.error(f"[{self.__class__.__name__}] Cannot give {winner_id} xp, user not found")
 
             return {
                 "type": "match.ended",
                 "winner": winner_id
             }
+
+    async def reward_user(self, user_id, xp, money):
+        try:
+            loop = asyncio.get_event_loop()
+            user = await loop.run_in_executor(None, lambda: User.objects.get(userID=user_id))
+            user.xp += xp
+            user.money += money
+            logger.info(f"[{self.__class__.__name__}] Rewarding {user_id} with {xp} XP and {money} coins")
+            await loop.run_in_executor(None, user.save)
+        except User.DoesNotExist:
+            logger.error(f"[{self.__class__.__name__}] Cannot reward {user_id}, user not found")
 
     async def save_match(self):
         loop = asyncio.get_event_loop()
