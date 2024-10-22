@@ -7,7 +7,6 @@ const MatchHistory = ({ userID, matches }) => {
 	const navigate = useNavigate();
 	const [visibleRows, setVisibleRows] = useState([]);
 	const containerRef = useRef(null);
-	const sortedMatches = [...matches].sort((a, b) => new Date(b.finishedAt) - new Date(a.finishedAt));
 	const { t } = useTranslation();
 
 	const handleScroll = () => {
@@ -63,7 +62,7 @@ const MatchHistory = ({ userID, matches }) => {
 						</tbody>
 					) : (
 						<tbody ref={containerRef}>
-							{sortedMatches.map((match, index) => (
+							{matches.map((match, index) => (
 								<tr
 									key={index}
 									className={`match-card ${visibleRows.includes(index) ? "visible" : ""}`}
