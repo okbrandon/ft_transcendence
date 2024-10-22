@@ -1,31 +1,14 @@
 # NEW TODO
 
 - Chat (!!) :
-	- enable max characters input [x]
-	- Enable instant access to messaging when adding a new friend [x]
-	- Make Chat messages direct message work again [x]
-	- Fix default avatar picture [x]
-	- Enable blocking feature, where we cannot see the chat again [x]
-	- if user is unblocked, re-fetch conversation with <targetuser> [x]
-		- Use notification context for warning user that <targetuser> has been blocked. [x]
-		- If user has been blocked already => notify: <targetuser> has been already blocked. [x]
 	- Enable game invite (gameserver) []
 		- Use notification Context for enabling sending game invite notification []
 	- The tournament system should be able to warn users expected for the next game []
-	- If a friend is removed, remove/hide the conversation correctly [x]
 
 - Search friends component:
-	- Fix the feature. [x]
-		- Map through the list of friends. [x]
 	- Implement the Invite button, (TODO LATER : waiting for gameserver)
-	- Block button, [x]
-	- Profile button,[x]
 
 - Implement status (online, offline) [x]
-
-- Implement notification:
-	- When message received from any user:
-		- implement small notification badge on main Chat feature.
 
 ### structure conversations chat
 
@@ -68,17 +51,7 @@
 								        						  |---- username
 }
 
-
-
-
-## LeaderBoard:
-
-# TODO:
-
-- Finish the podium styling
-- Edit the styling for the leaderbaord
-	- re-cented the leaderboard
-- Enable access to profile when clicking on a user
+# Leaderboard:
 
 - API ENDPOINTS:
 	- leaderboards/`daily`
@@ -113,3 +86,7 @@ Structure:
 	}
 }
 ```
+
+# Tournament Ended Page:
+
+Create the styling:
