@@ -14,12 +14,13 @@ const WinnerTournament = ({ winnerID }) => {
 	const [confettiOpacity, setConfettiOpacity] = useState(1);
 
 	useEffect(() => {
-		const timer = setTimeout(() => {
+		const fadeOutTimer = setTimeout(() => {
 			setConfettiOpacity(0);
-			setTimeout(() => setShowConfetti(false), 1000); // Wait for the fade-out to complete
+			const stopConfettiTimer = setTimeout(() => setShowConfetti(false), 1000);
+			return () => clearTimeout(stopConfettiTimer);
 		}, 5000);
 
-		return () => clearTimeout(timer); // Cleanup the timer on component unmount
+		return () => clearTimeout(fadeOutTimer);
 	}, []);
 
 	return (
@@ -40,6 +41,6 @@ const WinnerTournament = ({ winnerID }) => {
 			)}
 		</WinnerPageContainer>
 	);
-}
+};
 
 export default WinnerTournament;
