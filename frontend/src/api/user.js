@@ -107,10 +107,14 @@ export const getMatchHistory = async (id) => {
 	try {
 		const res = await API.get(`/users/${id}/matches`);
 		const rawMatches = res.data;
-		const matches = await Promise.all(rawMatches.map(async match => {
+
+		console.log(rawMatches);
+
+		const matches = rawMatches.map(match => {
 			const duration = getDuration(match.startedAt, match.finishedAt);
 			const date = getDate(match.finishedAt);
-			const [playerA, playerB] = await Promise.all([getUserById(match.playerA.id), getUserById(match.playerB.id)]);
+			const playerA = formatUserData(match.playerA);
+			const playerB = formatUserData(match.playerB);
 
 			const me = playerA.userID === id ? playerA : playerB;
 			const opponent = playerA.userID === id ? playerB : playerA;
@@ -126,7 +130,7 @@ export const getMatchHistory = async (id) => {
 				winner,
 				date
 			};
-		}))
+		})
 		return matches;
 	} catch (err) {
 		console.error(err?.response?.data?.error || 'An error occurred');
