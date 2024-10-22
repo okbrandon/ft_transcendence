@@ -108,8 +108,6 @@ export const getMatchHistory = async (id) => {
 		const res = await API.get(`/users/${id}/matches`);
 		const rawMatches = res.data;
 
-		console.log(rawMatches);
-
 		const matches = rawMatches.map(match => {
 			const duration = getDuration(match.startedAt, match.finishedAt);
 			const date = getDate(match.finishedAt);
