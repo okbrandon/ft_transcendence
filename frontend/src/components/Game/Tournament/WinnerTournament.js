@@ -6,18 +6,18 @@ import {
 	WinnerImage,
 	WinnerUsername,
 	WinnerPrize,
-} from './styles/WinnerTournament';
+} from '../styles/Tournament/WinnerTournament.styled';
 import Confetti from 'react-confetti';
 
 const WinnerTournament = ({ winnerID }) => {
 
 	return (
 		<WinnerPageContainer>
+			<WinnerText>Winner of the tournament is: {winnerID}</WinnerText>
 			<WinnerContainer>
-				<WinnerText style={animations}>Winner of the tournament is: {winnerID}</WinnerText>
-				<WinnerImage style={animations} src='/images/default-profile.png' alt='Winner' />
-				<WinnerUsername style={animations}>Prune</WinnerUsername>
-				<WinnerPrize style={animations}>Display number of coins</WinnerPrize>
+				<WinnerImage src='/images/prune.jpg' alt='Winner' />
+				<WinnerUsername>Prune</WinnerUsername>
+				<WinnerPrize>Display number of coins</WinnerPrize>
 			</WinnerContainer>
 			<Confetti />
 		</WinnerPageContainer>

@@ -23,11 +23,16 @@ export const WinnerPageContainer = styled.div`
 				linear-gradient(135deg, #000000 0%, #111111 100%);
 `;
 
+export const WinnerText = styled.h1`
+	font-size: 2rem;
+	color: #fff;
+`;
+
 export const WinnerContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: center;
+	justify-content: space-around;
 	background: rgba(5, 5, 5, 0.8);
 	margin: 20px auto;
 	border: 1px solid rgba(255, 255, 255, 0.1);
@@ -37,26 +42,20 @@ export const WinnerContainer = styled.div`
 	max-width: 1200px;
 `;
 
-export const WinnerText = styled.h1`
-	font-size: 2rem;
-	color: #fff;
-	animation: ${fadeIn} 1s ease-in-out;
-`;
-
 export const WinnerImage = styled.img`
-	width: 100%;
-	max-width: 400px;
-	margin-top: 20px;
+	width: 300px;
+	height: 300px;
 	border-radius: 20px;
 	object-fit: cover;
 	object-position: center;
-	animation: ${fadeIn} 1s ease-in-out;
+	margin-bottom: 20px;
+	animation: ${fadeIn} 2s ease-in-out;
 `;
 
 export const WinnerUsername = styled.h2`
 	font-size: 1.5rem;
 	color: #fff;
-	animation: ${fadeIn} 1s ease-in-out;
+	animation: ${fadeIn} 1.5s ease-in-out;
 `;
 
 export const WinnerPrize = styled.div`

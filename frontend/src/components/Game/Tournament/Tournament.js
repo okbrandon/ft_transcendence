@@ -8,12 +8,12 @@ const Tournament = () => {
 	const [options, setOptions] = useState('');
 
 	return (
-		<WinnerTournament />
-		// <>
-		// 	{!options && <OptionsTournament setOptions={setOptions}/>}
-		// 	{options === 'create' && <CreateTournament setOptions={setOptions}/>}
-		// 	{options === 'join' && <AvailableTournaments setOptions={setOptions}/>}
-		// </>
+		<>
+			<WinnerTournament />
+			{!options && <OptionsTournament setOptions={setOptions}/>}
+			{options === 'create' && <CreateTournament setOptions={setOptions}/>}
+			{options === 'join' && <AvailableTournaments setOptions={setOptions}/>}
+		</>
 	);
 };
 
