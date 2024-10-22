@@ -20,11 +20,12 @@ import { getSkin } from "../../../api/user";
 const GameLocal = () => {
 	const navigate = useNavigate();
 	const userID = localStorage.getItem('userID');
-	const [keyPressedA, setKeyPressedA] = useState(null);
-	const [keyPressedB, setKeyPressedB] = useState(null);
-	const [isHit, setIsHit] = useState(false);
-	const [timer, setTimer] = useState(5);
 
+	const keyPressedA = useRef({ up: false, down: false });
+	const keyPressedB = useRef({ up: false, down: false });
+	const [isHit, setIsHit] = useState(false);
+
+	const [timer, setTimer] = useState(5);
 	const [scoreA, setScoreA] = useState(0);
 	const [scoreB, setScoreB] = useState(0);
 	const [isGameStarted, setIsGameStarted] = useState(false);
@@ -32,6 +33,7 @@ const GameLocal = () => {
 	const [gameOver, setGameOver] = useState(false);
 	const [paddleSkin, setPaddleSkin] = useState(null);
 
+	const hasBallReset = useRef(true);
 	const canvas = useRef(null);
 	const paddle1 = useRef(null);
 	const paddle2 = useRef(null);
@@ -56,15 +58,24 @@ const GameLocal = () => {
 	const paddleSpeed = 0.1;
 
 	// Setting up paddle movement
-	const movePaddle = useCallback((direction, paddle) => {
+	const movePaddle = useCallback((direction, paddle, delta) => {
 		if (!paddle.current) return;
-		if (direction === 'up') {
-			paddle.current.position.y = Math.min(terrain.SCENEHEIGHT / 2 - 1.37, paddle.current.position.y + paddleSpeed);
+
+		let movement;
+
+		if (!hasBallReset.current) {
+			movement = paddleSpeed * (delta / 16.67);
+		} else {
+			movement = paddleSpeed;
 		}
-		if (direction === 'down') {
-			paddle.current.position.y = Math.max(-terrain.SCENEHEIGHT / 2 + 1.45, paddle.current.position.y - paddleSpeed);
+
+		if (direction.up) {
+			paddle.current.position.y = Math.min(terrain.SCENEHEIGHT / 2 - 1.37, paddle.current.position.y + movement);
 		}
-	}, [terrain.SCENEHEIGHT, paddleSpeed]);
+		if (direction.down) {
+			paddle.current.position.y = Math.max(-terrain.SCENEHEIGHT / 2 + 1.45, paddle.current.position.y - movement);
+		}
+	}, [terrain.SCENEHEIGHT]);
 
 	useEffect(() => {
 		if (!userID) return;
@@ -78,19 +89,22 @@ const GameLocal = () => {
 	useEffect(() => {
 		const handleKeyDown = event => {
 			if (!isGameStarted && !activateTimer) {
+				if (event.key === 'q') navigate('/');
 				setActivateTimer(true);
 				return;
 			}
-			if (event.key === 'ArrowUp') setKeyPressedB('up');
-			else if (event.key === 'ArrowDown') setKeyPressedB('down');
-			else if (event.key === 'w') setKeyPressedA('up');
-			else if (event.key === 's') setKeyPressedA('down');
-			else if (event.key === 'q') navigate('/');
+			if (event.key === 'ArrowUp') keyPressedB.current.up = true;
+			else if (event.key === 'ArrowDown') keyPressedB.current.down = true;
+			if (event.key === 'w') keyPressedA.current.up = true;
+			else if (event.key === 's') keyPressedA.current.down = true;
+			if (event.key === 'q') navigate('/');
 		}
 
 		const handleKeyUp = event => {
-			if (event.key === 'ArrowUp' || event.key === 'ArrowDown') setKeyPressedB(null);
-			if (event.key === 'w' || event.key === 's') setKeyPressedA(null);
+			if (event.key === 'ArrowUp') keyPressedB.current.up = false;
+			if (event.key === 'ArrowDown') keyPressedB.current.down = false;
+			if (event.key === 'w') keyPressedA.current.up = false;
+			if (event.key === 's') keyPressedA.current.down = false;
 		}
 
 		window.addEventListener("keydown", handleKeyDown);
@@ -116,25 +130,26 @@ const GameLocal = () => {
 				x: directionX * 0.1, // Random left (-1) or right (1)
 				y: directionY * 0.1  // Random up (-1) or down (1)
 			};
+
+			hasBallReset.current = true;
 		}
 	}, []);
 
-	// Ball hit effect
-	useEffect(() => {
-		if (!isHit) return;
-		const timeoutID = setTimeout(() => setIsHit(false), 500);
-
-		return () => clearTimeout(timeoutID);
-	}, [isHit]);
-
 	// Ball movement logic and collision detection
-	const updateBallPosition = useCallback(() => {
+	const updateBallPosition = useCallback(delta => {
 		if (!ball.current || !paddle1.current || !paddle2.current) return;
 
-		ball.current.position.x += ballVelocity.current.x;
-		ball.current.position.y += ballVelocity.current.y;
+		if (!hasBallReset.current) {
+			ball.current.position.x += ballVelocity.current.x * (delta / 16.67);
+			ball.current.position.y += ballVelocity.current.y * (delta / 16.67);
+		} else {
+			hasBallReset.current = false;
+		}
 
 		if (ball.current.position.y > terrain.SCENEHEIGHT / 2 - 0.3 || ball.current.position.y < -terrain.SCENEHEIGHT / 2 + 0.4) {
+			hit.current = { x: ball.current.position.x, y: ball.current.position.y };
+			setIsHit(true);
+			setTimeout(() => setIsHit(false), 500);
 			ballVelocity.current.y *= -1;
 		}
 
@@ -160,6 +175,7 @@ const GameLocal = () => {
 			if (Math.abs(ballVelocity.current.y) < maxBallSpeed) ballVelocity.current.y *= 1.1;
 			hit.current = { x: ball.current.position.x, y: ball.current.position.y };
 			setIsHit(true);
+			setTimeout(() => setIsHit(false), 500);
 		}
 
 		if (ball.current.position.x + ballRadius >= paddle2.current.position.x - paddleWidth / 2 &&
@@ -174,6 +190,7 @@ const GameLocal = () => {
 			if (Math.abs(ballVelocity.current.y) < maxBallSpeed) ballVelocity.current.y *= 1.1;
 			hit.current = { x: ball.current.position.x, y: ball.current.position.y };
 			setIsHit(true);
+			setTimeout(() => setIsHit(false), 500);
 		}
 
 		if (ball.current.position.x < -terrain.SCENEWIDTH / 2) {
@@ -198,12 +215,11 @@ const GameLocal = () => {
 				setTimer(prev => prev - 1);
 			}, 1000);
 		}
-
 		if (timer === 0) {
 			setActivateTimer(false);
-			clearInterval(intervalRef.current);
 			setIsGameStarted(true);
 		}
+
 		return () => clearInterval(intervalRef.current);
 	}, [activateTimer, timer]);
 
@@ -230,20 +246,24 @@ const GameLocal = () => {
 	// Animate ball and game logic
 	useEffect(() => {
 		let animationFrameId;
+		let lastTime = 0;
 
-		const gameLoop = () => {
+		const gameLoop = time => {
+			const delta = time - lastTime;
+			lastTime = time;
+
 			if (isGameStarted && !gameOver) {
-				if (keyPressedA) movePaddle(keyPressedA, paddle1);
-				if (keyPressedB) movePaddle(keyPressedB, paddle2);
-				updateBallPosition();
+				movePaddle(keyPressedA.current, paddle1, delta);
+				movePaddle(keyPressedB.current, paddle2, delta);
+				updateBallPosition(delta);
 			}
 
 			animationFrameId = requestAnimationFrame(gameLoop);
 		};
-		gameLoop();
+		animationFrameId = requestAnimationFrame(gameLoop);
 
 		return () => cancelAnimationFrame(animationFrameId);
-	}, [updateBallPosition, movePaddle, keyPressedA, keyPressedB, isGameStarted, gameOver]);
+	}, [updateBallPosition, movePaddle, isGameStarted, gameOver]);
 
 	return (
 		<PageContainer>

@@ -83,6 +83,7 @@ const SearchBar = () => {
 	const handleSelect = username => {
 		setInput('');
 		setResults(null);
+		window.scrollTo(0, 0);
 		navigate(`/profile/${username}`);
 	};
 

@@ -61,6 +61,8 @@ API.interceptors.request.use(
 			}
 			return config;
 		} catch (error) {
+			localStorage.clear();
+			window.location.href = '/';
 			throw new Error(error);
 		}
 	},

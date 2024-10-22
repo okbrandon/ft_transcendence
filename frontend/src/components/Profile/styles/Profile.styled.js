@@ -168,6 +168,12 @@ export const MatchCardTable = styled.table`
 		border-bottom: 1px solid #2e2e3d;
 	}
 
+	td.hover {
+		&:hover {
+			color: rgba(164, 69, 178, 1);
+		}
+	}
+
 	tbody {
 		display: block;
 		max-height: 600px;
@@ -205,6 +211,10 @@ export const MatchCardTable = styled.table`
 	td {
 		font-size: 18px;
 		color: #b5b5c5;
+	}
+
+	td.profile {
+		cursor: pointer;
 	}
 
 	th {

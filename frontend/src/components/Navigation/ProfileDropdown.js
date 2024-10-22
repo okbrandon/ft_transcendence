@@ -20,8 +20,7 @@ const ProfileDropdown = () => {
 		setRequests([]);
 		setBlockedUsers([]);
 		setConversations([]);
-		localStorage.removeItem('token');
-		localStorage.removeItem('refresh');
+		localStorage.clear();
 	};
 
 	return (
