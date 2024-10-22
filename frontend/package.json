@@ -19,6 +19,7 @@
     "react-apexcharts": "^1.4.1",
     "react-bootstrap": "^2.10.4",
     "react-circular-progressbar": "^2.1.0",
+    "react-confetti": "^6.1.0",
     "react-dom": "^18.3.1",
     "react-i18next": "^15.0.2",
     "react-qr-code": "^2.0.15",

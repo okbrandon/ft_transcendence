@@ -60,7 +60,7 @@ export const DirectMessage = ({
 		} else {
 			setIsBlocked(false);
 		}
-	}, [relations]);
+	}, [relations, username]);
 
 	const toggleDropdown = (event) => {
 		event.stopPropagation();

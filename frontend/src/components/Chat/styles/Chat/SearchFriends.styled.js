@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import magnifier from '../../img/magnifier.svg';
 
 export const SearchFriendsContainer = styled.div`
 	display: flex;
