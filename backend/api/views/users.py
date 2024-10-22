@@ -49,9 +49,9 @@ class UserProfileMe(APIView):
 
             for field in allowed_fields:
                 if field in data:
-                    if field == 'username' and me.oauthAccountID:
+                    if field == 'username' and me.oauthAccountID and data[field] != me.username:
                         return Response({"error": "Cannot change username for OAuth accounts."}, status=status.HTTP_400_BAD_REQUEST)
-                    elif field == 'username':
+                    elif field == 'username' and data[field] != me.username:
                         if not validate_username(data[field]):
                             return Response({"error": "Invalid username. Username must be 4-16 characters long and contain only alphanumeric characters and cannot end with '42'."}, status=status.HTTP_400_BAD_REQUEST)
                         if User.objects.filter(username=data[field]).exclude(id=me.id).exists():
