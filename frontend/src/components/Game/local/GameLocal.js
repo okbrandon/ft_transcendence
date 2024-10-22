@@ -147,6 +147,7 @@ const GameLocal = () => {
 		}
 
 		if (ball.current.position.y > terrain.SCENEHEIGHT / 2 - 0.3 || ball.current.position.y < -terrain.SCENEHEIGHT / 2 + 0.4) {
+			ball.current.position.y = ball.current.position.y > 0 ? terrain.SCENEHEIGHT / 2 - 0.3 : -terrain.SCENEHEIGHT / 2 + 0.4;
 			hit.current = { x: ball.current.position.x, y: ball.current.position.y };
 			setIsHit(true);
 			setTimeout(() => setIsHit(false), 500);
