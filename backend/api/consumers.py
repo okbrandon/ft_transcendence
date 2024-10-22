@@ -982,14 +982,14 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             # Check for scoring
             if match_state['ball']['x'] <= 0:
                 match_state['scores'][match_state['playerB']['id']] += 1
-                match_state['rewards'][match_state['playerB']['id']]['xp'] += random.randint(5, 10)
-                match_state['rewards'][match_state['playerB']['id']]['money'] += random.randint(2, 5)
+                match_state['rewards'][match_state['playerB']['id']]['xp'] += random.randint(3, 6)
+                match_state['rewards'][match_state['playerB']['id']]['money'] += random.randint(1, 3)
                 self.reset_ball(match_state)
                 await self.send_ball_scored(match_state['playerB'])
             elif match_state['ball']['x'] + BALL_RADIUS >= TERRAIN_WIDTH:
                 match_state['scores'][match_state['playerA']['id']] += 1
-                match_state['rewards'][match_state['playerA']['id']]['xp'] += random.randint(5, 10)
-                match_state['rewards'][match_state['playerA']['id']]['money'] += random.randint(2, 5)
+                match_state['rewards'][match_state['playerA']['id']]['xp'] += random.randint(3, 6)
+                match_state['rewards'][match_state['playerA']['id']]['money'] += random.randint(1, 3)
                 self.reset_ball(match_state)
                 await self.send_ball_scored(match_state['playerA'])
 
