@@ -12,10 +12,12 @@ const DisplaySkin = ({ currentSkin }) => {
 
 		if (skin) {
 			const paddleTexture = textureLoader.load(`/images/skins/${skin}`, texture => {
-				texture.wrapS = THREE.RepeatWrapping;
-				texture.wrapT = THREE.RepeatWrapping;
+				texture.wrapS = THREE.ClampToEdgeWrapping;
+				texture.wrapT = THREE.ClampToEdgeWrapping;
 				texture.flipY = false;
-				texture.repeat.set(20 / 120, 20 / 120);
+				texture.offset.set(0.5, 0.5);
+				texture.repeat.set(0.1, 0.1);
+				texture.needsUpdate = true;
 			});
 
 			return new THREE.MeshLambertMaterial({
