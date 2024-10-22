@@ -95,18 +95,23 @@ const gameCanvas = (canvas, paddle1, paddle2, paddle1Skin, paddle2Skin, ball, te
 		if (hit && hit.current) {
 			const hitPosition = new THREE.Vector3(hit.current.x, hit.current.y, 0);
 			const ripplePosition = mapToRipplePlane(hitPosition, camera.position.z, -10);
-			particles.wave.amplitude = 5;
-			particles.wave.x = ripplePosition.x;
-			particles.wave.y = -ripplePosition.y;
-			particles.wave.radius = 5;
+
+			particles.waves.push({
+				amplitude: 5,
+				x: ripplePosition.x,
+				y: -ripplePosition.y,
+				radius: 5,
+				speed: 0.05
+			});
 			hit.current = null;
 
 			createParticleBurst(scene, hitPosition);
 		}
-		if (particles.wave.amplitude > 0) particles.animateWave();
+		if (particles.waves.length > 0) particles.animateWave();
+
 		animationFrameId = requestAnimationFrame(animate);
 	};
-	animate();
+	animationFrameId = requestAnimationFrame(animate);
 
 	const dispose = () => {
 		cancelAnimationFrame(animationFrameId);
