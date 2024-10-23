@@ -14,12 +14,11 @@ import {
 	SectionContainer,
 } from '../styles/main/ProfileMainInfo.styled';
 
-const ProfilePicture = ({ profileUser, relation, setIsRefetch }) => {
+const ProfilePicture = ({ user, profileUser, relation, setIsRefetch }) => {
 	const navigate = useNavigate();
 	const { addNotification } = useNotification();
 	const disableAddFriend = !!relation.length;
 	const disableBlockUser = !!(relation.length && relation[0].status === 2);
-	const userID = localStorage.getItem('userID');
 
 	const handleAddFriend = () => {
 		if (relation.length && relation[0].status === 0) {
@@ -89,7 +88,7 @@ const ProfilePicture = ({ profileUser, relation, setIsRefetch }) => {
 				<ProfileUsername>{profileUser.displayName}</ProfileUsername>
 				<ProfileDisplayName>{profileUser.username}</ProfileDisplayName>
 				<div>
-					{userID === profileUser.userID ? (
+					{profileUser.username === user.username ? (
 						<ActionsContainer>
 							<ActionButton type="button" onClick={() => navigate('/settings')}>
 								<i className="bi bi-gear-fill"/>
@@ -111,8 +110,17 @@ const ProfilePicture = ({ profileUser, relation, setIsRefetch }) => {
 									type="button"
 									onClick={handleRemoveFriend}
 								>
-									<i className="bi bi-person-dash-fill"/>
-									{relation[0].status === 0 ? 'Cancel Request' : 'Remove Friend'}
+									{disableBlockUser ? (
+										<>
+											<i className="bi bi-bandaid"/>
+											Cancel Block
+										</>
+									) : (
+										<>
+											<i className="bi bi-person-dash-fill"/>
+											{relation[0].status === 0 ? 'Cancel Request' : 'Remove Friend'}
+										</>
+									)}
 								</ActionButton>
 							) : (
 								<ActionButton

@@ -13,85 +13,73 @@ import { ProfileContainer, UserContainer, UserInfoContainer, UserMainInfoContain
 import Loader from '../../styles/shared/Loader.styled';
 import ProfileMainInfo from './main/ProfileMainInfo';
 import Activity from './content/Activity';
+import { useAuth } from '../../context/AuthContext';
 
 const Profile = () => {
 	const navigate = useNavigate();
 	const { username } = useParams();
 	const { addNotification } = useNotification();
-	const { relations, setIsRefetch } = useRelation();
+	const { relations, isRefetch, setIsRefetch } = useRelation();
+	const { user } = useAuth();
+	const [hasRefetched, setHasRefetched] = useState(false);
 	const [showLoader, setShowLoader] = useState(true);
 	const [profileUser, setProfileUser] = useState(null);
 	const [currentSkin, setCurrentSkin] = useState(null);
 	const [relation, setRelation] = useState(null);
 	const [isBlocked, setIsBlocked] = useState(false);
 	const [matches, setMatches] = useState(null);
-	const userID = localStorage.getItem('userID');
 
 	useEffect(() => {
 		setIsRefetch(true);
+		setHasRefetched(true);
+		setShowLoader(true);
 	}, [setIsRefetch]);
 
 	useEffect(() => {
-		if (!profileUser || !relation || !matches) {
-			setShowLoader(true);
-		} else {
-			setShowLoader(false);
-		}
-	}, [profileUser, relation, matches]);
+		const fetchProfileData = async () => {
+			try {
+				if (username && relations && hasRefetched && !isRefetch) {
+					let profilePageUser = null;
+					if (user.username === username) {
+						profilePageUser = await getUser();
+					} else {
+						profilePageUser = await getUserById(username);
+					}
 
-	useEffect(() => {
-		if (!profileUser) return;
-		setShowLoader(true);
-		getMatchHistory(profileUser.userID)
-			.then(data => {
-				setMatches(data);
-			})
-			.finally(() => {
-				setShowLoader(false);
-			})
-	}, [profileUser, userID]);
+					setProfileUser(profilePageUser);
 
-	// Get user data and relation data of the user
-	useEffect(() => {
-		if (username && relations) {
-			getUserById(username)
-				.then(user => {
-					if (user.userID === userID) return getUser();
-					return user;
-				})
-				.then(meUser => {
-					setProfileUser(meUser);
-					return getRelationFromUsername(relations, meUser.username);
-				})
-				.then(relationData => {
+					const relationData = getRelationFromUsername(relations, profilePageUser.username);
 					setRelation(relationData);
-				})
-				.catch(err => {
-					addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
-					navigate('/404');
-				});
-		}
-	}, [relations, username, navigate, addNotification, userID]);
+
+					const matchData = await getMatchHistory(profilePageUser.userID);
+					setMatches(matchData);
+					setShowLoader(false);
+				}
+			} catch (err) {
+				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
+				navigate('/404');
+			}
+		};
+
+		fetchProfileData();
+	}, [addNotification, navigate, relations, username, isRefetch, hasRefetched, user]);
 
 	// Get selected skin of the user
 	useEffect(() => {
-		if (!profileUser) return;
-		getSkin(profileUser.userID)
-			.then(skin => {
-				setCurrentSkin(skin)
-			})
-			.catch(err => {
-				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`)
-			});
+		if (profileUser) {
+			getSkin(profileUser.userID)
+				.then(skin => setCurrentSkin(skin))
+				.catch(err => addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`));
+		}
 	}, [profileUser, addNotification]);
 
 	// Check if the user is blocked
 	useEffect(() => {
-		if (relation && relation.length && relation[0].status === 2 && relation[0].target.userID === userID && profileUser.userID !== userID) {
+		if (relation && relation.length && relation[0].status === 2 && relation[0].target.username === user.username && profileUser.username !== user.username) {
 			setIsBlocked(true);
 			addNotification('error', 'An error occurred.');
 		}
-	}, [relation, profileUser, userID, addNotification]);
+	}, [relation, profileUser, user, addNotification]);
 
 	if (showLoader) {
 		return (
@@ -110,11 +98,12 @@ const Profile = () => {
 					<UserProfileBannerContainer>
 						<UserProfileBanner $path={profileUser.bannerID}/>
 						<ProfileMainInfo
+							user={user}
 							profileUser={profileUser}
 							relation={relation}
 							setIsRefetch={setIsRefetch}/>
 					</UserProfileBannerContainer>
-				<MainBar profileUser={profileUser} matches={matches}/>
+					<MainBar profileUser={profileUser} matches={matches}/>
 					<UserContainer>
 						<UserMainInfoContainer>
 							<MatchHistory
@@ -126,7 +115,7 @@ const Profile = () => {
 						<UserInfoContainer>
 							<Winrate userID={profileUser.userID} matches={matches}/>
 							<DisplaySkin currentSkin={currentSkin}/>
-							{profileUser.userID === userID && (
+							{profileUser?.username === user?.username && (
 								<Balance profileUser={profileUser}/>
 							)}
 						</UserInfoContainer>

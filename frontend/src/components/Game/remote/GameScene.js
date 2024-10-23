@@ -2,11 +2,11 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom";
 import { GameSceneContainer, Score, ScoresContainer, StyledCanvas, Timer, OverlayContainer } from "../styles/Game.styled";
 import gameCanvas from "../../../scripts/game";
-import PongButton from "../../../styles/shared/PongButton.styled";
 import { getSkin } from "../../../api/user";
 import { lerp } from "../../../scripts/math";
+import Rewards from "./Rewards";
 
-const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderScore, sendMessage, activateTimer, setActivateTimer, gameStarted, gameOver, won }) => {
+const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderScore, sendMessage, activateTimer, setActivateTimer, gameStarted, gameOver, endGameData }) => {
 	const navigate = useNavigate();
 
 	const [borderColor, setBorderColor] = useState(null);
@@ -242,11 +242,7 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 				<Score>{scoreB}</Score>
 			</ScoresContainer>
 				{gameOver ? (
-					<OverlayContainer>
-						<h1>Game Over!</h1>
-						<p>{won ? 'You won' : 'You lost'}</p>
-						<PongButton onClick={() => navigate('/playmenu')}>Go Back to Main Menu</PongButton>
-					</OverlayContainer>
+					<Rewards endGameData={endGameData}/>
 				) : (
 					<>
 						{activateTimer && (
