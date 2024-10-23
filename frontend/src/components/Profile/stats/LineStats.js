@@ -52,6 +52,9 @@ const LineStats = ({ matches }) => {
 		grid: {
 			borderColor: '#2e2e3d',
 		},
+		tooltip: {
+			theme: 'dark'
+		}
 	};
 
 	return (
