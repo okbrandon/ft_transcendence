@@ -9,8 +9,7 @@ export const getRelationFromUsername = (relations, profileUsername) => {
 	return relation;
 }
 
-export const getFriends = relations => {
-	const userID = localStorage.getItem('userID');
+export const getFriends = (relations, userID) => {
 	const friends = relations
 		.filter(relation => relation.status === 1)
 		.map(relation => {
@@ -23,8 +22,7 @@ export const getFriends = relations => {
 	return friends;
 };
 
-export const getRequests = relations => {
-	const userID = localStorage.getItem('userID');
+export const getRequests = (relations, userID) => {
 	const requests = relations
 		.filter(relation => relation.status === 0)
 		.map(relation => {
@@ -37,8 +35,7 @@ export const getRequests = relations => {
 	return requests;
 };
 
-export const getBlockedUsers = relations => {
-	const userID = localStorage.getItem('userID');
+export const getBlockedUsers = (relations, userID) => {
 	const blockedUsers = relations
 		.filter(relation => relation.status === 2)
 		.map(relation => {
