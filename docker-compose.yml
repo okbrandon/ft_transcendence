@@ -24,7 +24,7 @@ services:
     depends_on:
       - certs
     ports:
-      - "8888:443"
+      - "443:443"
       - "8000:80"
     networks:
       - transcendence

@@ -25,6 +25,7 @@ import PageNotFound from '../components/PageNotFound/PageNotFound';
 import Settings from '../components/Settings/Settings';
 import { useAuth } from '../context/AuthContext';
 import GameLocal from '../components/Game/local/GameLocal';
+import GameTournament from '../components/Game/Tournament/GameTournament';
 import CreateTournament from '../components/Game/Tournament/CreateTournament';
 
 const PrivateRoutes = () => {
@@ -74,6 +75,7 @@ const Router = createBrowserRouter(createRoutesFromElements(
 				<Route path="tournaments" element={ <Tournament/> }/>
 				<Route path="tournaments/create" element={ <CreateTournament /> }/>
 				<Route path="tournaments/:tournamentID" element={ <JoinTournament/> }/>
+				<Route path="tournaments/:tournamentID/play" element={ <GameTournament /> }/>
 				<Route element={ <GameRoutes/> }>
 					<Route path="game-classic" element={ <Game/> }/>
 					<Route path="game-ai" element={ <Game/> }/>

@@ -15,7 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
 class MatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Match
-        fields = ["matchID", "playerA", "playerB", "scores", "winnerID", "startedAt", "finishedAt", "flags"]
+        fields = ["matchID", "playerA", "playerB", "scores", "winnerID", "startedAt", "finishedAt", "whitelist", "flags"]
         read_only_fields = ["matchID", "startedAt", "finishedAt"]
 
 class RelationshipSerializer(serializers.ModelSerializer):

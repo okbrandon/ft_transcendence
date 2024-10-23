@@ -17,7 +17,6 @@ class Tournaments(APIView):
         pending_tournaments = Tournament.objects.filter(
             isPublic=True,
             status='PENDING',
-            startDate__gt=current_time
         )
 
         serializer = TournamentSerializer(pending_tournaments, many=True)
@@ -32,25 +31,14 @@ class Tournaments(APIView):
 
     def post(self, request):
         name = request.data.get('name')
-        start_date = request.data.get('startDate')
         is_public = request.data.get('isPublic')
         max_participants = request.data.get('maxParticipants', 8)
 
-        if not all([name, start_date, is_public is not None]):
+        if not all([name, is_public is not None]):
             return Response({"error": "Missing mandatory fields"}, status=status.HTTP_400_BAD_REQUEST)
 
         if len(name) > 16:
             return Response({"error": "Tournament name is too long"}, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            start_date = datetime.fromisoformat(start_date).replace(tzinfo=pytz_timezone.utc)
-            now = datetime.now(pytz_timezone.utc)
-            if start_date < now + timezone.timedelta(hours=1):
-                return Response({"error": "Start date must be at least 1 hour in the future"}, status=status.HTTP_400_BAD_REQUEST)
-            if start_date > now + timezone.timedelta(hours=24):
-                return Response({"error": "Start date cannot be more than 24 hours in the future"}, status=status.HTTP_400_BAD_REQUEST)
-        except ValueError:
-            return Response({"error": "Invalid start date format"}, status=status.HTTP_400_BAD_REQUEST)
 
         if not isinstance(max_participants, int) or max_participants <= 0:
             return Response({"error": "Invalid max participants"}, status=status.HTTP_400_BAD_REQUEST)
@@ -66,7 +54,6 @@ class Tournaments(APIView):
             tournament = Tournament.objects.create(
                 tournamentID=generate_id("tournament"),
                 name=name,
-                startDate=start_date,
                 isPublic=is_public,
                 maxParticipants=max_participants,
                 owner=request.user
@@ -134,7 +121,6 @@ class Tournaments(APIView):
 
         return Response({"message": "Invitations sent successfully"}, status=status.HTTP_200_OK)
 
-
 class UserCurrentTournament(APIView):
     def get(self, request):
         try:
@@ -152,8 +138,6 @@ class UserCurrentTournament(APIView):
                 return Response({"message": "User is not currently subscribed to any tournament"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
 
 class TournamentDetail(APIView):
     def get(self, request, tournamentID):
@@ -205,6 +189,7 @@ class KickUserFromTournament(APIView):
         return Response({"message": f"User {user_to_kick.username} has been kicked from the tournament"}, status=status.HTTP_200_OK)
 
 class ForceTournamentStart(APIView):
+    @transaction.atomic
     def post(self, request, tournamentID):
         try:
             tournament = Tournament.objects.get(tournamentID=tournamentID)
@@ -214,7 +199,24 @@ class ForceTournamentStart(APIView):
         if request.user != tournament.owner:
             return Response({"error": "Only the tournament owner can force start the tournament"}, status=status.HTTP_403_FORBIDDEN)
 
-        #TODO: implement
+        if tournament.status != 'PENDING':
+            return Response({"error": "Tournament can only be force started when in PENDING status"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if tournament.participants.count() < 2:
+            return Response({"error": "At least 2 participants are required to start the tournament"}, status=status.HTTP_400_BAD_REQUEST)
+
+        tournament.status = 'ONGOING'
+        tournament.save()
+
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"tournament_{tournamentID}",
+            {
+                "type": "tournament_ready",
+                "tournament": TournamentSerializer(tournament).data
+            }
+        )
+
         return Response({"message": "Tournament force start initiated"}, status=status.HTTP_200_OK)
 
 
@@ -233,10 +235,6 @@ class TournamentInviteResponse(APIView):
             return Response({"error": "Invite not found"}, status=status.HTTP_404_NOT_FOUND)
 
         channel_layer = get_channel_layer()
-
-        current_time = timezone.now()
-        if tournament.startDate <= current_time + timedelta(minutes=1):
-            return Response({"error": "Tournament has already started or is about to start"}, status=status.HTTP_400_BAD_REQUEST)
 
         if tournament.participants.count() >= tournament.maxParticipants:
             return Response({"error": "Tournament is full"}, status=status.HTTP_400_BAD_REQUEST)
@@ -276,10 +274,6 @@ class JoinPublicTournament(APIView):
 
         if not tournament.isPublic:
             return Response({"error": "This tournament is not public"}, status=status.HTTP_400_BAD_REQUEST)
-
-        current_time = timezone.now()
-        if tournament.startDate <= current_time + timedelta(minutes=1):
-            return Response({"error": "Tournament has already started or is about to start"}, status=status.HTTP_400_BAD_REQUEST)
 
         if tournament.participants.count() >= tournament.maxParticipants:
             return Response({"error": "Tournament is full"}, status=status.HTTP_400_BAD_REQUEST)

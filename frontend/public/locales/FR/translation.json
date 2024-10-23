@@ -89,6 +89,7 @@
 		"connectButton": "CONNEXION",
 		"friendsButton": "AMIS",
 		"leaderboardButton": "CLASSEMENT",
+		"tournamentsButton": "TOURNOIS",
 		"storeButton": "BOUTIQUE",
 		"playButton": "JOUER",
 		"profileButton": {

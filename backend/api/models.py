@@ -11,7 +11,9 @@ class Match(models.Model):
     winnerID = models.CharField(max_length = 48, null=True)
     startedAt = models.DateTimeField(auto_now_add=True)
     finishedAt = models.DateTimeField(null=True)
-    flags = models.IntegerField(default=0) # 1<<0 = AI, 1<<1 = 1v1
+    flags = models.IntegerField(default=0) # 1<<0 = AI, 1<<1 = 1v1, 1<<2 = tournament
+    tournament = models.ForeignKey('Tournament', on_delete=models.SET_NULL, null=True, blank=True, related_name='matches')
+    whitelist = models.ManyToManyField('User', related_name='whitelisted_matches', limit_choices_to=2)
 
     def __str__(self):
         return self.matchID
@@ -85,7 +87,7 @@ class User(AbstractUser):
 class Tournament(models.Model):
     tournamentID = models.CharField(max_length=48, unique=True)
     name = models.CharField(max_length=16)
-    startDate = models.DateTimeField()
+    startDate = models.DateTimeField(null=True, default=None)
     endDate = models.DateTimeField(null=True, default=None)
     maxParticipants = models.IntegerField(default=8)
     participants = models.ManyToManyField(User, related_name='tournaments')

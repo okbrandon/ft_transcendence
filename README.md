@@ -6,3 +6,6 @@
 
 ### WS Connection Lifecycle
 ![ws-flow](/docs/WS-flow.png)
+
+PRE-FLIGHT LIST:
+- Disable DEBUG mode for all django apps.

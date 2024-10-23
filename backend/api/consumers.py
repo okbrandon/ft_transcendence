@@ -15,7 +15,7 @@ from asgiref.sync import sync_to_async, async_to_sync
 from django.db.models import Q, Count
 from django.utils import timezone
 
-from .models import Conversation, User, Relationship, Match, UserSettings
+from .models import Conversation, User, Relationship, Match, UserSettings, Tournament
 from .util import generate_id, get_safe_profile, get_user_id_from_token
 from .serializers import UserSerializer, UserSettingsSerializer
 
@@ -349,112 +349,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 new_conversation.participants.add(user, friend)
                 new_conversation.save()
 
-class TournamentConsumer(AsyncJsonWebsocketConsumer):
-    async def connect(self):
-        logger.info(f"[{self.__class__.__name__}] New connection attempt")
-        await self.accept()
-        await self.send_json({
-            "e": "HELLO",
-            "d": {"heartbeat_interval": 1000}
-        })
-        self.last_heartbeat = time.time()
-        self.heartbeat_task = asyncio.create_task(self.heartbeat_check())
-        self.user = None
-        self.tournament = None
-        logger.info(f"[{self.__class__.__name__}] Connection accepted, heartbeat check task started")
-
-    async def disconnect(self, close_code):
-        logger.info(f"[{self.__class__.__name__}] Disconnecting with close code: {close_code}")
-        if hasattr(self, 'heartbeat_task'):
-            self.heartbeat_task.cancel()
-        if self.user and self.tournament:
-            await self.channel_layer.group_discard(
-                f"tournament_{self.tournament.tournamentID}",
-                self.channel_name
-            )
-        logger.info(f"[{self.__class__.__name__}] Disconnected, cleanup completed")
-
-    async def receive_json(self, content):
-        event_type = content.get('e')
-        data = content.get('d')
-
-        if event_type != 'HEARTBEAT':
-            logger.info(f"[{self.__class__.__name__}] Received event: {event_type}")
-
-        if event_type == 'HEARTBEAT':
-            self.last_heartbeat = time.time()
-            await self.send_json({"e": "HEARTBEAT_ACK"})
-        elif event_type == 'IDENTIFY':
-            await self.handle_identify(data)
-
-    async def handle_identify(self, data):
-        token = data.get('token')
-        if not token:
-            logger.warning(f"[{self.__class__.__name__}] Identify attempt without token")
-            await self.close()
-            return
-
-        user_id = await get_user_id_from_token(token)
-        if not user_id:
-            logger.warning(f"[{self.__class__.__name__}] Invalid token in identify attempt")
-            await self.close()
-            return
-
-        try:
-            self.user = await sync_to_async(User.objects.get)(userID=user_id)
-            
-            # Check if user is subscribed to a tournament
-            self.tournament = await sync_to_async(Tournament.objects.filter)(
-                participants=self.user,
-                status='PENDING'
-            ).first()
-
-            if not self.tournament:
-                logger.warning(f"[{self.__class__.__name__}] User {self.user.userID} is not subscribed to any tournament")
-                await self.close()
-                return
-
-            await self.channel_layer.group_add(
-                f"tournament_{self.tournament.tournamentID}",
-                self.channel_name
-            )
-            
-            # Get safe profile for the user
-            safe_profile = await sync_to_async(get_safe_profile)(self.user.__dict__, True)
-            
-            # Send TOURNAMENT_JOIN event with safe profile
-            await self.send_json({
-                "e": "TOURNAMENT_JOIN",
-                "d": safe_profile
-            })
-            
-            logger.info(f"[{self.__class__.__name__}] User identified and subscribed to tournament: {self.user.userID}")
-        except User.DoesNotExist:
-            logger.error(f"[{self.__class__.__name__}] User not found for ID: {user_id}")
-            await self.close()
-
-    async def heartbeat_check(self):
-        while True:
-            await asyncio.sleep(5)
-            if time.time() - self.last_heartbeat > 5:
-                logger.warning(f"[{self.__class__.__name__}] Heartbeat missed, closing connection")
-                await self.close()
-                break
-
-    async def tournament_kick(self, event):
-        kicked_user = event['user']
-        if kicked_user['userID'] == self.user.userID:
-            await self.send_json({
-                "e": "TOURNAMENT_KICK",
-                "d": {"message": "You have been kicked from the tournament"}
-            })
-            await self.close()
-        else:
-            await self.send_json({
-                "e": "TOURNAMENT_KICK",
-                "d": {"user": kicked_user}
-            })
-
 class MatchConsumer(AsyncJsonWebsocketConsumer):
     active_matches = {}
 
@@ -506,6 +400,8 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             await self.handle_player_quit()
         elif event_type == 'SPECTATE_REQUEST':
             await self.handle_spectate_request(data)
+        elif event_type == 'TOURNAMENT_MATCH_JOIN':
+            await self.handle_tournament_match_join(data)
 
     async def heartbeat_check(self):
         while True:
@@ -614,6 +510,140 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             )
             await self.send_match_ready(match)
             logger.info(f"[{self.__class__.__name__}] Match {match.matchID} started with both players")
+
+    async def handle_tournament_match_join(self, data):
+        match_id = data.get('match_id')
+        logger.info(f"[{self.__class__.__name__}] Tournament match join request received for match: {match_id}")
+        logger.debug(f"[{self.__class__.__name__}] Full data received: {data}")
+
+        match = await self.find_match_by_id(match_id)
+        logger.debug(f"[{self.__class__.__name__}] Match found: {match}")
+        if not match:
+            logger.error(f"[{self.__class__.__name__}] Invalid tournament match: {match_id}")
+            await self.send_json({
+                "e": "TOURNAMENT_MATCH_JOIN_FAILED",
+                "d": {"reason": "Invalid tournament match"}
+            })
+            logger.debug(f"[{self.__class__.__name__}] Sent TOURNAMENT_MATCH_JOIN_FAILED response")
+            return
+
+        tournament = await database_sync_to_async(lambda: match.tournament)()
+        logger.debug(f"[{self.__class__.__name__}] Tournament associated with match: {tournament}")
+        if not tournament:
+            logger.error(f"[{self.__class__.__name__}] Match {match_id} is not associated with a tournament")
+            await self.send_json({
+                "e": "TOURNAMENT_MATCH_JOIN_FAILED",
+                "d": {"reason": "Match is not part of a tournament"}
+            })
+            logger.debug(f"[{self.__class__.__name__}] Sent TOURNAMENT_MATCH_JOIN_FAILED response")
+            return
+
+        is_user_in_tournament = await self.is_user_in_tournament(self.user.userID, tournament.tournamentID)
+        logger.debug(f"[{self.__class__.__name__}] Is user in tournament: {is_user_in_tournament}")
+        if not is_user_in_tournament:
+            logger.error(f"[{self.__class__.__name__}] User {self.user.userID} not in tournament {tournament.tournamentID}")
+            await self.send_json({
+                "e": "TOURNAMENT_MATCH_JOIN_FAILED",
+                "d": {"reason": "User not in tournament"}
+            })
+            logger.debug(f"[{self.__class__.__name__}] Sent TOURNAMENT_MATCH_JOIN_FAILED response")
+            return
+
+        self.match = match
+        logger.debug(f"[{self.__class__.__name__}] Set self.match to: {self.match}")
+        await self.channel_layer.group_add(
+            f"match_{match.matchID}",
+            self.channel_name
+        )
+        logger.debug(f"[{self.__class__.__name__}] Added to channel group: match_{match.matchID}")
+
+        is_whitelisted = await self.is_user_whitelisted(self.user, match)
+        logger.debug(f"[{self.__class__.__name__}] Is user whitelisted: {is_whitelisted}")
+
+        if is_whitelisted:
+            logger.debug(f"[{self.__class__.__name__}] User is whitelisted, proceeding with match join")
+            
+            # Determine player assignment based on userID
+            if match.playerA is None and match.playerB is None:
+                # First player to join
+                match.playerA = {"id": self.user.userID, "platform": "web"}
+                side = "left"
+                logger.debug(f"[{self.__class__.__name__}] Assigned first user as playerA")
+            elif match.playerA is None or match.playerB is None:
+                # Second player to join
+                other_player = match.playerA or match.playerB
+                if self.user.userID > other_player['id']:
+                    match.playerB = {"id": self.user.userID, "platform": "web"}
+                    side = "right"
+                    logger.debug(f"[{self.__class__.__name__}] Assigned second user as playerB")
+                else:
+                    match.playerB = match.playerA
+                    match.playerA = {"id": self.user.userID, "platform": "web"}
+                    side = "left"
+                    logger.debug(f"[{self.__class__.__name__}] Assigned second user as playerA, moved first user to playerB")
+            else:
+                logger.error(f"[{self.__class__.__name__}] Both player slots filled for match {match_id}")
+                await self.send_json({
+                    "e": "TOURNAMENT_MATCH_JOIN_FAILED",
+                    "d": {"reason": "Match is full"}
+                })
+                logger.debug(f"[{self.__class__.__name__}] Sent TOURNAMENT_MATCH_JOIN_FAILED response")
+                return
+
+            await database_sync_to_async(match.save)()
+            logger.debug(f"[{self.__class__.__name__}] Saved match after player assignment")
+
+            # Initialize or update match state
+            if match.matchID not in self.active_matches:
+                logger.debug(f"[{self.__class__.__name__}] Initializing new match state for {match.matchID}")
+                self.active_matches[match.matchID] = {
+                    'playerA': {'id': match.playerA['id'], 'paddle_y': 375, 'pos': 'A'},
+                    'playerB': {'id': match.playerB['id'] if match.playerB else None, 'paddle_y': 375, 'pos': 'B'},
+                    'ball': {},
+                    'scores': {match.playerA['id']: 0},
+                    'spectators': []
+                }
+                self.reset_ball(self.active_matches[match.matchID])
+                logger.debug(f"[{self.__class__.__name__}] Reset ball for new match")
+            else:
+                logger.debug(f"[{self.__class__.__name__}] Updating existing match state for {match.matchID}")
+                # Update playerB id in active match state if it's not set
+                if match.playerB and self.active_matches[match.matchID]['playerB']['id'] is None:
+                    self.active_matches[match.matchID]['playerB']['id'] = match.playerB['id']
+                self.active_matches[match.matchID]['scores'][self.user.userID] = 0
+
+            await self.send_json({
+                "e": "MATCH_JOIN",
+                "d": {
+                    "match_id": match.matchID,
+                    "side": side,
+                    "opponent": await self.get_opponent_info(match, self.user)
+                }
+            })
+            logger.debug(f"[{self.__class__.__name__}] Sent MATCH_JOIN response")
+
+            # If both players have joined, start the match
+            if match.playerA and match.playerB:
+                await self.send_match_ready(match)
+                logger.info(f"[{self.__class__.__name__}] Tournament match {match.matchID} started with both players")
+        else:
+            logger.debug(f"[{self.__class__.__name__}] User is not whitelisted, joining as spectator")
+            # Join as spectator
+            self.is_spectator = True
+            await self.handle_spectate_request({"match_id": match_id})
+        logger.debug(f"[{self.__class__.__name__}] handle_tournament_match_join completed for match {match_id}")
+
+    @database_sync_to_async
+    def is_user_in_tournament(self, user_id, tournament_id):
+        try:
+            tournament = Tournament.objects.get(tournamentID=tournament_id)
+            return tournament.participants.filter(userID=user_id).exists()
+        except Tournament.DoesNotExist:
+            return False
+
+    @database_sync_to_async
+    def is_user_whitelisted(self, user, match):
+        return match.whitelist.filter(userID=user.userID).exists()
 
     async def handle_matchmake_force_join(self, data):
         if self.user.userID != 'user_ai':
@@ -1093,6 +1123,18 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             await self.reward_user(winner_id, winner_earnings['xp'], winner_earnings['money'])
             await self.reward_user(loser_id, loser_earnings['xp'], loser_earnings['money'])
             logger.info(f"[{self.__class__.__name__}] Match {match_id} ended. Winner: {winner_id}")
+
+            # Check if the match is part of a tournament
+            if self.match.tournament:
+                await self.channel_layer.group_send(
+                    f"tournament_{self.match.tournament.tournamentID}",
+                    {
+                        "type": "tournament_round_end",
+                        "matchID": self.match.matchID,
+                        "winner": winner_id
+                    }
+                )
+                logger.info(f"[{self.__class__.__name__}] Tournament round end event sent for tournament: {self.match.tournament.tournamentID}")
 
             return {
                 "type": "match.ended",

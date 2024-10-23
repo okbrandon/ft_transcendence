@@ -11,12 +11,14 @@ import {
 	BackButton
 } from "../styles/Tournament/AvailableTournaments.styled";
 import PongButton from "../../../styles/shared/PongButton.styled";
+import { useTonneru } from "../../../context/TonneruContext";
 import API from "../../../api/api";
 
 const AvailableTournaments = ({ setOptions }) => {
 	const navigate = useNavigate();
 	const [searchQuery, setSearchQuery] = useState("");
 	const [tournaments, setTournaments] = useState([]);
+	const { registerForTournament } = useTonneru();
 
 	useEffect(() => {
 		fetchTournaments();
@@ -43,6 +45,7 @@ const AvailableTournaments = ({ setOptions }) => {
 
 			if (tournament.isPublic) {
 				await API.post(`/tournaments/${tournamentID}/join`);
+				registerForTournament(tournamentID);
 				navigate(`/tournaments/${tournamentID}`);
 			} else {
 				// For private tournaments, we might need to handle invites differently
@@ -73,7 +76,6 @@ const AvailableTournaments = ({ setOptions }) => {
 						<TournamentCard key={tournament.tournamentID}>
 							<h3>{tournament.name}</h3>
 							<p>Players: {tournament.participants.length}/{tournament.maxParticipants}</p>
-							<p>Start Date: {new Date(tournament.startDate).toLocaleString()}</p>
 							<p>Status: {tournament.status}</p>
 							{tournament.status === 'PENDING' && (
 								<PongButton onClick={() => handleJoinTournament(tournament.tournamentID)}>

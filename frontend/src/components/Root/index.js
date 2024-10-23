@@ -6,6 +6,7 @@ import Footer from '../Footer/Footer';
 import { useAuth } from '../../context/AuthContext';
 import RelationProvider from '../../context/RelationContext';
 import ConnectedNavBar from '../Navigation/ConnectedNavigation';
+import TonneruProvider from '../../context/TonneruContext';
 
 const Root = () => {
 	const location = useLocation();
@@ -23,14 +24,16 @@ const Root = () => {
 	return (
 		<>
 			{isLoggedIn ? (
-				<RelationProvider>
-					{showPersistentUI && <ConnectedNavBar/>}
-					<main>
-						<Chat/>
-						<Outlet/>
-					</main>
-					{showPersistentUI && <Footer/>}
-				</RelationProvider>
+				<TonneruProvider>
+					<RelationProvider>
+						{showPersistentUI && <ConnectedNavBar/>}
+						<main>
+							<Chat/>
+							<Outlet/>
+						</main>
+						{showPersistentUI && <Footer/>}
+					</RelationProvider>
+				</TonneruProvider>
 			) : (
 				<>
 					{showPersistentUI && <NavBar/>}

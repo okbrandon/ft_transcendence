@@ -10,25 +10,26 @@ import {
 import PongButton from "../../../styles/shared/PongButton.styled";
 import API from "../../../api/api";
 import { useNavigate } from "react-router-dom";
+import { useTonneru } from "../../../context/TonneruContext";
 
 const CreateTournament = ({ setOptions }) => {
 	const [tournamentName, setTournamentName] = useState("");
 	const [maxParticipants, setMaxParticipants] = useState(4);
-	const [startDate, setStartDate] = useState("");
 	const [isPublic, setIsPublic] = useState(true);
 	const navigate = useNavigate();
+	const { registerForTournament } = useTonneru();
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		try {
 			const response = await API.post('/tournaments', {
 				name: tournamentName,
-				startDate: startDate,
 				isPublic: isPublic,
 				maxParticipants: maxParticipants
 			});
 			console.log('Tournament created:', response.data);
-			navigate(`/tournaments/${response.data.tournamentID}`); // Assuming you have a route for the tournament room
+			registerForTournament(response.data.tournamentID);
+			navigate(`/tournaments/${response.data.tournamentID}`);
 		} catch (error) {
 			console.error('Error creating tournament:', error.response?.data?.error || error.message);
 			// Handle error (e.g., show error message to user)
@@ -48,16 +49,6 @@ const CreateTournament = ({ setOptions }) => {
 						maxLength={16}
 						value={tournamentName}
 						onChange={(e) => setTournamentName(e.target.value)}
-					/>
-				</FormGroup>
-				<FormGroup>
-					<FormLabel htmlFor="start-date">Start Date</FormLabel>
-					<FormControl
-						id="start-date"
-						type="datetime-local"
-						required
-						value={startDate}
-						onChange={(e) => setStartDate(e.target.value)}
 					/>
 				</FormGroup>
 				<FormGroup>

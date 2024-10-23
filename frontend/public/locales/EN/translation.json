@@ -89,6 +89,7 @@
 		"connectButton": "CONNECT",
 		"friendsButton": "FRIENDS",
 		"leaderboardButton": "LEADERBOARD",
+		"tournamentsButton": "TOURNAMENTS",
 		"storeButton": "SHOP",
 		"playButton": "PLAY",
 		"profileButton": {

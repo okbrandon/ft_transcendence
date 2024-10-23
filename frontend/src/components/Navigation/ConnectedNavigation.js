@@ -63,6 +63,7 @@ const ConnectedNavBar = () => {
 					<StyledNavLink to="leaderboard">{t('header.leaderboardButton')}</StyledNavLink>
 					<StyledNavLink to="shop">{t('header.storeButton')}</StyledNavLink>
 					<StyledNavLink to="playmenu">{t('header.playButton')}</StyledNavLink>
+					<StyledNavLink to="tournaments">{t('header.tournamentsButton')}</StyledNavLink>
 				</NavItemsContainer>
 			</NavItemsContainer>
 			<NavItemsContainer>

@@ -1,8 +1,10 @@
+import os
 import base64
 
 from django.apps import AppConfig
 from django.db.models.signals import post_migrate
 from django.utils import timezone
+from django.contrib.auth.hashers import make_password
 
 from .util import generate_id
 
@@ -15,6 +17,8 @@ class ApiConfig(AppConfig):
         post_migrate.connect(delete_unfinished_matches)
         post_migrate.connect(create_ai_account)
         post_migrate.connect(update_users_statuses)
+        if os.environ.get('SKIP_EMAIL_VERIFICATION', '').lower() == 'true':
+            post_migrate.connect(create_test_accounts)
 
 def create_store_items(sender, **kwargs):
     from .models import StoreItem
@@ -50,6 +54,42 @@ def create_ai_account(sender, **kwargs):
             avatarID=f"data:image/jpeg;base64,{encoded_avatar}",
             flags=3
         )
+
+def create_test_accounts(sender, **kwargs):
+    from .models import User
+
+    test_accounts = [
+        {
+            'username': 'test',
+            'displayName': 'Test User',
+            'email': 'test@example.com',
+            'password': 'test123',
+        },
+        {
+            'username': 'test2',
+            'displayName': 'Test User 2',
+            'email': 'test2@example.com',
+            'password': 'test123',
+        },
+        {
+            'username': 'test3',
+            'displayName': 'Test User 3',
+            'email': 'test3@example.com',
+            'password': 'test123',
+        },
+    ]
+
+    for account in test_accounts:
+        if not User.objects.filter(username=account['username']).exists():
+            User.objects.create(
+                userID=generate_id("user"),
+                username=account['username'],
+                displayName=account['displayName'],
+                email=account['email'],
+                password=make_password(account['password']),
+                lang='en',
+                flags=1
+            )
 
 def delete_unfinished_matches(sender, **kwargs):
     from .models import Match

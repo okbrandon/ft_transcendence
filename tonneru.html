@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tonneru WebSocket Client</title>
+</head>
+<body>
+    <h1>Tonneru WebSocket Client</h1>
+    <div id="status">Disconnected</div>
+    <button id="connectBtn">Connect</button>
+    <button id="identifyBtn" disabled>Identify</button>
+    <div id="messages"></div>
+
+    <script>
+        const wsUrl = 'ws://localhost:8000/ws/tonneru';  // Update this URL as needed
+        let socket;
+        let heartbeatInterval;
+        
+        const statusEl = document.getElementById('status');
+        const connectBtn = document.getElementById('connectBtn');
+        const identifyBtn = document.getElementById('identifyBtn');
+        const messagesEl = document.getElementById('messages');
+
+        function updateStatus(message) {
+            statusEl.textContent = message;
+        }
+
+        function addMessage(message) {
+            const messageEl = document.createElement('p');
+            messageEl.textContent = message;
+            messagesEl.appendChild(messageEl);
+        }
+
+        function connect() {
+            socket = new WebSocket(wsUrl);
+
+            socket.onopen = () => {
+                updateStatus('Connected');
+                connectBtn.disabled = true;
+                identifyBtn.disabled = false;
+            };
+
+            socket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                addMessage(`Received: ${JSON.stringify(data)}`);
+
+                if (data.e === 'HELLO') {
+                    const heartbeatMs = data.d.heartbeat_interval;
+                    startHeartbeat(heartbeatMs);
+                } else if (data.e === 'READY') {
+                    updateStatus('Identified');
+                }
+            };
+
+            socket.onclose = () => {
+                updateStatus('Disconnected');
+                connectBtn.disabled = false;
+                identifyBtn.disabled = true;
+                stopHeartbeat();
+            };
+
+            socket.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                updateStatus('Error');
+            };
+        }
+
+        function startHeartbeat(interval) {
+            stopHeartbeat(); // Clear any existing interval
+            heartbeatInterval = setInterval(() => {
+                sendHeartbeat();
+            }, interval);
+        }
+
+        function stopHeartbeat() {
+            if (heartbeatInterval) {
+                clearInterval(heartbeatInterval);
+            }
+        }
+
+        function sendHeartbeat() {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({ e: 'HEARTBEAT' }));
+                addMessage('Sent: HEARTBEAT');
+            }
+        }
+
+        function identify() {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                const token = prompt('Enter your JWT token:');
+                if (token) {
+                    socket.send(JSON.stringify({
+                        e: 'IDENTIFY',
+                        d: { token: token }
+                    }));
+                    addMessage('Sent: IDENTIFY');
+                }
+            }
+        }
+
+        connectBtn.addEventListener('click', connect);
+        identifyBtn.addEventListener('click', identify);
+    </script>
+</body>
+</html>
