@@ -24,10 +24,12 @@ export const setPaddleAttributes = (terrain, textureUrl = null) => {
 
 	if (textureUrl) {
 		const paddleTexture = textureLoader.load(`/images/skins/${textureUrl}`, texture => {
-			texture.wrapS = THREE.RepeatWrapping;
-			texture.wrapT = THREE.RepeatWrapping;
-			texture.flipY = false;
-			texture.repeat.set(1, 1);
+			texture.wrapS = THREE.ClampToEdgeWrapping;
+			texture.wrapT = THREE.ClampToEdgeWrapping;
+			texture.flipY = true;
+			texture.offset.set(0.5, 0.5);
+			texture.repeat.set(0.4, 0.4);
+			texture.rotation = Math.PI / 2;
 		});
 
 		paddleMaterial = new THREE.MeshLambertMaterial({
