@@ -22,6 +22,7 @@ export const WinnerPageContainer = styled.div`
 				radial-gradient(circle at 70% 70%, rgba(59, 130, 246, 0.25), transparent 40%),
 				linear-gradient(135deg, #111111 0%, #222222 100%);
 	padding: 20px;
+	padding-top: 100px;
 	text-align: center;
 
 	@media (max-width: 768px) {
@@ -38,6 +39,17 @@ export const WinnerText = styled.h1`
 
 	@media (max-width: 768px) {
 		font-size: 2rem;
+	}
+`;
+
+export const TimerText = styled.p`
+	font-size: 1.2rem;
+	color: #ffd700;
+	margin-bottom: 10px;
+	animation: ${fadeIn} 1.5s ease-in-out;
+
+	@media (max-width: 768px) {
+		font-size: 1rem;
 	}
 `;
 
@@ -60,14 +72,20 @@ export const WinnerContainer = styled.div`
 	}
 `;
 
+export const TrophyIcon = styled.i`
+	font-size: 2rem;
+	color: #FFD700;
+	animation: ${fadeIn} 4s ease-in-out;
+`;
+
 export const WinnerImage = styled.img`
 	width: 250px;
 	height: 250px;
-	border-radius: 50%;
+	border-radius: 25%;
 	object-fit: cover;
 	object-position: center;
 	margin-bottom: 20px;
-	border: 2px solid #6a0dad;
+	border: 2px solid #333;
 	animation: ${fadeIn} 2s ease-in-out;
 
 	@media (max-width: 768px) {
@@ -96,6 +114,17 @@ export const WinnerPrize = styled.div`
 	justify-content: center;
 	margin-top: 10px;
 	animation: ${fadeIn} 1s ease-in-out;
+
+	@media (max-width: 768px) {
+		font-size: 1rem;
+	}
+`;
+
+export const WinnerBio = styled.div`
+	font-size: 1.2rem;
+	color: #ccc;
+	margin-top: 10px;
+	animation: ${fadeIn} 1.2s ease-in-out;
 
 	@media (max-width: 768px) {
 		font-size: 1rem;
