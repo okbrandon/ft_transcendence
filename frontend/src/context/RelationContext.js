@@ -26,6 +26,34 @@ const RelationProvider = ({ children }) => {
 	const [blockedUsers, setBlockedUsers] = useState([]);
 	const [isRefetch, setIsRefetch] = useState(false);
 
+	// State for managing direct messages
+	const [directMessage, setDirectMessage] = useState({
+		isOpen: false,
+		isMinimized: false,
+		username: null,
+		conversationID: null,
+	});
+
+	// Function to Select a Chat
+	const handleSelectChat = (username, conversationID) => {
+		setDirectMessage({
+			isOpen: true,
+			isMinimized: false,
+			username,
+			conversationID,
+		});
+	}
+
+	// Function to Close a Chat
+	const handleCloseChat = () => {
+		setDirectMessage({
+			isOpen: false,
+			isMinimized: false,
+			username: null,
+			conversationID: null,
+		});
+	}
+
 	const setActivity = location => {
 		if (location.state?.mode === 'ai') {
 			return 'PLAYING_VS_AI';
@@ -164,6 +192,12 @@ const RelationProvider = ({ children }) => {
 			blockedUsers,			// get the blocked users
 			setBlockedUsers,		// change the blocked users
 			setIsRefetch,			// refetch the relations when set to true
+
+			// Direct Message Management
+			directMessage, 			// get the direct message
+			setDirectMessage,		// change the direct message
+			handleSelectChat,		// function to select a chat
+			handleCloseChat,		// function to close a chat
 		}}>
 			{ children }
 		</RelationContext.Provider>

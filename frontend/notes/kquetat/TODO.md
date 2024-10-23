@@ -12,9 +12,7 @@
 
 - [ ]  Tournament Winner Page:
     - [ ]  Implement Private Routing
-    - [ ]  Improve styling
-- [x]  Leaderboard:
-    - [x]  Implement Redirection to profile page
+    - [x]  Improve styling
 
 ### structure conversations chat
 
@@ -92,7 +90,3 @@ Structure:
 	}
 }
 ```
-
-# Tournament Ended Page:
-
-Create the styling:

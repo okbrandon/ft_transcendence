@@ -8,33 +8,18 @@ import ChatHeader from './tools/ChatHeader.js';
 import { ChatProvider } from '../../context/ChatContext.js';
 
 const Chat = () => {
-	const { conversations, blockedUsers, friends, relations } = useRelation();
+	const {
+		conversations,
+		blockedUsers,
+		friends,
+		relations,
+		directMessage,
+		setDirectMessage,
+		handleSelectChat,
+		handleCloseChat,
+	} = useRelation();
 	const [isOverlayMinimized, setIsOverlayMinimized] = useState(true);
 	const [mainWinArrow, setMainWinArrow] = useState(false);
-	const [directMessage, setDirectMessage] = useState({
-		isOpen: false,
-		isMinimized: false,
-		username: null,
-		conversationID: null,
-	});
-
-	const handleSelectChat = (username, conversationID) => {
-		setDirectMessage({
-			isOpen: true,
-			isMinimized: false,
-			username,
-			conversationID,
-		});
-	};
-
-	const handleCloseChat = () => {
-		setDirectMessage({
-			isOpen: false,
-			isMinimized: false,
-			username: null,
-			conversationID: null,
-		});
-	};
 
 	const toggleDMMinimization = () => {
 		setDirectMessage((prev) => ({
