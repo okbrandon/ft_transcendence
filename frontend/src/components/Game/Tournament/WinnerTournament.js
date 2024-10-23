@@ -10,14 +10,11 @@ import {
 	WinnerBio,
 	TimerText,
 } from '../styles/Tournament/WinnerTournament.styled';
-import { useNotification } from '../../../context/NotificationContext';
 import Confetti from 'react-confetti';
-import ShareButton from './ShareButton';
 
 const WinnerTournament = ({ winnerID }) => {
 	const [confettiActive, setConfettiActive] = useState(true);
-	const [timeLeft, setTimeLeft] = useState(900);
-	const { addNotification } = useNotification();
+	const [timeLeft, setTimeLeft] = useState(30);
 	const testWins = 20;
 
 	useEffect(() => {
@@ -25,7 +22,6 @@ const WinnerTournament = ({ winnerID }) => {
 		return () => clearTimeout(confettiTimer);
 	}, []);
 
-	// Countdown Timer for redirecting to home page
 	useEffect(() => {
 		const timer = setInterval(() => {
 			setTimeLeft((prev) => prev - 1);
@@ -61,7 +57,6 @@ const WinnerTournament = ({ winnerID }) => {
 
 				<WinnerBio>{getWinnerMessage(testWins)}</WinnerBio>
 
-				<ShareButton />
 			</WinnerContainer>
 
 			{confettiActive && (
