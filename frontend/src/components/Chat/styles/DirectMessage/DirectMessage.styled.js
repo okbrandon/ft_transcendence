@@ -67,7 +67,8 @@ export const DropdownItem = styled.button`
 	cursor: pointer;
 	transition: background-color 0.3s ease;
 	font-size: 0.9rem;
-	background-color: rgba(255, 255, 255, 0.7);
+	background-color: #1e1e28;
+	color: #fff;
 
 	&[data-action="profile"] {
 		&:hover {
@@ -242,6 +243,7 @@ export const Avatar = styled.img`
 	border-radius: 50%;
 	margin-right: 8px;
 	vertical-align: middle;
+	object-fit: cover;
 `;
 
 export const MessageUsername = styled.span`
