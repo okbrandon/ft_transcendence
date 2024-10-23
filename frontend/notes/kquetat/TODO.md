@@ -1,4 +1,4 @@
-# NEW TODO
+# TODO
 
 - Chat (!!) :
 	- Enable game invite (gameserver) []
@@ -9,6 +9,14 @@
 	- Implement the Invite button, (TODO LATER : waiting for gameserver)
 
 - Implement status (online, offline) [x]
+
+## To-do List *of the day*:
+
+- [ ]  Tournament Winner Page:
+    - [ ]  Implement Private Routing
+    - [ ]  Improve styling
+- [x]  Leaderboard:
+    - [x]  Implement Redirection to profile page
 
 ### structure conversations chat
 
