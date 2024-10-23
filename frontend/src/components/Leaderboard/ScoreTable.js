@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ScoreTableStyled, Trophy, Username } from './styles/ScoreTable.styled';
+import { formatUserData } from '../../api/user';
 
 const statHeaders = {
 	gamesPlayed: 'Games Played',
@@ -26,20 +27,24 @@ const ScoreTable = ({ data, selectedStat }) => {
 			</tr>
 			</thead>
 			<tbody>
-			{data.map((player, index) => (
-				<tr key={player.id || index}>
-				<td>
-					<Trophy className="bi bi-trophy-fill" $position={index + 1} />
-					{index + 1}
-				</td>
-				<td>
-					<Username onClick={() => handleClickUsername(player.user.username)}>
-						{player.user.username}
-					</Username>
-				</td>
-				<td>{player.stats[selectedStat]}</td>
-				</tr>
-			))}
+			{data.map((player, index) => {
+				const formattedUser = formatUserData(player.user);
+				console.log('formattedUser: ', formattedUser);
+				return (
+					<tr key={player.id || index}>
+					<td>
+						<Trophy className="bi bi-trophy-fill" $position={index + 1} />
+						{index + 1}
+					</td>
+					<td>
+						<Username onClick={() => handleClickUsername(player.user.username)}>
+							{formattedUser.displayName}
+						</Username>
+					</td>
+					<td>{player.stats[selectedStat]}</td>
+					</tr>
+				);
+			})}
 			</tbody>
 		</ScoreTableStyled>
 	);
