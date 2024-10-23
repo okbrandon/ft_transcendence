@@ -19,64 +19,34 @@ import { useNotification } from "../../context/NotificationContext";
 import { useTranslation } from "react-i18next";
 
 const Shop = () => {
-	const { setUser, loading } = useAuth();
+	const { loading } = useAuth();
 	const { addNotification } = useNotification();
-	const [meUser, setMeUser] = useState(null);
+	const [user, setUser] = useState(null);
 	const [purchasedItems, setPurchasedItems] = useState([]);
 	const [storeItems, setStoreItems] = useState([]);
 	const [selectedSkin, setSelectedSkin] = useState(null);
 	const { t } = useTranslation();
 
 	useEffect(() => {
-		getUser()
-			.then(response => {
-				console.log(response);
-				setMeUser(response);
-				setUser(response);
-			})
-			.catch(err => {
-				addNotification('error', err?.response?.data?.error || 'An error occurred');
-			});
-	}, [addNotification, setUser]);
+		const fetchData = async () => {
+			try {
+				const [meUser, storeItems, purchasedItems, selectedSkin] = await Promise.all([
+					getUser(),
+					API.get('/store/items'),
+					API.get('/users/@me/purchases'),
+					API.get('/users/@me/settings'),
+				]);
 
-	useEffect(() => {
-		API.get('/users/@me/settings')
-			.then(response => {
-				setSelectedSkin(response.data.selectedPaddleSkin);
-			})
-			.catch(err => {
+				setUser(meUser);
+				setStoreItems(storeItems.data);
+				setPurchasedItems(purchasedItems.data);
+				setSelectedSkin(selectedSkin.data.selectedPaddleSkin);
+			} catch (err) {
 				addNotification('error', err?.response?.data?.error || 'An error occurred');
-			})
-	}, [addNotification]);
+			}
+		}
 
-	const handleEquip = itemID => {
-		API.patch('/users/@me/settings', { selectedPaddleSkin: itemID })
-			.then(() => {
-				setSelectedSkin(itemID);
-			})
-			.catch(() => {
-				addNotification('error', `${t('store.equipError')}`);
-			})
-	};
-
-	useEffect(() => {
-		API.get('/store/items')
-			.then(response => {
-				setStoreItems(response.data);
-			})
-			.catch(err => {
-				addNotification('error', err?.response?.data?.error || 'An error occurred');
-			});
-	}, [addNotification]);
-
-	useEffect(() => {
-		API.get('/users/@me/purchases')
-			.then(response => {
-				setPurchasedItems(response.data);
-			})
-			.catch(err => {
-				addNotification('error', err?.response?.data?.error || 'An error occurred');
-			});
+		fetchData();
 	}, [addNotification]);
 
 	const handlePurchase = item => {
@@ -97,7 +67,13 @@ const Shop = () => {
 			});
 	};
 
-	if (loading || !meUser) {
+	const handleEquip = itemID => {
+		API.patch('/users/@me/settings', { selectedPaddleSkin: itemID })
+			.then(() => setSelectedSkin(itemID))
+			.catch(() => addNotification('error', `${t('store.equipError')}`));
+	};
+
+	if (loading || !user || !storeItems.length) {
 		return (
 			<ShopContainer>
 				<Loader/>
@@ -109,7 +85,7 @@ const Shop = () => {
 		<ShopContainer>
 			<Header>
 				<h1>{t('store.title')}</h1>
-				<CoinsDisplay>{t('store.currentBalance', {balance: `${meUser.money}`})}</CoinsDisplay>
+				<CoinsDisplay>{t('store.currentBalance', {balance: `${user.money}`})}</CoinsDisplay>
 			</Header>
 			<SubtitleSection>
 				<p>{t('store.subTitle')}</p>
