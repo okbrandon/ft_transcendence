@@ -2,6 +2,7 @@ import base64
 
 from django.apps import AppConfig
 from django.db.models.signals import post_migrate
+from django.utils import timezone
 
 from .util import generate_id
 
@@ -13,6 +14,7 @@ class ApiConfig(AppConfig):
         post_migrate.connect(create_store_items)
         post_migrate.connect(delete_unfinished_matches)
         post_migrate.connect(create_ai_account)
+        post_migrate.connect(update_users_statuses)
 
 def create_store_items(sender, **kwargs):
     from .models import StoreItem
@@ -54,3 +56,17 @@ def delete_unfinished_matches(sender, **kwargs):
 
     Match.objects.filter(finishedAt__isnull=True).delete()
     Match.objects.filter(playerB__isnull=True).delete()
+
+def update_users_statuses(sender, **kwargs):
+    from .models import User
+
+    users = User.objects.all()
+
+    for user in users:
+        user.status = {
+            "online": False,
+            "activity": None,
+            "last_seen": timezone.now().isoformat()
+        }
+
+    User.objects.bulk_update(users, ['status'])
