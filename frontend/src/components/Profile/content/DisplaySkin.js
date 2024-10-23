@@ -14,7 +14,7 @@ const DisplaySkin = ({ currentSkin }) => {
 			const paddleTexture = textureLoader.load(`/images/skins/${skin}`, texture => {
 				texture.wrapS = THREE.ClampToEdgeWrapping;
 				texture.wrapT = THREE.ClampToEdgeWrapping;
-				texture.flipY = false;
+				texture.flipY = true;
 				texture.offset.set(0.5, 0.5);
 				texture.repeat.set(0.1, 0.1);
 				texture.needsUpdate = true;
