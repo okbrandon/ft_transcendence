@@ -360,9 +360,11 @@ class UserRelationshipsMe(APIView):
         channel_layer = get_channel_layer()
 
         if status == "accepted" or status == "rejected":
-            group_name = f"chat_{relationship.userA}"
-        elif status == "pending" or status == "deleted":
-            group_name = f"chat_{relationship.userB}"
+            group_names = [f"chat_{relationship.userA}"]
+        elif status == "pending":
+            group_names = [f"chat_{relationship.userB}"]
+        elif status == "deleted":
+            group_names = [f"chat_{relationship.userA}", f"chat_{relationship.userB}"]
         else:
             return
 
@@ -376,22 +378,23 @@ class UserRelationshipsMe(APIView):
         except User.DoesNotExist:
             return
 
-        try:
-            async_to_sync(channel_layer.group_send)(
-                group_name,
-                {
-                    "type": "friend_request",
-                    "status": status,
-                    "data": {
-                        "type": "relationship",
-                        "relationshipID": relationship.relationshipID,
-                        "from": get_safe_profile(UserSerializer(from_user).data, me=False),
-                        "to": get_safe_profile(UserSerializer(to_user).data, me=False)
+        for group_name in group_names:
+            try:
+                async_to_sync(channel_layer.group_send)(
+                    group_name,
+                    {
+                        "type": "friend_request",
+                        "status": status,
+                        "data": {
+                            "type": "relationship",
+                            "relationshipID": relationship.relationshipID,
+                            "from": get_safe_profile(UserSerializer(from_user).data, me=False),
+                            "to": get_safe_profile(UserSerializer(to_user).data, me=False)
+                        }
                     }
-                }
-            )
-        except Exception as _:
-            logger.error(f"Failed to send friend request notification. Group: {group_name}")
+                )
+            except Exception as _:
+                logger.error(f"Failed to send friend request notification. Group: {group_name}")
 
 class UserMatches(APIView):
     def get(self, request, userID, *args, **kwargs):
