@@ -140,8 +140,6 @@ export const DirectMessage = ({
 		setCharCount(e.target.value.length);
 	};
 
-	console.log('DirectMessage conversations: ', conversations);
-
 	return (
 		<>
 			<DirectMessageContainer $isOpen={isOpen} $isMinimized={isMinimized}>

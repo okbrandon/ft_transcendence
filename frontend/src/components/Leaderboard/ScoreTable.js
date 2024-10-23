@@ -29,7 +29,6 @@ const ScoreTable = ({ data, selectedStat }) => {
 			<tbody>
 			{data.map((player, index) => {
 				const formattedUser = formatUserData(player.user);
-				console.log('formattedUser: ', formattedUser);
 				return (
 					<tr key={player.id || index}>
 					<td>
