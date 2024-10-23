@@ -197,7 +197,7 @@ const BaseBubble = styled.div`
 	max-width: calc(100% - 60px);
 	word-wrap: break-word;
 	white-space: pre-wrap;
-	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	font-family: 'Helvetica Neue', sans-serif;
 	font-size: 14px;
 	line-height: 1.4;
 	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
