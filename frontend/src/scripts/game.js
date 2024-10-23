@@ -1,8 +1,8 @@
 import * as THREE from 'three';
-import { BallAttributes, PaddleAttributes, DashedLine } from './gameShapes';
-import { createParticleBurst, Particles } from './gameParticles';
+import { setBallAttributes, setPaddleAttributes, addDashedLine, setWallAttributes } from './gameShapes';
+import { createParticleBurst, addParticles } from './gameParticles';
 
-const Lightning = (scene, terrain, ball) => {
+const addLights = (scene, terrain, ball) => {
 	const ambientLight = new THREE.AmbientLight(0xffffff, 2);
 	scene.add(ambientLight);
 	// Light intensity and distance configuration
@@ -31,64 +31,50 @@ const Lightning = (scene, terrain, ball) => {
 	return { ambientLight, cornerLights };
 };
 
-const AddToScene = (scene, terrain, paddle1, paddle2, ball, walls) => {
-	const { paddleGeometry, paddleMaterial } = PaddleAttributes(terrain);
-	const { ballGeometry, ballMaterial } = BallAttributes(terrain);
+const addPaddle = (scene, terrain, paddleSkin, paddle, side) => {
+	const { paddleGeometry, paddleMaterial } = setPaddleAttributes(terrain, paddleSkin);
+	paddle.current = new THREE.Mesh(paddleGeometry, paddleMaterial);
+	paddle.current.position.set(side === 'left' ? -11 : 11, 0, 0);
+	paddle.current.castShadow = true;
+	scene.add(paddle.current);
+}
 
-	paddle1.current = new THREE.Mesh(paddleGeometry, paddleMaterial);
-	paddle1.current.position.set(-11, 0, 0);
-	paddle1.current.castShadow = true;
-	scene.add(paddle1.current);
+const addWall = (scene, terrain, side, walls) => {
+	const { wallGeometry, wallMaterial } = setWallAttributes(terrain);
 
-	paddle2.current = new THREE.Mesh(paddleGeometry, paddleMaterial);
-	paddle2.current.position.set(11, 0, 0);
-	paddle2.current.castShadow = true;
-	scene.add(paddle2.current);
+	const wall = new THREE.Mesh(wallGeometry, wallMaterial);
+	wall.position.set(side === 'left' ? -terrain.SCENEWIDTH / 2 - 1.5 : terrain.SCENEWIDTH / 2 + 1.5, 0, 0);
+	scene.add(wall);
+	walls.push(wall);
+}
+
+const addToScene = (scene, terrain, paddle1, paddle2, paddle1Skin, paddle2Skin, ball, walls) => {
+	const { ballGeometry, ballMaterial } = setBallAttributes(terrain);
+
+	addPaddle(scene, terrain, paddle1Skin, paddle1, 'left');
+	addPaddle(scene, terrain, paddle2Skin, paddle2, 'right');
 
 	ball.current = new THREE.Mesh(ballGeometry, ballMaterial);
 	ball.current.position.set(0, 0, 0);
 	ball.current.castShadow = true;
 	scene.add(ball.current);
 
-	// Add walls to surround the game
-	const wallThickness = 0;
-	const wallHeight = terrain.SCENEHEIGHT + wallThickness * 2 + 5;
-
-	const wallMaterial = new THREE.MeshPhysicalMaterial({
-		color: 0x666666,
-		reflectivity: 0.9,
-		roughness: 0.05,
-		thickness: 1.0,
-		transmission: 0.9,
-		ior: 1.5,
-		transparent: true,
-		opacity: 0.8,
-	});
-
-	const leftWall = new THREE.Mesh(new THREE.BoxGeometry(wallThickness, wallHeight, 2), wallMaterial);
-	leftWall.position.set(-terrain.SCENEWIDTH / 2 - 1.5 - wallThickness / 2, 0, 0);
-	scene.add(leftWall);
-	walls.push(leftWall);
-
-	const rightWall = new THREE.Mesh(new THREE.BoxGeometry(wallThickness, wallHeight, 2), wallMaterial);
-	rightWall.position.set(terrain.SCENEWIDTH / 2 + 1.5 + wallThickness / 2, 0, 0);
-	rightWall.rotateZ(Math.PI);
-	scene.add(rightWall);
-	walls.push(rightWall);
+	addWall(scene, terrain, 'left', walls);
+	addWall(scene, terrain, 'right', walls);
 }
 
-const GameCanvas = (canvas, paddle1, paddle2, ball, terrain, hit) => {
+const gameCanvas = (canvas, paddle1, paddle2, paddle1Skin, paddle2Skin, ball, terrain, hit) => {
 	const scene = new THREE.Scene();
 	const camera = new THREE.PerspectiveCamera(40, terrain.WIDTH / terrain.HEIGHT, 0.1, 1000);
 	camera.position.set(0, 0, 20.8);
 	camera.lookAt(0, 0, 0);
 
 	const walls = [];
-	AddToScene(scene, terrain, paddle1, paddle2, ball, walls);
+	addToScene(scene, terrain, paddle1, paddle2, paddle1Skin, paddle2Skin, ball, walls);
 
-	const lights = Lightning(scene, terrain, ball);
-	const particles = Particles(scene);
-	const dashedLine = DashedLine(scene, terrain);
+	const lights = addLights(scene, terrain, ball);
+	const particles = addParticles(scene);
+	const dashedLine = addDashedLine(scene, terrain);
 
 	const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 	renderer.setSize(terrain.WIDTH, terrain.HEIGHT);
@@ -109,18 +95,23 @@ const GameCanvas = (canvas, paddle1, paddle2, ball, terrain, hit) => {
 		if (hit && hit.current) {
 			const hitPosition = new THREE.Vector3(hit.current.x, hit.current.y, 0);
 			const ripplePosition = mapToRipplePlane(hitPosition, camera.position.z, -10);
-			particles.wave.amplitude = 5;
-			particles.wave.x = ripplePosition.x;
-			particles.wave.y = -ripplePosition.y;
-			particles.wave.radius = 5;
+
+			particles.waves.push({
+				amplitude: 5,
+				x: ripplePosition.x,
+				y: -ripplePosition.y,
+				radius: 5,
+				speed: 0.05
+			});
 			hit.current = null;
 
 			createParticleBurst(scene, hitPosition);
 		}
-		if (particles.wave.amplitude > 0) particles.animateWave();
+		if (particles.waves.length > 0) particles.animateWave();
+
 		animationFrameId = requestAnimationFrame(animate);
 	};
-	animate();
+	animationFrameId = requestAnimationFrame(animate);
 
 	const dispose = () => {
 		cancelAnimationFrame(animationFrameId);
@@ -161,4 +152,4 @@ const GameCanvas = (canvas, paddle1, paddle2, ball, terrain, hit) => {
 	return {renderer, camera, dispose};
 };
 
-export default GameCanvas;
+export default gameCanvas;

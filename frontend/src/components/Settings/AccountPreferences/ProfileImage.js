@@ -7,7 +7,7 @@ import {
 	ImageUploadLabel,
 } from '../styles/ProfileImage.styled';
 import { SubSectionHeading } from '../styles/Settings.styled';
-import { GetImage } from '../../../api/user';
+import { getImage } from '../../../api/user';
 import PongButton from '../../../styles/shared/PongButton.styled';
 import ErrorMessage from '../../../styles/shared/ErrorMessage.styled';
 import { useNotification } from '../../../context/NotificationContext';
@@ -29,7 +29,7 @@ const ImageSettings = ({ user, setFormData, handleChange }) => {
 			return;
 		}
 
-		GetImage(file)
+		getImage(file)
 			.then(image => {
 				setError('');
 				handleChange({ target: { id: type, value: image } });

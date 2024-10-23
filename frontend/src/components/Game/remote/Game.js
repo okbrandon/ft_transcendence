@@ -10,7 +10,6 @@ import { PageContainer } from "../styles/Game.styled";
 const Game = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const gameMode = location.state?.mode;
 	const [gameState, setGameState] = useState({
 		matchState: null,
 		player: null,
@@ -19,7 +18,7 @@ const Game = () => {
 	});
 	const [gameOver, setGameOver] = useState(false);
 	const [gameStarted, setGameStarted] = useState(false);
-	const [won, setWon] = useState(false);
+	const [endGameData, setEndGameData] = useState(null);
 
 	const [heartbeatIntervalTime, setHeartbeatIntervalTime] = useState(null);
 	const [hitPos, setHitPos] = useState(null);
@@ -36,7 +35,7 @@ const Game = () => {
 
 	const { sendMessage, lastMessage, readyState } = useWebSocket(process.env.REACT_APP_ENV === 'production' ? '/ws/match' : 'ws://localhost:8000/ws/match', {
 		onClose: event => { if (event.code === 1006) handleReconnect() },
-		shouldReconnect: () => true,
+		shouldReconnect: () => !gameOver,
 	});
 
 	const handleReconnect = useCallback(() => {
@@ -60,15 +59,21 @@ const Game = () => {
 		}));
 	}, [sendMessage]);
 
+	const retreiveGameMode = useCallback(() => {
+		if (location.pathname === '/game-ai') return 'ai';
+		if (location.pathname === '/game-classic') return '1v1';
+		return '';
+	}, [location.pathname]);
+
 	const handleHeartbeatAck = useCallback(() => {
 		heartbeatAckCount.current += 1;
 		if (heartbeatAckCount.current === 2) {
 			sendMessage(JSON.stringify({
 				e: 'MATCHMAKE_REQUEST',
-				d: { match_type: gameMode }
+				d: { match_type: retreiveGameMode() }
 			}));
 		}
-	}, [sendMessage, gameMode]);
+	}, [sendMessage, retreiveGameMode]);
 
 	// Send IDENTIFY message on connection open
 	useEffect(() => {
@@ -106,8 +111,9 @@ const Game = () => {
 					setBorderScore(data.d.player);
 					break;
 				case 'MATCH_END':
+					console.log(data.d);
 					setGameOver(true);
-					setWon(data.d.won);
+					setEndGameData(data.d);
 					break;
 				case 'HEARTBEAT_ACK':
 					handleHeartbeatAck();
@@ -128,6 +134,11 @@ const Game = () => {
 				case 'PADDLE_HIT':
 					setHitPos(data.d.ball);
 					break;
+				case 'BALL_HIT':
+					setHitPos(data.d.ball);
+					break;
+				case 'PADDLE_RATE_LIMIT': // ignoring
+					break;
 				default:
 					console.log('Unhandled message:', data);
 			}
@@ -142,6 +153,8 @@ const Game = () => {
 				playerSide={gameState.playerSide}
 			/>
 			<GameScene
+				player={gameState.player}
+				opponent={gameState.opponent}
 				matchState={gameState.matchState}
 				playerSide={gameState.playerSide}
 				hitPos={hitPos}
@@ -151,7 +164,7 @@ const Game = () => {
 				setActivateTimer={setActivateTimer}
 				gameStarted={gameStarted}
 				gameOver={gameOver}
-				won={won}
+				endGameData={endGameData}
 			/>
 		</PageContainer>
 	)

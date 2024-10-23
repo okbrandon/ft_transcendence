@@ -1,3 +1,4 @@
+import { getDate, getDuration } from '../scripts/match';
 import API from './api';
 import logger from './logger'
 
@@ -14,7 +15,7 @@ export const formatUserData = user => {
 	return user;
 };
 
-export const GetUser = async () => {
+export const getUser = async () => {
 	try {
 		logger('Getting current user...');
 		const res = await API.get(`users/@me/profile`);
@@ -26,7 +27,7 @@ export const GetUser = async () => {
 	}
 };
 
-export const GetUserByUsername = async (id) => {
+export const getUserById = async (id) => {
 	try {
 		logger('Getting user by username...');
 		const res = await API.get(`users/${id}/profile`);
@@ -39,7 +40,7 @@ export const GetUserByUsername = async (id) => {
 	}
 };
 
-export const GetUsers = async (input) => {
+export const getUsers = async (input) => {
 	try {
 		const res = await API.get(`users/search?content=${input}`);
 		const users = res.data.map(formatUserData);
@@ -50,7 +51,7 @@ export const GetUsers = async (input) => {
 	}
 }
 
-export const GetImage = async (file) => {
+export const getImage = async (file) => {
 	return new Promise((resolve, reject) => {
 		const reader = new FileReader();
 
@@ -82,4 +83,55 @@ export const GetImage = async (file) => {
 		reader.onerror = (error) => reject(error);
 		reader.readAsDataURL(file);
 	});
+}
+
+export const getSkin = async (id) => {
+	try {
+		const res = await API.get(`/users/${id}/settings`);
+		const selectedSkinId = res.data.selectedPaddleSkin;
+		let selectedSkin = null;
+
+		if (selectedSkinId) {
+			const skins = await API.get(`/store/items`);
+			selectedSkin = skins.data.find(item => item.itemID === selectedSkinId);
+		}
+
+		return selectedSkin?.assetID || null;
+	} catch (err) {
+		console.error(err?.response?.data?.error || 'An error occurred');
+		return null;
+	}
+}
+
+export const getMatchHistory = async (id) => {
+	try {
+		const res = await API.get(`/users/${id}/matches`);
+		const rawMatches = res.data;
+
+		const matches = rawMatches.map(match => {
+			const duration = getDuration(match.startedAt, match.finishedAt);
+			const date = getDate(match.finishedAt);
+			const playerA = formatUserData(match.playerA);
+			const playerB = formatUserData(match.playerB);
+
+			const me = playerA.userID === id ? playerA : playerB;
+			const opponent = playerA.userID === id ? playerB : playerA;
+			const meScore = match.scores?.[`${me.userID}`] || 0;
+			const opponentScore = match.scores?.[`${opponent.userID}`] || 0;
+			const winner = match.winnerID === id ? me : opponent;
+
+			return {
+				...match,
+				duration,
+				me: { ...me, score: meScore },
+				opponent: { ...opponent, score: opponentScore },
+				winner,
+				date
+			};
+		})
+		return matches;
+	} catch (err) {
+		console.error(err?.response?.data?.error || 'An error occurred');
+		return [];
+	}
 }

@@ -26,7 +26,7 @@ const Root = () => {
 				<RelationProvider>
 					{showPersistentUI && <ConnectedNavBar/>}
 					<main>
-						{showPersistentUI && <Chat/>}
+						<Chat/>
 						<Outlet/>
 					</main>
 					{showPersistentUI && <Footer/>}

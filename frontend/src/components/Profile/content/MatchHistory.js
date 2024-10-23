@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
-import { getDuration, getDate } from "../../../scripts/match";
 import { useTranslation } from "react-i18next";
 import { MatchCardTable, MatchHistoryContainer } from "../styles/Profile.styled";
+import { useNavigate } from "react-router-dom";
 
-const MatchHistory = ({ matchArray }) => {
+const MatchHistory = ({ userID, matches }) => {
+	const navigate = useNavigate();
 	const [visibleRows, setVisibleRows] = useState([]);
 	const containerRef = useRef(null);
 	const { t } = useTranslation();
@@ -24,7 +25,13 @@ const MatchHistory = ({ matchArray }) => {
 		setVisibleRows(newVisibleRows);
 	};
 
+	const handleProfileClick = (username) => {
+		window.scrollTo(0, 0);
+		navigate(`/profile/${username}`);
+	}
+
 	useEffect(() => {
+		if (!containerRef.current) return;
 		const container = containerRef.current;
 		container.addEventListener('scroll', handleScroll);
 		handleScroll();
@@ -35,35 +42,41 @@ const MatchHistory = ({ matchArray }) => {
 		<>
 			<h2>Match History</h2>
 			<MatchHistoryContainer>
-				{matchArray.length === 0 ? (
-					<p>{t('profile.matchHistory.noResults')}</p>
-				) : (
-					<MatchCardTable>
-						<thead>
-							<tr>
-								<th>{t('profile.matchHistory.table.opponent')}</th>
-								<th>{t('profile.matchHistory.table.duration')}</th>
-								<th>{t('profile.matchHistory.table.scores')}</th>
-								<th>{t('profile.matchHistory.table.results')}</th>
-								<th>{t('profile.matchHistory.table.date')}</th>
+				<MatchCardTable>
+					<thead>
+						<tr>
+							<th>{t('profile.matchHistory.table.opponent')}</th>
+							<th>{t('profile.matchHistory.table.duration')}</th>
+							<th>{t('profile.matchHistory.table.scores')}</th>
+							<th>{t('profile.matchHistory.table.results')}</th>
+							<th>{t('profile.matchHistory.table.date')}</th>
+						</tr>
+					</thead>
+					{matches.length === 0 ? (
+						<tbody>
+							<tr rowSpan="5">
+								<td>
+									{t('profile.matchHistory.noResults')}
+								</td>
 							</tr>
-						</thead>
+						</tbody>
+					) : (
 						<tbody ref={containerRef}>
-							{matchArray.map((match, index) => (
+							{matches.map((match, index) => (
 								<tr
 									key={index}
 									className={`match-card ${visibleRows.includes(index) ? "visible" : ""}`}
 								>
-									<td>{match.playerB.displayName}</td>
-									<td>{getDuration(match.startedAt, match.finishedAt)}</td>
-									<td>{match.scores.playerA} - {match.scores.playerB}</td>
-									<td>{match.scores.playerA > match.scores.playerB ? t('profile.matchHistory.table.victoryLabel') : t('profile.matchHistory.table.defeatLabel')}</td>
-									<td>{getDate(match.finishedAt)}</td>
+									<td className="profile hover" onClick={() => handleProfileClick(match.opponent.username)}>{match.opponent.displayName}</td>
+									<td>{match.duration}</td>
+									<td>{match.me.score} - {match.opponent.score}</td>
+									<td>{match.winner.userID === userID ? t('profile.matchHistory.table.victoryLabel') : t('profile.matchHistory.table.defeatLabel')}</td>
+									<td>{match.date}</td>
 								</tr>
 							))}
 						</tbody>
-					</MatchCardTable>
-				)}
+					)}
+				</MatchCardTable>
 			</MatchHistoryContainer>
 		</>
 	);

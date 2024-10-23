@@ -26,7 +26,7 @@ class StatCruncher():
 		matches = [match for match in matches if match['playerA']['id'] == user['userID'] or match['playerB']['id'] == user['userID']]
 
 		if start_date:
-			matches = [match for match in matches if match['finishedAt'] >= start_date]
+			matches = [match for match in matches if timezone.make_aware(match['finishedAt'].replace(tzinfo=None)) >= start_date]
 
 		played = len(matches)
 		wins = len([match for match in matches if match['winnerID'] == user['userID']])

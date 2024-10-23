@@ -29,18 +29,16 @@ class AuthRegister(APIView):
         try:
             data = self.validate_request_data(request.data)
         except ValidationError as ex:
-            return Response({"error": str(ex)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": ex}, status=status.HTTP_400_BAD_REQUEST)
 
         if User.objects.filter(username=data['username']).exists():
             return Response({"error": "Username is already taken"}, status=status.HTTP_409_CONFLICT)
 
         if User.objects.filter(email=data['email']).exists():
             return Response({"error": "Email is already in use"}, status=status.HTTP_409_CONFLICT)
-        
+
         if re.search(r'42$', data['username']):
             return Response({"error": "Username cannot end with '42'"}, status=status.HTTP_400_BAD_REQUEST)
-
-        skip_email_verification = os.environ.get('SKIP_EMAIL_VERIFICATION', '').lower() == 'true'
 
         skip_email_verification = os.environ.get('SKIP_EMAIL_VERIFICATION', '').lower() == 'true'
 
@@ -53,7 +51,6 @@ class AuthRegister(APIView):
             money=100000 if skip_email_verification else 0,
             flags=1 if skip_email_verification else 0  # Set EMAIL_VERIFIED flag if skipping verification
         )
-        serializer = UserSerializer(user)
 
         if not skip_email_verification:
             verification_code = generate_id('code')
@@ -81,7 +78,7 @@ class AuthRegister(APIView):
         if not validate_password(password):
             raise ValidationError("Invalid password. It must be at least 8 characters long, contain at least one lowercase letter, one uppercase letter, one digit, and one special character.")
         if not validate_lang(lang):
-            raise ValidationError("Unsupported language. Supported languages are 'en', 'fr' or 'es'.")
+            raise ValidationError("Unsupported language. Supported languages are 'EN', 'FR' or 'ES'.")
 
         return {
             "username": username,
@@ -238,7 +235,7 @@ class CheckOTP(APIView):
     def get(self, request, *args, **kwargs):
         user = request.user
         has_otp = user.mfaToken is not None and user.mfaToken != ""
-        
+
         return Response({
             "has_otp": has_otp
         }, status=status.HTTP_200_OK)

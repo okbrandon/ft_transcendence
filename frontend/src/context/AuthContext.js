@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { isValidToken } from '../api/api';
-import { GetUser } from '../api/user';
+import { getUser } from '../api/user';
 
 export const AuthContext = createContext();
 
@@ -11,7 +11,7 @@ const AuthProvider = ({ children }) => {
 
 	useEffect(() => {
 		if (isLoggedIn) {
-			GetUser()
+			getUser()
 				.then(user => {
 					setUser(user);
 					localStorage.setItem('userID', user.userID);

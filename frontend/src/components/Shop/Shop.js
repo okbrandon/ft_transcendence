@@ -13,56 +13,40 @@ import {
 } from "./styles/Shop.styled";
 import { useAuth } from "../../context/AuthContext";
 import API from "../../api/api";
+import { getUser } from "../../api/user";
 import Loader from "../../styles/shared/Loader.styled";
 import { useNotification } from "../../context/NotificationContext";
 import { useTranslation } from "react-i18next";
 
 const Shop = () => {
-	const { user, setUser, loading } = useAuth();
+	const { loading } = useAuth();
 	const { addNotification } = useNotification();
+	const [user, setUser] = useState(null);
 	const [purchasedItems, setPurchasedItems] = useState([]);
 	const [storeItems, setStoreItems] = useState([]);
 	const [selectedSkin, setSelectedSkin] = useState(null);
 	const { t } = useTranslation();
 
 	useEffect(() => {
-		API.get('/users/@me/settings')
-			.then(response => {
-				setSelectedSkin(response.data.selectedPaddleSkin);
-			})
-			.catch(err => {
-				addNotification('error', err?.response?.data?.error || 'An error occurred');
-			})
-	}, [addNotification]);
+		const fetchData = async () => {
+			try {
+				const [meUser, storeItems, purchasedItems, selectedSkin] = await Promise.all([
+					getUser(),
+					API.get('/store/items'),
+					API.get('/users/@me/purchases'),
+					API.get('/users/@me/settings'),
+				]);
 
-	const handleEquip = itemID => {
-		API.patch('/users/@me/settings', { selectedPaddleSkin: itemID })
-			.then(() => {
-				setSelectedSkin(itemID);
-			})
-			.catch(() => {
-				addNotification('error', `${t('store.equipError')}`);
-			})
-	};
-
-	useEffect(() => {
-		API.get('/store/items')
-			.then(response => {
-				setStoreItems(response.data);
-			})
-			.catch(err => {
+				setUser(meUser);
+				setStoreItems(storeItems.data);
+				setPurchasedItems(purchasedItems.data);
+				setSelectedSkin(selectedSkin.data.selectedPaddleSkin);
+			} catch (err) {
 				addNotification('error', err?.response?.data?.error || 'An error occurred');
-			});
-	}, [addNotification]);
+			}
+		}
 
-	useEffect(() => {
-		API.get('/users/@me/purchases')
-			.then(response => {
-				setPurchasedItems(response.data);
-			})
-			.catch(err => {
-				addNotification('error', err?.response?.data?.error || 'An error occurred');
-			});
+		fetchData();
 	}, [addNotification]);
 
 	const handlePurchase = item => {
@@ -83,7 +67,13 @@ const Shop = () => {
 			});
 	};
 
-	if (loading) {
+	const handleEquip = itemID => {
+		API.patch('/users/@me/settings', { selectedPaddleSkin: itemID })
+			.then(() => setSelectedSkin(itemID))
+			.catch(() => addNotification('error', `${t('store.equipError')}`));
+	};
+
+	if (loading || !user || !storeItems.length) {
 		return (
 			<ShopContainer>
 				<Loader/>

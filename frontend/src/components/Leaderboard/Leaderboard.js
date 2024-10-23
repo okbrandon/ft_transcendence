@@ -4,7 +4,7 @@ import TimeFrameButtons from './tools/TimeFrameButtons';
 import Podium from './Podium';
 import ScoreTable from './ScoreTable';
 import StatsDropdown from './tools/StatsDropdown';
-import { GetLeaderboard } from '../../api/leaderboard';
+import { getLeaderboard } from '../../api/leaderboard';
 
 const Leaderboard = () => {
 	const [timeFrame, setTimeFrame] = useState('lifetime');
@@ -12,7 +12,7 @@ const Leaderboard = () => {
 	const [leaderboardData, setLeaderboardData] = useState([]);
 
 	const fetchLeaderboardData = useCallback(async () => {
-		const data = await GetLeaderboard(timeFrame, stats);
+		const data = await getLeaderboard(timeFrame, stats);
 		setLeaderboardData(data);
 	}, [timeFrame, stats]);
 

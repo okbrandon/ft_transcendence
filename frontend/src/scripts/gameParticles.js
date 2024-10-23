@@ -30,7 +30,7 @@ const computeGeometry = () => {
 	return geometry;
 }
 
-export const Particles = scene => {
+export const addParticles = scene => {
 	const geometry = computeGeometry();
 	const material = new THREE.PointsMaterial({ size: 0.15, vertexColors: true });
 	const mesh = new THREE.Points(geometry, material);
@@ -38,40 +38,48 @@ export const Particles = scene => {
 	mesh.position.set(0, 0, -10);
 	scene.add(mesh);
 
-	let wave = { amplitude: 0, x: 0, y: 0, radius: 0, speed: 0.05 };
+	let waves = [];
 
 	const animateWave = () => {
 		const positions = geometry.attributes.position.array;
 		const nb = 50;
 
-		for (let i = 0; i < nb; i++) {
-			for (let j = 0; j < nb; j++) {
-				const index = (i * nb + j) * 3;
-				const x = positions[index];
-				const y = positions[index + 2];
+		for (let i = 0; i < nb * nb; i++) {
+			positions[i * 3 + 1] = 0;
+		}
 
-				// Distance from wave origin
-				const distance = Math.sqrt((x - wave.x) ** 2 + (y - wave.y) ** 2);
+		const indexToRemove = [];
 
-				// Ripple based on distance from the center and wave time
-				const rippleEffect = wave.amplitude * Math.sin(distance - wave.radius);
+		waves.forEach((wave, waveIndex) => {
+			for (let i = 0; i < nb; i++) {
+				for (let j = 0; j < nb; j++) {
+					const index = (i * nb + j) * 3;
+					const x = positions[index];
+					const y = positions[index + 2];
 
-				// Apply ripple height
-				if (distance < wave.radius) {
-					positions[index + 1] = rippleEffect;
-				} else {
-					positions[index + 1] = 0;
+					const distance = Math.sqrt((x - wave.x) ** 2 + (y - wave.y) ** 2);
+
+					const rippleEffect = wave.amplitude * Math.sin(distance - wave.radius);
+
+					if (distance < wave.radius) {
+						positions[index + 1] = rippleEffect;
+					}
 				}
 			}
+
+			wave.radius += wave.speed;
+			if (wave.amplitude > 0.05) {
+				wave.amplitude *= 0.98;
+			} else {
+				indexToRemove.push(waveIndex);
+			}
+		});
+
+		for (let i = indexToRemove.length - 1; i >= 0; i--) {
+			waves.splice(indexToRemove[i], 1);
 		}
 
 		geometry.attributes.position.needsUpdate = true;
-
-		wave.radius += wave.speed;
-
-		if (wave.amplitude > 0.05) {
-			wave.amplitude *= 0.98;
-		}
 	};
 
 	const dispose = () => {
@@ -80,7 +88,7 @@ export const Particles = scene => {
 		material.dispose();
 	};
 
-	return { animateWave, wave, dispose };
+	return { animateWave, waves, dispose };
 };
 
 export const createParticleBurst = (scene, position) => {

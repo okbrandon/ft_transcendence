@@ -28,25 +28,22 @@ class Leaderboard():
 
 		@method_decorator(cache_page(60 * 2, key_prefix='leaderboard'))
 		def get(self, request, *args, **kwargs):
-			period = request.query_params.get('period', 'lifetime')
 			requested_stats = request.query_params.get('stats', None)
 
-			return Leaderboard.get_leaderboard_response(period, requested_stats)
+			return Leaderboard.get_leaderboard_response("daily", requested_stats)
 
 	class Weekly(APIView):
 
 		@method_decorator(cache_page(60 * 2, key_prefix='leaderboard'))
 		def get(self, request, *args, **kwargs):
-			period = request.query_params.get('period', 'lifetime')
 			requested_stats = request.query_params.get('stats', None)
 
-			return Leaderboard.get_leaderboard_response(period, requested_stats)
+			return Leaderboard.get_leaderboard_response("weekly", requested_stats)
 
 	class Lifetime(APIView):
 
 		@method_decorator(cache_page(60 * 2, key_prefix='leaderboard'))
 		def get(self, request, *args, **kwargs):
-			period = request.query_params.get('period', 'lifetime')
 			requested_stats = request.query_params.get('stats', None)
 
-			return Leaderboard.get_leaderboard_response(period, requested_stats)
+			return Leaderboard.get_leaderboard_response("lifetime", requested_stats)

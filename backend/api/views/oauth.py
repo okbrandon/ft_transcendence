@@ -1,5 +1,6 @@
 import requests
 import os
+import base64
 
 from django.conf import settings
 from django.shortcuts import redirect
@@ -49,12 +50,32 @@ class OAuth42Callback(APIView):
             return JsonResponse({"error": "Failed to retrieve user information"}, status=status.HTTP_400_BAD_REQUEST)
 
         user_info = user_info_response.json()
+        encoded_avatar = None
+
+        if 'image' in user_info:
+            avatar_data = requests.get(user_info['image']['link']).content
+            avatar_path = f"avatar_{user_info['login']}.jpg"
+            media_root = settings.MEDIA_ROOT
+
+            if not os.path.exists(media_root):
+                os.makedirs(media_root)
+
+            # Save the avatar to the media root
+            with open(f'{media_root}/{avatar_path}', 'wb') as f:
+                f.write(avatar_data)
+
+            # Encode the avatar to base64
+            with open(f'{media_root}/{avatar_path}', 'rb') as f:
+                encoded_avatar = base64.b64encode(f.read()).decode('utf-8')
+
+            os.remove(f'{media_root}/{avatar_path}')
+
         user, created = User.objects.get_or_create(oauthAccountID=user_info['id'], defaults={
             'username': user_info['login'] + '42',
             'userID': generate_id('user'),
             'email': user_info['email'],
-            'avatarID': user_info['image']['link'] if 'image' in user_info else None,
-            'lang': 'en',
+            'avatarID': f"data:image/jpeg;base64,{encoded_avatar}" if encoded_avatar else None,
+            'lang': 'EN',
             'oauthAccountID': user_info['id'],
             'flags': 1, # EMAIL_VERIFIED
         })

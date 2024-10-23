@@ -20,6 +20,7 @@ class BotProgram:
 	def __init__(self, **kwargs) -> None:
 		self.config = get_config()
 		self.ws_connection = None
+		self.move_task = None
 		self.heartbeat_task = None
 		self.heartbeat_interval = None
 		self.heartbeat_ack = 0
@@ -29,7 +30,7 @@ class BotProgram:
 		self.match_started = False
 		self.match_data = None
 		self.bot_data = BotData()
-		self.last_move_sent = 0
+		self.last_move_sent = time.time()
 
 		self.host = kwargs.get('host', None)
 		self.port = kwargs.get('port', None)
@@ -64,7 +65,6 @@ class BotProgram:
 	async def handle_match_update(self):
 		self.bot_data.update_match_data(self.match_data)
 		try:
-			# self.bot_data.bot_action_predictor.velocity_estimator.update_velocity(self.match_data.ball_data.x, self.match_data.ball_data.y)
 			self.bot_data.bot_action_predictor.velocity_estimator.vx = self.match_data.ball_data.dx
 			self.bot_data.bot_action_predictor.velocity_estimator.vy = self.match_data.ball_data.dy
 			if self.bot_data.should_predict:
@@ -75,11 +75,20 @@ class BotProgram:
 			logger.error(f"[{self.__class__.__name__} | MatchID: {self.match_id}] Error: {type(e).__name__} - {e}")
 
 	async def handle_match_move(self):
-		current_time = time.time()
+		now = time.time()
 
-		if (current_time - self.last_move_sent) * 1000 >= self.config['fps_interval_ms']:
-			await self.bot_data.bot_action_predictor.send_predicted_action(self.ws_connection)
-			self.last_move_sent = current_time
+		if now - self.last_move_sent < self.config['paddle']['move_rate']:
+			return
+		await self.bot_data.bot_action_predictor.send_predicted_action(self.ws_connection)
+		self.last_move_sent = now
+
+	async def handle_paddle_move(self):
+		while True:
+			if not self.ws_connection:
+				return
+			if self.is_identified and self.match_started:
+				await self.handle_match_move()
+			await asyncio.sleep(self.config['paddle']['move_rate'])
 
 	async def handle_identify(self):
 		await self.ws_connection.send(json.dumps({
@@ -106,6 +115,7 @@ class BotProgram:
 				case 'HELLO':
 					self.heartbeat_interval = int(data.get('heartbeat_interval', 1000))
 					self.heartbeat_task = asyncio.create_task(self.heartbeat())
+					self.move_task = asyncio.create_task(self.handle_paddle_move())
 					self.bot_data.bot_action_predictor = BotActionPredictor()
 				case 'HEARTBEAT_ACK':
 					self.heartbeat_ack += 1
@@ -136,7 +146,6 @@ class BotProgram:
 							position=paddle_data.get('pos', 'Unknown')
 						)
 					)
-					await self.handle_match_move()
 				case 'PADDLE_HIT':
 					event_data = data.get('d', {})
 					player_data = event_data.get('player', {})
@@ -147,6 +156,9 @@ class BotProgram:
 					self.bot_data.should_predict = True
 					await self.handle_match_update()
 					self.bot_data.bot_action_predictor.predict_action(self.match_data)
+				case 'PADDLE_RATE_LIMIT':
+					logger.info(f"[{self.__class__.__name__} | MatchID: {self.match_id}] AI has been rate limited")
+					self.bot_data.bot_action_predictor.paddle_state.refund_last_move()
 				case _:
 					event_data = data.get('d', {})
 					logger.info(f"[{self.__class__.__name__} | MatchID: {self.match_id}] Event: {event} - {event_data}")
@@ -167,13 +179,15 @@ class BotProgram:
 				while True:
 					message = await ws.recv()
 					await self.handle_message(message)
-		except websockets.exceptions.ConnectionClosedError:
-			logger.info(f"[{self.__class__.__name__} | MatchID: {self.match_id}] Connection closed")
+		except websockets.exceptions.ConnectionClosedError as e:
+			logger.info(f"[{self.__class__.__name__} | MatchID: {self.match_id}] Connection closed with code: {e.code}")
 		except Exception as e:
 			logger.error(f"[{self.__class__.__name__} | MatchID: {self.match_id}] Error: {type(e).__name__} - {e}")
 		finally:
 			logger.info(f"[{self.__class__.__name__} | MatchID: {self.match_id}] Terminating listen process")
 			if self.heartbeat_task:
 				self.heartbeat_task.cancel()
+			if self.move_task:
+				self.move_task.cancel()
 			if self.listen_process:
 				self.listen_process.close()

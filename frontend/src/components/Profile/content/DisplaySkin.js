@@ -12,10 +12,12 @@ const DisplaySkin = ({ currentSkin }) => {
 
 		if (skin) {
 			const paddleTexture = textureLoader.load(`/images/skins/${skin}`, texture => {
-				texture.wrapS = THREE.RepeatWrapping;
-				texture.wrapT = THREE.RepeatWrapping;
-				texture.flipY = false;
-				texture.repeat.set(20 / 120, 20 / 120);
+				texture.wrapS = THREE.ClampToEdgeWrapping;
+				texture.wrapT = THREE.ClampToEdgeWrapping;
+				texture.flipY = true;
+				texture.offset.set(0.5, 0.5);
+				texture.repeat.set(0.1, 0.1);
+				texture.needsUpdate = true;
 			});
 
 			return new THREE.MeshLambertMaterial({
@@ -56,7 +58,7 @@ const DisplaySkin = ({ currentSkin }) => {
 		// Create paddle shape and mesh
 		const paddleShape = roundedRectShape(5, 1, 0.2);
 		const extrudeSettings = { depth: 0.5, bevelEnabled: false };
-		const paddleGeometry = new THREE.ExtrudeGeometry(paddleShape, extrudeSettings);
+		const paddleGeometry = new THREE.ExtrudeGeometry(paddleShape, extrudeSettings).center();
 		const mesh = new THREE.Mesh(paddleGeometry, paddleMaterial);
 		mesh.castShadow = true;
 		scene.add(mesh);

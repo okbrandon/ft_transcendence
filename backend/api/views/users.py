@@ -49,22 +49,24 @@ class UserProfileMe(APIView):
 
             for field in allowed_fields:
                 if field in data:
-                    if field == 'username' and me.oauthAccountID:
+                    if field == 'username' and me.oauthAccountID and data[field] != me.username:
                         return Response({"error": "Cannot change username for OAuth accounts."}, status=status.HTTP_400_BAD_REQUEST)
-                    elif field == 'username':
+                    elif field == 'username' and data[field] != me.username:
                         if not validate_username(data[field]):
                             return Response({"error": "Invalid username. Username must be 4-16 characters long and contain only alphanumeric characters and cannot end with '42'."}, status=status.HTTP_400_BAD_REQUEST)
                         if User.objects.filter(username=data[field]).exclude(id=me.id).exists():
                             return Response({"error": "Username is already taken"}, status=status.HTTP_409_CONFLICT)
                     elif field == 'displayName' and not validate_displayname(data[field]):
                         return Response({"error": "Invalid display name. Display name must be 4-16 characters long and contain only alphanumeric characters or null."}, status=status.HTTP_400_BAD_REQUEST)
+                    elif field == 'bio' and not validate_bio(data[field]):
+                        return Response({"error": "Invalid bio. Bio must be 280 characters or less."}, status=status.HTTP_400_BAD_REQUEST)
                     elif field == 'email':
                         if not validate_email(data[field]):
                             return Response({"error": "Invalid email. Email must be a valid format and no longer than 64 characters."}, status=status.HTTP_400_BAD_REQUEST)
                         if User.objects.filter(email=data[field]).exclude(id=me.id).exists():
                             return Response({"error": "Email is already in use"}, status=status.HTTP_409_CONFLICT)
                     elif field == 'lang' and not validate_lang(data[field]):
-                        return Response({"error": "Invalid language. Supported languages are 'en', 'fr', and 'es'."}, status=status.HTTP_400_BAD_REQUEST)
+                        return Response({"error": "Invalid language. Supported languages are 'EN', 'FR', and 'ES'."}, status=status.HTTP_400_BAD_REQUEST)
                     elif field in ['avatarID', 'bannerID'] and not validate_image(data[field]):
                         return Response({"error": f"Invalid {field}. Image must be a valid base64 encoded string and no larger than 1MB."}, status=status.HTTP_400_BAD_REQUEST)
                     elif field == 'phone_number' and not validate_phone_number(data[field]):
@@ -156,14 +158,6 @@ class UserProfile(APIView):
             profile['relationship'] = None
 
         return Response(profile, status=status.HTTP_200_OK)
-
-class UserMatches(APIView):
-    def get(self, request, userID, *args, **kwargs):
-        user = User.objects.get(userID=userID)
-        matches = Match.objects.all()
-        matches = [match for match in matches if match.playerA['id'] == user.userID or match.playerB['id'] == user.userID]
-        serializer = MatchSerializer(matches, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class UserDeleteMe(APIView):
     def get(self, request, *args, **kwargs):
@@ -356,6 +350,8 @@ class UserRelationshipsMe(APIView):
             if me.userID != relationship.userA:
                 self.notify_chat_websocket(relationship, status="rejected")
 
+        self.notify_chat_websocket(relationship, status="deleted")
+
         relationship.delete()
 
         return Response({"status": "Relationship deleted"}, status=status.HTTP_200_OK)
@@ -364,9 +360,11 @@ class UserRelationshipsMe(APIView):
         channel_layer = get_channel_layer()
 
         if status == "accepted" or status == "rejected":
-            group_name = f"chat_{relationship.userA}"
+            group_names = [f"chat_{relationship.userA}"]
         elif status == "pending":
-            group_name = f"chat_{relationship.userB}"
+            group_names = [f"chat_{relationship.userB}"]
+        elif status == "deleted":
+            group_names = [f"chat_{relationship.userA}", f"chat_{relationship.userB}"]
         else:
             return
 
@@ -380,31 +378,79 @@ class UserRelationshipsMe(APIView):
         except User.DoesNotExist:
             return
 
-        try:
-            async_to_sync(channel_layer.group_send)(
-                group_name,
-                {
-                    "type": "friend_request",
-                    "status": status,
-                    "data": {
-                        "type": "relationship",
-                        "relationshipID": relationship.relationshipID,
-                        "from": get_safe_profile(UserSerializer(from_user).data, me=False),
-                        "to": get_safe_profile(UserSerializer(to_user).data, me=False)
+        for group_name in group_names:
+            try:
+                async_to_sync(channel_layer.group_send)(
+                    group_name,
+                    {
+                        "type": "friend_request",
+                        "status": status,
+                        "data": {
+                            "type": "relationship",
+                            "relationshipID": relationship.relationshipID,
+                            "from": get_safe_profile(UserSerializer(from_user).data, me=False),
+                            "to": get_safe_profile(UserSerializer(to_user).data, me=False)
+                        }
                     }
-                }
-            )
-        except Exception as _:
-            logger.error(f"Failed to send friend request notification. Group: {group_name}")
+                )
+            except Exception as _:
+                logger.error(f"Failed to send friend request notification. Group: {group_name}")
 
+class UserMatches(APIView):
+    def get(self, request, userID, *args, **kwargs):
+        user = User.objects.get(userID=userID)
+        matches = Match.objects.all()
+        matches = [match for match in matches if match.playerA['id'] == user.userID or match.playerB['id'] == user.userID]
+
+        tempered_matches = []
+        for match in matches:
+            match_data = MatchSerializer(match).data
+            serialized_playerA = UserSerializer(User.objects.get(userID=match_data['playerA']['id'])).data
+            serialized_playerB = UserSerializer(User.objects.get(userID=match_data['playerB']['id'])).data
+            match_playerA = get_safe_profile(serialized_playerA, me=False)
+            match_playerB = get_safe_profile(serialized_playerB, me=False)
+
+            tempered_matches.append({
+                "matchID": match_data['matchID'],
+                "playerA": match_playerA,
+                "playerB": match_playerB,
+                "scores": match_data['scores'],
+                "winnerID": match_data['winnerID'],
+                "startedAt": match_data['startedAt'],
+                "finishedAt": match_data['finishedAt'],
+                "flags": match_data['flags']
+            })
+
+        tempered_matches.sort(key=lambda x: x['finishedAt'], reverse=True)
+        return Response(tempered_matches, status=status.HTTP_200_OK)
 
 class UserMatchesMe(APIView):
     def get(self, request, *args, **kwargs):
         me = request.user
         matches = Match.objects.all()
         matches = [match for match in matches if match.playerA['id'] == me.userID or match.playerB['id'] == me.userID]
-        serializer = MatchSerializer(matches, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+
+        tempered_matches = []
+        for match in matches:
+            match_data = MatchSerializer(match).data
+            serialized_playerA = UserSerializer(User.objects.get(userID=match_data['playerA']['id'])).data
+            serialized_playerB = UserSerializer(User.objects.get(userID=match_data['playerB']['id'])).data
+            match_playerA = get_safe_profile(serialized_playerA, me=False)
+            match_playerB = get_safe_profile(serialized_playerB, me=False)
+
+            tempered_matches.append({
+                "matchID": match_data['matchID'],
+                "playerA": match_playerA,
+                "playerB": match_playerB,
+                "scores": match_data['scores'],
+                "winnerID": match_data['winnerID'],
+                "startedAt": match_data['startedAt'],
+                "finishedAt": match_data['finishedAt'],
+                "flags": match_data['flags']
+            })
+
+        tempered_matches.sort(key=lambda x: x['finishedAt'], reverse=True)
+        return Response(tempered_matches, status=status.HTTP_200_OK)
 
 class UserSearch(APIView):
     def get(self, request, *args, **kwargs):

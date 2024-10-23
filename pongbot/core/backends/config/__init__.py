@@ -12,11 +12,9 @@ def get_config():
 		},
 		"paddle": {
 			"height": PADDLE_HEIGHT,
-			"speed": PADDLE_SPEED
+			"speed": PADDLE_SPEED,
+			"move_rate": PADDLE_MOVE_RATE
 		},
 		"left_side_paddle_x": LEFT_SIDE_PADDLE_X,
-		"right_side_paddle_x": RIGHT_SIDE_PADDLE_X,
-		"required_params": REQUIRED_PARAMS,
-		"fps_interval_ms": FPS_INTERVAL_MS,
-		"min_send_interval_ms": MIN_SEND_INTERVAL_MS
+		"right_side_paddle_x": RIGHT_SIDE_PADDLE_X
 	}

@@ -4,11 +4,11 @@ import { getNumberOfMatchesPerMonth } from "../../../scripts/match";
 import { LineStatsContainer } from "../styles/Stats.styled";
 import { useTranslation } from "react-i18next";
 
-const LineStats = ({ matchArray }) => {
+const LineStats = ({ matches }) => {
 	const { t } = useTranslation();
 	const series = [{
 		name: t('profile.stats.line.title'),
-		data: getNumberOfMatchesPerMonth(matchArray),
+		data: getNumberOfMatchesPerMonth(matches),
 	}];
 	const months = [
 		'january', 'february', 'march', 'april', 'may', 'june',
@@ -52,6 +52,9 @@ const LineStats = ({ matchArray }) => {
 		grid: {
 			borderColor: '#2e2e3d',
 		},
+		tooltip: {
+			theme: 'dark'
+		}
 	};
 
 	return (
