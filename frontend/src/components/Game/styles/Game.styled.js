@@ -176,6 +176,34 @@ export const OverlayContainer = styled.div`
 	}
 `;
 
+export const RewardsContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	background-color: rgba(25, 25, 25, 1);
+	padding: 40px 50px;
+	border-radius: 10px;
+
+	& > p {
+		margin: 0;
+		padding: 0;
+		display: grid;
+		grid-template-columns: 180px auto;
+		font-family: 'Poppins', sans-serif;
+		font-size: 1.5rem;
+		color: #fff;
+		align-items: center;
+
+		.label {
+			font-weight: 500;
+		}
+	}
+
+	i {
+		color: #FFD700;
+	}
+`;
+
 export const Timer = styled.div`
 	font-family: 'Orbitron', sans-serif;
 	font-size: 5rem;
