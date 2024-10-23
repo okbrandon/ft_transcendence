@@ -51,9 +51,9 @@ const RelationProvider = ({ children }) => {
 		API.get('users/@me/relationships')
 			.then(relationships => {
 				setRelations(relationships.data);
-				setFriends(getFriends(relationships.data, userID));
-				setRequests(getRequests(relationships.data, userID));
-				setBlockedUsers(getBlockedUsers(relationships.data, userID));
+				setFriends(getFriends(relationships.data, userID.current));
+				setRequests(getRequests(relationships.data, userID.current));
+				setBlockedUsers(getBlockedUsers(relationships.data, userID.current));
 
 				// handle conversations when there is a change in relation status
 				return API.get('chat/conversations');
