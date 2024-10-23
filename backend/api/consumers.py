@@ -179,7 +179,6 @@ class StatusConsumer(AsyncWebsocketConsumer):
 
 class ChatConsumer(AsyncWebsocketConsumer):
 
-
     async def connect(self):
         self.user = None
 
@@ -295,6 +294,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def friend_request(self, event):
         try:
+            if event["status"] == "accepted":
+                await self.ensure_conversations_exist(self.user)
+
             await self.send(json.dumps({
                 "type": "friend_request",
                 "status": event["status"],
