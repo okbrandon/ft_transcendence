@@ -110,8 +110,17 @@ const ProfilePicture = ({ user, profileUser, relation, setIsRefetch }) => {
 									type="button"
 									onClick={handleRemoveFriend}
 								>
-									<i className="bi bi-person-dash-fill"/>
-									{relation[0].status === 0 ? 'Cancel Request' : 'Remove Friend'}
+									{disableBlockUser ? (
+										<>
+											<i className="bi bi-bandaid"/>
+											Cancel Block
+										</>
+									) : (
+										<>
+											<i className="bi bi-person-dash-fill"/>
+											{relation[0].status === 0 ? 'Cancel Request' : 'Remove Friend'}
+										</>
+									)}
 								</ActionButton>
 							) : (
 								<ActionButton
