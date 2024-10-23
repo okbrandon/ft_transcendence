@@ -214,6 +214,11 @@ const RelationProvider = ({ children }) => {
 		setBlockedUsers,
 		isRefetch,
 		setIsRefetch,
+
+		directMessage,
+		setDirectMessage,
+		handleSelectChat,
+		handleCloseChat,
 	}), [relations, friends, requests, blockedUsers, isRefetch, conversations, sendMessage]);
 
 	return (
