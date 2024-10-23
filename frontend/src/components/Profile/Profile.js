@@ -28,10 +28,12 @@ const Profile = () => {
 	const userID = localStorage.getItem('userID');
 
 	useEffect(() => {
+		console.log('passing setIsRefetch');
 		setIsRefetch(true);
 	}, [setIsRefetch]);
 
 	useEffect(() => {
+		console.log('passing setShowLoader');
 		if (!profileUser || !relation || !matches) {
 			setShowLoader(true);
 		} else {
@@ -41,6 +43,7 @@ const Profile = () => {
 
 	useEffect(() => {
 		if (!profileUser) return;
+		console.log('passing getMatchHistory');
 		setShowLoader(true);
 		getMatchHistory(profileUser.userID)
 			.then(data => {
@@ -54,6 +57,7 @@ const Profile = () => {
 	// Get user data and relation data of the user
 	useEffect(() => {
 		if (username && relations) {
+			console.log('passing getUserById');
 			getUserById(username)
 				.then(user => {
 					if (user.userID === userID) return getUser();
@@ -76,6 +80,7 @@ const Profile = () => {
 	// Get selected skin of the user
 	useEffect(() => {
 		if (!profileUser) return;
+		console.log('passing getSkin');
 		getSkin(profileUser.userID)
 			.then(skin => {
 				setCurrentSkin(skin)
