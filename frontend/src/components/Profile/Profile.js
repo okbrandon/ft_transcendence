@@ -39,8 +39,6 @@ const Profile = () => {
 		const fetchProfileData = async () => {
 			try {
 				if (username && relations && hasRefetched && !isRefetch) {
-
-					if (profileUser && profileUser.username === username) return;
 					let profilePageUser = null;
 					if (user.username === username) {
 						profilePageUser = await getUser();
@@ -64,7 +62,7 @@ const Profile = () => {
 		};
 
 		fetchProfileData();
-	}, [addNotification, navigate, relations, username, profileUser, isRefetch, hasRefetched, user]);
+	}, [addNotification, navigate, relations, username, isRefetch, hasRefetched, user]);
 
 	// Get selected skin of the user
 	useEffect(() => {
