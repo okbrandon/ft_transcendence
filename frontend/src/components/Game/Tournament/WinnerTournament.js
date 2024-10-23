@@ -10,17 +10,14 @@ import {
 import Confetti from 'react-confetti';
 
 const WinnerTournament = ({ winnerID }) => {
-	const [showConfetti, setShowConfetti] = useState(true);
-	const [confettiOpacity, setConfettiOpacity] = useState(1);
+	const [confettiActive, setConfettiActive] = useState(true);
 
 	useEffect(() => {
-		const fadeOutTimer = setTimeout(() => {
-			setConfettiOpacity(0);
-			const stopConfettiTimer = setTimeout(() => setShowConfetti(false), 1000);
-			return () => clearTimeout(stopConfettiTimer);
-		}, 5000);
+		// Fade out confetti after 5 seconds
+		const timer = setTimeout(() => setConfettiActive(false), 5000);
 
-		return () => clearTimeout(fadeOutTimer);
+		// Cleanup timer on component unmount
+		return () => clearTimeout(timer);
 	}, []);
 
 	return (
@@ -31,10 +28,12 @@ const WinnerTournament = ({ winnerID }) => {
 				<WinnerUsername>Prune</WinnerUsername>
 				<WinnerPrize>Prize: 42 🪙</WinnerPrize>
 			</WinnerContainer>
-			{showConfetti && (
+			{confettiActive && (
 				<Confetti
+					recycle={false}
+					numberOfPieces={300}
 					style={{
-						opacity: confettiOpacity,
+						opacity: confettiActive ? 1 : 0,
 						transition: 'opacity 1s ease-out',
 					}}
 				/>

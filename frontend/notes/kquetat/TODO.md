@@ -8,8 +8,6 @@
 - Search friends component:
 	- Implement the Invite button, (TODO LATER : waiting for gameserver)
 
-- Implement status (online, offline) [x]
-
 ## To-do List *of the day*:
 
 - [ ]  Tournament Winner Page:

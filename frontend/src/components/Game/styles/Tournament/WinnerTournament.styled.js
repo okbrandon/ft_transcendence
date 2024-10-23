@@ -18,14 +18,27 @@ export const WinnerPageContainer = styled.div`
 	justify-content: center;
 	height: 100vh;
 	width: 100%;
-	background: radial-gradient(circle at 20% 20%, rgba(75, 0, 130, 0.2), transparent 50%),
-				radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.2), transparent 50%),
-				linear-gradient(135deg, #000000 0%, #111111 100%);
+	background: radial-gradient(circle at 30% 30%, rgba(75, 0, 130, 0.25), transparent 40%),
+				radial-gradient(circle at 70% 70%, rgba(59, 130, 246, 0.25), transparent 40%),
+				linear-gradient(135deg, #111111 0%, #222222 100%);
+	padding: 20px;
+	text-align: center;
+
+	@media (max-width: 768px) {
+		padding: 10px;
+	}
 `;
 
 export const WinnerText = styled.h1`
-	font-size: 2rem;
+	font-size: 2.5rem;
 	color: #fff;
+	text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+	margin-bottom: 20px;
+	animation: ${fadeIn} 2s ease-in-out;
+
+	@media (max-width: 768px) {
+		font-size: 2rem;
+	}
 `;
 
 export const WinnerContainer = styled.div`
@@ -33,36 +46,58 @@ export const WinnerContainer = styled.div`
 	flex-direction: column;
 	align-items: center;
 	justify-content: space-around;
-	background: rgba(5, 5, 5, 0.8);
+	background: rgba(15, 15, 15, 0.85);
 	margin: 20px auto;
 	border: 1px solid rgba(255, 255, 255, 0.1);
-	padding: 20px;
+	padding: 30px;
 	border-radius: 20px;
-	box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1), 0 0 15px rgba(164, 69, 178, 0.3);
+	box-shadow: 0 8px 30px rgba(255, 255, 255, 0.1), 0 0 20px rgba(164, 69, 178, 0.3);
 	max-width: 1200px;
+	animation: ${fadeIn} 2s ease-in-out;
+
+	@media (max-width: 768px) {
+		padding: 20px;
+	}
 `;
 
 export const WinnerImage = styled.img`
 	width: 250px;
 	height: 250px;
-	border-radius: 20px;
+	border-radius: 50%;
 	object-fit: cover;
 	object-position: center;
 	margin-bottom: 20px;
+	border: 2px solid #6a0dad;
 	animation: ${fadeIn} 2s ease-in-out;
-	border: 1px solid #333;
+
+	@media (max-width: 768px) {
+		width: 200px;
+		height: 200px;
+	}
 `;
 
 export const WinnerUsername = styled.h2`
-	font-size: 1.5rem;
+	font-size: 2rem;
 	color: #fff;
+	margin-bottom: 10px;
+	text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
 	animation: ${fadeIn} 1.5s ease-in-out;
+
+	@media (max-width: 768px) {
+		font-size: 1.5rem;
+	}
 `;
 
 export const WinnerPrize = styled.div`
+	font-size: 1.25rem;
+	color: #ffd700;
 	display: flex;
-	flex-direction: row;
 	align-items: center;
 	justify-content: center;
+	margin-top: 10px;
 	animation: ${fadeIn} 1s ease-in-out;
+
+	@media (max-width: 768px) {
+		font-size: 1rem;
+	}
 `;
