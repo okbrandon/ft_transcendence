@@ -33,7 +33,8 @@ def create_store_items(sender, **kwargs):
             StoreItem.objects.create(**item)
 
 def create_ai_account(sender, **kwargs):
-    from .models import User
+    import random
+    from .models import User, UserSettings, StoreItem, Purchase
 
     if not User.objects.filter(userID="user_ai").exists():
         encoded_avatar = None
@@ -50,6 +51,16 @@ def create_ai_account(sender, **kwargs):
             avatarID=f"data:image/jpeg;base64,{encoded_avatar}",
             flags=3
         )
+
+    settings, _ = UserSettings.objects.get_or_create(userID="user_ai")
+    store_items = StoreItem.objects.all()
+
+    for item in store_items:
+        _, _ = Purchase.objects.get_or_create(userID="user_ai", itemID=item.itemID, purchaseID=generate_id("purchase"))
+
+    selected_skin = random.choice(store_items).itemID
+    settings.selectedPaddleSkin = selected_skin
+    settings.save()
 
 def delete_unfinished_matches(sender, **kwargs):
     from .models import Match
