@@ -17,7 +17,7 @@ from django.utils import timezone
 
 from .models import Conversation, User, Relationship, Match, UserSettings
 from .util import generate_id, get_safe_profile, get_user_id_from_token
-from .serializers import UserSerializer, UserSettingsSerializer
+from .serializers import UserSerializer, UserSettingsSerializer, MessageSerializer
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -247,8 +247,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         raise Exception("Missing content")
 
                     logger.info(f"[{self.__class__.__name__}] Received message from {self.user.username}: {json_data}")
-                    await self.add_message_to_conversation(conversation_id, self.user, content)
-                    await self.notify_new_message(conversation_id, self.user, content)
+                    message = await self.add_message_to_conversation(conversation_id, self.user, content)
+                    await self.notify_new_message(conversation_id, self.user, message)
 
                 case _:
                     raise Exception(f"Invalid message type: {message_type}")
@@ -280,7 +280,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     "type": "conversation_update",
                     "conversationID": conversation_id,
                     "sender": safe_profile,
-                    "message": message
+                    "message": MessageSerializer(message).data
                 }
             )
 
@@ -318,8 +318,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if user not in conversation.participants.all():
             raise Exception(f"User {user.username} is not part of conversation {conversation_id}")
 
-        conversation.messages.create(messageID=generate_id("msg"), sender=user, content=content)
+        message = conversation.messages.create(messageID=generate_id("msg"), sender=user, content=content)
         conversation.save()
+        return message
 
     @sync_to_async
     def ensure_conversations_exist(self, user):
