@@ -92,7 +92,7 @@ class TournamentManager:
 
     @sync_to_async
     def get_matches(self):
-        matches = Match.objects.filter(tournament=self.tournament)
+        matches = Match.objects.filter(tournament=self.tournament).order_by('startedAt')
         result = []
         for match in matches:
             players = [get_safe_profile(UserSerializer(user).data, me=False) for user in match.whitelist.all()]
@@ -164,6 +164,7 @@ class TournamentManager:
         self.tournament.save()
         final_match = Match.objects.filter(tournament=self.tournament).order_by('-startedAt').first()
         if final_match and final_match.winnerID:
+            logger.info("final match: ", final_match.matchID)
             winner = User.objects.get(userID=final_match.winnerID)
             self.tournament.winnerID = winner.userID
             self.tournament.save()
@@ -401,7 +402,7 @@ class TonneruConsumer(AsyncJsonWebsocketConsumer):
         matches = await self.tournament_manager.setup_tournament()
 
     async def start_next_match(self):
-        current_match, ended = await self.tournament_manager.start_next_match()
+        current_match = await self.tournament_manager.start_next_match()
         if current_match:
             if 'winner' in current_match:
                 await self.channel_layer.group_send(

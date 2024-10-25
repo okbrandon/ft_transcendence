@@ -474,10 +474,9 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                 'playerA': {'id': match.playerA['id'], 'paddle_y': 375, 'pos': 'A'},
                 'playerB': {'id': match.playerB['id'] if match.playerB else None, 'paddle_y': 375, 'pos': 'B'},
                 'ball': {},
-                'scores': {match.playerA['id']: 0},
+                'scores': {match.playerA['id']: 0 if match.playerB else None, match.playerB['id']: 0},
                 'spectators': [],
-                'rewards': {match.playerA['id']: {'xp': 0, 'money': 0}},
-                'spectators': []
+                'rewards': {match.playerA['id']: {'xp': 0, 'money': 0} if match.playerB else None, match.playerB['id']: {'xp': 0, 'money': 0}},
             }
             self.reset_ball(self.active_matches[match.matchID])
             logger.info(f"[{self.__class__.__name__}] New match state initialized for match: {match.matchID}")
@@ -600,8 +599,9 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                     'playerA': {'id': match.playerA['id'], 'paddle_y': 375, 'pos': 'A'},
                     'playerB': {'id': match.playerB['id'] if match.playerB else None, 'paddle_y': 375, 'pos': 'B'},
                     'ball': {},
-                    'scores': {match.playerA['id']: 0},
-                    'spectators': []
+                    'scores': {match.playerA['id']: 0 if match.playerB else None, match.playerB['id']: 0},
+                    'spectators': [],
+                    'rewards': {match.playerA['id']: {'xp': 0, 'money': 0} if match.playerB else None, match.playerB['id']: {'xp': 0, 'money': 0}},
                 }
                 self.reset_ball(self.active_matches[match.matchID])
                 logger.debug(f"[{self.__class__.__name__}] Reset ball for new match")
@@ -610,7 +610,8 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                 # Update playerB id in active match state if it's not set
                 if match.playerB and self.active_matches[match.matchID]['playerB']['id'] is None:
                     self.active_matches[match.matchID]['playerB']['id'] = match.playerB['id']
-                self.active_matches[match.matchID]['scores'][self.user.userID] = 0
+                    self.active_matches[match.matchID]['rewards'][match.playerB['id']] = {'xp': 0, 'money': 0}
+                    self.active_matches[match.matchID]['scores'][match.playerB['id']] = 0
 
             await self.send_json({
                 "e": "MATCH_JOIN",
@@ -835,8 +836,9 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
 
     async def leave_spectator_mode(self):
         if self.match and self.is_spectator:
-            match_state = self.active_matches[self.match.matchID]
-            match_state['spectators'].remove(self.user.userID)
+            if self.match.matchID in self.active_matches:
+                match_state = self.active_matches[self.match.matchID]
+                match_state['spectators'].remove(self.user.userID)
             await self.channel_layer.group_discard(
                 f"match_{self.match.matchID}",
                 self.channel_name

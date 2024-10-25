@@ -29,7 +29,7 @@ const JoinTournament = () => {
 	const [isStartDisabled, setIsStartDisabled] = useState(true);
 	const [tournament, setTournament] = useState(null);
 	const [loading, setLoading] = useState(true);
-	const { addEventListener, removeEventListener } = useTonneru();
+	const { addEventListener } = useTonneru();
 
 	const updateTournament = useCallback((updatedTournament) => {
 		setTournament(updatedTournament);
@@ -40,92 +40,60 @@ const JoinTournament = () => {
 		console.log('Received tournament update:', data);
 		switch (data.e) {
 			case 'TOURNAMENT_JOIN':
-				console.log('Processing TOURNAMENT_JOIN event');
 				updateTournament(prevTournament => {
-					console.log('Previous tournament state:', prevTournament);
-					if (!prevTournament || !prevTournament.participants || !Array.isArray(prevTournament.participants)) {
+					if (!prevTournament || !Array.isArray(prevTournament.participants)) {
 						console.error('Invalid tournament data:', prevTournament);
 						return prevTournament;
 					}
-					const userExists = prevTournament.participants.some(p => p && p.userID === data?.d?.user?.userID);
-					if (userExists) {
-						console.log('User already in tournament, not adding:', data?.d?.user);
+					const newUser = data.d?.user;
+					if (!newUser || prevTournament.participants.some(p => p.userID === newUser.userID)) {
 						return prevTournament;
 					}
-					if (!data?.d?.user) {
-						console.error('Invalid user data:', data?.d);
-						return prevTournament;
-					}
-					const newTournament = {
+					return {
 						...prevTournament,
-						participants: [...prevTournament.participants, data.d.user]
+						participants: [...prevTournament.participants, newUser]
 					};
-					console.log('New tournament state after join:', newTournament);
-					return newTournament;
 				});
 				break;
 			case 'TOURNAMENT_LEAVE':
 			case 'TOURNAMENT_KICK':
-				console.log(`Processing ${data.e} event`);
 				updateTournament(prevTournament => {
-					console.log('Previous tournament state:', prevTournament);
-					if (!prevTournament || !data || !data.d || !data.d.user || !data.d.user.userID) {
+					if (!prevTournament || !data.d?.user?.userID) {
 						console.error('Invalid data for tournament update:', { prevTournament, data });
 						return prevTournament;
 					}
 					const newTournament = {
 						...prevTournament,
-						participants: prevTournament.participants && Array.isArray(prevTournament.participants)
-							? prevTournament.participants.filter(p => p && p.userID && p.userID !== data.d.user.userID)
-							: []
+						participants: prevTournament.participants.filter(p => p.userID !== data.d.user.userID)
 					};
-					console.log('New tournament state after leave/kick:', newTournament);
-					if (prevTournament.owner && prevTournament.owner.userID && data.d.user.userID === prevTournament.owner.userID) {
-						console.log('Tournament owner left, navigating back');
+					if (data.d.user.userID === prevTournament.owner?.userID) {
 						navigate(-1);
 					}
 					return newTournament;
 				});
 				break;
-			case 'TOURNAMENT_READY':
-				console.log('Tournament ready event received, navigating to play');
-				console.log('Tournament data:', data.d);
-				navigate(`/tournaments/${tournamentID}/play`, { state: { tournamentData: data.d } });
-				break;
 			default:
 				console.warn('Unhandled tournament update event:', data.e);
-				break;
 		}
-	}, [tournamentID, navigate, updateTournament]);
+	}, [navigate, updateTournament]);
 
 	useEffect(() => {
 		const fetchTournament = async () => {
 			try {
 				const response = await API.get(`/tournaments/${tournamentID}`);
 				updateTournament(response.data);
-				setLoading(false);
 			} catch (error) {
 				console.error("Error fetching tournament:", error);
+			} finally {
 				setLoading(false);
 			}
 		};
 
 		fetchTournament();
 
-		console.log('Setting up event listeners');
-		addEventListener('TOURNAMENT_JOIN', handleTournamentUpdate);
-		addEventListener('TOURNAMENT_LEAVE', handleTournamentUpdate);
-		addEventListener('TOURNAMENT_KICK', handleTournamentUpdate);
-		addEventListener('TOURNAMENT_READY', handleTournamentUpdate);
-
-		return () => {
-			console.log('Cleaning up event listeners');
-			removeEventListener('TOURNAMENT_JOIN', handleTournamentUpdate);
-			removeEventListener('TOURNAMENT_LEAVE', handleTournamentUpdate);
-			removeEventListener('TOURNAMENT_KICK', handleTournamentUpdate);
-			removeEventListener('TOURNAMENT_READY', handleTournamentUpdate);
-		};
-	}, [tournamentID, addEventListener, removeEventListener, handleTournamentUpdate]);
+		const eventTypes = ['TOURNAMENT_JOIN', 'TOURNAMENT_LEAVE', 'TOURNAMENT_KICK'];
+		eventTypes.forEach(type => addEventListener(type, handleTournamentUpdate));
+	}, [tournamentID, addEventListener, handleTournamentUpdate]);
 
 	useEffect(() => {
 		setActiveFriends(friends.filter(friend => !!friend.status.online));

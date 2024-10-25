@@ -5,8 +5,7 @@ import {
 	HostBubble,
 	TournamentInviteBubble,
 	Avatar,
-	MessageUsername,
-	TournamentInviteBubble
+	MessageUsername
 } from '../styles/DirectMessage/DirectMessage.styled.js';
 
 const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) => {

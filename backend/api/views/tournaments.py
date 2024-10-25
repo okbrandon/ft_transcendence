@@ -1,11 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.utils import timezone
 from ..models import Tournament, TournamentInvite, User, Conversation
 from ..serializers import TournamentSerializer
 from ..util import generate_id, get_safe_profile
-from datetime import datetime, timezone as pytz_timezone, timedelta
 from django.db import transaction
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -13,7 +11,6 @@ from asgiref.sync import async_to_sync
 class Tournaments(APIView):
     def get(self, request):
         # Get all public tournaments that haven't started yet
-        current_time = datetime.now(pytz_timezone.utc)
         pending_tournaments = Tournament.objects.filter(
             isPublic=True,
             status='PENDING',
@@ -102,7 +99,7 @@ class Tournaments(APIView):
                 participants=User.objects.filter(userID__in=[inviter.userID, invitee.userID])
             )
 
-            message = conversation.messages.create(
+            conversation.messages.create(
                 messageID=generate_id("msg"),
                 content=invite.inviteID,
                 sender=inviter,
@@ -261,8 +258,6 @@ class TournamentInviteResponse(APIView):
             message = "Invite declined successfully"
 
         return Response({"message": message}, status=status.HTTP_200_OK)
-
-
 
 class JoinPublicTournament(APIView):
     @transaction.atomic

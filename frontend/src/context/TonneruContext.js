@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useCallback, useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import logger from "../api/logger";
 
 const WS_TONNERU_URL = process.env.REACT_APP_ENV === 'production' ? '/ws/tonneru' : 'ws://localhost:8000/ws/tonneru';
@@ -8,6 +8,7 @@ export const TonneruContext = createContext({});
 
 const TonneruProvider = ({ children }) => {
     const location = useLocation();
+    const navigate = useNavigate();
     const socketTonneru = useRef(null);
     const [isConnected, setIsConnected] = useState(false);
     const [events, setEvents] = useState([]);
@@ -77,6 +78,8 @@ const TonneruProvider = ({ children }) => {
             if (data.e === 'HELLO') {
                 const heartbeatInterval = data.d.heartbeat_interval;
                 setInterval(heartbeat, heartbeatInterval);
+            } else if (data.e === 'TOURNAMENT_READY') {
+                navigate(`/tournaments/${data.d.tournament.tournamentID}/play`, { state: { tournamentData: data.d } });
             } else {
                 setEvents(prevEvents => [...prevEvents, data]);
             }
