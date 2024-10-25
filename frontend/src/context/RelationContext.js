@@ -117,7 +117,21 @@ const RelationProvider = ({ children }) => {
 			socketChat.current.onmessage = event => {
 				const response = JSON.parse(event.data);
 				if (response.type === 'conversation_update') {
-					fetchConversations();
+					const conversationID = response.conversationID;
+					const message = response.message;
+
+					setConversations(prevConversations => {
+						const updatedConversations = prevConversations.map(conversation => {
+							if (conversation.conversationID === conversationID) {
+								return {
+									...conversation,
+									messages: [...conversation.messages, message]
+								};
+							}
+							return conversation;
+						});
+						return updatedConversations;
+					});
 				} else if (response.type === 'friend_request') {
 					const userFrom = formatUserData({
 						...response.data.from,
