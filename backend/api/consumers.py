@@ -248,7 +248,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
                     logger.info(f"[{self.__class__.__name__}] Received message from {self.user.username}: {json_data}")
                     await self.add_message_to_conversation(conversation_id, self.user, content)
-                    await self.notify_new_message(conversation_id, self.user.username, content)
+                    await self.notify_new_message(conversation_id, self.user, content)
 
                 case _:
                     raise Exception(f"Invalid message type: {message_type}")
@@ -262,13 +262,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
             except Exception as _:
                 pass
 
-    async def notify_new_message(self, conversation_id, sender_username, message):
+    async def notify_new_message(self, conversation_id, sender, message):
         conversation = await sync_to_async(Conversation.objects.get)(conversationID=conversation_id)
 
         if not conversation:
             raise Exception(f"Conversation {conversation_id} not found")
 
         participants = await sync_to_async(list)(conversation.participants.all())
+        safe_profile = get_safe_profile(UserSerializer(sender).data, me=False)
 
         for participant in participants:
             participant_group_name = f"chat_{participant.userID}"
@@ -277,8 +278,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 participant_group_name,
                 {
                     "type": "conversation_update",
-                    "senderUsername": sender_username,
-                    "messagePreview": message[:32] + "..." if len(message) > 32 else message
+                    "conversationID": conversation_id,
+                    "sender": safe_profile,
+                    "message": message
                 }
             )
 
@@ -286,8 +288,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         try:
             await self.send(json.dumps({
                 "type": "conversation_update",
-                "senderUsername": event["senderUsername"],
-                "messagePreview": event["messagePreview"]
+                "conversationID": event["conversationID"],
+                "sender": event["sender"],
+                "message": event["message"]
             }))
         except Exception as _:
             pass
