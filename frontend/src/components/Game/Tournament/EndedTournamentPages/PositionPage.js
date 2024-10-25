@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-// import Confetti
 import Confetti from 'react-confetti';
 
 const Position = styled.div`

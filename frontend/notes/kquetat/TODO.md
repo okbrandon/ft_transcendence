@@ -54,6 +54,71 @@
         },
         [...]
     ]
+
+	hanmin:
+	{
+    "matchID": "match_MTcyOTcwMzQwOTk4NzE5OTM",
+    "playerA": {
+        "userID": "user_MTcyOTI2MzMxMzQyMjk5NTA",
+        "username": "hanmin",
+        "displayName": "hanmin",
+        "lang": "EN",
+        "avatarID": "/images/default-avatar.png",
+        "bannerID": "/images/default-banner.png",
+        "bio": null,
+        "flags": 1,
+        "status": {
+            "online": true,
+            "activity": "HOME",
+            "last_seen": "2024-10-25T11:10:05.047019+00:00"
+        },
+        "xp": 214,
+        "score": 10
+    },
+    "playerB": {
+        "userID": "user_MTcyOTI2MzM2OTQwMjU2MTI",
+        "username": "brandon",
+        "displayName": "brandon",
+        "lang": "EN",
+        "avatarID": "/images/default-avatar.png",
+        "bannerID": "/images/default-banner.png",
+        "bio": null,
+        "flags": 1,
+        "status": {
+            "online": true,
+            "activity": "HOME",
+            "last_seen": "2024-10-23T17:11:15.940197+00:00"
+        },
+        "xp": 157,
+        "score": 3
+    },
+    "scores": {
+        "user_MTcyOTI2MzM2OTQwMjU2MTI": 3,
+        "user_MTcyOTI2MzMxMzQyMjk5NTA": 10
+    },
+    "winnerID": "user_MTcyOTI2MzMxMzQyMjk5NTA",
+    "startedAt": "2024-10-23T17:10:09.987660Z",
+    "finishedAt": "2024-10-23T17:10:57.627729Z",
+    "flags": 0,
+    "duration": "0m 47s",
+    "winner": {
+        "userID": "user_MTcyOTI2MzMxMzQyMjk5NTA",
+        "username": "hanmin",
+        "displayName": "hanmin",
+        "lang": "EN",
+        "avatarID": "/images/default-avatar.png",
+        "bannerID": "/images/default-banner.png",
+        "bio": null,
+        "flags": 1,
+        "status": {
+            "online": true,
+            "activity": "HOME",
+            "last_seen": "2024-10-25T11:10:05.047019+00:00"
+        },
+        "xp": 214
+    },
+    "date": "2024/10/23"
+}
 }
 
 # Conversations:

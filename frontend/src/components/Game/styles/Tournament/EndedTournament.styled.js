@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { BackgroundContainer } from '../../../Leaderboard/styles/Leaderboard.styled';
 
 export const EndTournamentContainer = styled.div`
 	display: flex;

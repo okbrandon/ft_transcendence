@@ -8,9 +8,9 @@ import {
 	TournamentHeadDetails,
 	TournamentNavigation,
 	TournamentTitle
-} from '../styles/Tournament/EndTournament.styled';
+} from '../styles/Tournament/EndedTournament.styled';
 import PositionPage from './EndedTournamentPages/PositionPage';
-import OverviewPage from './EndedTournamentPages/OverviewPage';
+import TournamentOverview from './EndedTournamentPages/TournamentOverview';
 
 // data template
 const tournamentData = {
@@ -87,7 +87,7 @@ const EndedTournament = () => {
 
 			<BottomContainer>
 				{selected === "Position" && <PositionPage tournamentData={tournamentData}/>}
-				{selected === "Overview" && <OverviewPage tournamentData={tournamentData}/>}
+				{selected === "Overview" && <TournamentOverview tournamentData={tournamentData}/>}
 			</BottomContainer>
 
 		</EndTournamentContainer>
