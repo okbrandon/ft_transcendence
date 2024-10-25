@@ -24,7 +24,7 @@ import { SendButton } from './tools/SendButton';
 import ConfirmationModal from './tools/ConfirmationModal';
 import DisplayChatMessages from './tools/DisplayChatMessages';
 import useClickOutside from './tools/hooks/useClickOutside';
-import { GetUserFromRelation } from '../../scripts/relation';
+import { getRelationFromUsername } from '../../scripts/relation';
 
 export const DirectMessage = ({
 	isOpen,
@@ -54,7 +54,7 @@ export const DirectMessage = ({
 	useEffect(() => {
 		if (!relations) return;
 
-		const relation = GetUserFromRelation(relations, username);
+		const relation = getRelationFromUsername(relations, username);
 		if (relation && relation[0]?.status === 2) {
 			setIsBlocked(true);
 		} else {

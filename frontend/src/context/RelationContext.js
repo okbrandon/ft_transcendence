@@ -219,7 +219,7 @@ const RelationProvider = ({ children }) => {
 		setDirectMessage,
 		handleSelectChat,
 		handleCloseChat,
-	}), [relations, friends, requests, blockedUsers, isRefetch, conversations, sendMessage]);
+	}), [relations, friends, requests, blockedUsers, isRefetch, conversations, sendMessage, directMessage]);
 
 	return (
 		<RelationContext.Provider value={contextValue}>

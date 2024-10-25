@@ -1,21 +1,62 @@
-# TODO
-
-- Chat (!!) :
-	- Enable game invite (gameserver) []
-		- Use notification Context for enabling sending game invite notification []
-	- The tournament system should be able to warn users expected for the next game []
-
-- Search friends component:
-	- Implement the Invite button, (TODO LATER : waiting for gameserver)
-
 ## To-do List *of the day*:
 
 - [ ]  Tournament Winner Page:
-    - [ ]  Implement Private Routing
-    - [x]  Improve styling
+    - [ ]  Rethink the styling
 
-### structure conversations chat
+# Tournament:
+{
+	"winner": {
+        "userID": "user_X",
+        "username": "caca",
+        "displayName": null,
+        "lang": "EN",
+        "avatarID": null,
+        [...]
+    },
+    "matches": [
+        {
+            "matchID": "match_X",
+            "playerA": {
+                "id": "user_X",
+                "platform": "web"
+            },
+            "playerB": {
+                "id": "user_Y",
+                "platform": "web"
+            },
+            "scores": {
+                "user_X": 8,
+                "user_Y": 10
+            },
+            "winnerID": "user_Y",
+            "startedAt": "2016-06-01T00:00:00Z",
+            "finishedAt": "2016-06-01T00:00:00Z",
+            "flags": 2
+        },
+        {
+            "matchID": "match_Y",
+            "playerA": {
+                "id": "user_Y",
+                "platform": "web"
+            },
+            "playerB": {
+                "id": "user_Z",
+                "platform": "web"
+            },
+            "scores": {
+                "user_Y": 8,
+                "user_Z": 10
+            },
+            "winnerID": "user_Z",
+            "startedAt": "2016-06-01T00:00:00Z",
+            "finishedAt": "2016-06-01T00:00:00Z",
+            "flags": 2
+        },
+        [...]
+    ]
+}
 
+# Conversations:
 {
 									1 CONVERSATION (Type: 'Array')
 									   |
