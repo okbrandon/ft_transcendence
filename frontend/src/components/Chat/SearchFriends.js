@@ -43,7 +43,6 @@ export const SearchFriends = ({ toggleMinimization, handleSelectChat }) => {
 
 	const handleInvite = (friend, e) => {
 		e.stopPropagation();
-		console.log('Invite', friend); // Leader: implement game invite functionality here
 		setSearchQuery('');
 		toggleMinimization();
 	};

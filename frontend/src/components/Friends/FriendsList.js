@@ -15,10 +15,12 @@ import {
 } from "./styles/Friends.styled";
 import { useNotification } from "../../context/NotificationContext";
 import { useTranslation } from "react-i18next";
+import { useRelation } from "../../context/RelationContext";
 
 const FriendsList = ({ friends, setIsRefetch }) => {
 	const navigate = useNavigate();
 	const { addNotification } = useNotification();
+	const { conversations, handleSelectChat } = useRelation();
 	const { t } = useTranslation();
 
 	const setActivityDescription = activity => {
@@ -37,6 +39,18 @@ const FriendsList = ({ friends, setIsRefetch }) => {
 	const handleProfile = username => {
 		navigate(`/profile/${username}`)
 	};
+
+	// Handle opening DM with friend
+	const handleFriendDM = (username) => {
+		const userID = localStorage.getItem("userID");
+
+		const convo = conversations.find(convo => {
+			const other = convo.participants.find(participant => participant.userID !== userID);
+			return other.username === username;
+		})
+
+		handleSelectChat(username, convo ? convo.conversationID : null);
+	}
 
 	const handleRemove = relationID => {
 		API.delete(`users/@me/relationships/${relationID}`)
@@ -64,7 +78,11 @@ const FriendsList = ({ friends, setIsRefetch }) => {
 						</ProfileInfo>
 						<Actions>
 							<PongButton type="button">{t('friends.subSections.friendList.inviteButton')}</PongButton>
-							<PongButton type="button">{t('friends.subSections.friendList.messageButton')}</PongButton>
+							<PongButton
+								type="button"
+								onClick={() => handleFriendDM(friend.username)}
+							>
+								{t('friends.subSections.friendList.messageButton')}</PongButton>
 							<PongButton
 								type="button"
 								$backgroundColor="#ff5555"

@@ -64,7 +64,7 @@ export const MessagePreview = ({ handleSelectChat }) => {
 			/>
 			<MessageContent>
 				<Sender>{friend.username}</Sender>
-				<MessageText>{truncateText(message, 50)}</MessageText>
+				<MessageText>{truncateText(message, 24)}</MessageText>
 			</MessageContent>
 		</PreviewContainer>
 	);

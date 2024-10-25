@@ -71,3 +71,30 @@ export const Trophy = styled.i`
 	}};
 	margin-right: 8px;
 `;
+
+export const Username = styled.span`
+	cursor: pointer;
+	position: relative;
+
+	&::after {
+		content: '';
+		position: absolute;
+		width: 100%;
+		height: 2px;
+		bottom: -2px;
+		left: 0;
+		background-color: #6a0dad;
+		transform: scaleX(0); /* Initially, the underline is hidden */
+		transform-origin: bottom left; /* Start scaling from the left */
+		transition: transform 0.3s ease; /* Smooth scaling effect */
+	}
+
+	&:hover::after {
+		transform: scaleX(1); /* On hover, the underline expands from left to right */
+	}
+
+	&:hover {
+		color: #6a0dad;
+		transition: color 0.3s ease;
+	}
+`;

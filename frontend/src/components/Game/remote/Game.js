@@ -18,7 +18,7 @@ const Game = () => {
 	});
 	const [gameOver, setGameOver] = useState(false);
 	const [gameStarted, setGameStarted] = useState(false);
-	const [won, setWon] = useState(false);
+	const [endGameData, setEndGameData] = useState(null);
 
 	const [heartbeatIntervalTime, setHeartbeatIntervalTime] = useState(null);
 	const [hitPos, setHitPos] = useState(null);
@@ -111,8 +111,9 @@ const Game = () => {
 					setBorderScore(data.d.player);
 					break;
 				case 'MATCH_END':
+					console.log(data.d);
 					setGameOver(true);
-					setWon(data.d.won);
+					setEndGameData(data.d);
 					break;
 				case 'HEARTBEAT_ACK':
 					handleHeartbeatAck();
@@ -163,7 +164,7 @@ const Game = () => {
 				setActivateTimer={setActivateTimer}
 				gameStarted={gameStarted}
 				gameOver={gameOver}
-				won={won}
+				endGameData={endGameData}
 			/>
 		</PageContainer>
 	)

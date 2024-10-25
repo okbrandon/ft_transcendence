@@ -24,6 +24,7 @@ import { SendButton } from './tools/SendButton';
 import ConfirmationModal from './tools/ConfirmationModal';
 import DisplayChatMessages from './tools/DisplayChatMessages';
 import useClickOutside from './tools/hooks/useClickOutside';
+import { getRelationFromUsername } from '../../scripts/relation';
 
 export const DirectMessage = ({
 	isOpen,
@@ -36,17 +37,30 @@ export const DirectMessage = ({
 }) => {
 	const userID = localStorage.getItem('userID');
 	const [content, setContent] = useState('');
-	const { sendMessage, setIsRefetch } = useRelation();
+	const [charCount, setCharCount] = useState(0);
+	const { sendMessage, setIsRefetch, relations } = useRelation();
 	const { addNotification } = useNotification();
 	const messagesEndRef = useRef(null);
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [isBlockModalOpen, setIsBlockModalOpen] = useState(false);
 	const navigate = useNavigate();
 	const dropdownRef = useRef(null);
+	const [isBlocked, setIsBlocked] = useState(false);
 
 	const realConvo = conversations.find(c => c.conversationID === conversationID);
 	const otherUser = realConvo.participants.find(id => id.userID !== userID);
 	const proPic = otherUser.avatarID || 'images/default-profile.png';
+
+	useEffect(() => {
+		if (!relations) return;
+
+		const relation = getRelationFromUsername(relations, username);
+		if (relation && relation[0]?.status === 2) {
+			setIsBlocked(true);
+		} else {
+			setIsBlocked(false);
+		}
+	}, [relations, username]);
 
 	const toggleDropdown = (event) => {
 		event.stopPropagation();
@@ -78,16 +92,13 @@ export const DirectMessage = ({
 	}
 
 	const handleDropdownAction = (action) => {
-		console.log(action);
 		switch (action) {
 			case 'profile':
 				navigate(`/profile/${username}`);
 				break;
 			case 'invite':
-				console.log('invite'); // Leader: Game invites can be implemented here
 				break;
 			case 'block':
-				console.log('block');
 				setIsBlockModalOpen(true);
 				break;
 			default:
@@ -111,9 +122,22 @@ export const DirectMessage = ({
 	const handleMessage = () => {
 		if (content.trim() === '') return;
 
-		// Check for user relationship
+		setIsRefetch(true);
+
+		if (isBlocked) {
+			setContent('');
+			setCharCount(0);
+			onClose();
+			return ;
+		}
 		sendMessage(JSON.stringify({ type: 'send_message', conversationID: conversationID, content: content, }))
 		setContent('');
+		setCharCount(0);
+	};
+
+	const handleInputChange = (e) => {
+		setContent(e.target.value);
+		setCharCount(e.target.value.length);
 	};
 
 	return (
@@ -150,7 +174,7 @@ export const DirectMessage = ({
 								as="textarea"
 								placeholder="Type a message..."
 								value={content}
-								onChange={e => setContent(e.target.value)}
+								onChange={handleInputChange}
 								onKeyDown={e => {
 									if (e.key === 'Enter') {
 										e.preventDefault();
@@ -164,6 +188,15 @@ export const DirectMessage = ({
 							<SendButton onClick={handleMessage} disabled={content.trim() === ''}>
 								<i className="bi bi-send-fill" />
 							</SendButton>
+							<span style={{
+								position: 'absolute',
+								bottom: '12px',
+								right: '60px',
+								fontSize: '7px',
+								color: 'rgba(255, 255, 255, 0.5)'
+							}}>
+								{charCount}/256
+							</span>
 						</ChatInputContainer>
 					</>
 				)}

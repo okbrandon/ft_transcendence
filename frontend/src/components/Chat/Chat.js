@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SearchFriends } from './SearchFriends.js';
 import { MessagePreview } from './MessagePreview.js';
 import { DirectMessage } from './DirectMessage.js';
@@ -6,46 +6,20 @@ import ChatContainer, { MainChatContainer } from './styles/Chat/ChatContainer.st
 import { useRelation } from '../../context/RelationContext.js';
 import ChatHeader from './tools/ChatHeader.js';
 import { ChatProvider } from '../../context/ChatContext.js';
-import NotificationBadge from './tools/NotificationBadge.js';
 
 const Chat = () => {
-	const { conversations, blockedUsers, friends } = useRelation();
+	const {
+		conversations,
+		blockedUsers,
+		friends,
+		relations,
+		directMessage,
+		setDirectMessage,
+		handleSelectChat,
+		handleCloseChat,
+	} = useRelation();
 	const [isOverlayMinimized, setIsOverlayMinimized] = useState(true);
 	const [mainWinArrow, setMainWinArrow] = useState(false);
-	const [unreadMessages, setUnreadMessages] = useState(0);
-	const [directMessage, setDirectMessage] = useState({
-		isOpen: false,
-		isMinimized: false,
-		username: null,
-		conversationID: null,
-	});
-
-	// useEffect(() => {
-	// 	if (!conversations) return;
-
-	// 	const unread =
-
-	// 	setUnreadMessages(unread);
-	// });
-
-	const handleSelectChat = (username, conversationID) => {
-		setDirectMessage({
-			isOpen: true,
-			isMinimized: false,
-			username,
-			conversationID,
-		});
-
-	};
-
-	const handleCloseChat = () => {
-		setDirectMessage({
-			isOpen: false,
-			isMinimized: false,
-			username: null,
-			conversationID: null,
-		});
-	};
 
 	const toggleDMMinimization = () => {
 		setDirectMessage((prev) => ({
@@ -60,12 +34,20 @@ const Chat = () => {
 		setMainWinArrow(!mainWinArrow);
 	};
 
+	useEffect(() => {
+		if (relations && relations.length > 0) {
+			const relation = relations.find((relation) => relation.status === 2);
+			if (relation) {
+				handleSelectChat(relation.username, null);
+			}
+		}
+	}, [relations]);
+
 	return (
 		<ChatProvider conversations={conversations} friends={friends} blockedUsers={blockedUsers}>
 			<ChatContainer>
 				<MainChatContainer $isMinimized={isOverlayMinimized}>
 					<ChatHeader toggleMinimization={mainMinimizer} arrowState={mainWinArrow} />
-					{/* {totalUnreadMessages > 0 && <NotificationBadge count={totalUnreadMessages} />} */}
 					{!isOverlayMinimized && (
 						<>
 							<SearchFriends toggleMinimization={mainMinimizer} handleSelectChat={handleSelectChat}/>

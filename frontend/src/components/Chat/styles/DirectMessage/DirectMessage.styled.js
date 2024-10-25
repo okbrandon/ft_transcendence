@@ -67,7 +67,8 @@ export const DropdownItem = styled.button`
 	cursor: pointer;
 	transition: background-color 0.3s ease;
 	font-size: 0.9rem;
-	background-color: rgba(255, 255, 255, 0.7);
+	background-color: #1e1e28;
+	color: #fff;
 
 	&[data-action="profile"] {
 		&:hover {
@@ -173,13 +174,31 @@ export const NewConversationMessage = styled.div`
 	font-size: 0.9rem;
 `;
 
+export const ChatBubbleContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	padding: 10px 0;
+	gap: 0;
+`;
+
+export const MessageWrapper = styled.div`
+	display: flex;
+	justify-content: ${({ isHost }) => (isHost ? 'flex-end' : 'flex-start')};
+`;
+
+export const BubbleDetails = styled.div`
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+`;
+
 const BaseBubble = styled.div`
 	padding: 10px 15px;
 	margin: 5px;
 	max-width: calc(100% - 60px);
 	word-wrap: break-word;
 	white-space: pre-wrap;
-	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	font-family: 'Helvetica Neue', sans-serif;
 	font-size: 14px;
 	line-height: 1.4;
 	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
@@ -200,22 +219,22 @@ const BaseBubble = styled.div`
 	}
 `;
 
-export const SenderBubble = styled(BaseBubble)`
+export const HostBubble = styled(BaseBubble)`
 	background-color: #6a0dad;
 	color: #fff;
-	border-radius: 18px 18px 0 18px;
-	margin-left: auto;
-	text-align: right;
+	border-radius: ${({ $isRounded }) => $isRounded ? '18px' : '18px 0 18px 18px'};
+	align-self: flex-end;
 	width: fit-content;
+	margin: 2px;
 `;
 
-export const HostBubble = styled(BaseBubble)`
+export const SenderBubble = styled(BaseBubble)`
 	background-color: #e0e0e0;
 	color: #333;
-	border-radius: 18px 18px 18px 0;
-	margin: 10px 0;
-	max-width: 70%;
+	border-radius: ${({ $isRounded }) => $isRounded ? '18px' : '0 18px 18px 18px'};
+	align-self: flex-start;
 	width: fit-content;
+	margin: 2px;
 `;
 
 export const Avatar = styled.img`
@@ -224,15 +243,16 @@ export const Avatar = styled.img`
 	border-radius: 50%;
 	margin-right: 8px;
 	vertical-align: middle;
+	object-fit: cover;
 `;
 
 export const MessageUsername = styled.span`
 	font-size: 0.65em;
 	font-weight: bold;
-	margin-bottom: 4px;
 	color: ${props => props.$isHost ? '#fff' : '#6a0dad'};
 	display: block;
 	text-align: ${props => props.$isHost ? 'left' : 'right'};
+	margin: 5px 0;
 `;
 
 export const TournamentInviteBubble = styled.div`

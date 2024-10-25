@@ -1,5 +1,4 @@
 # TODO
-- game -> wave animation DONT RESET IT
 - tournaments
 - Game: send invite
 

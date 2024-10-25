@@ -16,17 +16,14 @@ const Leaderboard = () => {
 		setLeaderboardData(data);
 	}, [timeFrame, stats]);
 
-	// Trigger fetching when timeFrame or stats change
 	useEffect(() => {
 		fetchLeaderboardData();
 	}, [fetchLeaderboardData]);
 
-	// Handle time frame change (e.g., 'daily', 'weekly', 'lifetime')
 	const handleTimeFrameChange = (newTimeFrame) => {
 		setTimeFrame(newTimeFrame);
 	};
 
-	// Handle stats change (e.g., 'gamesPlayed', 'gamesWon', 'gamesLost')
 	const handleStatsChange = (newStats) => {
 		setStats(newStats);
 	};

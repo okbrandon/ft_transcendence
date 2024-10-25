@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useRef, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import API from '../api/api';
 import { useLocation, useNavigate } from "react-router-dom";
 import logger from "../api/logger";
@@ -26,9 +26,38 @@ const RelationProvider = ({ children }) => {
 	const [friends, setFriends] = useState([]);
 	const [requests, setRequests] = useState([]);
 	const [blockedUsers, setBlockedUsers] = useState([]);
-	const [isRefetch, setIsRefetch] = useState(false);
+	const [isRefetch, setIsRefetch] = useState(true);
+	const userID = useRef(localStorage.getItem('userID'));
 
-	const setActivity = location => {
+	// State for managing direct messages
+	const [directMessage, setDirectMessage] = useState({
+		isOpen: false,
+		isMinimized: false,
+		username: null,
+		conversationID: null,
+	});
+
+	// Function to Select a Chat
+	const handleSelectChat = (username, conversationID) => {
+		setDirectMessage({
+			isOpen: true,
+			isMinimized: false,
+			username,
+			conversationID,
+		});
+	}
+
+	// Function to Close a Chat
+	const handleCloseChat = () => {
+		setDirectMessage({
+			isOpen: false,
+			isMinimized: false,
+			username: null,
+			conversationID: null,
+		});
+	}
+
+	const setActivity = useCallback(location => {
 		if (location === '/game-ai') {
 			return 'PLAYING_VS_AI';
 		} else if (location === '/game-classic') {
@@ -37,23 +66,24 @@ const RelationProvider = ({ children }) => {
 			return 'PLAYING_LOCAL';
 		}
 		return 'HOME';
-	};
+	}, []);
 
-	const sendMessage = (message) => {
+	const sendMessage = useCallback(message => {
 		if (socketChat.current && socketChat.current.readyState === WebSocket.OPEN) {
 			socketChat.current.send(message);
 		} else {
 			logger('WebSocket for Chat is not open');
 		}
-	};
+	}, []);
 
 	useEffect(() => {
+		if (!isRefetch) return;
 		API.get('users/@me/relationships')
 			.then(relationships => {
 				setRelations(relationships.data);
-				setFriends(getFriends(relationships.data));
-				setRequests(getRequests(relationships.data));
-				setBlockedUsers(getBlockedUsers(relationships.data));
+				setFriends(getFriends(relationships.data, userID.current));
+				setRequests(getRequests(relationships.data, userID.current));
+				setBlockedUsers(getBlockedUsers(relationships.data, userID.current));
 
 				// handle conversations when there is a change in relation status
 				return API.get('chat/conversations');
@@ -89,7 +119,21 @@ const RelationProvider = ({ children }) => {
 			socketChat.current.onmessage = event => {
 				const response = JSON.parse(event.data);
 				if (response.type === 'conversation_update') {
-					fetchConversations();
+					const conversationID = response.conversationID;
+					const message = response.message;
+
+					setConversations(prevConversations => {
+						const updatedConversations = prevConversations.map(conversation => {
+							if (conversation.conversationID === conversationID) {
+								return {
+									...conversation,
+									messages: [...conversation.messages, message]
+								};
+							}
+							return conversation;
+						});
+						return updatedConversations;
+					});
 				} else if (response.type === 'friend_request') {
 					const userFrom = formatUserData({
 						...response.data.from,
@@ -166,27 +210,35 @@ const RelationProvider = ({ children }) => {
 				logger('WebSocket for Status closed');
 			}
 		};
-	}, []);
+	}, [setActivity]);
 
 	useEffect(() => {
 		pathnameRef.current = location.pathname;
 	}, [location.pathname]);
 
+	const contextValue = useMemo(() => ({
+		conversations,
+		setConversations,
+		sendMessage,
+		relations,
+		setRelations,
+		friends,
+		setFriends,
+		requests,
+		setRequests,
+		blockedUsers,
+		setBlockedUsers,
+		isRefetch,
+		setIsRefetch,
+
+		directMessage,
+		setDirectMessage,
+		handleSelectChat,
+		handleCloseChat,
+	}), [relations, friends, requests, blockedUsers, isRefetch, conversations, sendMessage, directMessage]);
+
 	return (
-		<RelationContext.Provider value={{
-			conversations,
-			setConversations,
-			sendMessage,			// send a message
-			relations,				// get the relations
-			setRelations,			// change the relations
-			friends,				// get the friends
-			setFriends,				// change the friends
-			requests,				// get the requests users
-			setRequests,			// change the requests
-			blockedUsers,			// get the blocked users
-			setBlockedUsers,		// change the blocked users
-			setIsRefetch,			// refetch the relations when set to true
-		}}>
+		<RelationContext.Provider value={contextValue}>
 			{ children }
 		</RelationContext.Provider>
 	);

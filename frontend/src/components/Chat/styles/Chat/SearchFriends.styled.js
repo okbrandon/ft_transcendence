@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import magnifier from '../../img/magnifier.svg';
 
 export const SearchFriendsContainer = styled.div`
 	display: flex;
@@ -42,6 +41,9 @@ export const Dropdown = styled.div`
 `;
 
 export const FriendItem = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 	padding: 10px;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 	cursor: pointer;

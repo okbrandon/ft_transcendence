@@ -103,31 +103,54 @@ export const getSkin = async (id) => {
 	}
 }
 
+export const formatMatchData = (match) => {
+	const duration = getDuration(match.startedAt, match.finishedAt);
+	const date = getDate(match.finishedAt);
+	const playerA = formatUserData(match.playerA);
+	const playerB = formatUserData(match.playerB);
+	const playerAScore = match.scores?.[`${playerA.userID}`] || 0;
+	const playerBScore = match.scores?.[`${playerB.userID}`] || 0;
+	const winner = match.winnerID === playerA.userID ? playerA : playerB;
+
+	return {
+		...match,
+		duration,
+		playerA: { ...playerA, score: playerAScore },
+		playerB: { ...playerB, score: playerBScore },
+		winner,
+		date
+	};
+}
+
+const formatMatchMeData = (match) => {
+	const duration = getDuration(match.startedAt, match.finishedAt);
+	const date = getDate(match.finishedAt);
+	const playerA = formatUserData(match.playerA);
+	const playerB = formatUserData(match.playerB);
+
+	const me = playerA.userID === match.playerA.userID ? playerA : playerB;
+	const opponent = playerA.userID === match.playerA.userID ? playerB : playerA;
+	const meScore = match.scores?.[`${me.userID}`] || 0;
+	const opponentScore = match.scores?.[`${opponent.userID}`] || 0;
+	const winner = match.winnerID === me.userID ? me : opponent;
+
+	return {
+		...match,
+		duration,
+		me: { ...me, score: meScore },
+		opponent: { ...opponent, score: opponentScore },
+		winner,
+		date
+	};
+}
+
 export const getMatchHistory = async (id) => {
 	try {
 		const res = await API.get(`/users/${id}/matches`);
 		const rawMatches = res.data;
 
 		const matches = rawMatches.map(match => {
-			const duration = getDuration(match.startedAt, match.finishedAt);
-			const date = getDate(match.finishedAt);
-			const playerA = formatUserData(match.playerA);
-			const playerB = formatUserData(match.playerB);
-
-			const me = playerA.userID === id ? playerA : playerB;
-			const opponent = playerA.userID === id ? playerB : playerA;
-			const meScore = match.scores?.[`${me.userID}`] || 0;
-			const opponentScore = match.scores?.[`${opponent.userID}`] || 0;
-			const winner = match.winnerID === id ? me : opponent;
-
-			return {
-				...match,
-				duration,
-				me: { ...me, score: meScore },
-				opponent: { ...opponent, score: opponentScore },
-				winner,
-				date
-			};
+			return formatMatchMeData(match);
 		})
 		return matches;
 	} catch (err) {

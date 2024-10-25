@@ -1,10 +1,8 @@
-import os
 import base64
 
 from django.apps import AppConfig
 from django.db.models.signals import post_migrate
 from django.utils import timezone
-from django.contrib.auth.hashers import make_password
 
 from .util import generate_id
 
@@ -17,8 +15,6 @@ class ApiConfig(AppConfig):
         post_migrate.connect(delete_unfinished_matches)
         post_migrate.connect(create_ai_account)
         post_migrate.connect(update_users_statuses)
-        if os.environ.get('SKIP_EMAIL_VERIFICATION', '').lower() == 'true':
-            post_migrate.connect(create_test_accounts)
 
 def create_store_items(sender, **kwargs):
     from .models import StoreItem
@@ -37,7 +33,8 @@ def create_store_items(sender, **kwargs):
             StoreItem.objects.create(**item)
 
 def create_ai_account(sender, **kwargs):
-    from .models import User
+    import random
+    from .models import User, UserSettings, StoreItem, Purchase
 
     if not User.objects.filter(userID="user_ai").exists():
         encoded_avatar = None
@@ -55,41 +52,15 @@ def create_ai_account(sender, **kwargs):
             flags=3
         )
 
-def create_test_accounts(sender, **kwargs):
-    from .models import User
+    settings, _ = UserSettings.objects.get_or_create(userID="user_ai")
+    store_items = StoreItem.objects.all()
 
-    test_accounts = [
-        {
-            'username': 'test',
-            'displayName': 'Test User',
-            'email': 'test@example.com',
-            'password': 'test123',
-        },
-        {
-            'username': 'test2',
-            'displayName': 'Test User 2',
-            'email': 'test2@example.com',
-            'password': 'test123',
-        },
-        {
-            'username': 'test3',
-            'displayName': 'Test User 3',
-            'email': 'test3@example.com',
-            'password': 'test123',
-        },
-    ]
+    for item in store_items:
+        _, _ = Purchase.objects.get_or_create(userID="user_ai", itemID=item.itemID, purchaseID=generate_id("purchase"))
 
-    for account in test_accounts:
-        if not User.objects.filter(username=account['username']).exists():
-            User.objects.create(
-                userID=generate_id("user"),
-                username=account['username'],
-                displayName=account['displayName'],
-                email=account['email'],
-                password=make_password(account['password']),
-                lang='en',
-                flags=1
-            )
+    selected_skin = random.choice(store_items).itemID
+    settings.selectedPaddleSkin = selected_skin
+    settings.save()
 
 def delete_unfinished_matches(sender, **kwargs):
     from .models import Match
