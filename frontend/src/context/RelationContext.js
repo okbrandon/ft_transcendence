@@ -87,7 +87,22 @@ const RelationProvider = ({ children }) => {
 				return API.get('chat/conversations');
 			})
 			.then(response => {
-				setConversations(response.data.conversations);
+				const newConversations = [
+					...response.data.conversations.map(conversation => {
+							return {
+								...conversation,
+								participants: conversation.participants.map(formatUserData),
+								messages: conversation.messages.map(message => {
+									return {
+										...message,
+										sender: formatUserData(message.sender),
+									};
+								}),
+							};
+						}
+					),
+				]
+				setConversations(newConversations);
 			})
 			.catch(err => {
 				console.error(err?.response?.data?.error || 'An error occurred.');
@@ -101,7 +116,22 @@ const RelationProvider = ({ children }) => {
 		const fetchConversations = () => {
 			API.get('chat/conversations')
 				.then(response => {
-					setConversations(response.data.conversations);
+					const newConversations = [
+						...response.data.conversations.map(conversation => {
+								return {
+									...conversation,
+									participants: conversation.participants.map(formatUserData),
+									messages: conversation.messages.map(message => {
+										return {
+											...message,
+											sender: formatUserData(message.sender),
+										};
+									}),
+								};
+							}
+						),
+					]
+					setConversations(newConversations);
 				})
 				.catch(error => {
 					console.error('Failed to fetch conversations:', error);
@@ -233,7 +263,7 @@ const RelationProvider = ({ children }) => {
 		setDirectMessage,
 		handleSelectChat,
 		handleCloseChat,
-	}), [relations, friends, requests, blockedUsers, isRefetch, conversations, sendMessage, directMessage]);
+	}), [relations, friends, requests, blockedUsers, isRefetch, conversations, sendMessage, directMessage, handleCloseChat, handleSelectChat]);
 
 	return (
 		<RelationContext.Provider value={contextValue}>
