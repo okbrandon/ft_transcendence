@@ -1,4 +1,6 @@
 # TODO
+- chat: not calling api for blocking user
+- friends status not updating dynamically
 - tournaments
 - Game: send invite
 
