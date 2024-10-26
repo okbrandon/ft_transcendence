@@ -25,7 +25,7 @@ const RelationProvider = ({ children }) => {
 	const [requests, setRequests] = useState([]);
 	const [blockedUsers, setBlockedUsers] = useState([]);
 	const [isRefetch, setIsRefetch] = useState(true);
-	const userID = useRef(localStorage.getItem('userID'));
+	const userID = localStorage.getItem('userID');
 
 	// State for managing direct messages
 	const [directMessage, setDirectMessage] = useState({
@@ -79,9 +79,9 @@ const RelationProvider = ({ children }) => {
 		API.get('users/@me/relationships')
 			.then(relationships => {
 				setRelations(relationships.data);
-				setFriends(getFriends(relationships.data, userID.current));
-				setRequests(getRequests(relationships.data, userID.current));
-				setBlockedUsers(getBlockedUsers(relationships.data, userID.current));
+				setFriends(getFriends(relationships.data, userID));
+				setRequests(getRequests(relationships.data, userID));
+				setBlockedUsers(getBlockedUsers(relationships.data, userID));
 
 				// handle conversations when there is a change in relation status
 				return API.get('chat/conversations');
@@ -95,7 +95,7 @@ const RelationProvider = ({ children }) => {
 			.finally(() => {
 				setIsRefetch(false);
 			});
-	}, [isRefetch]);
+	}, [isRefetch, userID]);
 
 	useEffect(() => {
 		const fetchConversations = () => {
