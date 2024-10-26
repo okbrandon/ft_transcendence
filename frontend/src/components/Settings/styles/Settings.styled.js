@@ -193,15 +193,3 @@ export const TextArea = styled.textarea`
 		box-shadow: 0 0 10px rgba(164, 69, 178, 0.5);
 	}
 `;
-
-export const SuccessMessage = styled.p`
-	color: #155724;
-	background-color: #d4edda;
-	border: 1px solid #c3e6cb;
-	padding: 10px;
-	border-radius: 4px;
-	margin-bottom: 15px;
-	font-size: 14px;
-	text-align: center;
-	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-`;
