@@ -36,24 +36,24 @@ const RelationProvider = ({ children }) => {
 	});
 
 	// Function to Select a Chat
-	const handleSelectChat = (username, conversationID) => {
+	const handleSelectChat = useCallback((username, conversationID) => {
 		setDirectMessage({
 			isOpen: true,
 			isMinimized: false,
 			username,
 			conversationID,
 		});
-	}
+	}, []);
 
 	// Function to Close a Chat
-	const handleCloseChat = () => {
+	const handleCloseChat = useCallback(() => {
 		setDirectMessage({
 			isOpen: false,
 			isMinimized: false,
 			username: null,
 			conversationID: null,
 		});
-	}
+	}, []);
 
 	const setActivity = useCallback(location => {
 		if (location === '/game-ai') {

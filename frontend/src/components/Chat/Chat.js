@@ -41,7 +41,7 @@ const Chat = () => {
 				handleSelectChat(relation.username, null);
 			}
 		}
-	}, [relations]);
+	}, [relations, handleSelectChat]);
 
 	return (
 		<ChatProvider conversations={conversations} friends={friends} blockedUsers={blockedUsers}>
