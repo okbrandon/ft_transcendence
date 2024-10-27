@@ -14,11 +14,11 @@ import { useNotification } from '../../context/NotificationContext';
 import API from '../../api/api';
 import ConfirmationModal from './tools/ConfirmationModal';
 
-export const SearchFriends = ({ toggleMinimization, handleSelectChat }) => {
+export const SearchFriends = ({ toggleMinimization }) => {
 	const navigate = useNavigate();
 	const { friends, setIsRefetch } = useRelation();
 	const { addNotification } = useNotification();
-	const { conversations } = useChat();
+	const { conversations, handleSelectChat } = useChat();
 	const [searchQuery, setSearchQuery] = useState('');
 	const [isBlockModalOpen, setIsBlockModalOpen] = useState(false);
 	const [selectedFriend, setSelectedFriend] = useState(null);

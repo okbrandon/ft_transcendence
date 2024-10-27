@@ -30,16 +30,14 @@ import { useChat } from '../../context/ChatContext';
 export const DirectMessage = ({
 	isOpen,
 	conversationID,
-	conversations,
 	username,
-	onClose,
 	isMinimized,
 	toggleMinimization,
 }) => {
 	const navigate = useNavigate();
 
 	const { setIsRefetch, relations } = useRelation();
-	const { sendMessage } = useChat();
+	const { sendMessage, handleCloseChat, conversations } = useChat();
 	const { addNotification } = useNotification();
 
 	const messagesEndRef = useRef(null);
@@ -87,7 +85,7 @@ export const DirectMessage = ({
 			.then(() => {
 				addNotification('warning', `User ${username} blocked.`);
 				setIsRefetch(true);
-				onClose();
+				handleCloseChat();
 			})
 			.catch(err => {
 				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
@@ -126,12 +124,10 @@ export const DirectMessage = ({
 	const handleMessage = () => {
 		if (content.trim() === '') return;
 
-		setIsRefetch(true);
-
 		if (isBlocked) {
 			setContent('');
 			setCharCount(0);
-			onClose();
+			handleCloseChat();
 			addNotification('error', 'An error occurred.'); // not sure about this one
 			return ;
 		}
@@ -159,7 +155,7 @@ export const DirectMessage = ({
 					</Dropdown>
 					<ActionButtonContainer>
 						<Arrow ArrowAnimate={!isMinimized} />
-						<CloseButton variant='white' onClick={onClose} />
+						<CloseButton variant='white' onClick={handleCloseChat} />
 					</ActionButtonContainer>
 				</Header>
 

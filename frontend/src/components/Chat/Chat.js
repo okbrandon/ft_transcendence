@@ -9,14 +9,13 @@ import { useChat } from '../../context/ChatContext.js';
 
 const Chat = () => {
 	const { relations } = useRelation();
-	const { conversations, directMessage, setDirectMessage, handleSelectChat, handleCloseChat } = useChat();
+	const { directMessage, setDirectMessage, handleSelectChat } = useChat();
 	const [isOverlayMinimized, setIsOverlayMinimized] = useState(true);
 	const [mainWinArrow, setMainWinArrow] = useState(false);
 
 	const toggleDMMinimization = () => {
-		setDirectMessage((prev) => ({
+		setDirectMessage(prev => ({
 			...prev,
-			isOpen: true,
 			isMinimized: !prev.isMinimized,
 		}));
 	};
@@ -41,16 +40,14 @@ const Chat = () => {
 				<ChatHeader toggleMinimization={mainMinimizer} arrowState={mainWinArrow} />
 				{!isOverlayMinimized && (
 					<>
-						<SearchFriends toggleMinimization={mainMinimizer} handleSelectChat={handleSelectChat}/>
-						<MessagePreview handleSelectChat={handleSelectChat} />
+						<SearchFriends toggleMinimization={mainMinimizer}/>
+						<MessagePreview/>
 					</>
 				)}
 			</MainChatContainer>
 			{directMessage.username && (
 				<DirectMessage
 					{...directMessage}
-					conversations={conversations}
-					onClose={handleCloseChat}
 					toggleMinimization={toggleDMMinimization}
 				/>
 			)}

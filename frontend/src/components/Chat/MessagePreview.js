@@ -15,6 +15,10 @@ const PreviewContainer = styled.div`
 	&:hover {
 		background: #29293d;
 	}
+
+	&.not-read {
+		background: #1e1e2b;
+	}
 `;
 
 const MessageContent = styled.div`
@@ -43,8 +47,8 @@ const NoFriendsMessage = styled.div`
 	font-size: 1.2rem;
 `;
 
-export const MessagePreview = ({ handleSelectChat }) => {
-	const { conversations } = useChat();
+export const MessagePreview = () => {
+	const { conversations, handleSelectChat, unreadCounts } = useChat();
 	const { friends } = useRelation();
 	const userID = localStorage.getItem('userID');
 
@@ -62,17 +66,21 @@ export const MessagePreview = ({ handleSelectChat }) => {
 			return text;
 		}
 		return text.substring(0, maxLength) + '...';
-	}
+	};
 
-	const renderFriendPreview = (friend, index, message, lastMessageUserId) => {
-		if (lastMessageUserId === userID) {
+	const renderFriendPreview = (friend, index, message, lastMessageUserId = null, convId) => {
+		if (lastMessageUserId && lastMessageUserId === userID) {
 			message = 'You: ' + message; // Brandon don't forget to translate this line as well
 		}
 
 		return (
-			<PreviewContainer key={index} onClick={() => handleSelectFriend(friend)}>
+			<PreviewContainer
+				key={index}
+				onClick={() => handleSelectFriend(friend)}
+				className={unreadCounts[convId] ? 'not-read' : ''}
+			>
 				<ProfilePicture
-					src={friend.avatarID || 'images/default-profile.png'}
+					src={friend.avatarID}
 					alt={`${friend.username}'s profile picture`}
 				/>
 				<MessageContent>
@@ -97,9 +105,8 @@ export const MessagePreview = ({ handleSelectChat }) => {
 					if (convo.messages.length === 0) {
 						return renderFriendPreview(other, index, 'Start a new conversation');
 					}
-					console.log(convo.messages);
 					const lastMessage = convo.messages[convo.messages.length - 1];
-					return renderFriendPreview(other, index, lastMessage.content, lastMessage.sender.userID);
+					return renderFriendPreview(other, index, lastMessage.content, lastMessage.sender.userID, convo.conversationID);
 				}
 				return null;
 			})}

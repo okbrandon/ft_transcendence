@@ -30,6 +30,7 @@ export const Header = styled.div`
 	color: #fff;
 	font-weight: bold;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	position: relative;
 
 	.icon {
 		font-size: 1.2rem;
@@ -45,6 +46,19 @@ export const Header = styled.div`
 	&:hover {
 		background: #29293d;
 	}
+`;
+
+export const ChatNotificationPopUp = styled.div`
+	position: absolute;
+	top: 10px;
+	left: 115px;
+	background: #ff0000;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	text-align: center;
+	font-size: 0.8rem;
+	font-weight: 700;
 `;
 
 export const MainChatContainer = styled.div`

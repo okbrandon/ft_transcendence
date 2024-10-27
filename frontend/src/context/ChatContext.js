@@ -14,6 +14,8 @@ export const ChatProvider = ({ children }) => {
 	const { addNotification } = useNotification();
 	const { isRefetch, setIsRefetch } = useRelation();
 	const [conversations, setConversations] = useState([]);
+	const [unreadCounts, setUnreadCounts] = useState({});
+	const [sendNotification, setSendNotification] = useState(null);
 
 	// State for managing direct messages
 	const [directMessage, setDirectMessage] = useState({
@@ -22,6 +24,7 @@ export const ChatProvider = ({ children }) => {
 		username: null,
 		conversationID: null,
 	});
+	const directMessageRef = useRef(directMessage);
 
 	// Function to Select a Chat
 	const handleSelectChat = useCallback((username, conversationID) => {
@@ -52,8 +55,20 @@ export const ChatProvider = ({ children }) => {
 	}, []);
 
 	useEffect(() => {
+		directMessageRef.current = directMessage;
+	}, [directMessage]);
+
+	useEffect(() => {
+		if (!directMessage?.isMinimized && directMessage?.conversationID) {
+			setUnreadCounts(prevUnreadCounts => ({
+				...prevUnreadCounts,
+				[directMessage.conversationID]: 0,
+			}));
+		}
+	}, [directMessage?.isMinimized, directMessage?.conversationID]);
+
+	useEffect(() => {
 		if (!isRefetch) return;
-		console.log(`isRefetch: ${isRefetch}`);
 		API.get('chat/conversations')
 			.then(response => {
 				const newConversations = [
@@ -66,6 +81,16 @@ export const ChatProvider = ({ children }) => {
 						}))
 					}))
 				];
+				const initialUnreadCounts = {};
+				newConversations.forEach(conversation => {
+					if (initialUnreadCounts[conversation.conversationID] === undefined) {
+						initialUnreadCounts[conversation.conversationID] = 0;
+					}
+				});
+				setUnreadCounts(prevUnreadCounts => ({
+					...initialUnreadCounts,
+					...prevUnreadCounts,
+				}));
 				setConversations(newConversations);
 			})
 			.catch(err => {
@@ -74,32 +99,17 @@ export const ChatProvider = ({ children }) => {
 	}, [isRefetch]);
 
 	useEffect(() => {
-		const fetchConversations = () => {
-			API.get('chat/conversations')
-				.then(response => {
-					const newConversations = [
-						...response.data.conversations.map(conversation => ({
-							...conversation,
-							participants: conversation.participants.map(formatUserData),
-							messages: conversation.messages.map(message => ({
-								...message,
-								sender: formatUserData(message.sender),
-							}))
-						}))
-					];
-					setConversations(newConversations);
-				})
-				.catch(error => {
-					console.error('Failed to fetch conversations:', error);
-				});
-		};
+		if (sendNotification) {
+			addNotification('info', `${sendNotification} sent you a message.`);
+			setSendNotification(null);
+		}
+	}, [sendNotification, addNotification]);
 
+	useEffect(() => {
 		const connectWSChat = () => {
 			socketChat.current = new WebSocket(WS_CHAT_URL + localStorage.getItem('token'));
-			socketChat.current.onopen = () => {
-				logger('WebSocket for Chat connection opened');
-				fetchConversations();
-			};
+			socketChat.current.onopen = () => logger('WebSocket for Chat connection opened');
+
 			socketChat.current.onmessage = event => {
 				const response = JSON.parse(event.data);
 				if (response.type === 'conversation_update') {
@@ -119,6 +129,20 @@ export const ChatProvider = ({ children }) => {
 							}
 							return conversation;
 						});
+						if (directMessageRef.current?.conversationID === conversationID
+							&& directMessageRef.current?.isOpen
+							&& !directMessageRef.current?.isMinimized) {
+							setUnreadCounts(prevUnreadCounts => ({
+								...prevUnreadCounts,
+								[conversationID]: 0,
+							}));
+						} else {
+							setUnreadCounts(prevUnreadCounts => ({
+								...prevUnreadCounts,
+								[conversationID]: (prevUnreadCounts[conversationID] || 0) + 1,
+							}));
+							setSendNotification(message.sender.displayName);
+						}
 						return updatedConversations;
 					});
 				} else if (response.type === 'friend_request') {
@@ -169,7 +193,8 @@ export const ChatProvider = ({ children }) => {
 		handleSelectChat,
 		handleCloseChat,
 		sendMessage,
-	}), [conversations, directMessage, handleSelectChat, handleCloseChat, sendMessage]);
+		unreadCounts,
+	}), [conversations, directMessage, handleSelectChat, handleCloseChat, sendMessage, unreadCounts]);
 
 	return (
 		<ChatContext.Provider value={contextValue}>
