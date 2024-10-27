@@ -126,10 +126,13 @@ export const DirectMessage = ({
 	const handleMessage = () => {
 		if (content.trim() === '') return;
 
+		setIsRefetch(true);
+
 		if (isBlocked) {
 			setContent('');
 			setCharCount(0);
 			onClose();
+			addNotification('error', 'An error occurred.'); // not sure about this one
 			return ;
 		}
 		sendMessage(JSON.stringify({ type: 'send_message', conversationID: conversationID, content: content, }))
