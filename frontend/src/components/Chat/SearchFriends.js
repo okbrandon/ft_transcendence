@@ -15,14 +15,14 @@ import API from '../../api/api';
 import ConfirmationModal from './tools/ConfirmationModal';
 
 export const SearchFriends = ({ toggleMinimization, handleSelectChat }) => {
-	const [searchQuery, setSearchQuery] = useState('');
-	const [isBlockModalOpen, setIsBlockModalOpen] = useState(false);
-	const [selectedFriend, setSelectedFriend] = useState(null);
 	const navigate = useNavigate();
-	const userID = localStorage.getItem('userID');
 	const { friends, setIsRefetch } = useRelation();
 	const { addNotification } = useNotification();
 	const { conversations } = useChat();
+	const [searchQuery, setSearchQuery] = useState('');
+	const [isBlockModalOpen, setIsBlockModalOpen] = useState(false);
+	const [selectedFriend, setSelectedFriend] = useState(null);
+	const userID = localStorage.getItem('userID');
 
 	const handleSelectFriend = (friend) => {
 		const convo = conversations.find((convo) => {

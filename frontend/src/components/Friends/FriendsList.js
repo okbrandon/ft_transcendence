@@ -15,12 +15,12 @@ import {
 } from "./styles/Friends.styled";
 import { useNotification } from "../../context/NotificationContext";
 import { useTranslation } from "react-i18next";
-import { useRelation } from "../../context/RelationContext";
+import { useChat } from "../../context/ChatContext";
 
 const FriendsList = ({ friends, setIsRefetch }) => {
 	const navigate = useNavigate();
 	const { addNotification } = useNotification();
-	const { conversations, handleSelectChat } = useRelation();
+	const { conversations, handleSelectChat } = useChat();
 	const { t } = useTranslation();
 
 	const setActivityDescription = activity => {

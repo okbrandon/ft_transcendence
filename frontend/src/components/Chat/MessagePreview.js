@@ -3,6 +3,7 @@ import ProfilePicture from './styles/global/ProfilePicture.styled';
 import ScrollableComponent from './tools/ScrollableComponent';
 import { useChat } from '../../context/ChatContext';
 import { truncateText } from './tools/TruncateText';
+import { useRelation } from '../../context/RelationContext';
 
 const PreviewContainer = styled.div`
 	padding: 20px;
@@ -44,8 +45,9 @@ const NoFriendsMessage = styled.div`
 `;
 
 export const MessagePreview = ({ handleSelectChat }) => {
+	const { conversations } = useChat();
+	const { friends } = useRelation();
 	const userID = localStorage.getItem('userID');
-	const { conversations, friends, blockedUsers } = useChat();
 
 	const handleSelectFriend = (friend) => {
 		const convo = conversations.find((convo) => {
@@ -77,10 +79,9 @@ export const MessagePreview = ({ handleSelectChat }) => {
 		<ScrollableComponent>
 			{conversations.map((convo, index) => {
 				const other = convo.participants.find(participant => participant.userID !== userID);
-				const isBlocked = blockedUsers.find(blocked => blocked.userID === other.userID);
 				const friendExists = friends.find(friend => friend.username === other.username);
 
-				if (!isBlocked && friendExists) {
+				if (friendExists) {
 					if (convo.messages.length === 0) {
 						return renderFriendPreview(other, index, 'Start a new conversation');
 					}

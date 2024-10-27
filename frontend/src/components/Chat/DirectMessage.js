@@ -25,6 +25,7 @@ import ConfirmationModal from './tools/ConfirmationModal';
 import DisplayChatMessages from './tools/DisplayChatMessages';
 import useClickOutside from './tools/hooks/useClickOutside';
 import { getRelationFromUsername } from '../../scripts/relation';
+import { useChat } from '../../context/ChatContext';
 
 export const DirectMessage = ({
 	isOpen,
@@ -35,21 +36,24 @@ export const DirectMessage = ({
 	isMinimized,
 	toggleMinimization,
 }) => {
-	const userID = localStorage.getItem('userID');
+	const navigate = useNavigate();
+
+	const { setIsRefetch, relations } = useRelation();
+	const { sendMessage } = useChat();
+	const { addNotification } = useNotification();
+
+	const messagesEndRef = useRef(null);
+	const dropdownRef = useRef(null);
+
 	const [content, setContent] = useState('');
 	const [charCount, setCharCount] = useState(0);
-	const { sendMessage, setIsRefetch, relations } = useRelation();
-	const { addNotification } = useNotification();
-	const messagesEndRef = useRef(null);
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [isBlockModalOpen, setIsBlockModalOpen] = useState(false);
-	const navigate = useNavigate();
-	const dropdownRef = useRef(null);
 	const [isBlocked, setIsBlocked] = useState(false);
+	const userID = localStorage.getItem('userID');
 
 	const realConvo = conversations.find(c => c.conversationID === conversationID);
 	const otherUser = realConvo.participants.find(id => id.userID !== userID);
-	const proPic = otherUser.avatarID || 'images/default-profile.png';
 
 	useEffect(() => {
 		if (!relations) return;
@@ -122,8 +126,6 @@ export const DirectMessage = ({
 	const handleMessage = () => {
 		if (content.trim() === '') return;
 
-		setIsRefetch(true);
-
 		if (isBlocked) {
 			setContent('');
 			setCharCount(0);
@@ -144,7 +146,7 @@ export const DirectMessage = ({
 		<>
 			<DirectMessageContainer $isOpen={isOpen} $isMinimized={isMinimized}>
 				<Header onClick={toggleMinimization}>
-					<ProfilePicture src={proPic} alt={`${otherUser.username}'s profile picture`} $header />
+					<ProfilePicture src={otherUser.avatarID} alt={`${otherUser.username}'s profile picture`} $header />
 					<OnlineStatus $status={otherUser.status?.online || false} />
 					<Username onClick={toggleDropdown}>{username}</Username>
 					<Dropdown ref={dropdownRef} $isOpen={isDropdownOpen}>
@@ -183,7 +185,7 @@ export const DirectMessage = ({
 								}}
 								maxLength={256}
 								rows={1}
-								style={{ resize: 'none', overflow: 'hidden' }}
+								autoFocus
 							/>
 							<SendButton onClick={handleMessage} disabled={content.trim() === ''}>
 								<i className="bi bi-send-fill" />
