@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import ProfilePicture from './styles/global/ProfilePicture.styled';
 import ScrollableComponent from './tools/ScrollableComponent';
 import { useChat } from '../../context/ChatContext';
-import { truncateText } from './tools/TruncateText';
 import { useRelation } from '../../context/RelationContext';
 
 const PreviewContainer = styled.div`
@@ -58,18 +57,31 @@ export const MessagePreview = ({ handleSelectChat }) => {
 		handleSelectChat(friend.username, convo ? convo.conversationID : null);
 	};
 
-	const renderFriendPreview = (friend, index, message) => (
-		<PreviewContainer key={index} onClick={() => handleSelectFriend(friend)}>
-			<ProfilePicture
-				src={friend.avatarID || 'images/default-profile.png'}
-				alt={`${friend.username}'s profile picture`}
-			/>
-			<MessageContent>
-				<Sender>{friend.username}</Sender>
-				<MessageText>{truncateText(message, 24)}</MessageText>
-			</MessageContent>
-		</PreviewContainer>
-	);
+	const truncateText = (text, maxLength) => {
+		if (text.length <= maxLength) {
+			return text;
+		}
+		return text.substring(0, maxLength) + '...';
+	}
+
+	const renderFriendPreview = (friend, index, message, lastMessageUserId) => {
+		if (lastMessageUserId === userID) {
+			message = 'You: ' + message; // Brandon don't forget to translate this line as well
+		}
+
+		return (
+			<PreviewContainer key={index} onClick={() => handleSelectFriend(friend)}>
+				<ProfilePicture
+					src={friend.avatarID || 'images/default-profile.png'}
+					alt={`${friend.username}'s profile picture`}
+				/>
+				<MessageContent>
+					<Sender>{friend.username}</Sender>
+					<MessageText>{truncateText(message, 24)}</MessageText>
+				</MessageContent>
+			</PreviewContainer>
+		);
+	};
 
 	if (friends.length === 0) {
 		return <NoFriendsMessage>Make some friends so you can chat with them !</NoFriendsMessage>;
@@ -85,8 +97,9 @@ export const MessagePreview = ({ handleSelectChat }) => {
 					if (convo.messages.length === 0) {
 						return renderFriendPreview(other, index, 'Start a new conversation');
 					}
+					console.log(convo.messages);
 					const lastMessage = convo.messages[convo.messages.length - 1];
-					return renderFriendPreview(other, index, lastMessage.content);
+					return renderFriendPreview(other, index, lastMessage.content, lastMessage.sender.userID);
 				}
 				return null;
 			})}
