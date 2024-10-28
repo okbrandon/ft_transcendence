@@ -28,7 +28,7 @@ const PodiumPlayer = ({ player, position, selectedStat }) => {
 			<PlayerInfo $position={positionClass}>
 				<Username
 				onClick={() => handleClickUsername(playerName)}
-				style={{ paddingTop: '10px' }}
+				style={{ paddingTop: '10px', fontWeight: 'bold' }}
 				>
 					{playerName}</Username>
 				<TrophyContainer $position={positionClass}>
