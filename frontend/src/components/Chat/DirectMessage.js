@@ -149,6 +149,7 @@ export const DirectMessage = ({
 					<OnlineStatus $status={otherUser.status?.online || false} />
 					<Username onClick={toggleDropdown}>{username}</Username>
 					<Dropdown ref={dropdownRef} $isOpen={isDropdownOpen}>
+						{/* Brandon translate the buttons below */}
 						<DropdownItem data-action="profile" onClick={() => handleDropdownAction('profile')}>Profile</DropdownItem>
 						<DropdownItem data-action="invite" onClick={() => handleDropdownAction('invite')}>Invite</DropdownItem>
 						<DropdownItem data-action="block" onClick={() => handleDropdownAction('block')}>Block</DropdownItem>
@@ -173,7 +174,7 @@ export const DirectMessage = ({
 						<ChatInputContainer>
 							<ChatInput
 								as="textarea"
-								placeholder="Type a message..."
+								placeholder="Type a message..." // Brandon translate this line
 								value={content}
 								onChange={handleInputChange}
 								onKeyDown={e => {
@@ -207,6 +208,7 @@ export const DirectMessage = ({
 				isOpen={isBlockModalOpen}
 				onClose={() => setIsBlockModalOpen(false)}
 				onConfirm={handleBlockUser}
+				// Brandon translate -> "Block User", "message"
 				title="Block User"
 				message={`Are you sure you want to block ${username}? You won't be able to see their messages or receive invitations from them.`}
 			/>

@@ -7,6 +7,7 @@ const ChatHeader = ({ toggleMinimization, arrowState }) => {
 	const { unreadCounts } = useChat();
 	const unreadCount = Object.values(unreadCounts).reduce((acc, count) => acc + count, 0);
 
+	// Brandon translate this line -> "Messages"
 	return (
 		<Header onClick={toggleMinimization}>
 			{unreadCount > 0 && <ChatNotificationPopUp>{unreadCount}</ChatNotificationPopUp>}

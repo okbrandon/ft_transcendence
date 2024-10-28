@@ -92,7 +92,7 @@ export const MessagePreview = () => {
 	};
 
 	if (friends.length === 0) {
-		return <NoFriendsMessage>Make some friends so you can chat with them !</NoFriendsMessage>;
+		return <NoFriendsMessage>Make some friends so you can chat with them !</NoFriendsMessage>; // Brandon translate this line
 	}
 
 	return (
@@ -103,7 +103,7 @@ export const MessagePreview = () => {
 
 				if (friendExists) {
 					if (convo.messages.length === 0) {
-						return renderFriendPreview(other, index, 'Start a new conversation');
+						return renderFriendPreview(other, index, 'Start a new conversation'); // Brandon translate this line
 					}
 					const lastMessage = convo.messages[convo.messages.length - 1];
 					return renderFriendPreview(other, index, lastMessage.content, lastMessage.sender.userID, convo.conversationID);
