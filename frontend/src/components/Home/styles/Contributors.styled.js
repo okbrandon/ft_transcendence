@@ -44,12 +44,14 @@ export const CardsContainer = styled.div`
 	align-items: center;
 	width: 90%;
 	max-width: 1200px;
+	flex-wrap: wrap;
 `;
 
 export const Cards = styled.div`
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 	gap: 2rem;
+	width: 100%;
 `;
 
 export const Card = styled.div`
