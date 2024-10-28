@@ -25,11 +25,13 @@ const PodiumPlayer = ({ player, position, selectedStat }) => {
 		<PodiumBase className={positionClass}>
 			<PlayerAvatar src={player?.user.avatarID ? player?.user.avatarID : 'images/default-profile.png'} alt={playerName} $position={positionClass} />
 			<PlayerInfo $position={positionClass}>
-				<Username
-				onClick={() => handleClickUsername(playerName)}
-				style={{ paddingTop: '10px', fontWeight: 'bold' }}
-				>
-					{playerName}</Username>
+				<div style={{paddingTop: '10px', fontWeight: 'bold'}}>
+					{playerName !== 'N/A' ? (
+						<Username onClick={() => handleClickUsername(playerName)}>{playerName}</Username>
+					) : (
+						<span style={{color: 'rgba(255, 255, 255, 0.5)', cursor: 'not-allowed'}}>N/A</span>
+					)}
+				</div>
 				<TrophyContainer $position={positionClass}>
 					<Badge className={positionClass}><i className="bi bi-trophy-fill" /></Badge>
 				</TrophyContainer>
