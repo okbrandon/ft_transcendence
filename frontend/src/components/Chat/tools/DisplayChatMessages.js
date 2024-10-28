@@ -47,7 +47,7 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 								<BubbleDetails>
 									{!isSameSender && (
 										<MessageUsername $isHost={true}>
-											<Avatar src={message.sender.avatarID || 'images/default-profile.png'} alt={message.sender.username} />
+											<Avatar src={message.sender.avatarID} alt={message.sender.username} />
 											{message.sender.username}
 										</MessageUsername>
 									)}

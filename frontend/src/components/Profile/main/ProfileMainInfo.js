@@ -17,14 +17,14 @@ import {
 const ProfilePicture = ({ user, profileUser, relation, setIsRefetch }) => {
 	const navigate = useNavigate();
 	const { addNotification } = useNotification();
-	const disableAddFriend = !!relation.length;
+	const disableAddFriend = !!(relation.length && relation[0].status !== 0);
 	const disableBlockUser = !!(relation.length && relation[0].status === 2);
 
 	const handleAddFriend = () => {
 		if (relation.length && relation[0].status === 0) {
 			API.put('users/@me/relationships', { user: profileUser.userID, type: 1 })
 				.then(() => {
-					addNotification('success', 'Friend request sent.');
+					addNotification('success', 'You are now friends.');
 					setIsRefetch(true);
 				})
 				.catch(err => {

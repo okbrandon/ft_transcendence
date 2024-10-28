@@ -8,7 +8,6 @@ import SignIn from "./SignIn";
 import {
 	Form,
 	SectionHeading,
-	SuccessMessage
 } from "../styles/Settings.styled";
 import PongButton from "../../../styles/shared/PongButton.styled";
 import ErrorMessage from "../../../styles/shared/ErrorMessage.styled";
@@ -24,7 +23,6 @@ const Security = ({ user, setUser }) => {
 	});
 	const [cfPassword, setCfPassword] = useState('');
 	const [loading, setLoading] = useState(false);
-	const [success, setSuccess] = useState('');
 	const [has2FA, setHas2FA] = useState(false);
 	const [showTwoFactorAuth, setShowTwoFactorAuth] = useState(false);
 	const [error, setError] = useState('');
@@ -92,14 +90,13 @@ const Security = ({ user, setUser }) => {
 
 		if (errorMessage) {
 			setError(errorMessage);
-			setSuccess('');
 		} else if (submissionData.password && has2FA) {
 			setShowTwoFactorAuth(true);
 		} else {
 			setLoading(true);
 			API.patch('users/@me/profile', submissionData)
 				.then(() => {
-					setSuccess(t('settings.security.successMessage'));
+					addNotification('success', t('settings.security.successMessage'));
 					setError('');
 					getUser()
 						.then(user => {
@@ -107,12 +104,10 @@ const Security = ({ user, setUser }) => {
 						})
 						.catch(err => {
 							setError(err?.response?.data?.error || 'An error occurred');
-							setSuccess('');
 						});
 				})
 				.catch(err => {
 					setError(err.response.data.error);
-					setSuccess('');
 				})
 				.finally(() => {
 					setLoading(false);
@@ -136,7 +131,6 @@ const Security = ({ user, setUser }) => {
 					formData={formData}
 					handleChange={handleChange}
 				/>
-				{success && <SuccessMessage>{success}</SuccessMessage>}
 				{error && <ErrorMessage>{error}</ErrorMessage>}
 				<PongButton type="submit" disabled={loading}>
 					{loading ? t('settings.security.loadingButton') : t('settings.security.saveButton')}
@@ -147,7 +141,6 @@ const Security = ({ user, setUser }) => {
 				<TwoFactorAuthSecurity
 					formData={formData}
 					setUser={setUser}
-					setSuccess={setSuccess}
 					setShowTwoFactorAuth={setShowTwoFactorAuth}
 				/>
 			)}

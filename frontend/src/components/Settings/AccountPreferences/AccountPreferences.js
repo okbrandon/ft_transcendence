@@ -7,11 +7,11 @@ import { getUser } from '../../../api/user';
 import {
 	Form,
 	SectionHeading,
-	SuccessMessage,
 } from '../styles/Settings.styled';
 import PongButton from '../../../styles/shared/PongButton.styled';
 import ErrorMessage from '../../../styles/shared/ErrorMessage.styled';
 import { useTranslation } from 'react-i18next';
+import { useNotification } from '../../../context/NotificationContext';
 
 const AccountPreferences = ({ user, setUser }) => {
 	const [formData, setFormData] = useState({
@@ -21,8 +21,8 @@ const AccountPreferences = ({ user, setUser }) => {
 		lang: user.lang,
 	});
 	const [loading, setLoading] = useState(false);
-	const [success, setSuccess] = useState('');
 	const [error, setError] = useState('');
+	const { addNotification } = useNotification();
 	const { t } = useTranslation();
 
 	const handleChange = (e) => {
@@ -74,12 +74,11 @@ const AccountPreferences = ({ user, setUser }) => {
 
 		if (errorMessage) {
 			setError(errorMessage);
-			setSuccess('');
 		} else {
 			setLoading(true);
 			API.patch('/users/@me/profile', submissionData)
 				.then(() => {
-					setSuccess(t('settings.accountPreferences.successMessage'));
+					addNotification('success', t('settings.accountPreferences.successMessage'));
 					setError('');
 					getUser()
 						.then(user => {
@@ -87,12 +86,10 @@ const AccountPreferences = ({ user, setUser }) => {
 						})
 						.catch(err => {
 							setError(err?.response?.data?.error || 'An error occurred.');
-							setSuccess('');
 						});
 				})
 				.catch(err => {
 					setError(err?.response?.data?.error || 'An error occurred.');
-					setSuccess('');
 				})
 				.finally(() => {
 					setLoading(false);
@@ -114,7 +111,6 @@ const AccountPreferences = ({ user, setUser }) => {
 				handleChange={handleChange}
 			/>
 			<AccountManagement/>
-			{success && <SuccessMessage>{success}</SuccessMessage>}
 			{error && <ErrorMessage>{error}</ErrorMessage>}
 			<PongButton type="submit" disabled={loading}>
 				{loading ? t('settings.accountPreferences.loadingButton') : t('settings.accountPreferences.saveButton')}

@@ -9,7 +9,7 @@ import ErrorMessage from '../../../../styles/shared/ErrorMessage.styled';
 import { useNotification } from '../../../../context/NotificationContext';
 import { useTranslation } from 'react-i18next';
 
-const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactorAuth }) => {
+const TwoFactorAuthSecurity = ({ formData, setUser, setShowTwoFactorAuth }) => {
 	const { addNotification } = useNotification();
 	const [availablePlatforms, setAvailablePlatforms] = useState([]);
 	const [authCode, setAuthCode] = useState('');
@@ -46,20 +46,18 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactor
 
 		API.patch('users/@me/profile', { ...submissionData, otp: authCode })
 			.then(() => {
-				setSuccess('Security updated successfully');
+				addNotification('success', 'Security updated successfully');
 				getUser()
 					.then(res => {
 						setUser(res.data);
 					})
 					.catch(err => {
 						setError(err.response.data.error);
-						setSuccess('');
 					});
 				setShowTwoFactorAuth(false);
 			})
 			.catch(err => {
 				setError(err.response.data.error);
-				setSuccess('');
 			})
 			.finally(() => {
 				setDisableVerify(false);

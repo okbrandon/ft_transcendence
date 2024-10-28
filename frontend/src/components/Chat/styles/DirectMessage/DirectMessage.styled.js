@@ -133,6 +133,8 @@ export const ChatInput = styled.input`
 	background-color: #2a2a37;
 	color: #fff;
 	font-size: 1rem;
+	resize: none;
+	overflow: hidden;
 
 	&::placeholder {
 		color: #aaa;
