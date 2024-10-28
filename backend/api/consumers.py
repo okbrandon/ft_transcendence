@@ -214,15 +214,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
         connection_count = cache.get(connection_count_key, 0)
         cache.set(connection_count_key, connection_count + 1, timeout=None)
 
-        if connection_count <= 0:
-            logger.info(f"[{self.__class__.__name__}] User {self.user.username} connected")
-            await self.channel_layer.group_add(
-                self.user_group_name,
-                self.channel_name
-            )
+        await self.channel_layer.group_add(
+            self.user_group_name,
+            self.channel_name
+        )
 
+        if connection_count <= 0:
             await self.ensure_conversations_exist(self.user)
-            logger.info(f"[{self.__class__.__name__}] User {self.user.username} conversations ensured")
+            logger.info(f"[{self.__class__.__name__}] User {self.user.username} connected, conversations ensured")
         else:
             logger.info(f"[{self.__class__.__name__}] User {self.user.username} reconnected")
         await self.accept()
@@ -232,15 +231,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
             connection_count_key = f"chat_user_connections_{self.user.userID}"
             connection_count = cache.get(connection_count_key, 0) - 1
 
+            await self.channel_layer.group_discard(
+                self.user_group_name,
+                self.channel_name
+            )
+
             if connection_count > 0:
                 cache.set(connection_count_key, connection_count, timeout=None)
                 logger.info(f"[{self.__class__.__name__}] User {self.user.username} disconnected, {connection_count} connections remaining")
             else:
                 cache.delete(connection_count_key)
-                await self.channel_layer.group_discard(
-                    self.user_group_name,
-                    self.channel_name
-                )
                 logger.info(f"[{self.__class__.__name__}] User {self.user.username} disconnected")
 
     async def receive(self, text_data):
