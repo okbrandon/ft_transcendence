@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Username } from '../styles/ScoreTable.styled';
 import {
 	PlayerInfo,
-	PlayerName,
 	PlayerScore,
 	PlayerAvatar,
 	TrophyContainer,
