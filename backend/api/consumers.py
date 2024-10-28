@@ -46,13 +46,7 @@ class StatusConsumer(AsyncWebsocketConsumer):
             await self.close()
             return
 
-        try:
-            self.user = await sync_to_async(User.objects.get)(userID=userID)
-        except User.DoesNotExist:
-            logger.info(f"[{self.__class__.__name__}] User {userID} not found")
-            await self.close()
-            return
-
+        self.user = await sync_to_async(User.objects.get)(userID=userID)
         self.user_group_name = f"status_{self.user.userID}"
 
         await self.channel_layer.group_add(
@@ -198,13 +192,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.close()
             return
 
-        try:
-            self.user = await sync_to_async(User.objects.get)(userID=userID)
-        except User.DoesNotExist:
-            logger.info(f"[{self.__class__.__name__}] User {userID} not found")
-            await self.close()
-            return
-
+        self.user = await sync_to_async(User.objects.get)(userID=userID)
         self.user_group_name = f"chat_{self.user.userID}"
 
         await self.channel_layer.group_add(

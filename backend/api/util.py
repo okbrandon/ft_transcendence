@@ -3,12 +3,13 @@ import base64
 import random
 import resend
 import os
-import httpx
 import logging
-import ssl
-import certifi
+import jwt
 
 from plivo import RestClient
+from asgiref.sync import sync_to_async
+
+from django.conf import settings
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -132,26 +133,30 @@ def get_safe_profile(data: dict, me: bool, many: bool = False):
     return safe_data
 
 async def get_user_id_from_token(token):
+    from .models import User # Avoid premature loading
+    from .serializers import UserSerializer
+
     try:
-        url = "https://localhost:8443/api/v1/users/@me/profile"
-        headers = {
-            "Authorization": f"Bearer {token}"
-        }
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+        user_id = payload.get('user_id')
 
-        # Create a custom SSL context that doesn't verify certificates
-        ssl_context = ssl.create_default_context(cafile=certifi.where())
-        ssl_context.check_hostname = False
-        ssl_context.verify_mode = ssl.CERT_NONE
+        if not user_id:
+            logger.warning(f"[UserIDFromToken] {token}: Token payload missing user_id")
+            return None
 
-        async with httpx.AsyncClient(verify=ssl_context) as client:
-            response = await client.get(url, headers=headers)
+        user = await sync_to_async(User.objects.get)(id=user_id)
+        if not user:
+            logger.warning(f"[UserIDFromToken] {token}: User not found")
+            return None
 
-        if response.status_code != 200:
-            raise Exception(f"Exited with bad status_code: {response.status_code} {response.reason}")
-
-        user_data = response.json()
-        return user_data["userID"]
-
-    except Exception as err:
-        logger.error(f"User from token failed: {err}")
+        user_serializer = UserSerializer(user).data
+        return user_serializer['userID']
+    except jwt.ExpiredSignatureError:
+        logger.warning(f"[UserIDFromToken] {token}: Expired token")
+        return None
+    except jwt.InvalidTokenError:
+        logger.warning(f"[UserIDFromToken] {token}: Invalid token")
+        return None
+    except Exception as e:
+        logger.error(f"[UserIDFromToken] {token}: {e}")
         return None
