@@ -63,11 +63,6 @@ export const PlayerAvatar = styled.img`
 		calculateTop(270, 370)};
 `;
 
-export const PlayerName = styled.div`
-	font-size: 1.2em;
-	color: #fff;
-`;
-
 export const PlayerScore = styled.div`
 	display: flex;
 	justify-content: center;

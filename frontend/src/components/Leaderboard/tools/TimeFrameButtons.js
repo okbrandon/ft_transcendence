@@ -9,6 +9,7 @@ const TimeFrameButtons = ({ timeFrame, handleTimeFrameChange }) => {
 	return (
 		<TimeFrameContainer>
 			<BackgroundContainer>
+				{/* Brandon: translate each buttons */}
 				<TimeFrameButton
 					onClick={() => handleTimeFrameChange('lifetime')}
 					$isActive={timeFrame === 'lifetime'}
