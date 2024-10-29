@@ -98,10 +98,10 @@ const Shop = () => {
 						<SkinPrice>{item.price} {t('store.currency.icon')}</SkinPrice>
 						{purchasedItems.some(purchase => purchase.itemID === item.itemID) ? (
 							<BuyButton
-								onClick={() => handleEquip(item.itemID)}
-								disabled={selectedSkin === item.itemID}
+								onClick={() => selectedSkin === item.itemID ? handleEquip(null) : handleEquip(item.itemID)}
+								className={selectedSkin === item.itemID ? 'unequip' : ''}
 							>
-								{selectedSkin === item.itemID ? t('store.equippedLabel') : t('store.equipButton')}
+								{selectedSkin === item.itemID ? 'unequip' : t('store.equipButton')}
 							</BuyButton>
 						) : (
 							<BuyButton onClick={() => handlePurchase(item)}>
