@@ -18,7 +18,7 @@ import { useRelation } from '../../../context/RelationContext';
 const ProfilePicture = ({ user, profileUser, relation }) => {
 	const navigate = useNavigate();
 	const { addNotification } = useNotification();
-	const { setIsRefetch } = useRelation();
+	const { setFriends, setRelations, setIsRefetch } = useRelation();
 	const [loading, setLoading] = useState(false);
 	const disableAddFriend = !!(relation.length &&
 		((relation[0].sender.userID === user.userID && relation[0].status === 0)
@@ -34,12 +34,13 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 	}, [loading]);
 
 	const handleAddFriend = () => {
+		if (loading) return;
+		setLoading(true);
 		if (relation.length && relation[0].status === 0) {
 			API.put('users/@me/relationships', { user: profileUser.userID, type: 1 })
 				.then(() => {
 					addNotification('success', 'You are now friends.');
 					setIsRefetch(true);
-					setLoading(true);
 				})
 				.catch(err => {
 					addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
@@ -49,7 +50,6 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 				.then(() => {
 					addNotification('success', 'Friend request sent.');
 					setIsRefetch(true);
-					setLoading(true);
 				})
 				.catch(err => {
 					addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
@@ -58,12 +58,13 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 	};
 
 	const handleRemoveFriend = () => {
+		if (loading) return;
 		setLoading(true);
 		API.delete(`users/@me/relationships/${relation[0].relationshipID}`)
 			.then(() => {
 				addNotification('success', 'Friend removed.');
-				setIsRefetch(true);
-				setLoading(true);
+				setRelations(prevRelations => prevRelations.filter(prevRelation => prevRelation.relationshipID !== relation[0].relationshipID));
+				setFriends(prevFriends => prevFriends.filter(friend => friend.relationshipID !== relation[0].relationshipID));
 			})
 			.catch(err => {
 				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
@@ -71,17 +72,18 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 	};
 
 	const handleBlockUser = () => {
+		if (loading) return;
 		setLoading(true);
 		API.put('users/@me/relationships', { user: profileUser.userID, type: 2 })
 			.then(() => {
 				addNotification('warning', 'User blocked.');
 				setIsRefetch(true);
-				setLoading(true);
 			})
 			.catch(err => {
 				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 			});
 	}
+
 	return (
 		<SectionContainer>
 			<ProfilePictureContainer>

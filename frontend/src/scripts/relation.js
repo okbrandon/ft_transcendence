@@ -16,7 +16,7 @@ export const getFriends = (relations, userID) => {
 			relation.sender = formatUserData(relation.sender);
 			relation.target = formatUserData(relation.target);
 			const friend = getOtherFromRelationship(relation, userID);
-			return { ...friend, relationID: relation.relationshipID };
+			return { ...friend, relationshipID: relation.relationshipID };
 		});
 	if (!friends) return [];
 	return friends;
@@ -29,7 +29,7 @@ export const getRequests = (relations, userID) => {
 			relation.sender = formatUserData(relation.sender);
 			relation.target = formatUserData(relation.target);
 			const request = getOtherFromRelationship(relation, userID);
-			return { ...request, relationID: relation.relationshipID };
+			return { ...request, relationshipID: relation.relationshipID };
 		});
 	if (!requests) return [];
 	return requests;
@@ -42,7 +42,7 @@ export const getBlockedUsers = (relations, userID) => {
 			relation.sender = formatUserData(relation.sender);
 			relation.target = formatUserData(relation.target);
 			const blockedUser = getOtherFromRelationship(relation, userID);
-			return { ...blockedUser, relationID: relation.relationshipID };
+			return { ...blockedUser, relationshipID: relation.relationshipID };
 		})
 		.filter(user => user.is === 'target');
 	if (!blockedUsers) return [];

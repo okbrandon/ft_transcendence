@@ -24,9 +24,9 @@ const Visibility = () => {
 
 	if (!blockedUsers) return <Loader/>;
 
-	const handleUnblock = (e, relationID) => {
+	const handleUnblock = (e, relationshipID) => {
 		e.preventDefault();
-		API.delete(`users/@me/relationships/${relationID}`)
+		API.delete(`users/@me/relationships/${relationshipID}`)
 			.then(() => {
 				addNotification('success', 'User unblocked');
 				setIsRefetch(true);
@@ -48,7 +48,7 @@ const Visibility = () => {
 								<BlockedUserAvatar src='/images/default-profile.png' alt='Blocked user'/>
 								<BlockedUserName>{relation.displayName}</BlockedUserName>
 							</div>
-							<PongButton onClick={e => handleUnblock(e, relation.relationID)}>
+							<PongButton onClick={e => handleUnblock(e, relation.relationshipID)}>
 								{t('settings.visibility.subSections.blockedUsers.unblockButton')}
 							</PongButton>
 						</BlockedUserItem>
