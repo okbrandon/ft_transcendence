@@ -101,7 +101,7 @@ const Profile = () => {
 							user={user}
 							profileUser={profileUser}
 							relation={relation}
-							setIsRefetch={setIsRefetch}/>
+						/>
 					</UserProfileBannerContainer>
 					<MainBar profileUser={profileUser} matches={matches}/>
 					<UserContainer>
