@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import { useNotification } from '../../../context/NotificationContext';
@@ -17,7 +17,9 @@ import {
 const ProfilePicture = ({ user, profileUser, relation, setIsRefetch }) => {
 	const navigate = useNavigate();
 	const { addNotification } = useNotification();
-	const disableAddFriend = !!(relation.length && relation[0].status !== 0);
+	const disableAddFriend = !!(relation.length &&
+		((relation[0].sender.userID === user.userID && relation[0].status === 0)
+		|| relation[0].status !== 0));
 	const disableBlockUser = !!(relation.length && relation[0].status === 2);
 
 	const handleAddFriend = () => {

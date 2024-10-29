@@ -173,6 +173,7 @@ export const DirectMessage = ({
 
 						<ChatInputContainer>
 							<ChatInput
+								id="chat-input"
 								as="textarea"
 								placeholder="Type a message..." // Brandon translate this line
 								value={content}

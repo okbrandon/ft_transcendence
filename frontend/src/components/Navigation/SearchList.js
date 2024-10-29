@@ -1,6 +1,5 @@
 import React from "react";
 import { SearchListContainer, SearchListItem, SearchListItemImage, SearchListItemText } from "./styles/SearchList.styled";
-import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 const SearchList = ({ results, activeIndex, handleSelect }) => {
