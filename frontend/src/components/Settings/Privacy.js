@@ -7,10 +7,19 @@ import { useNotification } from "../../context/NotificationContext";
 import { useTranslation } from "react-i18next";
 
 const Privacy = () => {
+	const { addNotification } = useNotification();
 	const [isHarvesting, setIsHarvesting] = useState(false);
 	const [isDataReady, setIsDataReady] = useState(false);
-	const { addNotification } = useNotification();
+	const [loading, setLoading] = useState(false);
 	const { t } = useTranslation();
+
+	useEffect(() => {
+		if (loading) return;
+		const timeout = setTimeout(() => {
+			setLoading(false);
+		}, 1000);
+		return () => clearTimeout(timeout);
+	}, [loading]);
 
 	useEffect(() => {
 		API.get('users/@me/harvest')
@@ -32,6 +41,8 @@ const Privacy = () => {
 
 	const handleHarvest = e => {
 		e.preventDefault();
+		if (loading) return;
+		setLoading(true);
 		API.get('users/@me/exports', { responseType: 'blob' })
 			.then(res => {
 				const blobUrl = window.URL.createObjectURL(res.data);
@@ -53,9 +64,12 @@ const Privacy = () => {
 
 	const handleAskData = e => {
 		e.preventDefault();
+		if (loading) return;
+		setLoading(true);
 		API.post('users/@me/harvest')
 			.then(() => {
 				addNotification('success', 'Data harvesting scheduled');
+				setIsHarvesting(true);
 			})
 			.catch(err => {
 				addNotification('error', `${err?.response?.data?.error || 'An error occurred'}`);

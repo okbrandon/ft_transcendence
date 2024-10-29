@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import API from "../../api/api";
 import { useRelation } from "../../context/RelationContext";
 import { useNotification } from "../../context/NotificationContext";
@@ -20,12 +20,23 @@ import { useTranslation } from "react-i18next";
 const Visibility = () => {
 	const { blockedUsers, setIsRefetch } = useRelation();
 	const { addNotification } = useNotification();
+	const [loading, setLoading] = useState(false);
 	const { t } = useTranslation();
+
+	useEffect(() => {
+		if (!loading) return;
+		const timeout = setTimeout(() => {
+			setLoading(false);
+		}, 1000);
+		return () => clearTimeout(timeout);
+	}, [loading]);
 
 	if (!blockedUsers) return <Loader/>;
 
 	const handleUnblock = (e, relationshipID) => {
 		e.preventDefault();
+		if (loading) return;
+		setLoading(true);
 		API.delete(`users/@me/relationships/${relationshipID}`)
 			.then(() => {
 				addNotification('success', 'User unblocked');

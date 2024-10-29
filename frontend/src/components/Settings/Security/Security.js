@@ -29,6 +29,14 @@ const Security = ({ user, setUser }) => {
 	const { t } = useTranslation();
 
 	useEffect(() => {
+		if (!loading) return;
+		const timeout = setTimeout(() => {
+			setLoading(false);
+		}, 1000);
+		return () => clearTimeout(timeout);
+	}, [loading]);
+
+	useEffect(() => {
 		API.get('auth/totp')
 			.then(res => {
 				setHas2FA(res.data.has_otp);
@@ -79,6 +87,7 @@ const Security = ({ user, setUser }) => {
 
 	const handleSubmit = e => {
 		e.preventDefault();
+		if (loading) return;
 
 		const submissionData = { ...formData };
 
@@ -104,13 +113,11 @@ const Security = ({ user, setUser }) => {
 						})
 						.catch(err => {
 							setError(err?.response?.data?.error || 'An error occurred');
+							addNotification('error', `${err?.response?.data?.error || 'An error occurred'}`);
 						});
 				})
 				.catch(err => {
-					setError(err.response.data.error);
-				})
-				.finally(() => {
-					setLoading(false);
+					addNotification('error', `${err?.response?.data?.error || 'An error occurred'}`);
 				});
 		}
 	};
