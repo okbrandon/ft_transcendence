@@ -33,7 +33,7 @@ const Profile = () => {
 		setIsRefetch(true);
 		setHasRefetched(true);
 		setShowLoader(true);
-	}, [setIsRefetch]);
+	}, [setIsRefetch, username]);
 
 	useEffect(() => {
 		const fetchProfileData = async () => {
