@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Image from 'react-bootstrap/Image';
 import Button from 'react-bootstrap/Button';
@@ -12,23 +12,37 @@ import { useAuth } from '../../context/AuthContext';
 import TwoFactorAuthSignIn from './TwoFactorAuthSignIn';
 import ErrorMessage from '../../styles/shared/ErrorMessage.styled';
 import { useTranslation } from 'react-i18next';
+import { useNotification } from '../../context/NotificationContext';
 
 const SignIn = () => {
 	const navigate = useNavigate();
 	const { setIsLoggedIn } = useAuth();
+	const { addNotification } = useNotification();
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [isTwoFactorAuth, setIsTwoFactorAuth] = useState(false);
 	const [availablePlatforms, setAvailablePlatforms] = useState(null);
 	const [showPassword, setShowPassword] = useState(false);
 	const [error, setError] = useState('');
+	const [loading, setLoading] = useState(false);
 	const { t } = useTranslation();
+
+	useEffect(() => {
+		if (!loading) return;
+		const timeout = setTimeout(() => {
+			setLoading(false);
+		}, 1000);
+		return () => clearTimeout(timeout);
+	}, [loading]);
 
 	const handleSubmit = event => {
 		event.preventDefault();
+		if (loading) return;
 		if (!username || !password) {
 			setError(t('auth.signIn.errorMessage'));
+			addNotification('error', t('auth.signIn.errorMessage'));
 		} else {
+			setLoading(true);
 			apiLogin(username, password)
 				.then(() => {
 					setIsLoggedIn(true);
@@ -40,6 +54,7 @@ const SignIn = () => {
 						setIsTwoFactorAuth(true);
 					} else {
 						setError(err.response.data.error);
+						addNotification('error', err.response.data.error);
 					}
 				});
 		}
