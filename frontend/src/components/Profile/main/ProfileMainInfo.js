@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import { useNotification } from '../../../context/NotificationContext';
@@ -33,7 +33,7 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 		return () => clearTimeout(timeout);
 	}, [loading]);
 
-	const handleAddFriend = () => {
+	const handleAddFriend = useCallback(() => {
 		if (loading) return;
 		setLoading(true);
 		if (relation.length && relation[0].status === 0) {
@@ -55,9 +55,9 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 					addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 				});
 		}
-	};
+	}, [addNotification, profileUser.userID, relation, setIsRefetch, loading]);
 
-	const handleRemoveFriend = () => {
+	const handleRemoveFriend = useCallback(() => {
 		if (loading) return;
 		setLoading(true);
 		API.delete(`users/@me/relationships/${relation[0].relationshipID}`)
@@ -69,9 +69,9 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 			.catch(err => {
 				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 			});
-	};
+	}, [addNotification, relation, setFriends, setRelations, loading]);
 
-	const handleBlockUser = () => {
+	const handleBlockUser = useCallback(() => {
 		if (loading) return;
 		setLoading(true);
 		API.put('users/@me/relationships', { user: profileUser.userID, type: 2 })
@@ -82,7 +82,7 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 			.catch(err => {
 				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 			});
-	}
+	}, [addNotification, profileUser.userID, setIsRefetch, loading]);
 
 	return (
 		<SectionContainer>
