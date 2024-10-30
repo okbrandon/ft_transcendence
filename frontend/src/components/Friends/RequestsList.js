@@ -14,9 +14,9 @@ import { useNotification } from "../../context/NotificationContext";
 import { useTranslation } from "react-i18next";
 import { useRelation } from "../../context/RelationContext";
 
-const RequestsList = ({ requests, setIsRefetch }) => {
+const RequestsList = ({ requests }) => {
 	const navigate = useNavigate();
-	const { setRelations, setRequests } = useRelation();
+	const { setRelations, setRequests, setIsRefetch } = useRelation();
 	const { addNotification } = useNotification();
 	const [loading, setLoading] = useState(false);
 	const { t } = useTranslation();

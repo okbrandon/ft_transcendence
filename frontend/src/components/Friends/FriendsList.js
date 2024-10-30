@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { UNSAFE_DataRouterStateContext, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import API from "../../api/api";
 import PongButton from "../../styles/shared/PongButton.styled";
 import {
@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
 import { useChat } from "../../context/ChatContext";
 import { useRelation } from "../../context/RelationContext";
 
-const FriendsList = ({ friends, setIsRefetch }) => {
+const FriendsList = ({ friends }) => {
 	const navigate = useNavigate();
 	const { setFriends, setRelations } = useRelation();
 	const { addNotification } = useNotification();
@@ -45,13 +45,12 @@ const FriendsList = ({ friends, setIsRefetch }) => {
 			return "In lobby";
 		}
 		return "Touching grass...";
-	}
+	};
 
 	const handleProfile = username => {
 		navigate(`/profile/${username}`);
 	};
 
-	// Handle opening DM with friend
 	const handleFriendDM = (username) => {
 		const userID = localStorage.getItem("userID");
 
@@ -61,7 +60,7 @@ const FriendsList = ({ friends, setIsRefetch }) => {
 		})
 
 		handleSelectChat(username, convo ? convo.conversationID : null);
-	}
+	};
 
 	const handleRemove = relationshipID => {
 		if (loading) return;
