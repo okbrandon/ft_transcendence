@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import API from "../../../api/api";
 import { getUser } from "../../../api/user";
 import TwoFactorAuthToggle from "./2FA/TwoFactorAuthToggle";
@@ -46,44 +46,42 @@ const Security = ({ user, setUser }) => {
 			})
 	}, [addNotification]);
 
-	const handleChange = e => {
+	const handleChange = useCallback(e => {
 		const { id, value } = e.target;
 
 		setFormData(data => ({
 			...data,
 			[id]: value,
 		}));
-	};
+	}, []);
 
-	const checkSecurityRestrictions = (data, cfPassword) => {
-		if (!data) {
-			return '';
-		}
+	const checkSecurityRestrictions = useCallback((data, cfPassword) => {
+		const { password, email, phone_number } = data;
 
-		if (data.password && (new TextEncoder().encode(data.password).length < 8 || new TextEncoder().encode(data.password).length > 72)) {
+		if (password && (new TextEncoder().encode(password).length < 8 || new TextEncoder().encode(password).length > 72)) {
 			return t('restrictions.password.invalidLength');
-		} else if (data.password && !/[a-z]/.test(data.password)) {
+		} else if (password && !/[a-z]/.test(password)) {
 			return t('restrictions.password.missingLowercase');
-		} else if (data.password && !/[A-Z]/.test(data.password)) {
+		} else if (password && !/[A-Z]/.test(password)) {
 			return t('restrictions.password.missingUppercase');
-		} else if  (data.password && !/\d/.test(data.password)) {
+		} else if  (password && !/\d/.test(password)) {
 			return t('restrictions.password.missingDigit');
-		} else if (data.password && !/[\W_]/.test(data.password)) {
+		} else if (password && !/[\W_]/.test(password)) {
 			return t('restrictions.password.missingSpecial');
-		} else if (data.password && data.password !== cfPassword) {
+		} else if (password && password !== cfPassword) {
 			return t('restrictions.password.noMatch');
-		} else if (!data.email) {
+		} else if (!email) {
 			return t('restrictions.email.required');
-		} else if (data.email.length > 64) {
+		} else if (email.length > 64) {
 			return t('restrictions.email.invalidLength');
-		} else if (!/^[^@]+@[^@]+\.[^@]+$/.test(data.email)) {
+		} else if (!/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
 			return t('restrictions.email.invalidFormat');
-		} else if (data.phone_number && !/^\+[1-9]\d{1,14}$/.test(data.phone_number)) {
+		} else if (phone_number && !/^\+[1-9]\d{1,14}$/.test(phone_number)) {
 			return t('restrictions.phoneNumber.invalidFormat');
 		}
 
 		return '';
-	};
+	}, [t]);
 
 	const handleSubmit = e => {
 		e.preventDefault();

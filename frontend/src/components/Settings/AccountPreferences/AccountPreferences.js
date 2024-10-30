@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import ProfileImage from './ProfileImage';
 import AccountManagement from './AccountManagement';
 import ProfileInformation from './ProfileInformation';
@@ -33,7 +33,7 @@ const AccountPreferences = ({ user, setUser }) => {
 		return () => clearTimeout(timeout);
 	}, [loading]);
 
-	const handleChange = (e) => {
+	const handleChange = useCallback((e) => {
 		const { id, value } = e.target;
 
 		if (id === 'bio') {
@@ -49,9 +49,9 @@ const AccountPreferences = ({ user, setUser }) => {
 				[id]: value,
 			}));
 		}
-	};
+	}, []);
 
-	const checkAccountPreferencesRestrictions = data => {
+	const checkAccountPreferencesRestrictions = useCallback(data => {
 		if (!data) {
 			return '';
 		}
@@ -69,7 +69,7 @@ const AccountPreferences = ({ user, setUser }) => {
 		}
 
 		return '';
-	};
+	}, [t]);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();

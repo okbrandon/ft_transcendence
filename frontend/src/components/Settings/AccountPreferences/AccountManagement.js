@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../../../api/api';
 import {
@@ -20,7 +20,7 @@ const AccountManagement = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const { t } = useTranslation();
 
-	const handleConfirmDelete = () => {
+	const handleConfirmDelete = useCallback(() => {
 		API.delete('users/@me/profile')
 			.then(() => {
 				localStorage.removeItem('token');
@@ -31,7 +31,7 @@ const AccountManagement = () => {
 				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 			});
 		setIsModalOpen(false);
-	};
+	}, [addNotification, navigate]);
 
 	return (
 		<>
