@@ -22,13 +22,16 @@ const TwoFactorAuthSignIn = ({ username, password, setIsTwoFactorAuth, available
 	const { t } = useTranslation();
 
 	useEffect(() => {
-		if (otpSent) {
-			addNotification('info', t('auth.twoFactor.successMessage'));
+		if (!otpSent) return;
+		addNotification('info', t('auth.twoFactor.successMessage'));
+		const timeout = setTimeout(() => {
 			setOtpSent(false);
-		}
+		}, 5000);
+		return () => clearTimeout(timeout);
 	}, [otpSent, addNotification, t]);
 
 	const handlePlatform = platform => {
+		if (otpSent) return;
 		axios.post(process.env.REACT_APP_ENV === 'production' ? '/api/v1/auth/totp/request' : 'http://localhost:8000/api/v1/auth/totp/request', { username, password, platform })
 			.then(() => {
 				setOtpSent(true);
@@ -49,7 +52,7 @@ const TwoFactorAuthSignIn = ({ username, password, setIsTwoFactorAuth, available
 				navigate("/");
 			})
 			.catch(err => {
-				setError(err?.response?.data?.error || 'An error occurred');
+				addNotification("error", err?.response?.data?.error || "An error occurred");
 			});
 	};
 
@@ -69,6 +72,7 @@ const TwoFactorAuthSignIn = ({ username, password, setIsTwoFactorAuth, available
 							key={platform}
 							type="button"
 							onClick={() => handlePlatform(platform)}
+							disabled={otpSent}
 						>
 							{platform === "email" && <i className="bi bi-envelope-fill"/>}
 							{platform === "sms" && <i className="bi bi-chat-left-text-fill"/>}
