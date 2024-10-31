@@ -14,6 +14,7 @@ from asgiref.sync import sync_to_async, async_to_sync
 
 from django.db.models import Q, Count
 from django.utils import timezone
+from django.core.cache import cache
 
 from ..models import Conversation, User, Relationship, Match, UserSettings, Tournament
 from ..util import generate_id, get_safe_profile, get_user_id_from_token
@@ -46,24 +47,38 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.user = await sync_to_async(User.objects.get)(userID=userID)
         self.user_group_name = f"chat_{self.user.userID}"
 
+        connection_count_key = f"chat_user_connections_{self.user.userID}"
+        connection_count = cache.get(connection_count_key, 0)
+        cache.set(connection_count_key, connection_count + 1, timeout=None)
+
         await self.channel_layer.group_add(
             self.user_group_name,
             self.channel_name
         )
 
-        logger.info(f"[{self.__class__.__name__}] User {self.user.username} connected")
-        await self.ensure_conversations_exist(self.user)
-        logger.info(f"[{self.__class__.__name__}] User {self.user.username} conversations ensured")
+        if connection_count <= 0:
+            await self.ensure_conversations_exist(self.user)
+            logger.info(f"[{self.__class__.__name__}] User {self.user.username} connected, conversations ensured")
+        else:
+            logger.info(f"[{self.__class__.__name__}] User {self.user.username} reconnected")
         await self.accept()
 
     async def disconnect(self, close_code):
         if self.user:
+            connection_count_key = f"chat_user_connections_{self.user.userID}"
+            connection_count = cache.get(connection_count_key, 0) - 1
+
             await self.channel_layer.group_discard(
                 self.user_group_name,
                 self.channel_name
             )
 
-            logger.info(f"[{self.__class__.__name__}] User {self.user.username} disconnected")
+            if connection_count > 0:
+                cache.set(connection_count_key, connection_count, timeout=None)
+                logger.info(f"[{self.__class__.__name__}] User {self.user.username} disconnected, {connection_count} connections remaining")
+            else:
+                cache.delete(connection_count_key)
+                logger.info(f"[{self.__class__.__name__}] User {self.user.username} disconnected")
 
     async def receive(self, text_data):
         try:
