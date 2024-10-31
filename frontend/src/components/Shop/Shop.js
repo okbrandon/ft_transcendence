@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
 	ShopContainer,
 	CoinsDisplay,
@@ -49,7 +49,7 @@ const Shop = () => {
 		fetchData();
 	}, [addNotification]);
 
-	const handlePurchase = item => {
+	const handlePurchase = useCallback(item => {
 		API.post(`/store/${item.itemID}/purchase`)
 			.then(response => {
 				setPurchasedItems(prev => [...prev, response.data]);
@@ -65,13 +65,13 @@ const Shop = () => {
 					addNotification('error', t('store.purchaseError'));
 				}
 			});
-	};
+	}, [addNotification, t]);
 
-	const handleEquip = itemID => {
+	const handleEquip = useCallback(itemID => {
 		API.patch('/users/@me/settings', { selectedPaddleSkin: itemID })
 			.then(() => setSelectedSkin(itemID))
 			.catch(() => addNotification('error', `${t('store.equipError')}`));
-	};
+	}, [addNotification, t]);
 
 	if (loading || !user || !storeItems.length) {
 		return (
@@ -98,10 +98,10 @@ const Shop = () => {
 						<SkinPrice>{item.price} {t('store.currency.icon')}</SkinPrice>
 						{purchasedItems.some(purchase => purchase.itemID === item.itemID) ? (
 							<BuyButton
-								onClick={() => handleEquip(item.itemID)}
-								disabled={selectedSkin === item.itemID}
+								onClick={() => selectedSkin === item.itemID ? handleEquip(null) : handleEquip(item.itemID)}
+								className={selectedSkin === item.itemID ? 'unequip' : ''}
 							>
-								{selectedSkin === item.itemID ? t('store.equippedLabel') : t('store.equipButton')}
+								{selectedSkin === item.itemID ? 'unequip' : t('store.equipButton')}
 							</BuyButton>
 						) : (
 							<BuyButton onClick={() => handlePurchase(item)}>

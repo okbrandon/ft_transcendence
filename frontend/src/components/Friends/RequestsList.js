@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../api/api";
 import PongButton from "../../styles/shared/PongButton.styled";
@@ -12,13 +12,26 @@ import {
 } from "./styles/Friends.styled";
 import { useNotification } from "../../context/NotificationContext";
 import { useTranslation } from "react-i18next";
+import { useRelation } from "../../context/RelationContext";
 
-const RequestsList = ({ requests, setIsRefetch }) => {
+const RequestsList = ({ requests }) => {
 	const navigate = useNavigate();
+	const { setRelations, setRequests, setIsRefetch } = useRelation();
 	const { addNotification } = useNotification();
+	const [loading, setLoading] = useState(false);
 	const { t } = useTranslation();
 
+	useEffect(() => {
+		if (!loading) return;
+		const timeout = setTimeout(() => {
+			setLoading(false);
+		}, 1000);
+		return () => clearTimeout(timeout);
+	}, [loading]);
+
 	const handleAccept = focusedRequest => {
+		if (loading) return;
+		setLoading(true);
 		API.put('users/@me/relationships', { user: focusedRequest.userID, type: 1 })
 			.then(() => {
 				setIsRefetch(true);
@@ -29,9 +42,12 @@ const RequestsList = ({ requests, setIsRefetch }) => {
 	};
 
 	const handleDecline = id => {
+		if (loading) return;
+		setLoading(true);
 		API.delete(`users/@me/relationships/${id}`)
 			.then(() => {
-				setIsRefetch(true);
+				setRelations(prevRelations => prevRelations.filter(relation => relation.relationshipID !== id));
+				setRequests(prevRequests => prevRequests.filter(request => request.relationshipID !== id));
 			})
 			.catch(err => {
 				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
@@ -54,11 +70,11 @@ const RequestsList = ({ requests, setIsRefetch }) => {
 						{request.is === 'sender' ? (
 							<Actions>
 								<PongButton onClick={() => handleAccept(request)}>{t('friends.subSections.friendRequests.acceptButton')}</PongButton>
-								<PongButton $backgroundColor='#ff5555' onClick={() => handleDecline(request.relationID)}>{t('friends.subSections.friendRequests.declineButton')}</PongButton>
+								<PongButton $backgroundColor='#ff5555' onClick={() => handleDecline(request.relationshipID)}>{t('friends.subSections.friendRequests.declineButton')}</PongButton>
 							</Actions>
 						) : (
 							<Actions>
-								<PongButton $backgroundColor='#ff5555' onClick={() => handleDecline(request.relationID)}>{t('friends.subSections.friendRequests.cancelButton')}</PongButton>
+								<PongButton $backgroundColor='#ff5555' onClick={() => handleDecline(request.relationshipID)}>{t('friends.subSections.friendRequests.cancelButton')}</PongButton>
 							</Actions>
 						)}
 					</ListCard>

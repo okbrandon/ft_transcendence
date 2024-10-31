@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import API from '../../../../api/api';
 import { getUser } from '../../../../api/user';
 import OTPInputComponent from '../../../Auth/OTPInput';
@@ -27,7 +27,7 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setShowTwoFactorAuth }) => {
 			});
 	}, [addNotification]);
 
-	const handlePlatform = platform => {
+	const handlePlatform = useCallback(platform => {
 		API.post('auth/totp/request', { platform })
 			.then(() => {
 				addNotification('success', 'Request sent');
@@ -35,7 +35,7 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setShowTwoFactorAuth }) => {
 			.catch(err => {
 				addNotification('error', `${err?.response?.data?.error || 'An error occurred'}`);
 			});
-	};
+	}, [addNotification]);
 
 	const handleSubmit = e => {
 		e.preventDefault();

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import ProfileImage from './ProfileImage';
 import AccountManagement from './AccountManagement';
 import ProfileInformation from './ProfileInformation';
@@ -25,7 +25,15 @@ const AccountPreferences = ({ user, setUser }) => {
 	const { addNotification } = useNotification();
 	const { t } = useTranslation();
 
-	const handleChange = (e) => {
+	useEffect(() => {
+		if (!loading) return;
+		const timeout = setTimeout(() => {
+			setLoading(false);
+		}, 1000);
+		return () => clearTimeout(timeout);
+	}, [loading]);
+
+	const handleChange = useCallback((e) => {
 		const { id, value } = e.target;
 
 		if (id === 'bio') {
@@ -41,9 +49,9 @@ const AccountPreferences = ({ user, setUser }) => {
 				[id]: value,
 			}));
 		}
-	};
+	}, []);
 
-	const checkAccountPreferencesRestrictions = data => {
+	const checkAccountPreferencesRestrictions = useCallback(data => {
 		if (!data) {
 			return '';
 		}
@@ -61,10 +69,12 @@ const AccountPreferences = ({ user, setUser }) => {
 		}
 
 		return '';
-	};
+	}, [t]);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
+		if (loading) return;
+
 		const errorMessage = checkAccountPreferencesRestrictions(formData);
 		const submissionData = { ...formData };
 
@@ -86,13 +96,11 @@ const AccountPreferences = ({ user, setUser }) => {
 						})
 						.catch(err => {
 							setError(err?.response?.data?.error || 'An error occurred.');
+							addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 						});
 				})
 				.catch(err => {
-					setError(err?.response?.data?.error || 'An error occurred.');
-				})
-				.finally(() => {
-					setLoading(false);
+					addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 				});
 		}
 	};

@@ -50,16 +50,10 @@ const Friends = () => {
 				className="mb-3"
 			>
 				<Tab eventKey="friends" title="Friends">
-					<FriendsList
-						friends={filteredFriends}
-						setIsRefetch={setIsRefetch}
-					/>
+					<FriendsList friends={filteredFriends} />
 				</Tab>
 				<Tab eventKey="requests" title="Requests">
-					<RequestsList
-						requests={requests}
-						setIsRefetch={setIsRefetch}
-					/>
+					<RequestsList requests={requests} />
 				</Tab>
 			</Tabs>
 		</PageContainer>

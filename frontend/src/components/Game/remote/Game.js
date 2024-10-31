@@ -111,7 +111,6 @@ const Game = () => {
 					setBorderScore(data.d.player);
 					break;
 				case 'MATCH_END':
-					console.log(data.d);
 					setGameOver(true);
 					setEndGameData(data.d);
 					break;

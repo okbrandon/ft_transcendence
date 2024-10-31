@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { MatchCardTable, MatchHistoryContainer } from "../styles/Profile.styled";
 import { useNavigate } from "react-router-dom";
@@ -9,9 +9,9 @@ const MatchHistory = ({ userID, matches }) => {
 	const containerRef = useRef(null);
 	const { t } = useTranslation();
 
-	const handleScroll = () => {
+	const handleScroll = useCallback(() => {
 		const rows = containerRef.current.querySelectorAll('.match-card');
-		if (!rows || rows.legnth === 0) return;
+		if (!rows || rows.length === 0) return;
 
 		const newVisibleRows = [];
 		rows.forEach((row, index) => {
@@ -23,12 +23,12 @@ const MatchHistory = ({ userID, matches }) => {
 			}
 		});
 		setVisibleRows(newVisibleRows);
-	};
+	}, []);
 
-	const handleProfileClick = (username) => {
+	const handleProfileClick = username => {
 		window.scrollTo(0, 0);
 		navigate(`/profile/${username}`);
-	}
+	};
 
 	useEffect(() => {
 		if (!containerRef.current) return;
@@ -36,7 +36,7 @@ const MatchHistory = ({ userID, matches }) => {
 		container.addEventListener('scroll', handleScroll);
 		handleScroll();
 		return () => container.removeEventListener('scroll', handleScroll);
-	}, []);
+	}, [handleScroll]);
 
 	return (
 		<>
