@@ -47,13 +47,17 @@ def create_ai_account(sender, **kwargs):
         User.objects.create(
             userID="user_ai",
             username='ai',
-            displayName='Prune',
+            displayName='Prune 🤖',
             email='prune@brandoncodes.dev',
             password='',
             lang='EN',
             avatarID=f"data:image/jpeg;base64,{encoded_avatar}",
             flags=3
         )
+    else:
+        ai_account = User.objects.get(userID="user_ai")
+        ai_account.displayName = 'Prune 🤖'
+        ai_account.save()
 
     settings, _ = UserSettings.objects.get_or_create(userID="user_ai")
     store_items = StoreItem.objects.all()
