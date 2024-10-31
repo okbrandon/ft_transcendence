@@ -8,15 +8,32 @@ import {
 	TournamentForm
 } from "../styles/Tournament/CreateTournament.styled";
 import PongButton from "../../../styles/shared/PongButton.styled";
+import API from "../../../api/api";
+import { useNavigate } from "react-router-dom";
+import { useTournament } from "../../../context/TournamentContext";
 
 const CreateTournament = ({ setOptions }) => {
-	const [maxPlayers, setMaxPlayers] = useState(4);
-	const [maxRounds, setMaxRounds] = useState(3);
+	const [tournamentName, setTournamentName] = useState("");
+	const [maxParticipants, setMaxParticipants] = useState(4);
+	const [isPublic, setIsPublic] = useState(true);
+	const navigate = useNavigate();
+	const { registerForTournament } = useTournament();
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-		console.log('CreateTournament: tournament submitted');
-		// something to do with the api probably
+		try {
+			const response = await API.post('/tournaments', {
+				name: tournamentName,
+				isPublic: isPublic,
+				maxParticipants: maxParticipants
+			});
+			console.log('Tournament created:', response.data);
+			registerForTournament(response.data.tournamentID);
+			navigate(`/tournaments/${response.data.tournamentID}`);
+		} catch (error) {
+			console.error('Error creating tournament:', error.response?.data?.error || error.message);
+			// Handle error (e.g., show error message to user)
+		}
 	};
 
 	return (
@@ -29,14 +46,17 @@ const CreateTournament = ({ setOptions }) => {
 						id="tournament-name"
 						type="text"
 						required
+						maxLength={16}
+						value={tournamentName}
+						onChange={(e) => setTournamentName(e.target.value)}
 					/>
 				</FormGroup>
 				<FormGroup>
-					<FormLabel htmlFor="players">Max Players:</FormLabel>
+					<FormLabel htmlFor="max-participants">Max Participants:</FormLabel>
 					<FormSelect
-						id="players"
-						value={maxPlayers}
-						onChange={(e) => setMaxPlayers(parseInt(e.target.value))}
+						id="max-participants"
+						value={maxParticipants}
+						onChange={(e) => setMaxParticipants(parseInt(e.target.value))}
 					>
 						<option value="4">4</option>
 						<option value="6">6</option>
@@ -44,15 +64,14 @@ const CreateTournament = ({ setOptions }) => {
 					</FormSelect>
 				</FormGroup>
 				<FormGroup>
-					<FormLabel htmlFor="rounds">Max Rounds:</FormLabel>
+					<FormLabel htmlFor="is-public">Public Tournament:</FormLabel>
 					<FormSelect
-						id="rounds"
-						value={maxRounds}
-						onChange={(e) => setMaxRounds(parseInt(e.target.value))}
+						id="is-public"
+						value={isPublic}
+						onChange={(e) => setIsPublic(e.target.value === 'true')}
 					>
-						<option value="3">3</option>
-						<option value="5">5</option>
-						<option value="7">7</option>
+						<option value="true">Yes</option>
+						<option value="false">No</option>
 					</FormSelect>
 				</FormGroup>
 				<PongButton type="submit" $width='100%'>CREATE</PongButton>

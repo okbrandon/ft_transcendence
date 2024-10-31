@@ -1,8 +1,10 @@
 import base64
+import os
 
 from django.apps import AppConfig
 from django.db.models.signals import post_migrate
 from django.utils import timezone
+from django.contrib.auth.hashers import make_password
 
 from .util import generate_id
 
@@ -15,6 +17,7 @@ class ApiConfig(AppConfig):
         post_migrate.connect(delete_unfinished_matches)
         post_migrate.connect(create_ai_account)
         post_migrate.connect(update_users_statuses)
+        post_migrate.connect(create_test_accounts)
 
 def create_store_items(sender, **kwargs):
     from .models import StoreItem
@@ -81,3 +84,20 @@ def update_users_statuses(sender, **kwargs):
         }
 
     User.objects.bulk_update(users, ['status'])
+
+def create_test_accounts(sender, **kwargs):
+    from .models import User
+
+    if os.environ.get('SKIP_EMAIL_VERIFICATION', '').lower() == 'true':
+        for i in range(1, 5):
+            username = f'test{i}'
+            if not User.objects.filter(username=username).exists():
+                User.objects.create(
+                    userID=generate_id('user'),
+                    username=username,
+                    email=f'{username}@example.com',
+                    password=make_password('test123'),
+                    lang='EN',
+                    flags=1,  # Set EMAIL_VERIFIED flag
+                    money=100000
+                )

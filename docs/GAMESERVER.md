@@ -38,7 +38,7 @@ This document explains how the WebSocket server handles tournaments.
 5. Matches within the tournament are handled similarly to regular matches, with the following additions:
    - The MATCH_END event includes tournament-specific information:
      ```json
-     {"e": "MATCH_END", "d": {"won": true, "nextMatchId": "m789"}}
+     {"e": "MATCH_END", "d": {"winner": "user_123", "nextMatchId": "m789"}}
      ```
    - The winner advances to the next match in the bracket.
 

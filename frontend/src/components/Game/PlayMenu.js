@@ -12,7 +12,7 @@ const PlayMenu = () => {
 				<ModeCard onClick={() => navigate('/game-ai')}>
 					<h1>AI</h1>
 				</ModeCard>
-				<ModeCard onClick={() => navigate('/tournament')}>
+				<ModeCard onClick={() => navigate('/tournaments')}>
 					<h1>Tournament</h1>
 				</ModeCard>
 				<ModeCard onClick={() => navigate('/game-classic')}>

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from .models import User, Match, Message, Conversation, Token, Relationship, UserSettings, StoreItem, Purchase, VerificationCode
+from .models import User, Match, Message, Conversation, Token, Relationship, UserSettings, StoreItem, Purchase, VerificationCode, Tournament
+from .util import get_safe_profile
 
 class UserSerializer(serializers.ModelSerializer):
     status = serializers.JSONField()
@@ -14,7 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
 class MatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Match
-        fields = ["matchID", "playerA", "playerB", "scores", "winnerID", "startedAt", "finishedAt", "flags"]
+        fields = ["matchID", "playerA", "playerB", "scores", "winnerID", "startedAt", "finishedAt", "whitelist", "flags"]
         read_only_fields = ["matchID", "startedAt", "finishedAt"]
 
 class RelationshipSerializer(serializers.ModelSerializer):
@@ -60,7 +61,7 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ['messageID', 'content', 'sender', 'createdAt']
+        fields = ['messageID', 'content', 'sender', 'messageType', 'createdAt']
 
 class ConversationSerializer(serializers.ModelSerializer):
     participants = UserSerializer(many=True)
@@ -69,3 +70,13 @@ class ConversationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Conversation
         fields = ['conversationID', 'conversationType', 'receipientID', 'participants', 'messages']
+
+class TournamentSerializer(serializers.ModelSerializer):
+    participants = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Tournament
+        fields = ['tournamentID', 'name', 'startDate', 'endDate', 'maxParticipants', 'participants', 'status', 'winnerID', 'createdAt', 'isPublic', 'owner']
+
+    def get_participants(self, obj):
+        return [get_safe_profile(UserSerializer(participant).data, me=False) for participant in obj.participants.all()]

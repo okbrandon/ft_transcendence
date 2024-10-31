@@ -12,6 +12,8 @@ class Match(models.Model):
     startedAt = models.DateTimeField(auto_now_add=True)
     finishedAt = models.DateTimeField(null=True)
     flags = models.IntegerField(default=0) # 1<<0 = AI, 1<<1 = 1v1
+    tournament = models.ForeignKey('Tournament', on_delete=models.SET_NULL, null=True, blank=True, related_name='matches')
+    whitelist = models.ManyToManyField('User', related_name='whitelisted_matches', limit_choices_to=2)
 
     def __str__(self):
         return self.matchID
@@ -82,6 +84,42 @@ class User(AbstractUser):
     def __str__(self):
         return self.userID
 
+class Tournament(models.Model):
+    tournamentID = models.CharField(max_length=48, unique=True)
+    name = models.CharField(max_length=16)
+    startDate = models.DateTimeField(null=True, default=None)
+    endDate = models.DateTimeField(null=True, default=None)
+    maxParticipants = models.IntegerField(default=8)
+    participants = models.ManyToManyField(User, related_name='tournaments')
+    status = models.CharField(max_length=20, choices=[
+        ('PENDING', 'Pending'),
+        ('ONGOING', 'Ongoing'),
+        ('COMPLETED', 'Completed'),
+        ('CANCELLED', 'Cancelled')
+    ], default='PENDING')
+    winnerID = models.CharField(max_length=48, null=True, default=None)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    isPublic = models.BooleanField(default=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='owned_tournaments')
+
+    def __str__(self):
+        return f"{self.name} ({self.tournamentID})"
+
+class TournamentInvite(models.Model):
+    inviteID = models.CharField(max_length=48, unique=True)
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name='invites')
+    inviter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_invites')
+    invitee = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_invites')
+    status = models.CharField(max_length=20, choices=[
+        ('PENDING', 'Pending'),
+        ('ACCEPTED', 'Accepted'),
+        ('DECLINED', 'Declined')
+    ], default='PENDING')
+    createdAt = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Invite to {self.tournament.name} for {self.invitee.username}"
+
 class VerificationCode(models.Model):
     userID = models.CharField(max_length=48)
     code = models.CharField(max_length=48)
@@ -113,6 +151,7 @@ class Message(models.Model):
     conversation = models.ForeignKey(Conversation, null=True, related_name='messages', on_delete=models.CASCADE)
     content = models.CharField(max_length=256)
     sender = models.ForeignKey(User, null=True, related_name='sent_messages', on_delete=models.CASCADE)
+    messageType = models.IntegerField(default=0)
     createdAt = models.DateTimeField(null=True, auto_now_add=True)
 
     def __str__(self):

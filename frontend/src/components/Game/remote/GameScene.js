@@ -6,7 +6,7 @@ import { getSkin } from "../../../api/user";
 import { lerp } from "../../../scripts/math";
 import Rewards from "./Rewards";
 
-const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderScore, sendMessage, activateTimer, setActivateTimer, gameStarted, gameOver, endGameData }) => {
+const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderScore, sendMessage, activateTimer, setActivateTimer, gameStarted, gameOver, endGameData, isSpectator }) => {
 	const navigate = useNavigate();
 
 	const [borderColor, setBorderColor] = useState(null);
@@ -41,6 +41,10 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 		SCALEX: 22 / 1200,
 		SCALEY: 15 / 750,
 	}), []);
+
+	useEffect(() => {
+		console.log('gameOver status:', gameOver);
+	}, [gameOver]);
 
 	useEffect(() => {
 		if (player && playerSide) {
@@ -81,6 +85,7 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 	}, [activateTimer, timer, setActivateTimer]);
 
 	const handlePaddleMove = useCallback(direction => {
+		if (isSpectator) return;
 		if (direction.up) {
 			sendMessage(JSON.stringify({
 				e: 'PADDLE_MOVE',
@@ -93,9 +98,11 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 				d: { direction: 'down' }
 			}));
 		}
-	}, [sendMessage]);
+	}, [sendMessage, isSpectator]);
 
 	useEffect(() => {
+		if (isSpectator) return;
+
 		const handleKeydown = event => {
 			if (event.key === 'ArrowUp') keyPressed.current.up = true;
 			else if (event.key === 'ArrowDown') keyPressed.current.down = true;
@@ -117,10 +124,10 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 			window.removeEventListener('keydown', handleKeydown);
 			window.removeEventListener('keyup', handleKeyup);
 		};
-	}, [navigate, sendMessage]);
+	}, [navigate, sendMessage, isSpectator]);
 
 	useEffect(() => {
-		if (!keyPressed) return;
+		if (!keyPressed || isSpectator) return;
 		let animationFrameId;
 
 		const move = () => {
@@ -134,7 +141,7 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 		move();
 
 		return () => cancelAnimationFrame(animationFrameId);
-	}, [keyPressed, handlePaddleMove, gameStarted, gameOver]);
+	}, [keyPressed, handlePaddleMove, gameStarted, gameOver, isSpectator]);
 
 	useEffect(() => {
 		if (!hitPos) return;
@@ -235,14 +242,14 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 	}, [ballPosition, ballVelocity, gameStarted, gameOver]);
 
 	return (
-		<GameSceneContainer className={`${isHit ? "hit" : ""} ${borderColor}`}>
+		<GameSceneContainer className={`${isHit ? "hit" : ""} ${borderColor}`} key={gameOver ? 'game-over' : 'game-active'}>
 			<StyledCanvas ref={canvas}/>
 			<ScoresContainer>
 				<Score>{scoreA}</Score>
 				<Score>{scoreB}</Score>
 			</ScoresContainer>
 				{gameOver ? (
-					<Rewards endGameData={endGameData}/>
+					<Rewards endGameData={endGameData} isSpectator={isSpectator} />
 				) : (
 					<>
 						{activateTimer && (

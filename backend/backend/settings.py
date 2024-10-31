@@ -15,6 +15,8 @@ import os
 from pathlib import Path
 from datetime import timedelta
 
+from django.core.cache import cache
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,6 +30,12 @@ SECRET_KEY = 'django-insecure-q_35khu+0xkhx817w1a@f7n6bl09tr8w6#!0x_my^dcw4%gw$w
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }
+}
 
 ALLOWED_HOSTS = [
     "*",
