@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Spinner from "react-bootstrap/Spinner";
 import { useRelation } from "../../../context/RelationContext";
-import { useTonneru } from "../../../context/TonneruContext";
+import { useTournament } from "../../../context/TournamentContext";
 import {
 	ActiveFriendContainer,
 	ButtonContainer,
@@ -19,81 +19,34 @@ import {
 } from "../styles/Tournament/JoinTournament.styled";
 import PongButton from "../../../styles/shared/PongButton.styled";
 import API from "../../../api/api";
+import { useNotification } from "../../../context/NotificationContext";
+import Loader from "../../../styles/shared/Loader.styled";
 
 const JoinTournament = () => {
 	const navigate = useNavigate();
+	const { addNotification } = useNotification();
+	const { tournament, updateTournament, isStartDisabled } = useTournament();
 	const { tournamentID } = useParams();
 	const { friends } = useRelation();
 	const [invite, setInvite] = useState(false);
 	const [activeFriends, setActiveFriends] = useState([]);
-	const [isStartDisabled, setIsStartDisabled] = useState(true);
-	const [tournament, setTournament] = useState(null);
 	const [loading, setLoading] = useState(true);
-	const { addEventListener } = useTonneru();
-
-	const updateTournament = useCallback((updatedTournament) => {
-		setTournament(updatedTournament);
-		setIsStartDisabled(updatedTournament?.participants?.length < 2);
-	}, []);
-
-	const handleTournamentUpdate = useCallback((data) => {
-		console.log('Received tournament update:', data);
-		switch (data.e) {
-			case 'TOURNAMENT_JOIN':
-				updateTournament(prevTournament => {
-					if (!prevTournament || !Array.isArray(prevTournament.participants)) {
-						console.error('Invalid tournament data:', prevTournament);
-						return prevTournament;
-					}
-					const newUser = data.d?.user;
-					if (!newUser || prevTournament.participants.some(p => p.userID === newUser.userID)) {
-						return prevTournament;
-					}
-					return {
-						...prevTournament,
-						participants: [...prevTournament.participants, newUser]
-					};
-				});
-				break;
-			case 'TOURNAMENT_LEAVE':
-			case 'TOURNAMENT_KICK':
-				updateTournament(prevTournament => {
-					if (!prevTournament || !data.d?.user?.userID) {
-						console.error('Invalid data for tournament update:', { prevTournament, data });
-						return prevTournament;
-					}
-					const newTournament = {
-						...prevTournament,
-						participants: prevTournament.participants.filter(p => p.userID !== data.d.user.userID)
-					};
-					if (data.d.user.userID === prevTournament.owner?.userID) {
-						navigate(-1);
-					}
-					return newTournament;
-				});
-				break;
-			default:
-				console.warn('Unhandled tournament update event:', data.e);
-		}
-	}, [navigate, updateTournament]);
 
 	useEffect(() => {
 		const fetchTournament = async () => {
 			try {
 				const response = await API.get(`/tournaments/${tournamentID}`);
+				console.log('JoinTournament.js: fetchTournament', response.data);
 				updateTournament(response.data);
 			} catch (error) {
-				console.error("Error fetching tournament:", error);
+				addNotification('error', error.response?.data?.error || 'Error fetching tournament data');
 			} finally {
 				setLoading(false);
 			}
 		};
 
 		fetchTournament();
-
-		const eventTypes = ['TOURNAMENT_JOIN', 'TOURNAMENT_LEAVE', 'TOURNAMENT_KICK'];
-		eventTypes.forEach(type => addEventListener(type, handleTournamentUpdate));
-	}, [tournamentID, addEventListener, handleTournamentUpdate]);
+	}, [tournamentID, addNotification, updateTournament]);
 
 	useEffect(() => {
 		setActiveFriends(friends.filter(friend => !!friend.status.online));
@@ -129,8 +82,8 @@ const JoinTournament = () => {
 		}
 	};
 
-	if (loading) {
-		return <Spinner animation="border" />;
+	if (loading || !tournament) {
+		return <Loader />;
 	}
 
 	return (

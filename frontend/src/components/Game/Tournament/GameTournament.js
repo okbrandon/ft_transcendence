@@ -6,13 +6,13 @@ import GameScene from "../remote/GameScene";
 import { formatUserData } from "../../../api/user";
 import logger from "../../../api/logger";
 import { PageContainer } from "../styles/Game.styled";
-import { useTonneru } from "../../../context/TonneruContext";
+import { useTournament } from "../../../context/TournamentContext";
 
 const GameTournament = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const tournamentData = location.state?.tournamentData;
-	const { addEventListener } = useTonneru();
+	const { resetMatch, setResetMatch } = useTournament();
 
 	const [gameState, setGameState] = useState({
 		matchState: null,
@@ -22,47 +22,39 @@ const GameTournament = () => {
 	});
 	const [gameOver, setGameOver] = useState(false);
 	const [gameStarted, setGameStarted] = useState(false);
-	const [won, setWon] = useState(false);
+	const [endGameData, setEndGameData] = useState(null);
 	const [upcomingMatches, setUpcomingMatches] = useState([]);
-
 	const [heartbeatIntervalTime, setHeartbeatIntervalTime] = useState(null);
 	const [hitPos, setHitPos] = useState(null);
 	const [borderScore, setBorderScore] = useState(null);
-
 	const [activateTimer, setActivateTimer] = useState(false);
+	const [socketUrl, setSocketUrl] = useState(null);
+	const [key, setKey] = useState(0);
+	const [isSpectator, setIsSpectator] = useState(false);
 
-	const heartbeatAckCount = useRef(0);
+	const currentMatchId = useRef(null);
+	const playerId = useRef(null);
+	const isSpectatorRef = useRef(false);
+
 	const heartbeatInterval = useRef(null);
 	const reconnectAttempts = useRef(0);
 	const token = useRef(localStorage.getItem('token'));
 
 	const maxReconnectAttempts = 5;
 
-	const [socketUrl, setSocketUrl] = useState(null);
-	const [currentMatchId, setCurrentMatchId] = useState(null);
-
 	const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl, {
-		onClose: event => { 
+		onOpen: () => {
+			console.log("Match WebSocket connection opened");
+			reconnectAttempts.current = 0;
+		},
+		onClose: (event) => {
+			console.log("Match WebSocket connection closed");
 			if (event.code === 1006 && !gameOver) handleReconnect();
 		},
 		shouldReconnect: () => !gameOver,
+		retryOnError: true,
+		reconnectInterval: 3000,
 	});
-
-	useEffect(() => {
-		setUpcomingMatches(tournamentData.matches);
-
-		const handleTournamentMatchBegin = (data) => {
-			const matchUrl = process.env.REACT_APP_ENV === 'production' ? '/ws/match' : 'ws://localhost:8000/ws/match';
-			setSocketUrl(`${matchUrl}`);
-			setCurrentMatchId(data.d.match_id);
-		};
-
-		const unsubscribe = addEventListener('TOURNAMENT_MATCH_BEGIN', handleTournamentMatchBegin);
-
-		return () => {
-			unsubscribe();
-		};
-	}, [addEventListener, tournamentData]);
 
 	const handleReconnect = useCallback(() => {
 		if (reconnectAttempts.current < maxReconnectAttempts) {
@@ -78,86 +70,123 @@ const GameTournament = () => {
 		sendMessage(JSON.stringify({ e: 'HEARTBEAT' }));
 	}, [sendMessage]);
 
-	const handleIdentify = useCallback(() => {
-		sendMessage(JSON.stringify({
-			e: 'IDENTIFY',
-			d: { token: token.current }
-		}));
-	}, [sendMessage]);
+	// Reset tournament
+	useEffect(() => {
+		if (!resetMatch) return;
+		const matchUrl = process.env.REACT_APP_ENV === 'production' ? '/ws/match' : 'ws://localhost:8000/ws/match';
 
-	const handleHeartbeatAck = useCallback(() => {
-		heartbeatAckCount.current += 1;
-		if (heartbeatAckCount.current === 2) {
-			sendMessage(JSON.stringify({
-				e: 'TOURNAMENT_MATCH_JOIN',
-				d: { "match_id": currentMatchId }
-			}));
-		}
-	}, [sendMessage, currentMatchId]);
+		setSocketUrl(`${matchUrl}?t=${Date.now()}`);
+		currentMatchId.current = resetMatch.matchID;
 
-	// Send IDENTIFY message on connection open
+		setGameStarted(false);
+		setEndGameData(null);
+		setHitPos(null);
+		setBorderScore(null);
+		setActivateTimer(false);
+		setGameOver(false);
+		setIsSpectator(false);
+
+		const [playerA, playerB] = resetMatch.players;
+		setGameState(prevState => ({
+			...prevState,
+			matchState: null,
+			player: formatUserData(playerA),
+			opponent: formatUserData(playerB),
+			playerSide: 'left', // Assuming playerA is always on the left
+		}))
+		playerId.current = playerA.userID;
+		setKey(prevKey => prevKey + 1);
+		setResetMatch(null);
+		console.log('GameTournament.js: match resseted');
+	}, [resetMatch, setResetMatch]);
+
+	useEffect(() => {
+		setUpcomingMatches(tournamentData.matches);
+	}, [tournamentData]);
+
 	useEffect(() => {
 		if (readyState === ReadyState.OPEN && heartbeatIntervalTime) {
-			reconnectAttempts.current = 0;
-			handleIdentify();
-
 			heartbeatInterval.current = setInterval(sendHeartbeat, heartbeatIntervalTime);
 		}
-
 		return () => {
 			if (heartbeatInterval.current) clearInterval(heartbeatInterval.current);
 		};
-	}, [readyState, heartbeatIntervalTime, handleIdentify, sendHeartbeat]);
+	}, [readyState, heartbeatIntervalTime, sendHeartbeat]);
 
-	// Handle incoming messages
+	// Match event listeners
 	useEffect(() => {
-		if (lastMessage) {
-			const data = JSON.parse(lastMessage.data);
-			switch (data.e) {
-				case 'HELLO':
-					setHeartbeatIntervalTime(data.d.heartbeat_interval);
-					break;
-				case 'MATCH_READY':
+		if (!lastMessage) return;
+
+		const data = JSON.parse(lastMessage.data);
+		const handlers = {
+			'HELLO': () => {
+				setHeartbeatIntervalTime(data.d.heartbeat_interval);
+				sendMessage(JSON.stringify({
+					e: 'IDENTIFY',
+					d: { token: token.current }
+				}));
+			},
+			'READY': () => {
+				setGameState(prevState => ({ ...prevState, player: formatUserData(data.d) }));
+				playerId.current = data.d.userID;
+				if (currentMatchId.current) {
+					sendMessage(JSON.stringify({
+						e: 'TOURNAMENT_MATCH_JOIN',
+						d: { "match_id": currentMatchId.current }
+					}));
+				}
+			},
+			'MATCH_READY': () => {
+				if (!isSpectatorRef.current) {
 					setActivateTimer(true);
 					setGameState(prevState => ({ ...prevState, matchState: data.d }));
-					break;
-				case 'MATCH_BEGIN':
-					setGameStarted(true);
-					break;
-				case 'MATCH_UPDATE':
-					setGameState(prevState => ({ ...prevState, matchState: data.d }));
-					break;
-				case 'BALL_SCORED':
-					setBorderScore(data.d.player);
-					break;
-				case 'MATCH_END':
-					setGameOver(true);
-					setWon(data.d.won);
-					break;
-				case 'HEARTBEAT_ACK':
-					handleHeartbeatAck();
-					break;
-				case 'READY':
-					setGameState(prevState => ({ ...prevState, player: formatUserData(data.d) }));
-					break;
-				case 'MATCH_JOIN':
-					setGameState(prevState => ({
-						...prevState,
-						playerSide: data.d.side,
-						opponent: data.d.opponent ? formatUserData(data.d.opponent) : null
-					}));
-					break;
-				case 'PLAYER_JOIN':
-					if (data.d.userID !== gameState.player?.userID) setGameState(prevState => ({ ...prevState, opponent: formatUserData(data.d) }));
-					break;
-				case 'PADDLE_HIT':
-					setHitPos(data.d.ball);
-					break;
-				default:
-					console.log('Unhandled message:', data);
-			}
+				}
+			},
+			'SPECTATE_JOIN': () => {
+				setIsSpectator(true);
+				setGameState(prevState => ({
+					...prevState,
+					matchState: data.d.match_state,
+					playerSide: 'left',
+					player: data.d.match_state.playerA ? formatUserData(data.d.match_state.playerA) : null,
+					opponent: data.d.match_state.playerB ? formatUserData(data.d.match_state.playerB) : null,
+				}));
+				if (data.d.match_state.playerA) playerId.current = data.d.match_state.playerA.userID;
+				setGameStarted(true);
+			},
+			'MATCH_BEGIN': () => setGameStarted(true),
+			'MATCH_UPDATE': () => setGameState(prevState => ({ ...prevState, matchState: data.d })),
+			'BALL_SCORED': () => setBorderScore(data.d.player),
+			'MATCH_END': () => {
+				setGameOver(true);
+				setEndGameData(data.d);
+			},
+			'HEARTBEAT_ACK': () => {},
+			'BALL_HIT': () => setHitPos(data.d.ball),
+			'PADDLE_RATE_LIMIT': () => {}, // ignoring
+			'MATCH_JOIN': () => setGameState(prevState => ({
+				...prevState,
+				playerSide: data.d.side,
+				opponent: data.d.opponent ? formatUserData(data.d.opponent) : null
+			})),
+			'PLAYER_JOIN': () => {
+				if (data.d.userID !== playerId.current)
+					setGameState(prevState => ({ ...prevState, opponent: formatUserData(data.d) }));
+			},
+			'PADDLE_HIT': () => setHitPos(data.d.ball),
+		};
+
+		const handler = handlers[data.e];
+		if (handler) {
+			handler();
+		} else {
+			console.log('GameTournament.js: Unhandled message:', data);
 		}
-	}, [lastMessage, gameState.player?.userID, handleHeartbeatAck, navigate]);
+	}, [lastMessage, sendMessage]);
+
+	useEffect(() => {
+		isSpectatorRef.current = isSpectator;
+	}, [isSpectator]);
 
 	return (
 		<PageContainer>
@@ -165,8 +194,12 @@ const GameTournament = () => {
 				player={gameState.player}
 				opponent={gameState.opponent}
 				playerSide={gameState.playerSide}
+				isSpectator={isSpectator}
 			/>
 			<GameScene
+				key={key}
+				player={gameState.player}
+				opponent={gameState.opponent}
 				matchState={gameState.matchState}
 				playerSide={gameState.playerSide}
 				hitPos={hitPos}
@@ -176,22 +209,11 @@ const GameTournament = () => {
 				setActivateTimer={setActivateTimer}
 				gameStarted={gameStarted}
 				gameOver={gameOver}
-				won={won}
+				endGameData={endGameData}
+				isSpectator={isSpectator}
 			/>
-			{upcomingMatches.length > 0 && (
-				<div>
-					<h3>Upcoming Matches:</h3>
-					<ul>
-						{upcomingMatches.map((match, index) => (
-							<li key={index}>
-								{match.players[0].username} vs {match.players[1].username}
-							</li>
-						))}
-					</ul>
-				</div>
-			)}
 		</PageContainer>
-	)
+	);
 };
 
 export default GameTournament;

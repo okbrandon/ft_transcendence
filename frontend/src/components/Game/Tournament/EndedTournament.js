@@ -1,95 +1,129 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { formatMatchData, formatUserData } from '../../../api/user';
 import {
-	BackgroundTournamentContainer,
-	BottomContainer,
+	Background,
 	EndTournamentContainer,
-	NavButtons,
-	ParticipantsDetails,
-	TournamentHeadDetails,
-	TournamentNavigation,
-	TournamentTitle
+	MatchCardTable,
+	TournamentHeader,
+	TournamentOverview,
+	WinnerDiv,
+	WinnerContainer,
+	WinnerInfo,
+	LeaveButtonContainer,
 } from '../styles/Tournament/EndedTournament.styled';
-import PositionPage from './EndedTournamentPages/PositionPage';
-import TournamentOverview from './EndedTournamentPages/TournamentOverview';
-
-// data template
-const tournamentData = {
-	winner: {
-        userID: "user_X",
-        username: "caca",
-        displayName: null,
-        lang: "EN",
-        avatarID: null
-    },
-    matches: [
-        {
-            matchID: "match_X",
-            playerA: {
-                id: "user_X",
-                platform: "web"
-            },
-            playerB: {
-                id: "user_Y",
-                platform: "web"
-            },
-            scores: {
-                "user_X": 8,
-                "user_Y": 10
-            },
-            winnerID: "user_Y",
-            startedAt: "2016-06-01T00:00:00Z",
-            finishedAt: "2016-06-01T00:00:00Z",
-            flags: 2
-        },
-        {
-            matchID: "match_Y",
-            playerA: {
-                id: "user_Y",
-                platform: "web"
-            },
-            playerB: {
-                id: "user_Z",
-                platform: "web"
-            },
-            scores: {
-                "user_Y": 8,
-                "user_Z": 10
-            },
-            winnerID: "user_Z",
-            startedAt: "2016-06-01T00:00:00Z",
-            finishedAt: "2016-06-01T00:00:00Z",
-            flags: 2
-        }
-    ]
-};
+import { useTournament } from '../../../context/TournamentContext';
+import Loader from '../../../styles/shared/Loader.styled';
+import TournamentStats from './TournamentStats';
+import Confetti from 'react-confetti';
 
 const EndedTournament = () => {
-	const [selected, setSelected] = useState("Position");
+	const navigate = useNavigate();
+	const { endTournamentData, tournament } = useTournament();
+	const [matches, setMatches] = useState(null);
+	const [totalScores, setTotalScores] = useState(null);
+	const [isHovered, setIsHovered] = useState(false);
 
-	const handleSelection = (selection) => {
-		setSelected(selection);
+	useEffect(() => {
+		if (!endTournamentData) return;
+		setMatches(endTournamentData.matches.map(formatMatchData));
+	}, [endTournamentData]);
+
+	useEffect(() => {
+		if (!tournament || !matches) return;
+
+		for (const player of tournament.participants) {
+			const formattedPlayer = formatUserData(player);
+			const playerScore = matches.reduce((acc, match) => {
+				if (match.playerA.userID === player.userID) {
+					return acc + match.playerA.score;
+				} else if (match.playerB.userID === player.userID) {
+					return acc + match.playerB.score;
+				}
+				return acc;
+			}, 0);
+			setTotalScores(prevState => ({
+				...prevState,
+				[formattedPlayer.displayName]: playerScore
+			}))
+		}
+	}, [tournament, matches]);
+
+
+	if (!endTournamentData || !tournament || !matches || !totalScores) {
+		return (
+			<EndTournamentContainer $loading={true}>
+				<Loader/>
+			</EndTournamentContainer>
+		)
 	}
 
+	const handleProfileClick = username => {
+		window.scrollTo(0, 0);
+		navigate(`/profile/${username}`);
+	};
+
+	const renderMatch = ({ playerA, playerB, duration }, index) => (
+		<tr key={index}>
+			<td>{index + 1}</td>
+			<td className='profile hover versus' onClick={() => handleProfileClick(playerA.username)}>{playerA.displayName}</td>
+			<td className='profile hover' onClick={() => handleProfileClick(playerB.username)}>{playerB.displayName}</td>
+			<td>{duration}</td>
+			<td>{playerA.score} - {playerB.score}</td>
+		</tr>
+	);
+
 	return (
-		<EndTournamentContainer>
-			<div>Tournament's Result</div>
-			<TournamentHeadDetails>
-				<TournamentTitle>Dark Zone Championship</TournamentTitle>
-				<ParticipantsDetails>Number of Participants: 9/10</ParticipantsDetails>
-			</TournamentHeadDetails>
-
-			<TournamentNavigation>
-				<BackgroundTournamentContainer>
-					<NavButtons $isActive={selected === 'Position'} onClick={() => handleSelection('Position')}>Position</NavButtons>
-					<NavButtons $isActive={selected === 'Overview'} onClick={() => handleSelection('Overview')}>Overview</NavButtons>
-				</BackgroundTournamentContainer>
-			</TournamentNavigation>
-
-			<BottomContainer>
-				{selected === "Position" && <PositionPage tournamentData={tournamentData}/>}
-				{selected === "Overview" && <TournamentOverview tournamentData={tournamentData}/>}
-			</BottomContainer>
-
+		<EndTournamentContainer $loading={false}>
+			<WinnerContainer>
+				<Confetti recycle={false} numberOfPieces={500} style={{height: '100%'}}/>
+				<WinnerDiv>
+					<h2>WINNER</h2>
+					<WinnerInfo $background={endTournamentData.winner.bannerID}>
+						<img src={endTournamentData.winner.avatarID} alt={`${endTournamentData.winner.displayName}'s avatar`}/>
+						<div className='info'>
+							<h3 onClick={() => handleProfileClick(endTournamentData.winner.username)}>{endTournamentData.winner.displayName}</h3>
+							<p>{endTournamentData.winner.username}</p>
+						</div>
+					</WinnerInfo>
+				</WinnerDiv>
+				<Background>
+					<span/>
+					<span/>
+					<span/>
+					<span/>
+					<span/>
+					<span/>
+					<span/>
+					<span/>
+				</Background>
+			</WinnerContainer>
+			<TournamentOverview>
+				<LeaveButtonContainer
+					onMouseEnter={() => setIsHovered(true)}
+					onMouseLeave={() => setIsHovered(false)}
+				>
+					<i className={`bi bi-door-${isHovered ? 'open' : 'closed'}-fill`} onClick={() => navigate('/playmenu')}/>
+				</LeaveButtonContainer>
+				<TournamentHeader>
+					<h1>Overview</h1>
+					<h2>{tournament.name} - {tournament.isPublic ? 'Public' : 'Private'} tournament</h2>
+				</TournamentHeader>
+				<MatchCardTable>
+					<thead>
+						<tr>
+							<th>round</th>
+							<th colSpan={2}>players</th>
+							<th>Duration</th>
+							<th>Scores</th>
+						</tr>
+					</thead>
+					<tbody>
+						{matches.map((match, index) => renderMatch(match, index))}
+					</tbody>
+				</MatchCardTable>
+				<TournamentStats totalScores={totalScores}/>
+			</TournamentOverview>
 		</EndTournamentContainer>
 	);
 };

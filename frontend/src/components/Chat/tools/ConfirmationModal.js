@@ -60,6 +60,7 @@ const MessageContent = styled.p`
 const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message }) => {
 	if (!isOpen) return null;
 
+	// Brandon translate -> "Cancel" and "Confirm"
 	return (
 		<ModalOverlay>
 			<ModalContent>

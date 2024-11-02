@@ -33,7 +33,7 @@ const Profile = () => {
 		setIsRefetch(true);
 		setHasRefetched(true);
 		setShowLoader(true);
-	}, [setIsRefetch]);
+	}, [setIsRefetch, username]);
 
 	useEffect(() => {
 		if (!profileUser || !relation || !matches) {
@@ -122,7 +122,7 @@ const Profile = () => {
 							user={user}
 							profileUser={profileUser}
 							relation={relation}
-							setIsRefetch={setIsRefetch}/>
+						/>
 					</UserProfileBannerContainer>
 					<MainBar profileUser={profileUser} matches={matches}/>
 					<UserContainer>
@@ -148,7 +148,3 @@ const Profile = () => {
 };
 
 export default Profile;
-
-/*
-
-*/

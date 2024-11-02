@@ -84,13 +84,13 @@ export const Username = styled.span`
 		bottom: -2px;
 		left: 0;
 		background-color: #6a0dad;
-		transform: scaleX(0); /* Initially, the underline is hidden */
-		transform-origin: bottom left; /* Start scaling from the left */
-		transition: transform 0.3s ease; /* Smooth scaling effect */
+		transform: scaleX(0);
+		transform-origin: bottom left;
+		transition: transform 0.3s ease;
 	}
 
 	&:hover::after {
-		transform: scaleX(1); /* On hover, the underline expands from left to right */
+		transform: scaleX(1);
 	}
 
 	&:hover {

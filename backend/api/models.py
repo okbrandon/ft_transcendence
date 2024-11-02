@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 
 from .util import generate_id
 
@@ -11,9 +12,14 @@ class Match(models.Model):
     winnerID = models.CharField(max_length = 48, null=True)
     startedAt = models.DateTimeField(auto_now_add=True)
     finishedAt = models.DateTimeField(null=True)
-    flags = models.IntegerField(default=0) # 1<<0 = AI, 1<<1 = 1v1, 1<<2 = tournament
+    flags = models.IntegerField(default=0) # 1<<0 = AI, 1<<1 = 1v1
     tournament = models.ForeignKey('Tournament', on_delete=models.SET_NULL, null=True, blank=True, related_name='matches')
-    whitelist = models.ManyToManyField('User', related_name='whitelisted_matches', limit_choices_to=2)
+    whitelist = models.ManyToManyField('User', related_name='whitelisted_matches')
+
+    def clean(self):
+        super().clean()
+        if self.whitelist.count() > 2:
+            raise ValidationError("Only two users are allowed in the whitelist.")
 
     def __str__(self):
         return self.matchID
@@ -151,6 +157,7 @@ class Message(models.Model):
     conversation = models.ForeignKey(Conversation, null=True, related_name='messages', on_delete=models.CASCADE)
     content = models.CharField(max_length=256)
     sender = models.ForeignKey(User, null=True, related_name='sent_messages', on_delete=models.CASCADE)
+    messageType = models.IntegerField(default=0)
     createdAt = models.DateTimeField(null=True, auto_now_add=True)
     messageType = models.IntegerField(default=0)
 

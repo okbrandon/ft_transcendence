@@ -44,12 +44,6 @@ export const FeatureItem = styled.div`
 	border: 1px solid rgba(164, 69, 178, 0.3);
 	position: relative;
 
-	&:hover {
-		transform: scale(1.05);
-		box-shadow: 0 6px 20px rgba(212, 24, 114, 0.6), 0 0 20px rgba(59, 130, 246, 0.6);
-		border: 1px solid rgba(164, 69, 178, 0.4);
-	}
-
 	h3 {
 		font-family: 'Orbitron', sans-serif;
 		font-size: 24px;

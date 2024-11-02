@@ -1,357 +1,24 @@
 import logging
-import urllib.parse
-import httpx
-import json
 import asyncio
 import random
 import os
 import time
+import jwt
+import httpx
 
-from channels.generic.websocket import AsyncWebsocketConsumer, AsyncJsonWebsocketConsumer
+from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
 
 from asgiref.sync import sync_to_async, async_to_sync
 
-from django.db.models import Q, Count
 from django.utils import timezone
 
-from .models import Conversation, User, Relationship, Match, UserSettings, Tournament
-from .util import generate_id, get_safe_profile, get_user_id_from_token
-from .serializers import UserSerializer, UserSettingsSerializer, MessageSerializer
+from ..models import User, Match, UserSettings, Tournament
+from ..util import generate_id, get_safe_profile, get_user_id_from_token
+from ..serializers import UserSerializer, UserSettingsSerializer
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-
-class StatusConsumer(AsyncWebsocketConsumer):
-
-    async def connect(self):
-        self.user = None
-        self.heartbeat_task = None
-        self.failed_heartbeats = 0
-        self.first_heartbeat = True
-
-        query_string = self.scope['query_string'].decode()
-        query_params = urllib.parse.parse_qs(query_string)
-        token = query_params.get('token', [None])[0]
-
-        if token is None:
-            logger.info(f"[{self.__class__.__name__}] Connection attempt without token")
-            await self.close()
-            return
-
-        userID = await get_user_id_from_token(token)
-
-        if userID is None:
-            logger.info(f"[{self.__class__.__name__}] Connection attempt with invalid token")
-            await self.close()
-            return
-
-        try:
-            self.user = await sync_to_async(User.objects.get)(userID=userID)
-        except User.DoesNotExist:
-            logger.info(f"[{self.__class__.__name__}] User {userID} not found")
-            await self.close()
-            return
-
-        self.user_group_name = f"status_{self.user.userID}"
-
-        await self.channel_layer.group_add(
-            self.user_group_name,
-            self.channel_name
-        )
-
-        await self.accept()
-        self.heartbeat_task = asyncio.create_task(self.check_heartbeat())
-        logger.info(f"[{self.__class__.__name__}] User {self.user.username} connected")
-
-    async def disconnect(self, close_code):
-        if self.heartbeat_task and not self.heartbeat_task.done():
-            self.heartbeat_task.cancel()
-        if self.user is not None:
-            await self.channel_layer.group_discard(
-                self.user_group_name,
-                self.channel_name
-            )
-            await self.update_user_status(False, None)
-            await self.notify_friends_connection(self.user)
-            logger.info(f"[{self.__class__.__name__}] User {self.user.username} disconnected")
-
-    async def receive(self, text_data):
-        try:
-            json_data = json.loads(text_data)
-            message_type = json_data.get("type", None)
-
-            if not message_type:
-                raise Exception("Missing message type")
-
-            match message_type:
-                case "heartbeat":
-                    activity = json_data.get("activity", None)
-
-                    if activity is None:
-                        raise Exception("Missing activity")
-                    if activity not in ["HOME", "QUEUEING", "PLAYING_VS_AI", "PLAYING_MULTIPLAYER", "PLAYING_LOCAL"]:
-                        raise Exception("Invalid activity, not in [HOME, QUEUEING, PLAYING_VS_AI, PLAYING_MULTIPLAYER, PLAYING_LOCAL]")
-
-                    self.failed_heartbeats = 0
-                    await self.update_user_status(True, activity)
-
-                    if self.first_heartbeat:
-                        await self.notify_friends_connection(self.user)
-                        self.first_heartbeat = False
-
-                case _:
-                    raise Exception(f"Invalid message type: {message_type}")
-
-        except Exception as err:
-            try:
-                await self.send(json.dumps({
-                    "type": "error",
-                    "message": "Invalid JSON",
-                    "more_info": str(err)
-                }))
-            except Exception as _:
-                pass
-
-    @sync_to_async
-    def update_user_status(self, online, activity):
-        try:
-            self.user = User.objects.get(userID=self.user.userID)
-        except User.DoesNotExist:
-            return
-
-        self.user.status = {
-            "online": online,
-            "activity": activity,
-            "last_seen": timezone.now().isoformat()
-        }
-        self.user.save()
-
-    async def notify_friends_connection(self, user):
-        friends = await sync_to_async(list)(
-            Relationship.objects.filter(
-                Q(userA=user.userID) | Q(userB=user.userID),
-                status=1
-            )
-        )
-
-        for relationship in friends:
-            friend_id = relationship.userA if relationship.userA != user.userID else relationship.userB
-
-            try:
-                friend = await sync_to_async(User.objects.get)(userID=friend_id)
-            except User.DoesNotExist:
-                continue
-
-            await self.channel_layer.group_send(
-                f"status_{friend.userID}",
-                {
-                    "type": "connection_event",
-                    "user": get_safe_profile(UserSerializer(user).data, me=False)
-                }
-            )
-
-    async def connection_event(self, event):
-        try:
-            await self.send(json.dumps({
-                "type": "connection_event",
-                "user": event["user"]
-            }))
-        except Exception as _:
-            pass
-
-    async def check_heartbeat(self):
-        while True:
-            self.failed_heartbeats += 1
-
-            if self.failed_heartbeats >= 3:
-                logger.info(f"[{self.__class__.__name__}] User {self.user.username} missed 3 heartbeats, closing connection")
-                await self.close(code=4000)
-                break
-
-            try:
-                await self.send(json.dumps({
-                    "type": "heartbeat"
-                }))
-            except Exception as _:
-                pass
-            await asyncio.sleep(2)
-
-class ChatConsumer(AsyncWebsocketConsumer):
-
-    async def connect(self):
-        self.user = None
-
-        query_string = self.scope['query_string'].decode()
-        query_params = urllib.parse.parse_qs(query_string)
-        token = query_params.get('token', [None])[0]
-
-        if token is None:
-            logger.info(f"[{self.__class__.__name__}] Connection attempt without token")
-            await self.close()
-            return
-
-        userID = await get_user_id_from_token(token)
-
-        if userID is None:
-            logger.info(f"[{self.__class__.__name__}] Connection attempt with invalid token")
-            await self.close()
-            return
-
-        try:
-            self.user = await sync_to_async(User.objects.get)(userID=userID)
-        except User.DoesNotExist:
-            logger.info(f"[{self.__class__.__name__}] User {userID} not found")
-            await self.close()
-            return
-
-        self.user_group_name = f"chat_{self.user.userID}"
-
-        await self.channel_layer.group_add(
-            self.user_group_name,
-            self.channel_name
-        )
-
-        logger.info(f"[{self.__class__.__name__}] User {self.user.username} connected")
-        await self.ensure_conversations_exist(self.user)
-        logger.info(f"[{self.__class__.__name__}] User {self.user.username} conversations ensured")
-        await self.accept()
-
-    async def disconnect(self, close_code):
-        if self.user:
-            await self.channel_layer.group_discard(
-                self.user_group_name,
-                self.channel_name
-            )
-
-            logger.info(f"[{self.__class__.__name__}] User {self.user.username} disconnected")
-
-    async def receive(self, text_data):
-        try:
-            json_data = json.loads(text_data)
-            message_type = json_data.get("type", None)
-
-            if not message_type:
-                raise Exception("Missing message type")
-
-            match message_type:
-                case "send_message":
-                    conversation_id = json_data.get("conversationID", None)
-                    content = json_data.get("content", None)
-
-                    if self.user is None:
-                        raise Exception("Something went wrong when receiving the message")
-                    if conversation_id is None:
-                        raise Exception("Missing conversation ID")
-                    if content is None:
-                        raise Exception("Missing content")
-
-                    logger.info(f"[{self.__class__.__name__}] Received message from {self.user.username}: {json_data}")
-                    message = await self.add_message_to_conversation(conversation_id, self.user, content)
-                    await self.notify_new_message(conversation_id, self.user, message)
-
-                case _:
-                    raise Exception(f"Invalid message type: {message_type}")
-        except Exception as err:
-            try:
-                await self.send(json.dumps({
-                    "type": "error",
-                    "message": "Invalid JSON",
-                    "more_info": str(err)
-                }))
-            except Exception as _:
-                pass
-
-    async def notify_new_message(self, conversation_id, sender, message):
-        conversation = await sync_to_async(Conversation.objects.get)(conversationID=conversation_id)
-
-        if not conversation:
-            raise Exception(f"Conversation {conversation_id} not found")
-
-        participants = await sync_to_async(list)(conversation.participants.all())
-        safe_profile = get_safe_profile(UserSerializer(sender).data, me=False)
-
-        for participant in participants:
-            participant_group_name = f"chat_{participant.userID}"
-
-            await self.channel_layer.group_send(
-                participant_group_name,
-                {
-                    "type": "conversation_update",
-                    "conversationID": conversation_id,
-                    "sender": safe_profile,
-                    "message": MessageSerializer(message).data
-                }
-            )
-
-    async def conversation_update(self, event):
-        try:
-            await self.send(json.dumps({
-                "type": "conversation_update",
-                "conversationID": event["conversationID"],
-                "sender": event["sender"],
-                "message": event["message"]
-            }))
-        except Exception as _:
-            pass
-
-    async def friend_request(self, event):
-        try:
-            if event["status"] == "accepted":
-                await self.ensure_conversations_exist(self.user)
-
-            await self.send(json.dumps({
-                "type": "friend_request",
-                "status": event["status"],
-                "data": event["data"]
-            }))
-        except Exception as _:
-            pass
-
-    @sync_to_async
-    def add_message_to_conversation(self, conversation_id, user, content):
-        conversation = Conversation.objects.get(conversationID=conversation_id)
-
-        if not conversation:
-            raise Exception(f"Conversation {conversation_id} not found")
-
-        if user not in conversation.participants.all():
-            raise Exception(f"User {user.username} is not part of conversation {conversation_id}")
-
-        message = conversation.messages.create(messageID=generate_id("msg"), sender=user, content=content)
-        conversation.save()
-        return message
-
-    @sync_to_async
-    def ensure_conversations_exist(self, user):
-        friends = Relationship.objects.filter(
-            Q(userA=user.userID) | Q(userB=user.userID)
-        )
-        friends = friends.exclude(
-            Q(status=2) | Q(status=0),
-            Q(userA=user.userID) | Q(userB=user.userID)
-        )
-
-        user = User.objects.get(userID=user.userID)
-
-        for relationship in friends:
-            friend_id = relationship.userA if relationship.userA != user.userID else relationship.userB
-
-            try:
-                friend = User.objects.get(userID=friend_id)
-            except User.DoesNotExist:
-                continue
-
-            existing_conversation = Conversation.objects.filter(
-                participants__userID__in=[user.userID, friend_id],
-                conversationType='private_message'
-            ).annotate(participant_count=Count('participants')).filter(participant_count=2).exists()
-
-            if not existing_conversation:
-                new_conversation = Conversation.objects.create(conversationID=generate_id("conv"), conversationType='private_message')
-                new_conversation.receipientID = user.userID
-                new_conversation.participants.add(user, friend)
-                new_conversation.save()
 
 class MatchConsumer(AsyncJsonWebsocketConsumer):
     active_matches = {}
@@ -375,10 +42,11 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         if hasattr(self, 'heartbeat_task'):
             self.heartbeat_task.cancel()
 
-        if self.match and not self.is_spectator:
-            await self.handle_player_quit()
-        elif self.match and self.is_spectator:
-            await self.leave_spectator_mode()
+        if self.match:
+            if not self.is_spectator:
+                await self.handle_player_quit()
+            else:
+                await self.leave_spectator_mode()
 
         logger.info(f"[{self.__class__.__name__}] Disconnected, cleanup completed")
 
@@ -420,17 +88,33 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         token = data.get('token')
 
         if token != os.getenv('BOT_TOKEN'):
-            user_profile = await self.get_user_profile(token)
-            if user_profile:
-                self.user = await self.get_user_from_id(user_profile['userID'])
+            try:
+                user_id = await get_user_id_from_token(token)
+
+                if user_id is None:
+                    logger.info(f"[{self.__class__.__name__}] Connection attempt with invalid token")
+                    await self.close()
+                    return
+
+                self.user = await sync_to_async(User.objects.get)(userID=user_id)
+                if not self.user:
+                    logger.warning(f"User {user_id} not found")
+                    await self.close()
+                    return
+
+                user_data = UserSerializer(self.user).data
+                safe_profile = get_safe_profile(user_data, me=True)
                 try:
-                    await self.send_json({"e": "READY", "d": user_profile})
+                    await self.send_json({"e": "READY", "d": safe_profile})
                 except Exception as e:
                     logger.error(f"[{self.__class__.__name__}] Failed to send READY event: {str(e)}")
                     await self.close()
                 logger.info(f"[{self.__class__.__name__}] User identified: {self.user.userID}")
-            else:
-                logger.warning(f"[{self.__class__.__name__}] Invalid token, closing connection")
+            except jwt.ExpiredSignatureError:
+                logger.warning("Expired token")
+                await self.close()
+            except jwt.InvalidTokenError:
+                logger.warning("Invalid token")
                 await self.close()
         else:
             self.user = await self.get_user_from_id('user_ai')
@@ -478,9 +162,8 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                 'playerA': {'id': match.playerA['id'], 'paddle_y': 375, 'pos': 'A'},
                 'playerB': {'id': match.playerB['id'] if match.playerB else None, 'paddle_y': 375, 'pos': 'B'},
                 'ball': {},
-                'scores': {match.playerA['id']: 0 if match.playerB else None, match.playerB['id']: 0},
-                'spectators': [],
-                'rewards': {match.playerA['id']: {'xp': 0, 'money': 0} if match.playerB else None, match.playerB['id']: {'xp': 0, 'money': 0}},
+                'scores': {match.playerA['id']: 0},
+                'rewards': {match.playerA['id']: {'xp': 0, 'money': 0}},
             }
             self.reset_ball(self.active_matches[match.matchID])
             logger.info(f"[{self.__class__.__name__}] New match state initialized for match: {match.matchID}")
@@ -522,42 +205,24 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         match = await self.find_match_by_id(match_id)
         logger.debug(f"[{self.__class__.__name__}] Match found: {match}")
         if not match:
-            logger.error(f"[{self.__class__.__name__}] Invalid tournament match: {match_id}")
-            await self.send_json({
-                "e": "TOURNAMENT_MATCH_JOIN_FAILED",
-                "d": {"reason": "Invalid tournament match"}
-            })
-            logger.debug(f"[{self.__class__.__name__}] Sent TOURNAMENT_MATCH_JOIN_FAILED response")
+            await self.send_tournament_match_join_failed("Invalid tournament match")
             return
 
         tournament = await database_sync_to_async(lambda: match.tournament)()
         logger.debug(f"[{self.__class__.__name__}] Tournament associated with match: {tournament}")
         if not tournament:
-            logger.error(f"[{self.__class__.__name__}] Match {match_id} is not associated with a tournament")
-            await self.send_json({
-                "e": "TOURNAMENT_MATCH_JOIN_FAILED",
-                "d": {"reason": "Match is not part of a tournament"}
-            })
-            logger.debug(f"[{self.__class__.__name__}] Sent TOURNAMENT_MATCH_JOIN_FAILED response")
+            await self.send_tournament_match_join_failed("Match is not part of a tournament")
             return
 
         is_user_in_tournament = await self.is_user_in_tournament(self.user.userID, tournament.tournamentID)
         logger.debug(f"[{self.__class__.__name__}] Is user in tournament: {is_user_in_tournament}")
         if not is_user_in_tournament:
-            logger.error(f"[{self.__class__.__name__}] User {self.user.userID} not in tournament {tournament.tournamentID}")
-            await self.send_json({
-                "e": "TOURNAMENT_MATCH_JOIN_FAILED",
-                "d": {"reason": "User not in tournament"}
-            })
-            logger.debug(f"[{self.__class__.__name__}] Sent TOURNAMENT_MATCH_JOIN_FAILED response")
+            await self.send_tournament_match_join_failed("User not in tournament")
             return
 
         self.match = match
         logger.debug(f"[{self.__class__.__name__}] Set self.match to: {self.match}")
-        await self.channel_layer.group_add(
-            f"match_{match.matchID}",
-            self.channel_name
-        )
+        await self.channel_layer.group_add(f"match_{match.matchID}", self.channel_name)
         logger.debug(f"[{self.__class__.__name__}] Added to channel group: match_{match.matchID}")
 
         is_whitelisted = await self.is_user_whitelisted(self.user, match)
@@ -565,78 +230,111 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
 
         if is_whitelisted:
             logger.debug(f"[{self.__class__.__name__}] User is whitelisted, proceeding with match join")
-            
-            # Determine player assignment based on userID
-            if match.playerA is None and match.playerB is None:
-                # First player to join
-                match.playerA = {"id": self.user.userID, "platform": "web"}
-                side = "left"
-                logger.debug(f"[{self.__class__.__name__}] Assigned first user as playerA")
-            elif match.playerA is None or match.playerB is None:
-                # Second player to join
-                other_player = match.playerA or match.playerB
-                if self.user.userID > other_player['id']:
-                    match.playerB = {"id": self.user.userID, "platform": "web"}
-                    side = "right"
-                    logger.debug(f"[{self.__class__.__name__}] Assigned second user as playerB")
-                else:
-                    match.playerB = match.playerA
-                    match.playerA = {"id": self.user.userID, "platform": "web"}
-                    side = "left"
-                    logger.debug(f"[{self.__class__.__name__}] Assigned second user as playerA, moved first user to playerB")
-            else:
-                logger.error(f"[{self.__class__.__name__}] Both player slots filled for match {match_id}")
-                await self.send_json({
-                    "e": "TOURNAMENT_MATCH_JOIN_FAILED",
-                    "d": {"reason": "Match is full"}
-                })
-                logger.debug(f"[{self.__class__.__name__}] Sent TOURNAMENT_MATCH_JOIN_FAILED response")
+            await self.join_match_as_player(match)
+        else:
+            logger.debug(f"[{self.__class__.__name__}] User is not whitelisted, joining as spectator")
+            self.is_spectator = True
+            await self.handle_spectate_request({"match_id": match_id})
+
+        logger.debug(f"[{self.__class__.__name__}] handle_tournament_match_join completed for match {match_id}")
+
+    async def join_match_as_player(self, match):
+        async with asyncio.Lock():
+            side = await self.assign_player_to_match(match)
+            if not side:
+                await self.send_tournament_match_join_failed("Match is full")
                 return
 
-            await database_sync_to_async(match.save)()
-            logger.debug(f"[{self.__class__.__name__}] Saved match after player assignment")
+            await self.update_match_state(match)
+            await self.send_match_join(match, side)
 
-            # Initialize or update match state
-            if match.matchID not in self.active_matches:
-                logger.debug(f"[{self.__class__.__name__}] Initializing new match state for {match.matchID}")
-                self.active_matches[match.matchID] = {
-                    'playerA': {'id': match.playerA['id'], 'paddle_y': 375, 'pos': 'A'},
-                    'playerB': {'id': match.playerB['id'] if match.playerB else None, 'paddle_y': 375, 'pos': 'B'},
-                    'ball': {},
-                    'scores': {match.playerA['id']: 0 if match.playerB else None, match.playerB['id']: 0},
-                    'spectators': [],
-                    'rewards': {match.playerA['id']: {'xp': 0, 'money': 0} if match.playerB else None, match.playerB['id']: {'xp': 0, 'money': 0}},
-                }
-                self.reset_ball(self.active_matches[match.matchID])
-                logger.debug(f"[{self.__class__.__name__}] Reset ball for new match")
-            else:
-                logger.debug(f"[{self.__class__.__name__}] Updating existing match state for {match.matchID}")
-                # Update playerB id in active match state if it's not set
-                if match.playerB and self.active_matches[match.matchID]['playerB']['id'] is None:
-                    self.active_matches[match.matchID]['playerB']['id'] = match.playerB['id']
-                    self.active_matches[match.matchID]['rewards'][match.playerB['id']] = {'xp': 0, 'money': 0}
-                    self.active_matches[match.matchID]['scores'][match.playerB['id']] = 0
+            if match.playerB:
+                playerB_info = await self.get_opponent_info(match, await self.get_user_from_id(match.playerA['id']))
+                await self.channel_layer.group_send(
+                    f"match_{match.matchID}",
+                    {
+                        "type": "player.join",
+                        "player": playerB_info
+                    }
+                )
 
-            await self.send_json({
-                "e": "MATCH_JOIN",
-                "d": {
-                    "match_id": match.matchID,
-                    "side": side,
-                    "opponent": await self.get_opponent_info(match, self.user)
-                }
-            })
-            logger.debug(f"[{self.__class__.__name__}] Sent MATCH_JOIN response")
-
-            # If both players have joined, start the match
             if match.playerA and match.playerB:
                 await self.send_match_ready(match)
                 logger.info(f"[{self.__class__.__name__}] Tournament match {match.matchID} started with both players")
+
+    async def assign_player_to_match(self, match):
+        if match.playerA is None and match.playerB is None:
+            match.playerA = {"id": self.user.userID, "platform": "web"}
+            side = "left"
+            logger.debug(f"[{self.__class__.__name__}] Assigned first user as playerA")
+        elif match.playerA is None or match.playerB is None:
+            other_player = match.playerA or match.playerB
+            if self.user.userID > other_player['id']:
+                match.playerB = {"id": self.user.userID, "platform": "web"}
+                side = "right"
+                logger.debug(f"[{self.__class__.__name__}] Assigned second user as playerB")
+            else:
+                match.playerB = match.playerA
+                match.playerA = {"id": self.user.userID, "platform": "web"}
+                side = "left"
+                logger.debug(f"[{self.__class__.__name__}] Assigned second user as playerA, moved first user to playerB")
         else:
-            logger.debug(f"[{self.__class__.__name__}] User is not whitelisted, joining as spectator")
-            # Join as spectator
-            self.is_spectator = True
-            await self.handle_spectate_request({"match_id": match_id})
-        logger.debug(f"[{self.__class__.__name__}] handle_tournament_match_join completed for match {match_id}")
+            logger.error(f"[{self.__class__.__name__}] Both player slots filled for match {match.matchID}")
+            return None
+
+        await database_sync_to_async(match.save)()
+        logger.debug(f"[{self.__class__.__name__}] Saved match after player assignment")
+        return side
+
+    async def update_match_state(self, match):
+        if match.matchID not in self.active_matches:
+            logger.debug(f"[{self.__class__.__name__}] Initializing new match state for {match.matchID}")
+            self.active_matches[match.matchID] = {
+                'playerA': {'id': match.playerA['id'], 'paddle_y': 375, 'pos': 'A'},
+                'playerB': {'id': match.playerB['id'] if match.playerB else None, 'paddle_y': 375, 'pos': 'B'},
+                'ball': {},
+                'scores': {},
+                'spectators': [],
+                'rewards': {},
+            }
+            if match.playerA:
+                self.active_matches[match.matchID]['scores'][match.playerA['id']] = 0
+                self.active_matches[match.matchID]['rewards'][match.playerA['id']] = {'xp': 0, 'money': 0}
+            if match.playerB:
+                self.active_matches[match.matchID]['scores'][match.playerB['id']] = 0
+                self.active_matches[match.matchID]['rewards'][match.playerB['id']] = {'xp': 0, 'money': 0}
+            self.reset_ball(self.active_matches[match.matchID])
+            logger.debug(f"[{self.__class__.__name__}] Reset ball for new match")
+        else:
+            logger.debug(f"[{self.__class__.__name__}] Updating existing match state for {match.matchID}")
+            if match.playerB and self.active_matches[match.matchID]['playerB']['id'] is None:
+                self.active_matches[match.matchID]['playerB']['id'] = match.playerB['id']
+                self.active_matches[match.matchID]['rewards'][match.playerB['id']] = {'xp': 0, 'money': 0}
+                self.active_matches[match.matchID]['scores'][match.playerB['id']] = 0
+
+    async def send_match_join(self, match, side):
+        await self.send_json({
+            "e": "MATCH_JOIN",
+            "d": {
+                "match_id": match.matchID,
+                "side": side,
+                "opponent": await self.get_opponent_info(match, self.user)
+            }
+        })
+        logger.debug(f"[{self.__class__.__name__}] Sent MATCH_JOIN response")
+
+    async def send_tournament_match_join_failed(self, reason):
+        logger.error(f"[{self.__class__.__name__}] {reason}")
+        await self.send_json({
+            "e": "TOURNAMENT_MATCH_JOIN_FAILED",
+            "d": {"reason": reason}
+        })
+        logger.debug(f"[{self.__class__.__name__}] Sent TOURNAMENT_MATCH_JOIN_FAILED response")
+
+
+    @sync_to_async
+    def get_user(self, user_id):
+        return User.objects.filter(id=user_id).first()
 
     @database_sync_to_async
     def is_user_in_tournament(self, user_id, tournament_id):
@@ -761,14 +459,6 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             return
 
         paddle_speed = 5 # Appropriate paddle speed (adjust as needed)
-        if self.match is None:
-            logger.error(f"[{self.__class__.__name__}] Player {self.user.userID} attempted to move paddle without being in a match")
-            return
-        if self.match.matchID not in self.active_matches:
-            logger.error(f"[{self.__class__.__name__}] Match state not found for match: {self.match.matchID}")
-            return
-
-        paddle_speed = 5 # Appropriate paddle speed (adjust as needed)
         direction = data.get('direction')
         match_state = self.active_matches[self.match.matchID]
         now = time.time()
@@ -843,6 +533,25 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                 "match_state": match_state
             }
         })
+
+        if match.playerA:
+            playerA_info = await self.get_opponent_info(match, await self.get_user_from_id(match.playerB['id']))
+            await self.channel_layer.group_send(
+                f"match_{match.matchID}",
+                {
+                    "type": "player.join",
+                    "player": playerA_info
+                }
+            )
+        if match.playerB:
+            playerB_info = await self.get_opponent_info(match, await self.get_user_from_id(match.playerA['id']))
+            await self.channel_layer.group_send(
+                f"match_{match.matchID}",
+                {
+                    "type": "player.join",
+                    "player": playerB_info
+                }
+            )
 
         logger.info(f"[{self.__class__.__name__}] User {self.user.userID} joined match {match_id} as spectator")
 
@@ -988,8 +697,13 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         BALL_RADIUS = 25 / 2
         BALL_SPEED = 0.6
         BALL_MAX_SPEED = 19
-        MAX_SCORE = 10
         REFRESH_RATE = 1 / 60
+
+        FAST_MATCH = os.environ.get('FAST_MATCH', 'false').lower() == 'true'
+        MAX_SCORE = 3 if FAST_MATCH else 10
+
+        logger.info(f"[{self.__class__.__name__}] Starting match loop for match: {match_id}")
+        logger.info(f"[{self.__class__.__name__}] FAST_MATCH: {FAST_MATCH}, MAX_SCORE: {MAX_SCORE}")
 
         while match_id in self.active_matches:
             match_state = self.active_matches[match_id]
@@ -1186,24 +900,18 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             pass
 
     async def match_ended(self, event):
-        if self.is_spectator:
+        try:
             await self.send_json({
                 "e": "MATCH_END",
-                "d": {"winner": event["winner"]}
+                "d": {
+                    "winner": event["winner"],
+                    "rewards": event["rewards"]
+                }
             })
-        else:
-            try:
-                await self.send_json({
-                    "e": "MATCH_END",
-                    "d": {
-                        "won": event["winner"] == self.user.userID,
-                        "rewards": event["rewards"]
-                    }
-                })
-                logger.info(f"[{self.__class__.__name__}] Match end event processed for user: {self.user.userID}")
-                await self.close()
-            except Exception as _:
-                pass
+            logger.info(f"[{self.__class__.__name__}] Match end event processed for user: {self.user.userID}")
+            await self.close()
+        except Exception as _:
+            pass
 
     async def player_join(self, event):
         player_data = event["player"]

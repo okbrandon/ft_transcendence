@@ -15,8 +15,13 @@ class UserSerializer(serializers.ModelSerializer):
 class MatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Match
-        fields = ["matchID", "playerA", "playerB", "scores", "winnerID", "startedAt", "finishedAt", "whitelist", "flags"]
+        fields = ["matchID", "playerA", "playerB", "scores", "winnerID", "startedAt", "finishedAt", "flags", "whitelist"]
         read_only_fields = ["matchID", "startedAt", "finishedAt"]
+
+    def validate_whitelist(self, value):
+        if len(value) > 2:
+            raise serializers.ValidationError("Only two users are allowed in the whitelist.")
+        return value
 
 class RelationshipSerializer(serializers.ModelSerializer):
     class Meta:
@@ -61,7 +66,7 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ['messageID', 'messageType', 'content', 'sender', 'createdAt']
+        fields = ['messageID', 'content', 'sender', 'messageType', 'createdAt']
 
 class ConversationSerializer(serializers.ModelSerializer):
     participants = UserSerializer(many=True)

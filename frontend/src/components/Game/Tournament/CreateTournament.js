@@ -10,14 +10,16 @@ import {
 import PongButton from "../../../styles/shared/PongButton.styled";
 import API from "../../../api/api";
 import { useNavigate } from "react-router-dom";
-import { useTonneru } from "../../../context/TonneruContext";
+import { useTournament } from "../../../context/TournamentContext";
+import { useNotification } from "../../../context/NotificationContext";
 
 const CreateTournament = ({ setOptions }) => {
+	const { addNotification } = useNotification();
 	const [tournamentName, setTournamentName] = useState("");
 	const [maxParticipants, setMaxParticipants] = useState(4);
 	const [isPublic, setIsPublic] = useState(true);
 	const navigate = useNavigate();
-	const { registerForTournament } = useTonneru();
+	const { registerForTournament } = useTournament();
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -27,12 +29,11 @@ const CreateTournament = ({ setOptions }) => {
 				isPublic: isPublic,
 				maxParticipants: maxParticipants
 			});
-			console.log('Tournament created:', response.data);
+			console.log('CreateTournament: tournament created');
 			registerForTournament(response.data.tournamentID);
 			navigate(`/tournaments/${response.data.tournamentID}`);
 		} catch (error) {
-			console.error('Error creating tournament:', error.response?.data?.error || error.message);
-			// Handle error (e.g., show error message to user)
+			addNotification('error', error.response?.data?.error || 'Error creating tournament');
 		}
 	};
 

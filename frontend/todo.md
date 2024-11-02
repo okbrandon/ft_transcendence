@@ -1,5 +1,8 @@
 # TODO
-- tournaments
+- tournaments:
+ - start button
+ - Prune messages
+ - invitation
 - Game: send invite
 
 # localhost:8888 -> things to change

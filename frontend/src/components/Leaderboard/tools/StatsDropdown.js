@@ -12,6 +12,7 @@ const StatsDropdown = ({ stats, handleStatsChange }) => {
 		handleStatsChange(value);
 	};
 
+	// Brandon: translate each dropdown items
 	return (
 		<DropdownContainer>
 			<NavDropdown title={stats === 'gamesPlayed' ? 'Games Played' : stats === 'gamesWon' ? 'Games Won' : 'Games Lost'} id="stats-dropdown">

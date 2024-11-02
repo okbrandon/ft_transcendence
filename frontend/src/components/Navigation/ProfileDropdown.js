@@ -3,13 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import Dropdown from 'react-bootstrap/Dropdown';
 import { useAuth } from '../../context/AuthContext';
 import { useRelation } from '../../context/RelationContext';
+import { useChat } from '../../context/ChatContext';
 import { ProfileDropdownButton } from './styles/Navigation.styled';
 import { useTranslation } from 'react-i18next';
 
 const ProfileDropdown = () => {
 	const navigate = useNavigate();
 	const { setIsLoggedIn, user, setUser } = useAuth();
-	const { setConversations, setRelations, setFriends, setRequests, setBlockedUsers } = useRelation();
+	const { setRelations, setFriends, setRequests, setBlockedUsers } = useRelation();
+	const { setConversations } = useChat();
 	const { t } = useTranslation();
 
 	const handleLogout = () => {

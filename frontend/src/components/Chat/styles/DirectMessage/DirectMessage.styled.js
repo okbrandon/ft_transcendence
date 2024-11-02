@@ -133,6 +133,8 @@ export const ChatInput = styled.input`
 	background-color: #2a2a37;
 	color: #fff;
 	font-size: 1rem;
+	resize: none;
+	overflow: hidden;
 
 	&::placeholder {
 		color: #aaa;
@@ -265,11 +267,9 @@ export const TournamentInviteBubble = styled.div`
 	align-self: center;
 	text-align: center;
 	box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-
 	p {
 		margin: 5px 0;
 	}
-
 	button {
 		margin: 5px;
 		padding: 5px 10px;
@@ -277,20 +277,16 @@ export const TournamentInviteBubble = styled.div`
 		border-radius: 5px;
 		cursor: pointer;
 		transition: background-color 0.3s ease;
-
 		&:first-of-type {
 			background-color: #6a0dad;
 			color: #fff;
-
 			&:hover {
 				background-color: #4a0a9d;
 			}
 		}
-
 		&:last-of-type {
 			background-color: #EE4266;
 			color: #fff;
-
 			&:hover {
 				background-color: #ce2246;
 			}

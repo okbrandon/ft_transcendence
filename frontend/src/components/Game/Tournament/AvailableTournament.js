@@ -11,14 +11,14 @@ import {
 	BackButton
 } from "../styles/Tournament/AvailableTournaments.styled";
 import PongButton from "../../../styles/shared/PongButton.styled";
-import { useTonneru } from "../../../context/TonneruContext";
+import { useTournament } from "../../../context/TournamentContext";
 import API from "../../../api/api";
 
 const AvailableTournaments = ({ setOptions }) => {
 	const navigate = useNavigate();
 	const [searchQuery, setSearchQuery] = useState("");
 	const [tournaments, setTournaments] = useState([]);
-	const { registerForTournament } = useTonneru();
+	const { registerForTournament } = useTournament();
 
 	useEffect(() => {
 		fetchTournaments();

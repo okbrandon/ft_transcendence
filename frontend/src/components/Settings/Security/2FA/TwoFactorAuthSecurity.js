@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import API from '../../../../api/api';
 import { getUser } from '../../../../api/user';
 import OTPInputComponent from '../../../Auth/OTPInput';
@@ -9,7 +9,7 @@ import ErrorMessage from '../../../../styles/shared/ErrorMessage.styled';
 import { useNotification } from '../../../../context/NotificationContext';
 import { useTranslation } from 'react-i18next';
 
-const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactorAuth }) => {
+const TwoFactorAuthSecurity = ({ formData, setUser, setShowTwoFactorAuth }) => {
 	const { addNotification } = useNotification();
 	const [availablePlatforms, setAvailablePlatforms] = useState([]);
 	const [authCode, setAuthCode] = useState('');
@@ -27,7 +27,7 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactor
 			});
 	}, [addNotification]);
 
-	const handlePlatform = platform => {
+	const handlePlatform = useCallback(platform => {
 		API.post('auth/totp/request', { platform })
 			.then(() => {
 				addNotification('success', 'Request sent');
@@ -35,7 +35,7 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactor
 			.catch(err => {
 				addNotification('error', `${err?.response?.data?.error || 'An error occurred'}`);
 			});
-	};
+	}, [addNotification]);
 
 	const handleSubmit = e => {
 		e.preventDefault();
@@ -46,20 +46,18 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactor
 
 		API.patch('users/@me/profile', { ...submissionData, otp: authCode })
 			.then(() => {
-				setSuccess('Security updated successfully');
+				addNotification('success', 'Security updated successfully');
 				getUser()
 					.then(res => {
 						setUser(res.data);
 					})
 					.catch(err => {
 						setError(err.response.data.error);
-						setSuccess('');
 					});
 				setShowTwoFactorAuth(false);
 			})
 			.catch(err => {
 				setError(err.response.data.error);
-				setSuccess('');
 			})
 			.finally(() => {
 				setDisableVerify(false);

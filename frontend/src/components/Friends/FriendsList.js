@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../api/api";
 import PongButton from "../../styles/shared/PongButton.styled";
@@ -15,13 +15,24 @@ import {
 } from "./styles/Friends.styled";
 import { useNotification } from "../../context/NotificationContext";
 import { useTranslation } from "react-i18next";
+import { useChat } from "../../context/ChatContext";
 import { useRelation } from "../../context/RelationContext";
 
-const FriendsList = ({ friends, setIsRefetch }) => {
+const FriendsList = ({ friends }) => {
 	const navigate = useNavigate();
+	const { setFriends, setRelations } = useRelation();
 	const { addNotification } = useNotification();
-	const { conversations, handleSelectChat } = useRelation();
+	const { conversations, handleSelectChat } = useChat();
+	const [loading, setLoading] = useState(false);
 	const { t } = useTranslation();
+
+	useEffect(() => {
+		if (!loading) return;
+		const timeout = setTimeout(() => {
+			setLoading(false);
+		}, 1000);
+		return () => clearTimeout(timeout);
+	}, [loading]);
 
 	const setActivityDescription = activity => {
 		if (activity === "PLAYING_VS_AI") {
@@ -34,13 +45,12 @@ const FriendsList = ({ friends, setIsRefetch }) => {
 			return "In lobby";
 		}
 		return "Touching grass...";
-	}
-
-	const handleProfile = username => {
-		navigate(`/profile/${username}`)
 	};
 
-	// Handle opening DM with friend
+	const handleProfile = username => {
+		navigate(`/profile/${username}`);
+	};
+
 	const handleFriendDM = (username) => {
 		const userID = localStorage.getItem("userID");
 
@@ -50,13 +60,16 @@ const FriendsList = ({ friends, setIsRefetch }) => {
 		})
 
 		handleSelectChat(username, convo ? convo.conversationID : null);
-	}
+	};
 
-	const handleRemove = relationID => {
-		API.delete(`users/@me/relationships/${relationID}`)
+	const handleRemove = relationshipID => {
+		if (loading) return;
+		setLoading(true);
+		API.delete(`users/@me/relationships/${relationshipID}`)
 			.then(() => {
 				addNotification("success", "Friend removed");
-				setIsRefetch(true);
+				setRelations(prevRelations => prevRelations.filter(relation => relation.relationshipID !== relationshipID));
+				setFriends(prevFriends => prevFriends.filter(friend => friend.relationshipID !== relationshipID));
 			})
 			.catch(err => {
 				addNotification("error", `${err?.response?.data?.error || "An error occurred."}`);
@@ -86,7 +99,7 @@ const FriendsList = ({ friends, setIsRefetch }) => {
 							<PongButton
 								type="button"
 								$backgroundColor="#ff5555"
-								onClick={() => handleRemove(friend.relationID)}
+								onClick={() => handleRemove(friend.relationshipID)}
 							>
 								{t('friends.subSections.friendList.deleteButton')}
 							</PongButton>

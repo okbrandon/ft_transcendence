@@ -6,7 +6,7 @@ import Footer from '../Footer/Footer';
 import { useAuth } from '../../context/AuthContext';
 import RelationProvider from '../../context/RelationContext';
 import ConnectedNavBar from '../Navigation/ConnectedNavigation';
-import TonneruProvider from '../../context/TonneruContext';
+import TournamentProvider from '../../context/TournamentContext';
 
 const Root = () => {
 	const location = useLocation();
@@ -24,7 +24,7 @@ const Root = () => {
 	return (
 		<>
 			{isLoggedIn ? (
-				<TonneruProvider>
+				<TournamentProvider>
 					<RelationProvider>
 						{showPersistentUI && <ConnectedNavBar/>}
 						<main>
@@ -33,7 +33,7 @@ const Root = () => {
 						</main>
 						{showPersistentUI && <Footer/>}
 					</RelationProvider>
-				</TonneruProvider>
+				</TournamentProvider>
 			) : (
 				<>
 					{showPersistentUI && <NavBar/>}

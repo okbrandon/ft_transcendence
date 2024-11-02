@@ -106,8 +106,10 @@ export const getSkin = async (id) => {
 export const formatMatchData = (match) => {
 	const duration = getDuration(match.startedAt, match.finishedAt);
 	const date = getDate(match.finishedAt);
-	const playerA = formatUserData(match.playerA);
-	const playerB = formatUserData(match.playerB);
+	// const playerA = formatUserData(match.players[match.playerA.userID]);
+	// const playerB = formatUserData(match.players[match.playerB.userID]);
+	const playerA = formatUserData(match.players.find(player => player.userID === match.playerA.id));
+	const playerB = formatUserData(match.players.find(player => player.userID === match.playerB.id));
 	const playerAScore = match.scores?.[`${playerA.userID}`] || 0;
 	const playerBScore = match.scores?.[`${playerB.userID}`] || 0;
 	const winner = match.winnerID === playerA.userID ? playerA : playerB;
@@ -122,17 +124,17 @@ export const formatMatchData = (match) => {
 	};
 }
 
-const formatMatchMeData = (match) => {
+const formatMatchMeData = (match, id) => {
 	const duration = getDuration(match.startedAt, match.finishedAt);
 	const date = getDate(match.finishedAt);
 	const playerA = formatUserData(match.playerA);
 	const playerB = formatUserData(match.playerB);
 
-	const me = playerA.userID === match.playerA.userID ? playerA : playerB;
-	const opponent = playerA.userID === match.playerA.userID ? playerB : playerA;
+	const me = playerA.userID === id ? playerA : playerB;
+	const opponent = playerA.userID === id ? playerB : playerA;
 	const meScore = match.scores?.[`${me.userID}`] || 0;
 	const opponentScore = match.scores?.[`${opponent.userID}`] || 0;
-	const winner = match.winnerID === me.userID ? me : opponent;
+	const winner = match.winnerID === id ? me : opponent;
 
 	return {
 		...match,
@@ -150,8 +152,8 @@ export const getMatchHistory = async (id) => {
 		const rawMatches = res.data;
 
 		const matches = rawMatches.map(match => {
-			return formatMatchMeData(match);
-		})
+			return formatMatchMeData(match, id);
+		});
 		return matches;
 	} catch (err) {
 		console.error(err?.response?.data?.error || 'An error occurred');

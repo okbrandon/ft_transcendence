@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import ProfileImage from './ProfileImage';
 import AccountManagement from './AccountManagement';
 import ProfileInformation from './ProfileInformation';
@@ -7,11 +7,11 @@ import { getUser } from '../../../api/user';
 import {
 	Form,
 	SectionHeading,
-	SuccessMessage,
 } from '../styles/Settings.styled';
 import PongButton from '../../../styles/shared/PongButton.styled';
 import ErrorMessage from '../../../styles/shared/ErrorMessage.styled';
 import { useTranslation } from 'react-i18next';
+import { useNotification } from '../../../context/NotificationContext';
 
 const AccountPreferences = ({ user, setUser }) => {
 	const [formData, setFormData] = useState({
@@ -21,11 +21,19 @@ const AccountPreferences = ({ user, setUser }) => {
 		lang: user.lang,
 	});
 	const [loading, setLoading] = useState(false);
-	const [success, setSuccess] = useState('');
 	const [error, setError] = useState('');
+	const { addNotification } = useNotification();
 	const { t } = useTranslation();
 
-	const handleChange = (e) => {
+	useEffect(() => {
+		if (!loading) return;
+		const timeout = setTimeout(() => {
+			setLoading(false);
+		}, 1000);
+		return () => clearTimeout(timeout);
+	}, [loading]);
+
+	const handleChange = useCallback((e) => {
 		const { id, value } = e.target;
 
 		if (id === 'bio') {
@@ -41,9 +49,9 @@ const AccountPreferences = ({ user, setUser }) => {
 				[id]: value,
 			}));
 		}
-	};
+	}, []);
 
-	const checkAccountPreferencesRestrictions = data => {
+	const checkAccountPreferencesRestrictions = useCallback(data => {
 		if (!data) {
 			return '';
 		}
@@ -61,10 +69,12 @@ const AccountPreferences = ({ user, setUser }) => {
 		}
 
 		return '';
-	};
+	}, [t]);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
+		if (loading) return;
+
 		const errorMessage = checkAccountPreferencesRestrictions(formData);
 		const submissionData = { ...formData };
 
@@ -74,12 +84,11 @@ const AccountPreferences = ({ user, setUser }) => {
 
 		if (errorMessage) {
 			setError(errorMessage);
-			setSuccess('');
 		} else {
 			setLoading(true);
 			API.patch('/users/@me/profile', submissionData)
 				.then(() => {
-					setSuccess(t('settings.accountPreferences.successMessage'));
+					addNotification('success', t('settings.accountPreferences.successMessage'));
 					setError('');
 					getUser()
 						.then(user => {
@@ -87,15 +96,11 @@ const AccountPreferences = ({ user, setUser }) => {
 						})
 						.catch(err => {
 							setError(err?.response?.data?.error || 'An error occurred.');
-							setSuccess('');
+							addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 						});
 				})
 				.catch(err => {
-					setError(err?.response?.data?.error || 'An error occurred.');
-					setSuccess('');
-				})
-				.finally(() => {
-					setLoading(false);
+					addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 				});
 		}
 	};
@@ -114,7 +119,6 @@ const AccountPreferences = ({ user, setUser }) => {
 				handleChange={handleChange}
 			/>
 			<AccountManagement/>
-			{success && <SuccessMessage>{success}</SuccessMessage>}
 			{error && <ErrorMessage>{error}</ErrorMessage>}
 			<PongButton type="submit" disabled={loading}>
 				{loading ? t('settings.accountPreferences.loadingButton') : t('settings.accountPreferences.saveButton')}

@@ -1,11 +1,17 @@
 import React from 'react';
 import Arrow from './Arrow.js';
-import { Header } from '../styles/Chat/ChatContainer.styled.js'
+import { ChatNotificationPopUp, Header } from '../styles/Chat/ChatContainer.styled.js'
+import { useChat } from '../../../context/ChatContext.js';
 
 const ChatHeader = ({ toggleMinimization, arrowState }) => {
+	const { unreadCounts } = useChat();
+	const unreadCount = Object.values(unreadCounts).reduce((acc, count) => acc + count, 0);
+
+	// Brandon translate this line -> "Messages"
 	return (
 		<Header onClick={toggleMinimization}>
-			Messaging
+			{unreadCount > 0 && <ChatNotificationPopUp>{unreadCount}</ChatNotificationPopUp>}
+			Messages
 			<Arrow ArrowAnimate={arrowState} />
 		</Header>
 	);

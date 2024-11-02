@@ -77,7 +77,7 @@ export const SkinImage = styled.img`
 `;
 
 export const SkinName = styled.h3`
-	font-size: 1.2rem;
+	font-size: 1.3rem;
 	font-family: 'Orbitron', sans-serif;
 	margin-bottom: 0.5rem;
 	text-transform: uppercase;
@@ -104,9 +104,12 @@ export const BuyButton = styled.button`
 		box-shadow: 0px 6px 20px rgba(164, 69, 178, 0.6);
 	}
 
-	&:disabled {
+	&.unequip {
 		background: #555;
-		cursor: not-allowed;
+		box-shadow: none;
+	}
+	&.unequip:hover {
+		background: #444;
 		box-shadow: none;
 	}
 `;

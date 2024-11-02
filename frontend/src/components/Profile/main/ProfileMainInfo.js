@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import { useNotification } from '../../../context/NotificationContext';
@@ -13,18 +13,33 @@ import {
 	ProfileUsername,
 	SectionContainer,
 } from '../styles/main/ProfileMainInfo.styled';
+import { useRelation } from '../../../context/RelationContext';
 
-const ProfilePicture = ({ user, profileUser, relation, setIsRefetch }) => {
+const ProfilePicture = ({ user, profileUser, relation }) => {
 	const navigate = useNavigate();
 	const { addNotification } = useNotification();
-	const disableAddFriend = !!relation.length;
+	const { setFriends, setRelations, setIsRefetch } = useRelation();
+	const [loading, setLoading] = useState(false);
+	const disableAddFriend = !!(relation.length &&
+		((relation[0].sender.userID === user.userID && relation[0].status === 0)
+		|| relation[0].status !== 0));
 	const disableBlockUser = !!(relation.length && relation[0].status === 2);
 
-	const handleAddFriend = () => {
+	useEffect(() => {
+		if (!loading) return;
+		const timeout = setTimeout(() => {
+			setLoading(false);
+		}, 1000);
+		return () => clearTimeout(timeout);
+	}, [loading]);
+
+	const handleAddFriend = useCallback(() => {
+		if (loading) return;
+		setLoading(true);
 		if (relation.length && relation[0].status === 0) {
 			API.put('users/@me/relationships', { user: profileUser.userID, type: 1 })
 				.then(() => {
-					addNotification('success', 'Friend request sent.');
+					addNotification('success', 'You are now friends.');
 					setIsRefetch(true);
 				})
 				.catch(err => {
@@ -40,20 +55,25 @@ const ProfilePicture = ({ user, profileUser, relation, setIsRefetch }) => {
 					addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 				});
 		}
-	};
+	}, [addNotification, profileUser.userID, relation, setIsRefetch, loading]);
 
-	const handleRemoveFriend = () => {
+	const handleRemoveFriend = useCallback(() => {
+		if (loading) return;
+		setLoading(true);
 		API.delete(`users/@me/relationships/${relation[0].relationshipID}`)
 			.then(() => {
 				addNotification('success', 'Friend removed.');
-				setIsRefetch(true);
+				setRelations(prevRelations => prevRelations.filter(prevRelation => prevRelation.relationshipID !== relation[0].relationshipID));
+				setFriends(prevFriends => prevFriends.filter(friend => friend.relationshipID !== relation[0].relationshipID));
 			})
 			.catch(err => {
 				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 			});
-	};
+	}, [addNotification, relation, setFriends, setRelations, loading]);
 
-	const handleBlockUser = () => {
+	const handleBlockUser = useCallback(() => {
+		if (loading) return;
+		setLoading(true);
 		API.put('users/@me/relationships', { user: profileUser.userID, type: 2 })
 			.then(() => {
 				addNotification('warning', 'User blocked.');
@@ -62,7 +82,8 @@ const ProfilePicture = ({ user, profileUser, relation, setIsRefetch }) => {
 			.catch(err => {
 				addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 			});
-	}
+	}, [addNotification, profileUser.userID, setIsRefetch, loading]);
+
 	return (
 		<SectionContainer>
 			<ProfilePictureContainer>
@@ -100,7 +121,7 @@ const ProfilePicture = ({ user, profileUser, relation, setIsRefetch }) => {
 							<ActionButton
 								type="button"
 								onClick={handleBlockUser}
-								disabled={disableBlockUser}
+								disabled={disableBlockUser || loading}
 							>
 								<i className="bi bi-ban"/>
 								Block
@@ -109,6 +130,7 @@ const ProfilePicture = ({ user, profileUser, relation, setIsRefetch }) => {
 								<ActionButton
 									type="button"
 									onClick={handleRemoveFriend}
+									disabled={loading}
 								>
 									{disableBlockUser ? (
 										<>
@@ -126,6 +148,7 @@ const ProfilePicture = ({ user, profileUser, relation, setIsRefetch }) => {
 								<ActionButton
 									type="button"
 									onClick={handleAddFriend}
+									disabled={loading}
 								>
 									<i className="bi bi-person-fill-add"/>
 									Add Friend

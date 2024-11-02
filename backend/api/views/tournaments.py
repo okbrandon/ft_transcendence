@@ -17,13 +17,13 @@ class Tournaments(APIView):
         )
 
         serializer = TournamentSerializer(pending_tournaments, many=True)
-        
+
         # Modify the serialized data to use get_safe_profile for participants
         safe_data = []
         for tournament in serializer.data:
             tournament['participants'] = [get_safe_profile(participant, me=False) for participant in tournament['participants']]
             safe_data.append(tournament)
-        
+
         return Response(safe_data, status=status.HTTP_200_OK)
 
     def post(self, request):
@@ -144,9 +144,9 @@ class TournamentDetail(APIView):
             return Response({"error": "Tournament not found"}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = TournamentSerializer(tournament)
-        
+
         # Modify the serialized data to use get_safe_profile for participants
-        safe_data = serializer.data        
+        safe_data = serializer.data
         return Response(safe_data, status=status.HTTP_200_OK)
 
 class KickUserFromTournament(APIView):

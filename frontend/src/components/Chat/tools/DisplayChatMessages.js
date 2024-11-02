@@ -8,7 +8,8 @@ import {
 	MessageUsername,
 	ChatBubbleContainer,
 	MessageWrapper,
-	BubbleDetails
+	BubbleDetails,
+	TournamentInviteBubble
 } from '../styles/DirectMessage/DirectMessage.styled.js';
 
 const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) => {
@@ -48,7 +49,7 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 								<BubbleDetails>
 									{!isSameSender && (
 										<MessageUsername $isHost={true}>
-											<Avatar src={message.sender.avatarID || 'images/default-profile.png'} alt={message.sender.username} />
+											<Avatar src={message.sender.avatarID} alt={message.sender.username} />
 											{message.sender.username}
 										</MessageUsername>
 									)}

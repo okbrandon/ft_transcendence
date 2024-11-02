@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import {
 	ImagePreview,
 	ImagePreviewContainer,
@@ -22,7 +22,7 @@ const ImageSettings = ({ user, setFormData, handleChange }) => {
 	const bannerPictureRef = useRef(null);
 	const { t } = useTranslation();
 
-	const handleImageChange = (event, type, setImage) => {
+	const handleImageChange = useCallback((event, type, setImage) => {
 		const file = event.target.files[0];
 
 		if (!file) {
@@ -38,9 +38,9 @@ const ImageSettings = ({ user, setFormData, handleChange }) => {
 			.catch(err => {
 				addNotification('error', `${err?.response?.data?.error || 'An error occurred'}`);
 			});
-	};
+	}, [addNotification, handleChange]);
 
-	const handleRemoveImage = (type, setImage, inputRef) => {
+	const handleRemoveImage = useCallback((type, setImage, inputRef) => {
 		setImage(null);
 		setFormData(data => (
 			{ ...data, [type]: null }
@@ -48,7 +48,7 @@ const ImageSettings = ({ user, setFormData, handleChange }) => {
 		if (inputRef.current) {
 			inputRef.current.value = '';
 		}
-	};
+	}, [setFormData]);
 
 	return (
 		<>

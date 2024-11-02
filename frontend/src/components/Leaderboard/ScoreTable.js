@@ -17,6 +17,7 @@ const ScoreTable = ({ data, selectedStat }) => {
 		navigate(`/profile/${username}`);
 	}
 
+	// Brandon: translate each table headers
 	return (
 		<ScoreTableStyled>
 			<thead>

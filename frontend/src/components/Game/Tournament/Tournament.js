@@ -9,10 +9,10 @@ const Tournament = () => {
 
 	return (
 		<>
-			<EndedTournament />
-			{/* {!options && <OptionsTournament setOptions={setOptions}/>}
+			{/* <EndedTournament /> */}
+			{!options && <OptionsTournament setOptions={setOptions}/>}
 			{options === 'create' && <CreateTournament setOptions={setOptions}/>}
-			{options === 'join' && <AvailableTournaments setOptions={setOptions}/>} */}
+			{options === 'join' && <AvailableTournaments setOptions={setOptions}/>}
 		</>
 	);
 };

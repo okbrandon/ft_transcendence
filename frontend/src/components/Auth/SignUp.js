@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import { AuthenticationSection, FormContainer, LanguageDropdownButton } from './styles/Authentication.styled';
@@ -20,47 +20,45 @@ const SignUp = () => {
 	const [error, setError] = useState('');
 	const { t } = useTranslation();
 
-	const handleChange = e => {
+	const handleChange = useCallback(e => {
 		const { id, value } = e.target;
 
 		setFormData(prevData => ({
 			...prevData,
 			[id]: value,
 		}));
-	};
+	}, []);
 
 	const checkSignUpRestrictions = (data, cfPassword) => {
-		if (!data) {
-			return '';
-		}
+		const { username, email, password } = data;
 
-		if (!data.username) { // username
+		if (!username) { // username
 			return t('restrictions.username.required');
-		} else if (data.username.length < 4 || data.username.length > 16) {
+		} else if (username.length < 4 || username.length > 16) {
 			return t('restrictions.username.invalidLength');
-		} else if (/[^a-zA-Z0-9]/.test(data.username)) {
+		} else if (/[^a-zA-Z0-9]/.test(username)) {
 			return t('restrictions.username.invalidCharacters');
-		} else if (/42$/.test(data.username)) {
+		} else if (/42$/.test(username)) {
 			return ('Username cannot end with 42');
-		} else if (!data.email) { // email
+		} else if (!email) { // email
 			return t('restrictions.email.required');
-		} else if (data.email.length > 64) {
+		} else if (email.length > 64) {
 			return t('restrictions.email.invalidLength');
-		} else if (!/^[^@]+@[^@]+\.[^@]+$/.test(data.email)) {
+		} else if (!/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
 			return t('restrictions.email.invalidFormat');
-		} else if (!data.password) { // password
+		} else if (!password) { // password
 			return t('restrictions.password.required');
-		} else if (new TextEncoder().encode(data.password).length < 8 || new TextEncoder().encode(data.password).length > 72) {
+		} else if (new TextEncoder().encode(password).length < 8 || new TextEncoder().encode(password).length > 72) {
 			return t('restrictions.password.invalidLength');
-		} else if (!/[a-z]/.test(data.password)) {
+		} else if (!/[a-z]/.test(password)) {
 			return t('restrictions.password.missingLowercase');
-		} else if (!/[A-Z]/.test(data.password)) {
+		} else if (!/[A-Z]/.test(password)) {
 			return t('restrictions.password.missingUppercase');
-		} else if (!/\d/.test(data.password)) {
+		} else if (!/\d/.test(password)) {
 			return t('restrictions.password.missingDigit');
-		} else if (!/[\W_]/.test(data.password)) {
+		} else if (!/[\W_]/.test(password)) {
 			return t('restrictions.password.missingSpecial');
-		} else if (data.password !== cfPassword) {
+		} else if (password !== cfPassword) {
 			return t('restrictions.password.noMatch');
 		}
 
@@ -127,11 +125,7 @@ const SignUp = () => {
 							autoComplete='new-password'
 						/>
 						<span>{t('auth.signUp.passwordTitle')}</span>
-						{showPassword ? (
-							<i className="bi bi-eye-fill" onClick={() => setShowPassword(false)}/>
-						) : (
-							<i className="bi bi-eye" onClick={() => setShowPassword(true)}/>
-						)}
+						<i className={`bi ${showPassword ? 'bi-eye-fill' : 'bi-eye'}`} onClick={() => setShowPassword(prev => !prev)}/>
 					</FormContainer.Group>
 					<FormContainer.Group className="mb-3">
 						<FormContainer.Control
@@ -144,11 +138,7 @@ const SignUp = () => {
 							autoComplete='new-password'
 						/>
 						<span>{t('auth.signUp.confirmPasswordTitle')}</span>
-						{showCfPassword ? (
-							<i className="bi bi-eye-fill" onClick={() => setShowCfPassword(false)}/>
-						) : (
-							<i className="bi bi-eye" onClick={() => setShowCfPassword(true)}/>
-						)}
+						<i className={`bi ${showCfPassword ? 'bi-eye-fill' : 'bi-eye'}`} onClick={() => setShowCfPassword(prev => !prev)}/>
 					</FormContainer.Group>
 					<p>{t('auth.signUp.alreadyRegistered')}<Link to="/signin">{t('auth.signUp.loginButton')}</Link></p>
 					{error && <ErrorMessage>{error}</ErrorMessage>}
