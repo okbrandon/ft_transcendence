@@ -43,10 +43,6 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 	}), []);
 
 	useEffect(() => {
-		console.log('gameOver status:', gameOver);
-	}, [gameOver]);
-
-	useEffect(() => {
 		if (player && playerSide) {
 			getSkin(player.userID)
 				.then(skin => {
