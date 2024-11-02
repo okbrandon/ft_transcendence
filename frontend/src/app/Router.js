@@ -27,7 +27,6 @@ import { useAuth } from '../context/AuthContext';
 import GameLocal from '../components/Game/local/GameLocal';
 import GameTournament from '../components/Game/Tournament/GameTournament';
 import CreateTournament from '../components/Game/Tournament/CreateTournament';
-import TournamentOverview from '../components/Game/Tournament/EndedTournamentPages/TournamentOverview';
 import EndedTournament from '../components/Game/Tournament/EndedTournament';
 
 const PrivateRoutes = () => {
@@ -77,7 +76,7 @@ const Router = createBrowserRouter(createRoutesFromElements(
 				<Route path="tournaments" element={ <Tournament/> }/>
 				<Route path="tournaments/create" element={ <CreateTournament /> }/>
 				<Route path="tournaments/:tournamentID" element={ <JoinTournament/> }/>
-				<Route path="tournaments/:tournamentID/play" element={ <GameTournament /> }/>
+				<Route path="tournaments/:tournamentID/game" element={ <GameTournament /> }/>
 				<Route path="tournaments/:tournamentID/results" element={ <EndedTournament /> }/>
 				<Route element={ <GameRoutes/> }>
 					<Route path="game-classic" element={ <Game/> }/>
