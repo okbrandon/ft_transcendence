@@ -106,8 +106,10 @@ export const getSkin = async (id) => {
 export const formatMatchData = (match) => {
 	const duration = getDuration(match.startedAt, match.finishedAt);
 	const date = getDate(match.finishedAt);
-	const playerA = formatUserData(match.playerA);
-	const playerB = formatUserData(match.playerB);
+	// const playerA = formatUserData(match.players[match.playerA.userID]);
+	// const playerB = formatUserData(match.players[match.playerB.userID]);
+	const playerA = formatUserData(match.players.find(player => player.userID === match.playerA.id));
+	const playerB = formatUserData(match.players.find(player => player.userID === match.playerB.id));
 	const playerAScore = match.scores?.[`${playerA.userID}`] || 0;
 	const playerBScore = match.scores?.[`${playerB.userID}`] || 0;
 	const winner = match.winnerID === playerA.userID ? playerA : playerB;
