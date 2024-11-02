@@ -76,7 +76,9 @@ const TournamentProvider = ({ children }) => {
 		} else {
 			setTournament(data);
 		}
-		setIsStartDisabled(data?.participants?.length < 2);
+		console.log('TournamentContext.js: updateTournament', data);
+		console.log('TournamentContext.js: isJoin', isJoin);
+		setIsStartDisabled(data?.participants?.length < data?.maxParticipants || true);
 	}, [navigate]);
 
 	useEffect(() => {

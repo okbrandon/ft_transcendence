@@ -1,6 +1,7 @@
 # TODO
 - tournaments:
  - start button
+ - tournament name < len
  - Prune messages
  - invitation
 - Game: send invite
