@@ -94,7 +94,7 @@ class Tournaments(APIView):
                 invitee=invitee
             )
 
-            conversation, created = Conversation.objects.get_or_create(
+            conversation, _ = Conversation.objects.get_or_create(
                 conversationType='private_message',
                 participants=User.objects.filter(userID__in=[inviter.userID, invitee.userID])
             )
@@ -146,7 +146,7 @@ class TournamentDetail(APIView):
         serializer = TournamentSerializer(tournament)
 
         # Modify the serialized data to use get_safe_profile for participants
-        safe_data = serializer.data        
+        safe_data = serializer.data
         return Response(safe_data, status=status.HTTP_200_OK)
 
 class KickUserFromTournament(APIView):
@@ -199,8 +199,8 @@ class ForceTournamentStart(APIView):
         if tournament.status != 'PENDING':
             return Response({"error": "Tournament can only be force started when in PENDING status"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if tournament.participants.count() < 2:
-            return Response({"error": "At least 2 participants are required to start the tournament"}, status=status.HTTP_400_BAD_REQUEST)
+        if tournament.participants.count() < tournament.maxParticipants:
+            return Response({"error": "The tournament should be fully filled to start"}, status=status.HTTP_400_BAD_REQUEST)
 
         tournament.status = 'ONGOING'
         tournament.save()

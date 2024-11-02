@@ -191,7 +191,8 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                 f"match_{match.matchID}",
                 {
                     "type": "player.join",
-                    "player": playerB_info
+                    "player": playerB_info,
+                    "side": "playerB"
                 }
             )
             await self.send_match_ready(match)
@@ -254,7 +255,8 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                     f"match_{match.matchID}",
                     {
                         "type": "player.join",
-                        "player": playerB_info
+                        "player": playerB_info,
+                        "side": "playerB"
                     }
                 )
 
@@ -416,7 +418,8 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                 f"match_{match.matchID}",
                 {
                     "type": "player.join",
-                    "player": playerB_info
+                    "player": playerB_info,
+                    "side": "playerB"
                 }
             )
             await self.send_match_ready(match)
@@ -523,6 +526,8 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             self.channel_name
         )
 
+        self.update_match_state(match)
+
         match_state = self.active_matches[match.matchID]
         match_state['spectators'].append(self.user.userID)
 
@@ -534,24 +539,8 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             }
         })
 
-        if match.playerA:
-            playerA_info = await self.get_opponent_info(match, await self.get_user_from_id(match.playerB['id']))
-            await self.channel_layer.group_send(
-                f"match_{match.matchID}",
-                {
-                    "type": "player.join",
-                    "player": playerA_info
-                }
-            )
-        if match.playerB:
-            playerB_info = await self.get_opponent_info(match, await self.get_user_from_id(match.playerA['id']))
-            await self.channel_layer.group_send(
-                f"match_{match.matchID}",
-                {
-                    "type": "player.join",
-                    "player": playerB_info
-                }
-            )
+        self.match.playerA = match_state['playerA']
+        self.match.playerB = match_state['playerB']
 
         logger.info(f"[{self.__class__.__name__}] User {self.user.userID} joined match {match_id} as spectator")
 
@@ -915,11 +904,16 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
 
     async def player_join(self, event):
         player_data = event["player"]
+        side = event["side"]
 
         if player_data['userID'] == self.user.userID:
             return
 
-        self.match.playerB = {"id": player_data['userID'], "platform": ("web" if player_data['userID'] != 'user_ai' else "server")}
+        if side == "playerB":
+            self.match.playerB = {"id": player_data['userID'], "platform": ("web" if player_data
+            ['userID'] != 'user_ai' else "server")}
+        elif side == "playerA":
+            self.match.playerA = {"id": player_data['userID'], "platform": "web" if player_data['userID'] != 'user_ai' else "server"}
 
         try:
             await self.send_json({
