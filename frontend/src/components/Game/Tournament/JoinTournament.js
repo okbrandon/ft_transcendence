@@ -15,6 +15,8 @@ import {
 	PageContainer,
 	PlayerCard,
 	PlayerList,
+	PlayerListContainer,
+	TournamentHeader,
 	WaitingMessage,
 } from "../styles/Tournament/JoinTournament.styled";
 import PongButton from "../../../styles/shared/PongButton.styled";
@@ -86,22 +88,58 @@ const JoinTournament = () => {
 		return <Loader />;
 	}
 
+	const renderInvitePage = () => (
+		<ModalOverlay>
+			<ModalContainer>
+				<h2>Invite Friends</h2>
+				<ActiveFriendContainer>
+					{activeFriends.length ? (
+						activeFriends.map((friend) => (
+							<FriendItem key={friend.userID}>
+								<FriendProfilePicture src={friend.avatarID} alt={`${friend.username}'s avatar`} />
+								{friend.displayName || friend.username}
+							</FriendItem>
+						))
+					) : (
+						<p>No active friends available to invite</p>
+					)}
+				</ActiveFriendContainer>
+				<ButtonContainer>
+					<PongButton type="button" $width="150px" onClick={() => setInvite(false)}>
+						Cancel
+					</PongButton>
+					<PongButton type="button" $width="150px" onClick={handleInviteFriends}>
+						Invite
+					</PongButton>
+				</ButtonContainer>
+			</ModalContainer>
+		</ModalOverlay>
+	)
+
 	return (
 		<>
 			<PageContainer>
-				<h1>Tournament</h1>
-				<h2>{tournament.name}</h2>
+				<TournamentHeader>
+					<h1>Tournament</h1>
+					<h2>{tournament.name}</h2>
+				</TournamentHeader>
 				<JoinTournamentContainer>
-					<PlayerList>
-						{tournament.participants.map((player) => (
-							<PlayerCard key={player.userID}>
-								{player.displayName || player.username}
-								{tournament.owner.userID === player.userID ? null : (
-									<KickButton onClick={() => handleKickPlayer(player.userID)}>✖</KickButton>
-								)}
-							</PlayerCard>
-						))}
-					</PlayerList>
+					<PlayerListContainer>
+						<h3>Players</h3>
+						<PlayerList>
+							{tournament.participants.map((player) => (
+								<PlayerCard key={player.userID}>
+									<div className="player-info">
+										<img src={player.avatarID} alt={`${player.username}'s avatar`} />
+										{player.displayName || player.username}
+									</div>
+									{tournament.owner.userID === player.userID ? null : ( // doens't work
+										<KickButton onClick={() => handleKickPlayer(player.userID)}>✖</KickButton>
+									)}
+								</PlayerCard>
+							))}
+						</PlayerList>
+					</PlayerListContainer>
 					<ButtonContainer>
 						<PongButton type="button" $width="150px" onClick={() => navigate(-1)}>Back</PongButton>
 						<PongButton type="button" $width="150px" onClick={handleInvite}>Invite</PongButton>
@@ -110,7 +148,7 @@ const JoinTournament = () => {
 					<WaitingMessage>
 						{isStartDisabled ? (
 							<>
-								<p>Waiting for more players to join...</p>
+								Waiting for more players to join...
 								<Spinner animation="border" />
 							</>
 						) : (
@@ -119,33 +157,7 @@ const JoinTournament = () => {
 					</WaitingMessage>
 				</JoinTournamentContainer>
 			</PageContainer>
-			{invite && (
-				<ModalOverlay>
-					<ModalContainer>
-						<h2>Invite Friends</h2>
-						<ActiveFriendContainer>
-							{activeFriends.length ? (
-								activeFriends.map((friend) => (
-									<FriendItem key={friend.userID}>
-										<FriendProfilePicture src={friend.avatarID} alt={`${friend.username}'s avatar`} />
-										{friend.displayName || friend.username}
-									</FriendItem>
-								))
-							) : (
-								<p>No active friends available to invite</p>
-							)}
-						</ActiveFriendContainer>
-						<ButtonContainer>
-							<PongButton type="button" $width="150px" onClick={() => setInvite(false)}>
-								Cancel
-							</PongButton>
-							<PongButton type="button" $width="150px" onClick={handleInviteFriends}>
-								Invite
-							</PongButton>
-						</ButtonContainer>
-					</ModalContainer>
-				</ModalOverlay>
-			)}
+			{invite && renderInvitePage()}
 		</>
 	);
 };
