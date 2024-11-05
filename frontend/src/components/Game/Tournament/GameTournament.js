@@ -79,13 +79,20 @@ const GameTournament = () => {
 		setActivateTimer(false);
 		setGameOver(false);
 		setIsSpectator(false);
-		setGameState(prevState => ({
-			...prevState,
-			matchState: null,
-			player: formatUserData(playerA),
-			opponent: formatUserData(playerB),
-			playerSide: 'left', // Assuming playerA is always on the left
-		}));
+		setGameState(prevState => {
+			console.log('Resetting game state:');
+			console.log('Previous player:', prevState.player);
+			console.log('New player:', formatUserData(playerA));
+			console.log('Previous opponent:', prevState.opponent);
+			console.log('New opponent:', formatUserData(playerB));
+			return {
+				...prevState,
+				matchState: null,
+				player: formatUserData(playerA),
+				opponent: formatUserData(playerB),
+				playerSide: 'left', // Assuming playerA is always on the left
+			};
+		});
 		setKey(prevKey => prevKey + 1);
 	}, []);
 
@@ -132,7 +139,7 @@ const GameTournament = () => {
 				}));
 			},
 			'READY': () => {
-				setGameState(prevState => ({ ...prevState, player: formatUserData(data.d) }));
+				setGameState(prevState => ({ ...prevState }));
 				if (currentMatchId) {
 					sendMessage(JSON.stringify({
 						e: 'TOURNAMENT_MATCH_JOIN',
@@ -143,22 +150,39 @@ const GameTournament = () => {
 			'MATCH_READY': () => {
 				if (!isSpectator) {
 					setActivateTimer(true);
-					setGameState(prevState => ({ ...prevState, matchState: data.d }));
+					setGameState(prevState => {
+						return {
+							...prevState,
+							matchState: data.d,
+						};
+					});
 				}
 			},
 			'SPECTATE_JOIN': () => {
 				setIsSpectator(true);
-				setGameState(prevState => ({
-					...prevState,
-					matchState: data.d.match_state,
-					playerSide: 'left',
-					player: data.d.match_state.playerA ? formatUserData(data.d.match_state.playerA) : null,
-					opponent: data.d.match_state.playerB ? formatUserData(data.d.match_state.playerB) : null,
-				}));
+				setGameState(prevState => {
+					console.log('SPECTATE_JOIN event:');
+					console.log('Previous player:', prevState.player);
+					console.log('New player:', data.d.playerA ? formatUserData(data.d.playerA) : null);
+					console.log('Previous opponent:', prevState.opponent);
+					console.log('New opponent:', data.d.playerB ? formatUserData(data.d.playerB) : null);
+					return {
+						...prevState,
+						matchState: data.d.match_state,
+						playerSide: 'left',
+						player: data.d.playerA ? formatUserData(data.d.playerA) : null,
+						opponent: data.d.playerB ? formatUserData(data.d.playerB) : null,
+					};
+				});
 				setGameStarted(true);
 			},
 			'MATCH_BEGIN': () => setGameStarted(true),
-			'MATCH_UPDATE': () => setGameState(prevState => ({ ...prevState, matchState: data.d })),
+			'MATCH_UPDATE': () => setGameState(prevState => {
+				return {
+					...prevState,
+					matchState: data.d,
+				};
+			}),
 			'BALL_SCORED': () => setBorderScore(data.d.player),
 			'MATCH_END': () => {
 				setGameOver(true);
@@ -167,15 +191,16 @@ const GameTournament = () => {
 			'HEARTBEAT_ACK': handleHeartbeatAck,
 			'BALL_HIT': () => setHitPos(data.d.ball),
 			'PADDLE_RATE_LIMIT': () => {}, // ignoring
-			'MATCH_JOIN': () => setGameState(prevState => ({
-				...prevState,
-				playerSide: data.d.side,
-				opponent: data.d.opponent ? formatUserData(data.d.opponent) : null
-			})),
-			'PLAYER_JOIN': () => {
-				if (data.d.userID !== gameState.player?.userID) 
-					setGameState(prevState => ({ ...prevState, opponent: formatUserData(data.d) }));
-			},
+			'MATCH_JOIN': () => setGameState(prevState => {
+				console.log('MATCH_JOIN event:');
+				console.log('Previous opponent:', prevState.opponent);
+				console.log('New opponent:', data.d.opponent ? formatUserData(data.d.opponent) : null);
+				return {
+					...prevState,
+					playerSide: data.d.side,
+					opponent: data.d.opponent ? formatUserData(data.d.opponent) : null
+				};
+			}),
 			'PADDLE_HIT': () => setHitPos(data.d.ball),
 		};
 

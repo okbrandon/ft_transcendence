@@ -525,12 +525,22 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
 
         match_state = self.active_matches[match.matchID]
         match_state['spectators'].append(self.user.userID)
+        playerA = await self.get_user_from_id(match.playerA['id'])
+        playerB = await self.get_user_from_id(match.playerB['id']) if match.playerB else None
+        
+        playerA_data = UserSerializer(playerA).data
+        playerB_data = UserSerializer(playerB).data if playerB else None
+        
+        safe_playerA = get_safe_profile(playerA_data, me=False)
+        safe_playerB = get_safe_profile(playerB_data, me=False) if playerB_data else None
 
         await self.send_json({
             "e": "SPECTATE_JOIN",
             "d": {
                 "match_id": match.matchID,
-                "match_state": match_state
+                "match_state": match_state,
+                "playerA": safe_playerA,
+                "playerB": safe_playerB
             }
         })
 
