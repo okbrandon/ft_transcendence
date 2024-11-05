@@ -89,6 +89,11 @@ export const PlayerCard = styled.div`
 		align-items: center;
 		gap: 20px;
 		font-size: 1.2rem;
+		position: relative;
+
+		& > .owner {
+			color: #f1c40f;
+		}
 
 		& > img {
 			width: 50px;
@@ -117,6 +122,7 @@ export const ButtonContainer = styled.div`
 	justify-content: center;
 	gap: 1rem;
 	width: 100%;
+	${(props) => props.$shouldMargin && 'margin-top: 2rem;'}
 `;
 
 export const WaitingMessage = styled.div`

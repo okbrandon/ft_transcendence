@@ -23,9 +23,11 @@ import PongButton from "../../../styles/shared/PongButton.styled";
 import API from "../../../api/api";
 import { useNotification } from "../../../context/NotificationContext";
 import Loader from "../../../styles/shared/Loader.styled";
+import { useAuth } from "../../../context/AuthContext";
 
 const JoinTournament = () => {
 	const navigate = useNavigate();
+	const { user } = useAuth();
 	const { addNotification } = useNotification();
 	const { tournament, updateTournament, isStartDisabled } = useTournament();
 	const { tournamentID } = useParams();
@@ -130,10 +132,11 @@ const JoinTournament = () => {
 							{tournament.participants.map((player) => (
 								<PlayerCard key={player.userID}>
 									<div className="player-info">
+										<i className={`bi bi-${tournament.owner.userID === player.userID ? 'star' : 'person'}-fill ${tournament.owner.userID === player.userID && 'owner'}`}/>
 										<img src={player.avatarID} alt={`${player.username}'s avatar`} />
 										{player.displayName || player.username}
 									</div>
-									{tournament.owner.userID === player.userID ? null : ( // doens't work
+									{tournament.owner.userID === user.userID && tournament.owner.userID !== player.userID && (
 										<KickButton onClick={() => handleKickPlayer(player.userID)}>✖</KickButton>
 									)}
 								</PlayerCard>
@@ -153,10 +156,14 @@ const JoinTournament = () => {
 							<p>{tournament.participants.length} / {tournament.maxParticipants} players</p>
 						</WaitingMessage>
 					)}
-					<ButtonContainer>
+					<ButtonContainer $shouldMargin={!isStartDisabled}>
 						<PongButton type="button" $width="150px" onClick={() => navigate(-1)}>Back</PongButton>
-						<PongButton type="button" $width="150px" onClick={handleInvite}>Invite</PongButton>
-						<PongButton type="button" $width="150px" disabled={isStartDisabled} onClick={handleStartTournament}>Start</PongButton>
+						{user.userID === tournament.owner.userID && (
+							<>
+								<PongButton type="button" $width="150px" onClick={handleInvite}>Invite</PongButton>
+								<PongButton type="button" $width="150px" disabled={isStartDisabled} onClick={handleStartTournament}>Start</PongButton>
+							</>
+						)}
 					</ButtonContainer>
 				</JoinTournamentContainer>
 			</PageContainer>
