@@ -80,7 +80,7 @@ const SignIn = () => {
 			<FormContainer.Group className="mb-3">
 				<FormContainer.Control
 					id="username"
-					type="username"
+					type="text"
 					placeholder=" "
 					value={username}
 					onChange={e => setUsername(e.target.value)}
