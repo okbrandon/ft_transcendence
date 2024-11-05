@@ -56,7 +56,7 @@ const TournamentProvider = ({ children }) => {
 				}
 				return {
 					...prevTournament,
-					participants: [...prevTournament.participants, newUser]
+					participants: [...prevTournament.participants, formatUserData(newUser)]
 				};
 			});
 		} else if (isJoin === false) {
@@ -64,19 +64,23 @@ const TournamentProvider = ({ children }) => {
 				if (!prevTournament || !data?.user?.userID) {
 					return prevTournament;
 				}
-				const newTournament = {
-					...prevTournament,
-					participants: prevTournament.participants.filter(p => p.userID !== data.user.userID)
-				};
 				if (data.user.userID === prevTournament.owner?.userID) {
 					navigate(-1);
 				}
-				return newTournament;
+				return {
+					...prevTournament,
+					participants: prevTournament.participants.filter(p => p.userID !== data.user.userID)
+				}
 			});
 		} else {
-			setTournament(data);
+			setTournament({
+				...data,
+				participants: data?.participants?.map(formatUserData) || [],
+			});
 		}
-		setIsStartDisabled(data?.participants?.length < 2);
+		console.log('TournamentContext.js: updateTournament', data);
+		console.log('TournamentContext.js: isJoin', isJoin);
+		setIsStartDisabled(data?.participants?.length < data?.maxParticipants || true);
 	}, [navigate]);
 
 	useEffect(() => {
