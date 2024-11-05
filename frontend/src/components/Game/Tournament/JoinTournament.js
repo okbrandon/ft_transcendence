@@ -88,7 +88,7 @@ const JoinTournament = () => {
 		return <Loader />;
 	}
 
-	const renderInvitePage = () => (
+	const renderInviteOverlay = () => (
 		<ModalOverlay>
 			<ModalContainer>
 				<h2>Invite Friends</h2>
@@ -138,26 +138,29 @@ const JoinTournament = () => {
 									)}
 								</PlayerCard>
 							))}
+							{isStartDisabled && (
+								<WaitingMessage>
+									<div className="waiting-text">
+										waiting for more players
+										<Spinner animation="border" variant="spinner-border" />
+									</div>
+								</WaitingMessage>
+							)}
 						</PlayerList>
 					</PlayerListContainer>
+					{isStartDisabled && (
+						<WaitingMessage>
+							<p>{tournament.participants.length} / {tournament.maxParticipants} players</p>
+						</WaitingMessage>
+					)}
 					<ButtonContainer>
 						<PongButton type="button" $width="150px" onClick={() => navigate(-1)}>Back</PongButton>
 						<PongButton type="button" $width="150px" onClick={handleInvite}>Invite</PongButton>
 						<PongButton type="button" $width="150px" disabled={isStartDisabled} onClick={handleStartTournament}>Start</PongButton>
 					</ButtonContainer>
-					<WaitingMessage>
-						{isStartDisabled ? (
-							<>
-								Waiting for more players to join...
-								<Spinner animation="border" />
-							</>
-						) : (
-							<p>Ready to start!</p>
-						)}
-					</WaitingMessage>
 				</JoinTournamentContainer>
 			</PageContainer>
-			{invite && renderInvitePage()}
+			{invite && renderInviteOverlay()}
 		</>
 	);
 };

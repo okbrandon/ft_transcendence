@@ -117,7 +117,6 @@ export const ButtonContainer = styled.div`
 	justify-content: center;
 	gap: 1rem;
 	width: 100%;
-	margin-top: 2.5rem;
 `;
 
 export const WaitingMessage = styled.div`
@@ -132,6 +131,12 @@ export const WaitingMessage = styled.div`
 	.spinner-border {
 		scale: 0.8;
 		color: #888;
+	}
+
+	& > .waiting-text {
+		display: flex;
+		align-items: center;
+		gap: 10px;
 	}
 `;
 
