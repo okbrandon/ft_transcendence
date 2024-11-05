@@ -5,9 +5,13 @@ export const NotificationContext = createContext();
 
 const NotificationProvider = ({ children }) => {
 	const [notifications, setNotifications] = useState([]);
+	const [sound] = useState(new Audio('/sounds/notification.mp3'));
 
 	const addNotification = useCallback((type, message) => {
 		const id = Date.now();
+
+		sound.volume = 0.3;
+		if (type === 'info') sound.play();
 		setNotifications(prev => [...prev, { id, type, message, isVisible: true }]);
 		setTimeout(() => {
 			setNotifications(prev =>
@@ -20,7 +24,7 @@ const NotificationProvider = ({ children }) => {
 		setTimeout(() => {
 			setNotifications(prev => prev.filter(notification => notification.id !== id));
 		}, 5000);
-	}, []);
+	}, [sound]);
 
 	return (
 		<NotificationContext.Provider value={{ addNotification }}>
