@@ -78,6 +78,7 @@ class ConversationSerializer(serializers.ModelSerializer):
 
 class TournamentSerializer(serializers.ModelSerializer):
     participants = serializers.SerializerMethodField()
+    owner = UserSerializer()
 
     class Meta:
         model = Tournament
