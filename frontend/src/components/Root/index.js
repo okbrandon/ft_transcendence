@@ -25,7 +25,6 @@ const Root = () => {
 		setShowPersistentUI(!location.pathname.includes('/game'));
 
 		audio.loop = true;
-		audio.volume = 0.1;
 
 		document.body.addEventListener('click', activateMusic);
 
@@ -36,7 +35,10 @@ const Root = () => {
 
 	useEffect(() => {
 		if (hasInteracted && showPersistentUI && isLoggedIn) {
+			audio.volume = 0.07;
 			audio.play();
+		} else if (hasInteracted && !showPersistentUI && isLoggedIn) {
+			audio.volume = 0.02;
 		} else if (!showPersistentUI) {
 			audio.pause();
 		}
