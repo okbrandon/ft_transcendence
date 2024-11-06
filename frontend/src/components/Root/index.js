@@ -46,8 +46,9 @@ const Root = () => {
 			audio.currentTime = 0;
 			audioGame.volume = 0.2;
 			audioGame.play();
-		} else if (!showPersistentUI) {
+		} else if (showPersistentUI && !isLoggedIn) {
 			audio.pause();
+			audio.currentTime = 0;
 		}
 	}, [hasInteracted, showPersistentUI, audio, isLoggedIn, audioGame]);
 
