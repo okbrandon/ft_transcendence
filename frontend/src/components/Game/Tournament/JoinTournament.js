@@ -60,7 +60,7 @@ const JoinTournament = () => {
 		try {
 			await API.post(`/tournaments/${tournamentID}/kick`, { user_id: userID });
 		} catch (error) {
-			console.error("Error kicking player:", error);
+			addNotification('error', error.response?.data?.error || 'Error kicking player');
 		}
 	};
 
@@ -74,7 +74,17 @@ const JoinTournament = () => {
 			await API.put(`/tournaments/${tournamentID}`, { participants: inviteeIDs });
 			setInvite(false);
 		} catch (error) {
-			console.error("Error inviting friends:", error);
+			addNotification('error', error.response?.data?.error || 'Error inviting friends');
+		}
+	};
+
+	const handleLeave = async () => {
+		try {
+			const response = await API.delete(`/tournaments/@me`); // doesn't work
+			console.log('JoinTournament.js: handleLeave', response.data);
+			navigate('/tournaments');
+		} catch (error) {
+			addNotification('error', error.response?.data?.error || 'Error leaving tournament');
 		}
 	};
 
@@ -82,7 +92,7 @@ const JoinTournament = () => {
 		try {
 			await API.post(`/tournaments/${tournamentID}/start`);
 		} catch (error) {
-			console.error("Error starting tournament:", error);
+			addNotification('error', error.response?.data?.error || 'Error starting tournament');
 		}
 	};
 
@@ -157,7 +167,7 @@ const JoinTournament = () => {
 						</WaitingMessage>
 					)}
 					<ButtonContainer $shouldMargin={!isStartDisabled}>
-						<PongButton type="button" $width="150px" onClick={() => navigate(-1)}>Back</PongButton>
+						<PongButton type="button" $width="150px" onClick={handleLeave}>Back</PongButton>
 						{user.userID === tournament.owner.userID && (
 							<>
 								<PongButton type="button" $width="150px" onClick={handleInvite}>Invite</PongButton>

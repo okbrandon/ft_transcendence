@@ -148,8 +148,8 @@ const GameTournament = () => {
 					...prevState,
 					matchState: data.d.match_state,
 					playerSide: 'left',
-					player: data.d.match_state.playerA ? formatUserData(data.d.match_state.playerA) : null,
-					opponent: data.d.match_state.playerB ? formatUserData(data.d.match_state.playerB) : null,
+					player: data.d.playerA ? formatUserData(data.d.playerA) : null,
+					opponent: data.d.playerB ? formatUserData(data.d.playerB) : null,
 				}));
 				if (data.d.match_state.playerA) playerId.current = data.d.match_state.playerA.userID;
 				setGameStarted(true);
@@ -174,10 +174,6 @@ const GameTournament = () => {
 				playerSide: data.d.side,
 				opponent: data.d.opponent ? formatUserData(data.d.opponent) : null
 			})),
-			'PLAYER_JOIN': () => {
-				if (data.d.userID !== playerId.current)
-					setGameState(prevState => ({ ...prevState, opponent: formatUserData(data.d) }));
-			},
 			'PADDLE_HIT': () => {
 				setHitPos(data.d.ball);
 				const hit1 = new Audio('/sounds/pong-hit1.mp3');
