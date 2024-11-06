@@ -285,12 +285,12 @@ const GameLocal = () => {
 		<PageContainer>
 			<ProfilesContainer>
 				<Profile>
-					<ProfileImage src='/images/default-profile.png' alt='Player 1'/>
+					<ProfileImage src='/images/default-profile.webp' alt='Player 1'/>
 					<ProfileName>Player 1</ProfileName>
 				</Profile>
 				<p style={{margin: '0 auto'}}>Press <b>Q</b> to quit game</p>
 				<Profile>
-					<ProfileImage src='/images/default-profile.png' alt='Player 2'/>
+					<ProfileImage src='/images/default-profile.webp' alt='Player 2'/>
 					<ProfileName>Player 2</ProfileName>
 				</Profile>
 			</ProfilesContainer>

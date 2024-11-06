@@ -7,10 +7,10 @@ export const formatUserData = user => {
 		user.displayName = user.username;
 	}
 	if (user.avatarID === 'default' || !user.avatarID) {
-		user.avatarID = '/images/default-profile.png';
+		user.avatarID = '/images/default-profile.webp';
 	}
 	if (!user.bannerID) {
-		user.bannerID = '/images/default-banner.png';
+		user.bannerID = '/images/default-banner.webp';
 	}
 	return user;
 };

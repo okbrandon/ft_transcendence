@@ -64,7 +64,7 @@
         "displayName": "hanmin",
         "lang": "EN",
         "avatarID": "/images/default-avatar.png",
-        "bannerID": "/images/default-banner.png",
+        "bannerID": "/images/default-banner.webp",
         "bio": null,
         "flags": 1,
         "status": {
@@ -81,7 +81,7 @@
         "displayName": "brandon",
         "lang": "EN",
         "avatarID": "/images/default-avatar.png",
-        "bannerID": "/images/default-banner.png",
+        "bannerID": "/images/default-banner.webp",
         "bio": null,
         "flags": 1,
         "status": {
@@ -107,7 +107,7 @@
         "displayName": "hanmin",
         "lang": "EN",
         "avatarID": "/images/default-avatar.png",
-        "bannerID": "/images/default-banner.png",
+        "bannerID": "/images/default-banner.webp",
         "bio": null,
         "flags": 1,
         "status": {

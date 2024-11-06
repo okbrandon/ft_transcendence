@@ -24,7 +24,7 @@ export const HeroSection = styled.section`
 		left: 0;
 		width: 100%;
 		height: 100%;
-		background: url('/images/noise-texture.png');
+		background: url('/images/noise-texture.webp');
 		opacity: 0.03;
 		z-index: 50;
 	}

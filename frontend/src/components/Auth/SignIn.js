@@ -73,7 +73,7 @@ const SignIn = () => {
 		<FormContainer onSubmit={handleSubmit}>
 			<h1>{t('auth.signIn.title')}</h1>
 			<FortyTwoButton variant='light' onClick={handleFortyTwo}>
-				<Image src='/images/42_Logo.png' alt='42 Logo'/>
+				<Image src='/images/42-logo.webp' alt='42 Logo'/>
 				{t('auth.signIn.fortyTwoProvider')}
 			</FortyTwoButton>
 			<p>{t('auth.signIn.providerDivider')}</p>
