@@ -151,6 +151,9 @@ const GameLocal = () => {
 			hit.current = { x: ball.current.position.x, y: ball.current.position.y };
 			setIsHit(true);
 			setTimeout(() => setIsHit(false), 500);
+			const hit1 = new Audio('/sounds/pong-hit1.mp3');
+			hit1.volume = 0.2;
+			hit1.play();
 			ballVelocity.current.y *= -1;
 		}
 
@@ -177,6 +180,9 @@ const GameLocal = () => {
 			hit.current = { x: ball.current.position.x, y: ball.current.position.y };
 			setIsHit(true);
 			setTimeout(() => setIsHit(false), 500);
+			const hit2 = new Audio('/sounds/pong-hit2.mp3');
+			hit2.volume = 0.2;
+			hit2.play();
 		}
 
 		if (ball.current.position.x + ballRadius >= paddle2.current.position.x - paddleWidth / 2 &&
@@ -192,6 +198,9 @@ const GameLocal = () => {
 			hit.current = { x: ball.current.position.x, y: ball.current.position.y };
 			setIsHit(true);
 			setTimeout(() => setIsHit(false), 500);
+			const hit2 = new Audio('/sounds/pong-hit2.mp3');
+			hit2.volume = 0.2;
+			hit2.play();
 		}
 
 		if (ball.current.position.x < -terrain.SCENEWIDTH / 2) {

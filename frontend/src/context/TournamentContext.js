@@ -80,8 +80,12 @@ const TournamentProvider = ({ children }) => {
 		}
 		console.log('TournamentContext.js: updateTournament', data);
 		console.log('TournamentContext.js: isJoin', isJoin);
-		setIsStartDisabled(data?.participants?.length < data?.maxParticipants || true);
 	}, [navigate]);
+
+	useEffect(() => {
+		if (!tournament) return;
+		setIsStartDisabled(tournament.participants.length < tournament.maxParticipants);
+	}, [tournament]);
 
 	useEffect(() => {
 		const retryConnection = () => {
