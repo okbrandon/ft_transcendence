@@ -136,6 +136,44 @@ class UserCurrentTournament(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    def delete(self, request):
+        try:
+            tournament = Tournament.objects.filter(
+                participants=request.user,
+                status='PENDING'
+            ).first()
+
+            if tournament:
+                channel_layer = get_channel_layer()
+                if request.user == tournament.owner:
+                    # If the user is the tournament owner, kick all participants and destroy the tournament
+                    for participant in tournament.participants.all():
+                        async_to_sync(channel_layer.group_send)(
+                            f"tournament_{tournament.tournamentID}",
+                            {
+                                "type": "tournament_kick",
+                                "user": get_safe_profile(participant, me=False)
+                            }
+                        )
+                    tournament.delete()
+                    return Response({"message": "Tournament destroyed and all participants kicked"}, status=status.HTTP_200_OK)
+                else:
+                    # If the user is not the owner, just remove them from the tournament
+                    tournament.participants.remove(request.user)
+                    # Send player leave tournament event
+                    async_to_sync(channel_layer.group_send)(
+                        f"tournament_{tournament.tournamentID}",
+                        {
+                            "type": "tournament_leave",
+                            "user": get_safe_profile(request.user, me=False)
+                        }
+                    )
+                    return Response({"message": "Successfully left the tournament"}, status=status.HTTP_200_OK)
+            else:
+                return Response({"message": "User is not currently subscribed to any tournament"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 class TournamentDetail(APIView):
     def get(self, request, tournamentID):
         try:
@@ -163,7 +201,6 @@ class KickUserFromTournament(APIView):
         user_id = request.data.get('user_id')
         if not user_id:
             return Response({"error": "user_id is required"}, status=status.HTTP_400_BAD_REQUEST)
-
         try:
             user_to_kick = User.objects.get(userID=user_id)
         except User.DoesNotExist:
@@ -175,11 +212,12 @@ class KickUserFromTournament(APIView):
         tournament.participants.remove(user_to_kick)
 
         channel_layer = get_channel_layer()
+        user_serialized = UserSerializer(user_to_kick).data
         async_to_sync(channel_layer.group_send)(
             f"tournament_{tournamentID}",
             {
                 "type": "tournament_kick",
-                "user": get_safe_profile(user_to_kick, me=False)
+                "user": get_safe_profile(user_serialized, me=False)
             }
         )
 
