@@ -150,8 +150,17 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 	useEffect(() => {
 		if (!borderScore) return;
 		const side = borderScore.pos === 'A' ? 'left' : 'right';
-		if (side === playerSide) setBorderColor('green');
-		else setBorderColor('red');
+		if (side === playerSide) {
+			setBorderColor('green')
+			const wonSound = new Audio('/sounds/pong-won.mp3');
+			wonSound.volume = 0.2;
+			wonSound.play();
+		} else {
+			setBorderColor('red');
+			const lostSound = new Audio('/sounds/pong-lost.mp3');
+			lostSound.volume = 0.2;
+			lostSound.play();
+		}
 		const timeoutID = setTimeout(() => setBorderColor(null), 500);
 		return () => clearTimeout(timeoutID);
 	}, [borderScore, playerSide]);
