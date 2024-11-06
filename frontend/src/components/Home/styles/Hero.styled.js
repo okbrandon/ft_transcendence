@@ -24,7 +24,7 @@ export const HeroSection = styled.section`
 		left: 0;
 		width: 100%;
 		height: 100%;
-		background: url('/images/noise-texture.png');
+		background: url('/images/noise-texture.webp');
 		opacity: 0.03;
 		z-index: 50;
 	}
@@ -46,6 +46,7 @@ export const HeroSection = styled.section`
 			0 0 10px rgba(255, 255, 255, 0.6),
 			0 0 15px rgba(128, 0, 128, 0.4),
 			0 0 20px rgba(75, 0, 130, 0.3);
+		user-select: none;
 	}
 `;
 

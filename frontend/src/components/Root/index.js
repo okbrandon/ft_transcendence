@@ -1,3 +1,4 @@
+
 import React, { useCallback, useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import NavBar from '../Navigation/Navigation';
@@ -14,6 +15,7 @@ const Root = () => {
 	const [showPersistentUI, setShowPersistentUI] = useState(true);
 	const [hasInteracted, setHasInteracted] = useState(false);
 	const [audio] = useState(new Audio('/sounds/pong-theme.mp3'));
+	const [audioGame] = useState(new Audio('/sounds/pong-ingame.mp3'));
 
 	const activateMusic = useCallback(() => {
 		if (!hasInteracted) {
@@ -35,14 +37,20 @@ const Root = () => {
 
 	useEffect(() => {
 		if (hasInteracted && showPersistentUI && isLoggedIn) {
-			audio.volume = 0.07;
+			audioGame.pause();
+			audioGame.currentTime = 0;
+			audio.volume = 0.2;
 			audio.play();
 		} else if (hasInteracted && !showPersistentUI && isLoggedIn) {
-			audio.volume = 0.02;
-		} else if (!showPersistentUI) {
 			audio.pause();
+			audio.currentTime = 0;
+			audioGame.volume = 0.2;
+			audioGame.play();
+		} else if (showPersistentUI && !isLoggedIn) {
+			audio.pause();
+			audio.currentTime = 0;
 		}
-	}, [hasInteracted, showPersistentUI, audio, isLoggedIn]);
+	}, [hasInteracted, showPersistentUI, audio, isLoggedIn, audioGame]);
 
 	return (
 		<>

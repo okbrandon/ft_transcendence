@@ -4,7 +4,7 @@ import { BlockedProfileContainer, BlockedProfilePicture } from "./styles/Blocked
 const BlockedProfile = () => {
 	return (
 		<BlockedProfileContainer>
-			<BlockedProfilePicture src='/images/default-profile.png' alt='Blocked user'/>
+			<BlockedProfilePicture src='/images/default-profile.webp' alt='Blocked user'/>
 		</BlockedProfileContainer>
 	);
 };

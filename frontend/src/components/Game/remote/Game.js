@@ -132,15 +132,15 @@ const Game = () => {
 					break;
 				case 'PADDLE_HIT':
 					setHitPos(data.d.ball);
-					const hit2 = new Audio('/sounds/pong-hit2.mp3');
-					hit2.volume = 0.2;
-					hit2.play();
-					break;
-				case 'BALL_HIT':
-					setHitPos(data.d.ball);
 					const hit1 = new Audio('/sounds/pong-hit1.mp3');
 					hit1.volume = 0.2;
 					hit1.play();
+					break;
+				case 'BALL_HIT':
+					setHitPos(data.d.ball);
+					const hit2 = new Audio('/sounds/pong-hit2.mp3');
+					hit2.volume = 0.2;
+					hit2.play();
 					break;
 				case 'PADDLE_RATE_LIMIT': // ignoring
 					break;

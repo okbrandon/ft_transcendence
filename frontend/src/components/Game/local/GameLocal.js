@@ -151,9 +151,9 @@ const GameLocal = () => {
 			hit.current = { x: ball.current.position.x, y: ball.current.position.y };
 			setIsHit(true);
 			setTimeout(() => setIsHit(false), 500);
-			const hit1 = new Audio('/sounds/pong-hit1.mp3');
-			hit1.volume = 0.2;
-			hit1.play();
+			const hit2 = new Audio('/sounds/pong-hit2.mp3');
+			hit2.volume = 0.07;
+			hit2.play();
 			ballVelocity.current.y *= -1;
 		}
 
@@ -180,9 +180,9 @@ const GameLocal = () => {
 			hit.current = { x: ball.current.position.x, y: ball.current.position.y };
 			setIsHit(true);
 			setTimeout(() => setIsHit(false), 500);
-			const hit2 = new Audio('/sounds/pong-hit2.mp3');
-			hit2.volume = 0.2;
-			hit2.play();
+			const hit1 = new Audio('/sounds/pong-hit1.mp3');
+			hit1.volume = 0.07;
+			hit1.play();
 		}
 
 		if (ball.current.position.x + ballRadius >= paddle2.current.position.x - paddleWidth / 2 &&
@@ -198,19 +198,25 @@ const GameLocal = () => {
 			hit.current = { x: ball.current.position.x, y: ball.current.position.y };
 			setIsHit(true);
 			setTimeout(() => setIsHit(false), 500);
-			const hit2 = new Audio('/sounds/pong-hit2.mp3');
-			hit2.volume = 0.2;
-			hit2.play();
+			const hit1 = new Audio('/sounds/pong-hit1.mp3');
+			hit1.volume = 0.07;
+			hit1.play();
 		}
 
 		if (ball.current.position.x < -terrain.SCENEWIDTH / 2) {
 			setScoreB(prev => prev + 1);
 			resetBall();
+			const wonSound = new Audio('/sounds/pong-won.mp3');
+			wonSound.volume = 0.2;
+			wonSound.play();
 		}
 
 		if (ball.current.position.x > terrain.SCENEWIDTH / 2) {
 			setScoreA(prev => prev + 1);
 			resetBall();
+			const wonSound = new Audio('/sounds/pong-won.mp3');
+			wonSound.volume = 0.2;
+			wonSound.play();
 		}
 
 		if (scoreA >= 10 || scoreB >= 10) {
@@ -279,12 +285,12 @@ const GameLocal = () => {
 		<PageContainer>
 			<ProfilesContainer>
 				<Profile>
-					<ProfileImage src='/images/default-profile.png' alt='Player 1'/>
+					<ProfileImage src='/images/default-profile.webp' alt='Player 1'/>
 					<ProfileName>Player 1</ProfileName>
 				</Profile>
 				<p style={{margin: '0 auto'}}>Press <b>Q</b> to quit game</p>
 				<Profile>
-					<ProfileImage src='/images/default-profile.png' alt='Player 2'/>
+					<ProfileImage src='/images/default-profile.webp' alt='Player 2'/>
 					<ProfileName>Player 2</ProfileName>
 				</Profile>
 			</ProfilesContainer>

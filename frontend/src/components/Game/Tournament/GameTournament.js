@@ -164,9 +164,9 @@ const GameTournament = () => {
 			'HEARTBEAT_ACK': () => {},
 			'BALL_HIT': () => {
 				setHitPos(data.d.ball);
-				const hit1 = new Audio('/sounds/pong-hit1.mp3');
-				hit1.volume = 0.2;
-				hit1.play();
+				const hit2 = new Audio('/sounds/pong-hit2.mp3');
+				hit2.volume = 0.2;
+				hit2.play();
 			},
 			'PADDLE_RATE_LIMIT': () => {}, // ignoring
 			'MATCH_JOIN': () => setGameState(prevState => ({
@@ -180,9 +180,9 @@ const GameTournament = () => {
 			},
 			'PADDLE_HIT': () => {
 				setHitPos(data.d.ball);
-				const hit2 = new Audio('/sounds/pong-hit2.mp3');
-				hit2.volume = 0.2;
-				hit2.play();
+				const hit1 = new Audio('/sounds/pong-hit1.mp3');
+				hit1.volume = 0.2;
+				hit1.play();
 			},
 		};
 

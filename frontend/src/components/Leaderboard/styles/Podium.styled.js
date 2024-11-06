@@ -16,7 +16,7 @@ export const PodiumBase = styled.div`
 	flex-direction: column;
 	justify-content: flex-start;
 	align-items: center;
-	background-image: url('/images/podium.png');
+	background-image: url('/images/podium.webp');
 	background-size: contain;
 	background-position: center;
 	background-repeat: no-repeat;
