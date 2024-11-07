@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from ..models import Tournament, TournamentInvite, User, Conversation
-from ..serializers import TournamentSerializer
+from ..serializers import TournamentSerializer, UserSerializer
 from ..util import generate_id, get_safe_profile
 from django.db import transaction
 from channels.layers import get_channel_layer
@@ -148,11 +148,12 @@ class UserCurrentTournament(APIView):
                 if request.user == tournament.owner:
                     # If the user is the tournament owner, kick all participants and destroy the tournament
                     for participant in tournament.participants.all():
+                        serialized_participant = UserSerializer(participant).data
                         async_to_sync(channel_layer.group_send)(
                             f"tournament_{tournament.tournamentID}",
                             {
                                 "type": "tournament_kick",
-                                "user": get_safe_profile(participant, me=False)
+                                "user": get_safe_profile(serialized_participant, me=False)
                             }
                         )
                     tournament.delete()
