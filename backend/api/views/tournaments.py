@@ -107,13 +107,18 @@ class Tournaments(APIView):
                 new_conversation.receipientID = inviter.userID
                 new_conversation.participants.add(inviter, invitee)
                 new_conversation.save()
-                existing_conversation = new_conversation
+                conversation = new_conversation
+            else:
+                conversation = Conversation.objects.filter(
+                    participants__userID__in=[inviter.userID, invitee.userID],
+                    conversationType='private_message'
+                ).annotate(participant_count=Count('participants')).filter(participant_count=2).first()
 
             # Send a message to the invitee
-            message = existing_conversation.messages.create(messageID=generate_id("msg"), sender=inviter, content="I invite you to join my tournament")
+            message = conversation.messages.create(messageID=generate_id("msg"), sender=inviter, content="I invite you to join my tournament")
             message.messageType = 1
             message.inviteID = invite.inviteID
-            existing_conversation.save()
+            conversation.save()
 
             safe_profile = get_safe_profile(UserSerializer(inviter).data, me=False)
 
@@ -122,7 +127,7 @@ class Tournaments(APIView):
                 f"chat_{invitee.userID}",
                 {
                     "type": "conversation_update",
-                    "conversationID": existing_conversation.conversationID,
+                    "conversationID": conversation.conversationID,
                     "sender": safe_profile,
                     "message": MessageSerializer(message).data
                 }
