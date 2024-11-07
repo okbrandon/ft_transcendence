@@ -162,11 +162,12 @@ class UserCurrentTournament(APIView):
                     # If the user is not the owner, just remove them from the tournament
                     tournament.participants.remove(request.user)
                     # Send player leave tournament event
+                    serialized_user = UserSerializer(request.user).data
                     async_to_sync(channel_layer.group_send)(
                         f"tournament_{tournament.tournamentID}",
                         {
                             "type": "tournament_leave",
-                            "user": get_safe_profile(request.user, me=False)
+                            "user": get_safe_profile(serialized_user, me=False)
                         }
                     )
                     return Response({"message": "Successfully left the tournament"}, status=status.HTTP_200_OK)
