@@ -2,9 +2,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from ..models import Tournament, TournamentInvite, User, Conversation
-from ..serializers import TournamentSerializer, UserSerializer
+from ..serializers import TournamentSerializer, UserSerializer, MessageSerializer
 from ..util import generate_id, get_safe_profile
 from django.db import transaction
+from django.db.models import Count, Q
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
@@ -93,26 +94,43 @@ class Tournaments(APIView):
                 inviter=inviter,
                 invitee=invitee
             )
+            invite.save()
+            invite.save()
 
-            conversation, _ = Conversation.objects.get_or_create(
-                conversationType='private_message',
-                participants=User.objects.filter(userID__in=[inviter.userID, invitee.userID])
-            )
+            # Create or get conversation for the invite
+            existing_conversation = Conversation.objects.filter(
+                participants__userID__in=[inviter.userID, invitee.userID],
+                conversationType='private_message'
+            ).annotate(participant_count=Count('participants')).filter(participant_count=2).exists()
 
-            conversation.messages.create(
-                messageID=generate_id("msg"),
-                content=invite.inviteID,
-                sender=inviter,
-                messageType=1
-            )
+            if not existing_conversation:
+                new_conversation = Conversation.objects.create(conversationID=generate_id("conv"), conversationType='private_message')
+                new_conversation.receipientID = inviter.userID
+                new_conversation.participants.add(inviter, invitee)
+                new_conversation.save()
+                conversation = new_conversation
+            else:
+                conversation = Conversation.objects.filter(
+                    participants__userID__in=[inviter.userID, invitee.userID],
+                    conversationType='private_message'
+                ).annotate(participant_count=Count('participants')).filter(participant_count=2).first()
+
+            # Send a message to the invitee
+            message = conversation.messages.create(messageID=generate_id("msg"), sender=inviter, content="I invite you to join my tournament")
+            message.messageType = 1
+            message.inviteID = invite.inviteID
+            conversation.save()
+
+            safe_profile = get_safe_profile(UserSerializer(inviter).data, me=False)
 
             # Send message to channel layer
             async_to_sync(channel_layer.group_send)(
                 f"chat_{invitee.userID}",
                 {
                     "type": "conversation_update",
-                    "senderUsername": inviter.username,
-                    "messagePreview": "sent a tournament invite"
+                    "conversationID": conversation.conversationID,
+                    "sender": safe_profile,
+                    "message": MessageSerializer(message).data
                 }
             )
 

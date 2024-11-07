@@ -157,7 +157,8 @@ class Message(models.Model):
     conversation = models.ForeignKey(Conversation, null=True, related_name='messages', on_delete=models.CASCADE)
     content = models.CharField(max_length=256)
     sender = models.ForeignKey(User, null=True, related_name='sent_messages', on_delete=models.CASCADE)
-    messageType = models.IntegerField(default=0)
+    messageType = models.IntegerField(default=0) # 0 = basic message, 1 = tournament invitation
+    inviteID = models.CharField(max_length=48, null=True)
     createdAt = models.DateTimeField(null=True, auto_now_add=True)
 
     def __str__(self):
