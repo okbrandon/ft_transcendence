@@ -68,13 +68,12 @@ const JoinTournament = () => {
 		setInvite(true);
 	};
 
-	const handleInviteFriends = async () => {
+	const handleInviteFriend = async (userID) => {
 		try {
-			const inviteeIDs = activeFriends.map(friend => friend.userID);
-			await API.put(`/tournaments/${tournamentID}`, { participants: inviteeIDs });
-			setInvite(false);
+			const response = await API.put(`/tournaments/${tournamentID}/invite`, { participants: [userID] });
+			console.log('JoinTournament.js: handleInviteFriend', response.data);
 		} catch (error) {
-			addNotification('error', error.response?.data?.error || 'Error inviting friends');
+			addNotification('error', error.response?.data?.error || 'Error inviting friend');
 		}
 	};
 
@@ -108,8 +107,11 @@ const JoinTournament = () => {
 					{activeFriends.length ? (
 						activeFriends.map((friend) => (
 							<FriendItem key={friend.userID}>
-								<FriendProfilePicture src={friend.avatarID} alt={`${friend.username}'s avatar`} />
-								{friend.displayName || friend.username}
+								<div className="friend-info">
+									<FriendProfilePicture src={friend.avatarID} alt={`${friend.username}'s avatar`} />
+									{friend.displayName}
+								</div>
+								<PongButton type="button" $width="150px" onClick={() => handleInviteFriend(friend.userID)}>Invite</PongButton>
 							</FriendItem>
 						))
 					) : (
@@ -119,9 +121,6 @@ const JoinTournament = () => {
 				<ButtonContainer>
 					<PongButton type="button" $width="150px" onClick={() => setInvite(false)}>
 						Cancel
-					</PongButton>
-					<PongButton type="button" $width="150px" onClick={handleInviteFriends}>
-						Invite
 					</PongButton>
 				</ButtonContainer>
 			</ModalContainer>
