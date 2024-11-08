@@ -901,10 +901,14 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
 
     async def match_ended(self, event):
         try:
+            winner_user = await self.get_user_from_id(event["winner"])
+            safe_profile = get_safe_profile(UserSerializer(winner_user).data, me=False)
+
             await self.send_json({
                 "e": "MATCH_END",
                 "d": {
                     "winner": event["winner"],
+                    "winnerProfile": safe_profile,
                     "rewards": event["rewards"]
                 }
             })
