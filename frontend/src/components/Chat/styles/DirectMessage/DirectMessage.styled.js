@@ -185,7 +185,7 @@ export const ChatBubbleContainer = styled.div`
 
 export const MessageWrapper = styled.div`
 	display: flex;
-	justify-content: ${({ isHost }) => (isHost ? 'flex-end' : 'flex-start')};
+	justify-content: ${({ $isHost }) => ($isHost ? 'flex-end' : 'flex-start')};
 `;
 
 export const BubbleDetails = styled.div`
@@ -258,39 +258,99 @@ export const MessageUsername = styled.span`
 `;
 
 export const TournamentInviteBubble = styled.div`
-	background-color: #9AE66E;
-	color: #333;
+	background-color: rgba(255, 255, 255, 0.2);
+	color: rgba(255, 255, 255, 0.8);
+	width: 250px;
+	height: 160px;
 	border-radius: 10px;
 	padding: 15px;
 	margin: 10px auto;
-	max-width: 80%;
-	align-self: center;
+	margin-top: 25px;
 	text-align: center;
 	box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+	position: relative;
+	z-index: 10;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+
 	p {
 		margin: 5px 0;
 	}
+
+	h3 {
+		font-family: 'Orbitron', sans-serif;
+		margin: 10px 0 20px 0;
+		margin-bottom: 20px;
+		font-size: 1.5rem;
+	}
+
 	button {
+		font-size: 1.1rem;
 		margin: 5px;
-		padding: 5px 10px;
+		padding: 10px 20px;
 		border: none;
-		border-radius: 5px;
+		border-radius: 50px;
 		cursor: pointer;
 		transition: background-color 0.3s ease;
-		&:first-of-type {
-			background-color: #6a0dad;
-			color: #fff;
-			&:hover {
-				background-color: #4a0a9d;
-			}
+		background-color: #6a0dad;
+		color: #fff;
+
+		&:hover {
+			background-color: #4a0a9d;
 		}
-		&:last-of-type {
-			background-color: #EE4266;
-			color: #fff;
-			&:hover {
-				background-color: #ce2246;
-			}
+	}
+
+	.bg {
+		position: absolute;
+		top: 3px;
+		left: 3px;
+		width: 244px;
+		height: 154px;
+		z-index: 2;
+		background: rgba(50, 50, 50, 1);
+		backdrop-filter: blur(24px);
+		border-radius: 10px;
+		overflow: hidden;
+	}
+
+	@keyframes blob-bounce {
+		0% {
+			transform: translate(-100%, -100%) translate3d(0, 0, 0);
 		}
+
+		25% {
+			transform: translate(-100%, -100%) translate3d(100%, 0, 0);
+		}
+
+		50% {
+			transform: translate(-100%, -100%) translate3d(100%, 100%, 0);
+		}
+
+		75% {
+			transform: translate(-100%, -100%) translate3d(0, 100%, 0);
+		}
+
+		100% {
+			transform: translate(-100%, -100%) translate3d(0, 0, 0);
+		}
+	}
+
+	.blob {
+		position: absolute;
+		z-index: 1;
+		top: 50%;
+		left: 50%;
+		width: 150px;
+		height: 150px;
+		border-radius: 50%;
+		// cool neon background-color
+		background-color: #6a0dad;
+		opacity: 1;
+		filter: blur(12px);
+		animation: blob-bounce 5s infinite ease;
 	}
 `;
 

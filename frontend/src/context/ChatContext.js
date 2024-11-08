@@ -113,6 +113,7 @@ export const ChatProvider = ({ children }) => {
 			socketChat.current.onmessage = event => {
 				const response = JSON.parse(event.data);
 				if (response.type === 'conversation_update') {
+					console.log('ChatContext.js:', response);
 					const conversationID = response.conversationID;
 					const message = response.message;
 
