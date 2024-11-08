@@ -108,7 +108,7 @@ export const ChatProvider = ({ children }) => {
 	useEffect(() => {
 		const connectWSChat = () => {
 			socketChat.current = new WebSocket(WS_CHAT_URL + localStorage.getItem('token'));
-			socketChat.current.onopen = () => logger('WebSocket for Chat connection opened');
+			socketChat.current.onopen = () => console.log('WebSocket for Chat connection opened');
 
 			socketChat.current.onmessage = event => {
 				const response = JSON.parse(event.data);
@@ -170,7 +170,7 @@ export const ChatProvider = ({ children }) => {
 			};
 			socketChat.current.onclose = event => {
 				if (event.code === 1006) {
-					logger('WebSocket for Chat encountered an error: Connection closed unexpectedly');
+					console.log('WebSocket for Chat encountered an error: Connection closed unexpectedly');
 					connectWSChat();
 				}
 			};
@@ -181,7 +181,7 @@ export const ChatProvider = ({ children }) => {
 		return () => {
 			if (socketChat.current && socketChat.current.readyState === WebSocket.OPEN) {
 				socketChat.current.close();
-				logger('WebSocket for Chat closed');
+				console.log('WebSocket for Chat closed');
 			}
 		};
 	}, [addNotification, setIsRefetch]);

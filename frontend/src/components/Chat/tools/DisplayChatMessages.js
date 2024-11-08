@@ -13,9 +13,11 @@ import {
 import { useNotification } from '../../../context/NotificationContext.js';
 import API from '../../../api/api.js';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../context/AuthContext.js';
 
 const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) => {
 	const { addNotification } = useNotification();
+	const { setUser } = useAuth();
 	const navigate = useNavigate();
 
 	const formatTimestamp = (timestamp) => {
@@ -30,6 +32,10 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 		try {
 			await API.post(`/tournaments/${tournamentID}/invite/accept`);
 			addNotification('success', 'Tournament invite accepted');
+			setUser(prev => ({
+				...prev,
+				tournamentID,
+			}));
 			navigate(`/tournaments/${tournamentID}`);
 		} catch (error) {
 			console.log(error);

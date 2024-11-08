@@ -27,7 +27,7 @@ import { useAuth } from "../../../context/AuthContext";
 
 const JoinTournament = () => {
 	const navigate = useNavigate();
-	const { user } = useAuth();
+	const { user, setUser } = useAuth();
 	const { addNotification } = useNotification();
 	const { tournament, updateTournament, isStartDisabled } = useTournament();
 	const { tournamentID } = useParams();
@@ -79,8 +79,12 @@ const JoinTournament = () => {
 
 	const handleLeave = async () => {
 		try {
-			const response = await API.delete(`/tournaments/@me`); // doesn't work
+			const response = await API.delete(`/tournaments/@me`);
 			console.log('JoinTournament.js: handleLeave', response.data);
+			setUser(prev => ({
+				...prev,
+				tournamentID: null,
+			}));
 			navigate('/tournaments');
 		} catch (error) {
 			addNotification('error', error.response?.data?.error || 'Error leaving tournament');

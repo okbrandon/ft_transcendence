@@ -176,6 +176,27 @@ export const OverlayContainer = styled.div`
 	}
 `;
 
+export const SpectateResultsContainer = styled.div`
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background-color: rgba(25, 25, 25, 1);
+	padding: 40px 50px;
+	border-radius: 10px;
+	font-family: 'Orbitron', sans-serif;
+	gap: 20px;
+	font-size: 1.5rem;
+	position: relative;
+	overflow: hidden;
+
+	& > img {
+		width: 50px;
+		height: 50px;
+		border-radius: 50%;
+		object-fit: cover;
+	}
+`;
+
 export const RewardsContainer = styled.div`
 	display: flex;
 	flex-direction: column;

@@ -13,9 +13,11 @@ import {
 import PongButton from "../../../styles/shared/PongButton.styled";
 import { useTournament } from "../../../context/TournamentContext";
 import API from "../../../api/api";
+import { useAuth } from "../../../context/AuthContext";
 
 const AvailableTournaments = ({ setOptions }) => {
 	const navigate = useNavigate();
+	const { setUser } = useAuth();
 	const [searchQuery, setSearchQuery] = useState("");
 	const [tournaments, setTournaments] = useState([]);
 	const { registerForTournament } = useTournament();
@@ -46,6 +48,10 @@ const AvailableTournaments = ({ setOptions }) => {
 			if (tournament.isPublic) {
 				await API.post(`/tournaments/${tournamentID}/join`);
 				registerForTournament(tournamentID);
+				setUser(prev => ({
+					...prev,
+					tournamentID,
+				}));
 				navigate(`/tournaments/${tournamentID}`);
 			} else {
 				// For private tournaments, we might need to handle invites differently

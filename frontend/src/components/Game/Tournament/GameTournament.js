@@ -159,7 +159,10 @@ const GameTournament = () => {
 			'BALL_SCORED': () => setBorderScore(data.d.player),
 			'MATCH_END': () => {
 				setGameOver(true);
-				setEndGameData(data.d);
+				setEndGameData({
+					...data.d,
+					winnerProfile: data.d.winnerProfile ? formatUserData(data.d.winnerProfile) : null,
+				});
 			},
 			'HEARTBEAT_ACK': () => {},
 			'BALL_HIT': () => {
@@ -217,6 +220,7 @@ const GameTournament = () => {
 				gameOver={gameOver}
 				endGameData={endGameData}
 				isSpectator={isSpectator}
+				isTournament={true}
 			/>
 		</PageContainer>
 	);

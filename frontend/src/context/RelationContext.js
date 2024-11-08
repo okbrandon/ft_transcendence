@@ -54,7 +54,7 @@ const RelationProvider = ({ children }) => {
 		const connectWSStatus = () => {
 			socketStatus.current = new WebSocket(WS_STATUS_URL + localStorage.getItem('token'));
 			socketStatus.current.onopen = () => {
-				logger('WebSocket for Status connection opened');
+				console.log('WebSocket for Status connection opened');
 			};
 			socketStatus.current.onmessage = event => {
 				const response = JSON.parse(event.data);
@@ -72,7 +72,7 @@ const RelationProvider = ({ children }) => {
 			};
 			socketStatus.current.onclose = event => {
 				if (event.code === 1006) {
-					logger('WebSocket for Status encountered an error: Connection closed unexpectedly');
+					console.log('WebSocket for Status encountered an error: Connection closed unexpectedly');
 					connectWSStatus();
 				}
 			}
@@ -83,7 +83,7 @@ const RelationProvider = ({ children }) => {
 		return () => {
 			if (socketStatus.current && socketStatus.current.readyState === WebSocket.OPEN) {
 				socketStatus.current.close();
-				logger('WebSocket for Status closed');
+				console.log('WebSocket for Status closed');
 			}
 		};
 	}, [setActivity]);
