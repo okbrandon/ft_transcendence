@@ -45,7 +45,6 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 		);
 	} else {
 		let previousSenderID = null;
-		console.log('DisplayChatMessages.js:', realConvo);
 
 		return (
 			<ChatBubbleContainer>
