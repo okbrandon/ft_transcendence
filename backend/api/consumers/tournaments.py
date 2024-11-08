@@ -436,10 +436,7 @@ class TournamentConsumer(AsyncJsonWebsocketConsumer):
     async def tournament_kick(self, event):
         kicked_user = event['user']
         if kicked_user['userID'] == self.user.userID:
-            await self.send_json({"e": "TOURNAMENT_KICK", "d": {
-                "message": "You have been kicked from the tournament",
-                "userID": kicked_user['userID']
-            }})
+            await self.send_json({"e": "TOURNAMENT_KICK", "d": {"message": "You have been kicked from the tournament"}})
             await self.close()
         else:
             await self.channel_layer.group_send(

@@ -95,7 +95,6 @@ class Tournaments(APIView):
                 invitee=invitee
             )
             invite.save()
-            invite.save()
 
             # Create or get conversation for the invite
             existing_conversation = Conversation.objects.filter(
@@ -118,7 +117,7 @@ class Tournaments(APIView):
             # Send a message to the invitee
             message = conversation.messages.create(messageID=generate_id("msg"), sender=inviter, content="I invite you to join my tournament")
             message.messageType = 1
-            message.inviteID = invite.inviteID
+            message.invite = invite
             conversation.save()
 
             safe_profile = get_safe_profile(UserSerializer(inviter).data, me=False)
@@ -306,7 +305,7 @@ class TournamentInviteResponse(APIView):
                 f"tournament_{tournamentID}",
                 {
                     "type": "tournament_join",
-                    "user": get_safe_profile(request.user, me=False)
+                    "user": get_safe_profile(UserSerializer(request.user).data, me=False)
                 }
             )
             message = "Invite accepted and joined tournament successfully"

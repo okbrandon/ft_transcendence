@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import User, Match, Message, Conversation, Token, Relationship, UserSettings, StoreItem, Purchase, VerificationCode, Tournament
+from .models import User, Match, Message, Conversation, Token, Relationship, UserSettings, StoreItem, Purchase, VerificationCode, Tournament, TournamentInvite
 from .util import get_safe_profile
 
 class UserSerializer(serializers.ModelSerializer):
@@ -61,21 +61,6 @@ class UserSettingsSerializer(serializers.ModelSerializer):
         model = UserSettings
         fields = ["userID", "selectedPaddleSkin"]
 
-class MessageSerializer(serializers.ModelSerializer):
-    sender = UserSerializer()
-
-    class Meta:
-        model = Message
-        fields = ['messageID', 'content', 'sender', 'messageType', 'inviteID', 'createdAt']
-
-class ConversationSerializer(serializers.ModelSerializer):
-    participants = UserSerializer(many=True)
-    messages = MessageSerializer(many=True)
-
-    class Meta:
-        model = Conversation
-        fields = ['conversationID', 'conversationType', 'receipientID', 'participants', 'messages']
-
 class TournamentSerializer(serializers.ModelSerializer):
     participants = serializers.SerializerMethodField()
     owner = UserSerializer()
@@ -86,3 +71,28 @@ class TournamentSerializer(serializers.ModelSerializer):
 
     def get_participants(self, obj):
         return [get_safe_profile(UserSerializer(participant).data, me=False) for participant in obj.participants.all()]
+
+class TournamentInviteSerializer(serializers.ModelSerializer):
+    tournament = TournamentSerializer()
+    inviter = UserSerializer()
+    invitee = UserSerializer()
+
+    class Meta:
+        model = TournamentInvite
+        fields = ['inviteID', 'tournament', 'inviter', 'invitee', 'status', 'createdAt']
+
+class MessageSerializer(serializers.ModelSerializer):
+    sender = UserSerializer()
+    invite = TournamentInviteSerializer()
+
+    class Meta:
+        model = Message
+        fields = ['messageID', 'content', 'sender', 'messageType', 'invite', 'createdAt']
+
+class ConversationSerializer(serializers.ModelSerializer):
+    participants = UserSerializer(many=True)
+    messages = MessageSerializer(many=True)
+
+    class Meta:
+        model = Conversation
+        fields = ['conversationID', 'conversationType', 'receipientID', 'participants', 'messages']
