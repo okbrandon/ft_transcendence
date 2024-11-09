@@ -55,6 +55,7 @@ const Root = () => {
 		};
 		if (!location.pathname.includes(`/tournaments/${user.tournamentID}`)) {
 			leaveTournament();
+			console.log('index.js: leaving tournament');
 		}
 	}, [location, user?.tournamentID, addNotification, setUser]);
 

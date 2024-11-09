@@ -74,25 +74,12 @@ const TournamentProvider = ({ children }) => {
 					...prev,
 					tournamentID: null,
 				}));
-				setTournament(prevTournament => {
-					if (!prevTournament) {
-						return prevTournament;
-					}
-
-					return {
-						...prevTournament,
-						participants: prevTournament.participants.filter(p => p.userID !== userIDRef.current),
-					}
-				});
+				setTournament(null);
 				navigate('/tournaments');
 			} else {
 				setTournament(prevTournament => {
 					if (!prevTournament || !data?.user?.userID) {
 						return prevTournament;
-					}
-
-					if (data?.user?.userID === prevTournament.owner?.userID) {
-						navigate('/tournaments');
 					}
 
 					return {
@@ -171,7 +158,7 @@ const TournamentProvider = ({ children }) => {
 						setIsStartDisabled(true);
 						setEndTournamentData({
 							...data.d,
-							winner: formatUserData(data.d.winner)
+							winnerProfile: formatUserData(data.d.winnerProfile)
 						});
 						navigate(`/tournaments/${data.d.tournamentID}/results`);
 						break;

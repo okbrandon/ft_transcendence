@@ -53,6 +53,10 @@ const JoinTournament = () => {
 	}, [tournamentID, addNotification, updateTournament]);
 
 	useEffect(() => {
+		if (tournament?.tournamentID) setUser(prev => ({ ...prev, tournamentID: tournament.tournamentID }));
+	}, [tournament?.tournamentID, setUser]);
+
+	useEffect(() => {
 		setActiveFriends(friends.filter(friend => !!friend.status.online));
 	}, [friends]);
 
@@ -70,8 +74,8 @@ const JoinTournament = () => {
 
 	const handleInviteFriend = async (userID) => {
 		try {
-			const response = await API.put(`/tournaments/${tournamentID}/invite`, { participants: [userID] });
-			console.log('JoinTournament.js: handleInviteFriend', response.data);
+			await API.put(`/tournaments/${tournamentID}/invite`, { participants: [userID] });
+			addNotification('success', 'Friend invited');
 		} catch (error) {
 			addNotification('error', error.response?.data?.error || 'Error inviting friend');
 		}
