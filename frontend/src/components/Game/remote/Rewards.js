@@ -1,8 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
-import { OverlayContainer, RewardsContainer, SpectateResultsContainer } from "../styles/Game.styled";
+import { OverlayContainer, RewardsContainer } from "../styles/Game.styled";
 import PongButton from "../../../styles/shared/PongButton.styled";
+import Card from "../../../styles/shared/Card.styled";
 
 const Rewards = ({ endGameData, isSpectator = false, isTournament }) => {
 	const navigate = useNavigate();
@@ -14,10 +15,13 @@ const Rewards = ({ endGameData, isSpectator = false, isTournament }) => {
 		<OverlayContainer>
 			<h1>Game Over!</h1>
 			{isSpectator ? (
-				<SpectateResultsContainer>
-					<img src={endGameData.winnerProfile.avatarID} alt={`${endGameData.winnerProfile.displayName}'s avatar`}/>
-					{endGameData.winnerProfile.displayName} won !
-				</SpectateResultsContainer>
+				<Card $width="250px" $height="190px">
+					<div className="bg">
+						<img src={endGameData.winnerProfile.avatarID} alt={`${endGameData.winnerProfile.displayName}'s avatar`}/>
+						{endGameData.winnerProfile.displayName} won !
+					</div>
+					<div className="blob"/>
+				</Card>
 			) : (
 				<>
 					<p>{endGameData.winner === user.userID ? 'You won!' : 'You lost.'}</p>

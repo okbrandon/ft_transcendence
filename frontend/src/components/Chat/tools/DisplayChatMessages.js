@@ -8,12 +8,12 @@ import {
 	ChatBubbleContainer,
 	MessageWrapper,
 	BubbleDetails,
-	TournamentInviteBubble
 } from '../styles/DirectMessage/DirectMessage.styled.js';
 import { useNotification } from '../../../context/NotificationContext.js';
 import API from '../../../api/api.js';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext.js';
+import Card from '../../../styles/shared/Card.styled.js';
 
 const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) => {
 	const { addNotification } = useNotification();
@@ -87,15 +87,14 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 						return (
 							<MessageWrapper key={index} $isHost={false}>
 								<BubbleDetails>
-									<TournamentInviteBubble>
+									<Card $width={'270px'} $height={'200px'}>
 										<div className='bg'>
 											<h3>Tournament</h3>
 											<p>I invite you to join <b>{message.invite.tournament.name}</b></p>
 											<button onClick={() => handleAcceptTournamentInvite(message.invite.tournament.tournamentID)}>Join</button>
 										</div>
-										<div className='blob'>
-										</div>
-									</TournamentInviteBubble>
+										<div className='blob'/>
+									</Card>
 								</BubbleDetails>
 							</MessageWrapper>
 						)
