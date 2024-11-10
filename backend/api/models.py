@@ -10,7 +10,8 @@ class Match(models.Model):
     playerB = models.JSONField(null=True)
     scores = models.JSONField(default=dict) # ex: {"user_202020202020": 5, "user_202020202021", 3}
     winnerID = models.CharField(max_length = 48, null=True)
-    startedAt = models.DateTimeField(auto_now_add=True)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    startedAt = models.DateTimeField(null=True)
     finishedAt = models.DateTimeField(null=True)
     flags = models.IntegerField(default=0) # 1<<0 = AI, 1<<1 = 1v1
     tournament = models.ForeignKey('Tournament', on_delete=models.SET_NULL, null=True, blank=True, related_name='matches')

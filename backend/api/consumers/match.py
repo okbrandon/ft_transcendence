@@ -675,6 +675,8 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
 
     @database_sync_to_async
     def start_match(self, match):
+        match.startedAt = timezone.now()
+        match.save()
         # Use async_to_sync to run the coroutine in a new event loop
         async_to_sync(self._start_match_async)(match.matchID)
         logger.info(f"[{self.__class__.__name__}] Match loop started for match: {match.matchID}")
