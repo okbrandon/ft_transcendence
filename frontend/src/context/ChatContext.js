@@ -4,6 +4,7 @@ import API from '../api/api';
 import { formatUserData } from '../api/user';
 import { useNotification } from './NotificationContext';
 import { useRelation } from './RelationContext';
+import refreshToken from '../api/token';
 
 const WS_CHAT_URL = process.env.REACT_APP_ENV === 'production' ? '/ws/chat/?token=' : 'ws://localhost:8000/ws/chat/?token=';
 
@@ -106,9 +107,25 @@ export const ChatProvider = ({ children }) => {
 	}, [sendNotification, addNotification]);
 
 	useEffect(() => {
-		const connectWSChat = () => {
-			socketChat.current = new WebSocket(WS_CHAT_URL + localStorage.getItem('token'));
-			socketChat.current.onopen = () => console.log('WebSocket for Chat connection opened');
+		const connectWSChat = async () => {
+			if (socketChat.current && socketChat.current.readyState === WebSocket.OPEN) {
+				socketChat.current.close();
+			}
+
+			let token = localStorage.getItem('token');
+			if (!token) {
+				token = await refreshToken();
+				if (!token) {
+					console.error('Unable to refresh the token. Websocket connection aborted.');
+					return;
+				}
+			}
+
+			socketChat.current = new WebSocket(WS_CHAT_URL + token);
+
+			socketChat.current.onopen = () => {
+				console.log('WebSocket for Chat connection opened')
+			};
 
 			socketChat.current.onmessage = event => {
 				const response = JSON.parse(event.data);
@@ -165,13 +182,19 @@ export const ChatProvider = ({ children }) => {
 					};
 				}
 			};
+
 			socketChat.current.onerror = error => {
 				console.error('WebSocket for Chat encountered an error:', error);
 			};
-			socketChat.current.onclose = event => {
+
+			socketChat.current.onclose = async event => {
 				if (event.code === 1006) {
-					console.log('WebSocket for Chat encountered an error: Connection closed unexpectedly');
-					connectWSChat();
+					const newToken = await refreshToken();
+					if (newToken) {
+						connectWSChat();
+					} else {
+						console.log('Websocket for Chat failed to refresh the token');
+					}
 				}
 			};
 		}
