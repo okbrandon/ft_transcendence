@@ -38,14 +38,11 @@ const Root = () => {
 
 	useEffect(() => {
 		if (!user?.tournamentID) return;
+		console.log('index.js:', user.tournamentID);
 
 		const leaveTournament = async () => {
 			try {
 				await API.delete(`/tournaments/@me`);
-				setUser(prev => ({
-					...prev,
-					tournamentID: null,
-				}))
 				addNotification('info', "Due to you leaving, you've been removed from the tournament");
 			} catch (error) {
 				addNotification('error', error?.response?.data?.error || 'Error leaving tournament');

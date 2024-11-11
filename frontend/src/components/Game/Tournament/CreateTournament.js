@@ -12,9 +12,11 @@ import API from "../../../api/api";
 import { useNavigate } from "react-router-dom";
 import { useTournament } from "../../../context/TournamentContext";
 import { useNotification } from "../../../context/NotificationContext";
+import { useAuth } from "../../../context/AuthContext";
 
 const CreateTournament = ({ setOptions }) => {
 	const { addNotification } = useNotification();
+	const { user } = useAuth();
 	const [tournamentName, setTournamentName] = useState("");
 	const [maxParticipants, setMaxParticipants] = useState(4);
 	const [isPublic, setIsPublic] = useState(true);
@@ -30,6 +32,7 @@ const CreateTournament = ({ setOptions }) => {
 				maxParticipants: maxParticipants
 			});
 			console.log('CreateTournament: tournament created');
+			console.log('CreateTournament:', user.tournamentID);
 			registerForTournament(response.data.tournamentID);
 			navigate(`/tournaments/${response.data.tournamentID}`);
 		} catch (error) {

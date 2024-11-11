@@ -205,6 +205,7 @@ const TournamentProvider = ({ children }) => {
 		<TournamentContext.Provider value={{
 			registerForTournament,
 			tournament,
+			setTournament,
 			isStartDisabled,
 			updateTournament,
 			resetMatch,

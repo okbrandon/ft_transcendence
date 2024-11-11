@@ -140,8 +140,8 @@ const GameTournament = () => {
 				}
 			},
 			'MATCH_READY': () => {
+				setActivateTimer(true);
 				if (!isSpectatorRef.current) {
-					setActivateTimer(true);
 					setGameState(prevState => ({ ...prevState, matchState: data.d }));
 				}
 			},

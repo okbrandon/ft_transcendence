@@ -45,8 +45,8 @@ const AvailableTournaments = ({ setOptions }) => {
 
 			if (tournament.isPublic) {
 				await API.post(`/tournaments/${tournamentID}/join`);
-				registerForTournament(tournamentID);
 				navigate(`/tournaments/${tournamentID}`);
+				registerForTournament(tournamentID);
 			} else {
 				// For private tournaments, we might need to handle invites differently
 				console.log("This is a private tournament. Invite handling not implemented.");

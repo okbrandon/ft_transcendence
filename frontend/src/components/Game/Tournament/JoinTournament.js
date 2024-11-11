@@ -85,11 +85,6 @@ const JoinTournament = () => {
 		try {
 			const response = await API.delete(`/tournaments/@me`);
 			console.log('JoinTournament.js: handleLeave', response.data);
-			setUser(prev => ({
-				...prev,
-				tournamentID: null,
-			}));
-			navigate('/tournaments');
 		} catch (error) {
 			addNotification('error', error.response?.data?.error || 'Error leaving tournament');
 		}
