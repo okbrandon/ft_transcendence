@@ -155,9 +155,9 @@ class Conversation(models.Model):
 class Message(models.Model):
     messageID = models.CharField(primary_key=True, max_length=48, default="", editable=False)
     conversation = models.ForeignKey(Conversation, null=True, related_name='messages', on_delete=models.CASCADE)
-    content = models.CharField(max_length=256)
+    content = models.CharField(max_length=1024)
     sender = models.ForeignKey(User, null=True, related_name='sent_messages', on_delete=models.CASCADE)
-    messageType = models.IntegerField(default=0) # 0 = basic message, 1 = tournament invitation
+    messageType = models.IntegerField(default=0) # 0 = basic message, 1 = tournament invitation, 2 = ephemeral message
     invite = models.ForeignKey(TournamentInvite, null=True, related_name='messages', on_delete=models.CASCADE)
     createdAt = models.DateTimeField(null=True, auto_now_add=True)
 

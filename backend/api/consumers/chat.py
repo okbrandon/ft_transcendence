@@ -99,10 +99,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         raise Exception("Missing conversation ID")
                     if content is None:
                         raise Exception("Missing content")
+                    if len(content) > 256:
+                        raise Exception("Message content exceeds 256 characters")
 
                     logger.info(f"[{self.__class__.__name__}] Received message from {self.user.username}: {json_data}")
                     message = await self.add_message_to_conversation(conversation_id, self.user, content)
                     await self.notify_new_message(conversation_id, self.user, message)
+
+                    # Check if the message is for the AI user
+                    conversation = await sync_to_async(Conversation.objects.get)(conversationID=conversation_id)
+                    participants = await sync_to_async(list)(conversation.participants.all())
+                    ai_user = next((user for user in participants if user.userID == "user_ai"), None)
+                    
+                    if ai_user:
+                        ai_response = await self.get_ai_response(content, conversation_id)
+                        ai_message = await self.add_message_to_conversation(conversation_id, ai_user, ai_response)
+                        await self.notify_new_message(conversation_id, ai_user, ai_message)
 
                 case _:
                     raise Exception(f"Invalid message type: {message_type}")
@@ -206,3 +218,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 new_conversation.receipientID = user.userID
                 new_conversation.participants.add(user, friend)
                 new_conversation.save()
+
+    async def get_ai_response(self, prompt, conversation_id):
+        url = "https://ai.evan.sh/api/completion"
+        headers = {
+            "Authorization": f"Bearer {os.environ.get('CHAT_COMPLETION_TOKEN')}",
+            "Content-Type": "application/json"
+        }
+        data = {
+            "prompt": prompt,
+            "conversation_id": conversation_id
+        }
+
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url, json=data, headers=headers)
+            response.raise_for_status()
+            return response.json()["completion"]
