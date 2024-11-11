@@ -9,7 +9,6 @@ from channels.layers import get_channel_layer
 from django.conf import settings
 from django.core.cache import cache
 from django.utils import timezone
-from django.db import transaction
 from django.db.models import Q
 
 from ..models import User, Tournament, Match
@@ -124,18 +123,6 @@ class TournamentManager:
         cache.set(f"tournament_setup_done_{self.tournament.tournamentID}", True, timeout=None)
 
     @sync_to_async
-    def save_matches(self):
-        for match in self.matches:
-            match_obj = Match.objects.create(
-                matchID=match['matchID'],
-                tournament=self.tournament,
-                flags=4
-            )
-            players = [User.objects.get(userID=player['userID']) for player in match['players'] if player]
-            match_obj.whitelist.add(*players)
-            match_obj.save()
-
-    @sync_to_async
     def get_matches(self):
         matches = Match.objects.filter(tournament=self.tournament).order_by('startedAt')
         result = []
@@ -190,7 +177,20 @@ class TournamentManager:
             next_match = await self.get_next_unstarted_match()
             if not next_match:
                 logger.info(f"[{self.__class__.__name__}] No more matches to play. Ending tournament {self.tournament.tournamentID}")
-                return await self.end_tournament()
+                end_result = await self.end_tournament()
+
+                if 'winner' in end_result:
+                    matches = await self.get_matches()
+                    await self.channel_layer.group_send(
+                        f"tournament_{self.tournament.tournamentID}",
+                        {
+                            "type": "tournament.end",
+                            "tournamentID": end_result['tournamentID'],
+                            "winner": end_result['winner'],
+                            "matches": matches
+                        }
+                    )
+                return end_result
 
             if not all(next_match['players']):
                 logger.info(f"[{self.__class__.__name__}] Next match {next_match['matchID']} is not ready to start")
@@ -233,7 +233,7 @@ class TournamentManager:
                     'matchID': next_match.matchID,
                     'players': [get_safe_profile(UserSerializer(player).data, me=False) for player in players]
                 }
-        
+
         return None
 
     async def update_match_winner(self, match_id, winner_id):
@@ -253,45 +253,11 @@ class TournamentManager:
         if last_match:
             winner = User.objects.get(userID=winner_id)
             last_match.whitelist.add(winner)
-            if last_match.playerA is None:
+            if last_match.playerA is None and (last_match.playerB is None or last_match.playerB['id'] != winner.userID):
                 last_match.playerA = {"id": winner.userID, "platform": "web"}
-            else:
+            elif last_match.playerB is None and (last_match.playerA is None or last_match.playerA['id'] != winner.userID):
                 last_match.playerB = {"id": winner.userID, "platform": "web"}
             last_match.save()
-
-    @sync_to_async
-    def get_unfinished_matches(self):
-        return list(Match.objects.filter(tournament=self.tournament, winnerID__isnull=True))
-
-    @sync_to_async
-    def get_match_winners(self):
-        finished_matches = Match.objects.filter(tournament=self.tournament, winnerID__isnull=False)
-        return [User.objects.get(userID=match.winnerID) for match in finished_matches]
-
-    @sync_to_async
-    def create_next_match(self, winners):
-        if len(winners) < 2:
-            return None
-
-        match = {
-            "matchID": generate_id("match"),
-            "players": [
-                get_safe_profile(UserSerializer(winners[0]).data, me=False),
-                get_safe_profile(UserSerializer(winners[1]).data, me=False)
-            ]
-        }
-        match_obj = Match.objects.create(
-            matchID=match['matchID'],
-            tournament=self.tournament,
-            flags=4
-        )
-        match_obj.whitelist.add(winners[0], winners[1])
-        match_obj.save()
-        return match
-
-    @sync_to_async
-    def get_match_players(self, match):
-        return [get_safe_profile(UserSerializer(player).data, me=False) for player in match.whitelist.all()]
 
     @sync_to_async
     def end_tournament(self):
@@ -446,22 +412,33 @@ class TournamentConsumer(AsyncJsonWebsocketConsumer):
     async def join_existing_tournament(self, tournament):
         self.tournament = tournament
         self.tournament_manager = await TournamentManager.get_tournament(tournament.tournamentID)
+
         await self.channel_layer.group_add(f"tournament_{tournament.tournamentID}", self.channel_name)
         await self.channel_layer.group_send(
             f"tournament_{tournament.tournamentID}",
             {"type": "tournament.join", "user": get_safe_profile(UserSerializer(self.user).data, me=False)}
         )
+
         tournament_data = await self.tournament_manager.get_tournament_data()
-        await self.send_json({"e": "CURRENT_TOURNAMENT", "d": tournament_data})
-        logger.info(f"User {self.user.userID} is part of tournament {tournament.tournamentID}")
+
+        try:
+            await self.send_json({"e": "CURRENT_TOURNAMENT", "d": tournament_data})
+            logger.info(f"User {self.user.userID} is part of tournament {tournament.tournamentID}")
+        except Exception as _:
+            pass
 
     async def join_tournament(self, tournament):
         await self.tournament_manager.add_participant(self.user)
         await self.channel_layer.group_add(f"tournament_{tournament.tournamentID}", self.channel_name)
+
         self.tournament = tournament
         tournament_data = await self.tournament_manager.get_tournament_data()
-        await self.send_json({"e": "TOURNAMENT_REGISTERED", "d": tournament_data})
-        logger.info(f"User {self.user.userID} registered for tournament {tournament.tournamentID}")
+
+        try:
+            await self.send_json({"e": "TOURNAMENT_REGISTERED", "d": tournament_data})
+            logger.info(f"User {self.user.userID} registered for tournament {tournament.tournamentID}")
+        except Exception as _:
+            pass
 
         safe_profile = get_safe_profile(UserSerializer(self.user).data, me=False)
         await self.channel_layer.group_send(
@@ -491,14 +468,17 @@ class TournamentConsumer(AsyncJsonWebsocketConsumer):
     async def tournament_match_join(self, event):
         match_id = event['match_id']
         players = event['players']
-        await self.send_json({
-            "e": "TOURNAMENT_MATCH_BEGIN",
-            "d": {
-                "matchID": match_id,
-                "players": players
-            }
-        })
-        logger.info(f"Tournament match {match_id} is ready to begin for user {self.user.userID} with players: {players}")
+        try:
+            await self.send_json({
+                "e": "TOURNAMENT_MATCH_BEGIN",
+                "d": {
+                    "matchID": match_id,
+                    "players": players
+                }
+            })
+            logger.info(f"Tournament match {match_id} is ready to begin for user {self.user.userID} with players: {players}")
+        except Exception as _:
+            pass
 
     async def tournament_join(self, event):
         try:
@@ -516,22 +496,31 @@ class TournamentConsumer(AsyncJsonWebsocketConsumer):
             logger.info(f"User {self.user.userID} left tournament {self.tournament.tournamentID}")
 
     async def tournament_leave(self, event):
-        await self.send_json({"e": "TOURNAMENT_LEAVE", "d": {"user": event["user"]}})
+        try:
+            await self.send_json({"e": "TOURNAMENT_LEAVE", "d": {"user": event["user"]}})
+        except Exception as _:
+            pass
 
     async def s_tournament_ready(self, event):
-        await self.send_json({
-            "e": "TOURNAMENT_READY",
-            "d": {
-                "tournament": event['tournament_data'],
-                "matches": event['matches']
-            }
-        })
+        try:
+            await self.send_json({
+                "e": "TOURNAMENT_READY",
+                "d": {
+                    "tournament": event['tournament_data'],
+                    "matches": event['matches']
+                }
+            })
+        except Exception as _:
+            pass
 
     async def tournament_kick(self, event):
         kicked_user = event['user']
         if kicked_user['userID'] == self.user.userID:
-            await self.send_json({"e": "TOURNAMENT_KICK", "d": {"message": "You have been kicked from the tournament"}})
-            await self.close()
+            try:
+                await self.send_json({"e": "TOURNAMENT_KICK", "d": {"message": "You have been kicked from the tournament"}})
+                await self.close()
+            except Exception as _:
+                pass
         else:
             await self.channel_layer.group_send(
                 f"tournament_{self.tournament.tournamentID}",
@@ -544,48 +533,18 @@ class TournamentConsumer(AsyncJsonWebsocketConsumer):
         tournament_data = event['tournament']
         await self.tournament_manager.setup_tournament()
 
-    async def start_next_match(self):
-        # Use a lock to ensure this method is not triggered more than once simultaneously
-        lock_key = f"start_next_match_{self.tournament.tournamentID}"
-        if not await self.tournament_manager.add_lock(lock_key):
-            logger.info(f"start_next_match already in progress for tournament {self.tournament.tournamentID}")
-            return
-
-        try:
-            current_match = await self.tournament_manager.start_next_match()
-            if current_match:
-                if 'winner' in current_match:
-                    matches = await self.tournament_manager.get_matches()
-                    await self.channel_layer.group_send(
-                        f"tournament_{self.tournament.tournamentID}",
-                        {
-                            "type": "tournament.end",
-                            "tournamentID": current_match['tournamentID'],
-                            "winner": current_match['winner'],
-                            "matches": matches
-                        }
-                    )
-                else:
-                    await self.channel_layer.group_send(
-                        f"tournament_{self.tournament.tournamentID}",
-                        {
-                            "type": "match.begin",
-                            "matchID": current_match['matchID'],
-                            "players": current_match['players']
-                        }
-                    )
-        finally:
-            await self.tournament_manager.delete_lock(lock_key)
-
     async def match_begin(self, event):
-        await self.send_json({
-            "e": "TOURNAMENT_MATCH_BEGIN",
-            "d": {
-                "matchID": event["matchID"],
-                "players": event["players"]
-            }
-        })
-        logger.info(f"Match begin event sent for match: {event['matchID']}")
+        try:
+            await self.send_json({
+                "e": "TOURNAMENT_MATCH_BEGIN",
+                "d": {
+                    "matchID": event["matchID"],
+                    "players": event["players"]
+                }
+            })
+            logger.info(f"Match begin event sent for match: {event['matchID']}")
+        except Exception as _:
+            pass
 
     async def tournament_round_end(self, event):
         logger.info(f"Tournament round end event received for tournament {self.tournament.tournamentID}")
@@ -597,14 +556,20 @@ class TournamentConsumer(AsyncJsonWebsocketConsumer):
 
     async def tournament_end(self, event):
         tournament_data = await self.tournament_manager.get_tournament_data()
-        await self.send_json({
-            "e": "TOURNAMENT_END",
-            "d": {
-                "tournamentID": event["tournamentID"],
-                "winner": event["winner"],
-                "matches": event["matches"]
-            }
-        })
+        try:
+            await self.send_json({
+                "e": "TOURNAMENT_END",
+                "d": {
+                    "tournamentID": event["tournamentID"],
+                    "winner": event["winner"],
+                    "matches": event["matches"]
+                }
+            })
+        except Exception as _:
+            pass
 
     async def send_error(self, message):
-        await self.send_json({"e": "ERROR", "d": {"message": message}})
+        try:
+            await self.send_json({"e": "ERROR", "d": {"message": message}})
+        except Exception as _:
+            pass
