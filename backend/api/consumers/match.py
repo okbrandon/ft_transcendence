@@ -240,79 +240,30 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         logger.debug(f"[{self.__class__.__name__}] handle_tournament_match_join completed for match {match_id}")
 
     async def join_match_as_player(self, match):
-        async with asyncio.Lock():
-            side = await self.assign_player_to_match(match)
-            if not side:
-                await self.send_tournament_match_join_failed("Match is full")
-                return
+        side = "left" if match.playerA['id'] == self.user.userID else "right"
+        await self.update_match_state(match)
+        await self.send_match_join(match, side)
 
-            await self.update_match_state(match)
-            await self.send_match_join(match, side)
-
-            if match.playerB:
-                playerB_info = await self.get_opponent_info(match, await self.get_user_from_id(match.playerA['id']))
-                await self.channel_layer.group_send(
-                    f"match_{match.matchID}",
-                    {
-                        "type": "player.join",
-                        "player": playerB_info,
-                        "side": "playerB"
-                    }
-                )
-
-            if match.playerA and match.playerB:
-                await self.send_match_ready(match)
-                logger.info(f"[{self.__class__.__name__}] Tournament match {match.matchID} started with both players")
-
-    async def assign_player_to_match(self, match):
-        if match.playerA is None and match.playerB is None:
-            match.playerA = {"id": self.user.userID, "platform": "web"}
-            side = "left"
-            logger.debug(f"[{self.__class__.__name__}] Assigned first user as playerA")
-        elif match.playerA is None or match.playerB is None:
-            other_player = match.playerA or match.playerB
-            if self.user.userID > other_player['id']:
-                match.playerB = {"id": self.user.userID, "platform": "web"}
-                side = "right"
-                logger.debug(f"[{self.__class__.__name__}] Assigned second user as playerB")
-            else:
-                match.playerB = match.playerA
-                match.playerA = {"id": self.user.userID, "platform": "web"}
-                side = "left"
-                logger.debug(f"[{self.__class__.__name__}] Assigned second user as playerA, moved first user to playerB")
-        else:
-            logger.error(f"[{self.__class__.__name__}] Both player slots filled for match {match.matchID}")
-            return None
-
-        await database_sync_to_async(match.save)()
-        logger.debug(f"[{self.__class__.__name__}] Saved match after player assignment")
-        return side
+        if match.playerA and match.playerB:
+            await self.send_match_ready(match)
+            logger.info(f"[{self.__class__.__name__}] Tournament match {match.matchID} started with both players")
 
     async def update_match_state(self, match):
         if match.matchID not in self.active_matches:
             logger.debug(f"[{self.__class__.__name__}] Initializing new match state for {match.matchID}")
             self.active_matches[match.matchID] = {
                 'playerA': {'id': match.playerA['id'], 'paddle_y': 375, 'pos': 'A'},
-                'playerB': {'id': match.playerB['id'] if match.playerB else None, 'paddle_y': 375, 'pos': 'B'},
+                'playerB': {'id': match.playerB['id'], 'paddle_y': 375, 'pos': 'B'},
                 'ball': {},
-                'scores': {},
+                'scores': {match.playerA['id']: 0, match.playerB['id']: 0},
                 'spectators': [],
-                'rewards': {},
+                'rewards': {
+                    match.playerA['id']: {'xp': 0, 'money': 0},
+                    match.playerB['id']: {'xp': 0, 'money': 0}
+                },
             }
-            if match.playerA:
-                self.active_matches[match.matchID]['scores'][match.playerA['id']] = 0
-                self.active_matches[match.matchID]['rewards'][match.playerA['id']] = {'xp': 0, 'money': 0}
-            if match.playerB:
-                self.active_matches[match.matchID]['scores'][match.playerB['id']] = 0
-                self.active_matches[match.matchID]['rewards'][match.playerB['id']] = {'xp': 0, 'money': 0}
             self.reset_ball(self.active_matches[match.matchID])
             logger.debug(f"[{self.__class__.__name__}] Reset ball for new match")
-        else:
-            logger.debug(f"[{self.__class__.__name__}] Updating existing match state for {match.matchID}")
-            if match.playerB and self.active_matches[match.matchID]['playerB']['id'] is None:
-                self.active_matches[match.matchID]['playerB']['id'] = match.playerB['id']
-                self.active_matches[match.matchID]['rewards'][match.playerB['id']] = {'xp': 0, 'money': 0}
-                self.active_matches[match.matchID]['scores'][match.playerB['id']] = 0
 
     async def send_match_join(self, match, side):
         await self.send_json({
@@ -332,7 +283,6 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             "d": {"reason": reason}
         })
         logger.debug(f"[{self.__class__.__name__}] Sent TOURNAMENT_MATCH_JOIN_FAILED response")
-
 
     @sync_to_async
     def get_user(self, user_id):
@@ -675,6 +625,8 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
 
     @database_sync_to_async
     def start_match(self, match):
+        match.startedAt = timezone.now()
+        match.save()
         # Use async_to_sync to run the coroutine in a new event loop
         async_to_sync(self._start_match_async)(match.matchID)
         logger.info(f"[{self.__class__.__name__}] Match loop started for match: {match.matchID}")
