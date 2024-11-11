@@ -10,6 +10,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.utils import timezone
 from django.db import transaction
+from django.db.models import Q
 
 from ..models import User, Tournament, Match
 from ..util import get_safe_profile, generate_id
@@ -94,7 +95,9 @@ class TournamentManager:
                 matchID=match['matchID'],
                 tournament=self.tournament,
                 flags=4,
-                startedAt=None
+                startedAt=None,
+                playerA={"id": player1.userID, "platform": "web"} if player1 else None,
+                playerB={"id": player2.userID, "platform": "web"} if player2 else None
             )
             if player1:
                 match_obj.whitelist.add(player1)
@@ -230,24 +233,31 @@ class TournamentManager:
                     'matchID': next_match.matchID,
                     'players': [get_safe_profile(UserSerializer(player).data, me=False) for player in players]
                 }
+        
         return None
 
     async def update_match_winner(self, match_id, winner_id):
         await sync_to_async(Match.objects.filter(matchID=match_id).update)(winnerID=winner_id)
-        await self.update_next_match(match_id, winner_id)
+        await self.update_last_match(winner_id)
 
     @sync_to_async
-    def update_next_match(self, current_match_id, winner_id):
-        current_match = Match.objects.get(matchID=current_match_id)
-        next_match = Match.objects.filter(
+    def update_last_match(self, winner_id):
+        last_match = Match.objects.filter(
             tournament=self.tournament,
-            startedAt__isnull=True
-        ).order_by('id').first()
+            startedAt__isnull=True,
+            flags=4
+        ).filter(
+            Q(playerA__isnull=True) | Q(playerB__isnull=True)
+        ).order_by('-createdAt').first()
 
-        if next_match:
+        if last_match:
             winner = User.objects.get(userID=winner_id)
-            next_match.whitelist.add(winner)
-            next_match.save()
+            last_match.whitelist.add(winner)
+            if last_match.playerA is None:
+                last_match.playerA = {"id": winner.userID, "platform": "web"}
+            else:
+                last_match.playerB = {"id": winner.userID, "platform": "web"}
+            last_match.save()
 
     @sync_to_async
     def get_unfinished_matches(self):
@@ -282,10 +292,6 @@ class TournamentManager:
     @sync_to_async
     def get_match_players(self, match):
         return [get_safe_profile(UserSerializer(player).data, me=False) for player in match.whitelist.all()]
-
-    @sync_to_async
-    def update_match_winner(self, match_id, winner_id):
-        Match.objects.filter(matchID=match_id).update(winnerID=winner_id)
 
     @sync_to_async
     def end_tournament(self):
@@ -585,6 +591,7 @@ class TournamentConsumer(AsyncJsonWebsocketConsumer):
         logger.info(f"Tournament round end event received for tournament {self.tournament.tournamentID}")
         match_id = event['matchID']
         winner_id = event['winner']
+        logger.info(f"Match {match_id} ended. Winner: {winner_id}")
         await self.tournament_manager.update_match_winner(match_id, winner_id)
         await self.tournament_manager.start_next_match()
 
