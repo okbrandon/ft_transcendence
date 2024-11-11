@@ -6,12 +6,15 @@ import GameScene from "../remote/GameScene";
 import { formatUserData } from "../../../api/user";
 import { PageContainer } from "../styles/Game.styled";
 import { useTournament } from "../../../context/TournamentContext";
+import { useAuth } from "../../../context/AuthContext";
 
 const GameTournament = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const tournamentData = location.state?.tournamentData;
 	const { resetMatch, setResetMatch } = useTournament();
+	const { hasInteracted } = useAuth();
+	const hasInteractedRef = useRef(hasInteracted);
 
 	const [gameState, setGameState] = useState({
 		matchState: null,
@@ -166,9 +169,11 @@ const GameTournament = () => {
 			'HEARTBEAT_ACK': () => {},
 			'BALL_HIT': () => {
 				setHitPos(data.d.ball);
-				const hit2 = new Audio('/sounds/pong-hit2.mp3');
-				hit2.volume = 0.2;
-				hit2.play();
+				if (hasInteractedRef.current) {
+					const hit2 = new Audio('/sounds/pong-hit2.mp3');
+					hit2.volume = 0.2;
+					hit2.play();
+				}
 			},
 			'PADDLE_RATE_LIMIT': () => {}, // ignoring
 			'MATCH_JOIN': () => setGameState(prevState => ({
@@ -178,9 +183,11 @@ const GameTournament = () => {
 			})),
 			'PADDLE_HIT': () => {
 				setHitPos(data.d.ball);
-				const hit1 = new Audio('/sounds/pong-hit1.mp3');
-				hit1.volume = 0.2;
-				hit1.play();
+				if (hasInteractedRef.current) {
+					const hit1 = new Audio('/sounds/pong-hit1.mp3');
+					hit1.volume = 0.2;
+					hit1.play();
+				}
 			},
 		};
 
@@ -195,6 +202,10 @@ const GameTournament = () => {
 	useEffect(() => {
 		isSpectatorRef.current = isSpectator;
 	}, [isSpectator]);
+
+	useEffect(() => {
+		hasInteractedRef.current = hasInteracted;
+	}, [hasInteracted]);
 
 	return (
 		<PageContainer>

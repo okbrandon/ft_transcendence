@@ -16,10 +16,14 @@ import {
 } from "../styles/Game.styled";
 import PongButton from "../../../styles/shared/PongButton.styled";
 import { getSkin } from "../../../api/user";
+import { useAuth } from "../../../context/AuthContext";
+import { hasIn } from "lodash";
 
 const GameLocal = () => {
 	const navigate = useNavigate();
 	const userID = localStorage.getItem('userID');
+	const { hasInteracted } = useAuth();
+	const hasInteractedRef = useRef(hasInteracted);
 
 	const keyPressedA = useRef({ up: false, down: false });
 	const keyPressedB = useRef({ up: false, down: false });
@@ -151,10 +155,12 @@ const GameLocal = () => {
 			hit.current = { x: ball.current.position.x, y: ball.current.position.y };
 			setIsHit(true);
 			setTimeout(() => setIsHit(false), 500);
-			const hit2 = new Audio('/sounds/pong-hit2.mp3');
-			hit2.volume = 0.07;
-			hit2.play();
-			ballVelocity.current.y *= -1;
+			if (hasInteractedRef.current) {
+				const hit2 = new Audio('/sounds/pong-hit2.mp3');
+				hit2.volume = 0.07;
+				hit2.play();
+				ballVelocity.current.y *= -1;
+			}
 		}
 
 		const paddleHeight = 120 * terrain.SCALEY;
@@ -180,9 +186,11 @@ const GameLocal = () => {
 			hit.current = { x: ball.current.position.x, y: ball.current.position.y };
 			setIsHit(true);
 			setTimeout(() => setIsHit(false), 500);
-			const hit1 = new Audio('/sounds/pong-hit1.mp3');
-			hit1.volume = 0.07;
-			hit1.play();
+			if (hasInteractedRef.current) {
+				const hit1 = new Audio('/sounds/pong-hit1.mp3');
+				hit1.volume = 0.07;
+				hit1.play();
+			}
 		}
 
 		if (ball.current.position.x + ballRadius >= paddle2.current.position.x - paddleWidth / 2 &&
@@ -198,31 +206,41 @@ const GameLocal = () => {
 			hit.current = { x: ball.current.position.x, y: ball.current.position.y };
 			setIsHit(true);
 			setTimeout(() => setIsHit(false), 500);
-			const hit1 = new Audio('/sounds/pong-hit1.mp3');
-			hit1.volume = 0.07;
-			hit1.play();
+			if (hasInteractedRef.current) {
+				const hit1 = new Audio('/sounds/pong-hit1.mp3');
+				hit1.volume = 0.07;
+				hit1.play();
+			}
 		}
 
 		if (ball.current.position.x < -terrain.SCENEWIDTH / 2) {
 			setScoreB(prev => prev + 1);
 			resetBall();
-			const wonSound = new Audio('/sounds/pong-won.mp3');
-			wonSound.volume = 0.2;
-			wonSound.play();
+			if (hasInteractedRef.current) {
+				const wonSound = new Audio('/sounds/pong-won.mp3');
+				wonSound.volume = 0.2;
+				wonSound.play();
+			}
 		}
 
 		if (ball.current.position.x > terrain.SCENEWIDTH / 2) {
 			setScoreA(prev => prev + 1);
 			resetBall();
-			const wonSound = new Audio('/sounds/pong-won.mp3');
-			wonSound.volume = 0.2;
-			wonSound.play();
+			if (hasInteractedRef.current) {
+				const wonSound = new Audio('/sounds/pong-won.mp3');
+				wonSound.volume = 0.2;
+				wonSound.play();
+			}
 		}
 
 		if (scoreA >= 10 || scoreB >= 10) {
 			setGameOver(true);
 		}
 	}, [terrain, resetBall, scoreA, scoreB]);
+
+	useEffect(() => {
+		hasInteractedRef.current = hasInteracted;
+	}, [hasInteracted]);
 
 	// Timer logic
 	useEffect(() => {
