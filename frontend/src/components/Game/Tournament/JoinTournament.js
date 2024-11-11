@@ -104,7 +104,11 @@ const JoinTournament = () => {
 	};
 
 	if (loading || !tournament) {
-		return <Loader />;
+		return (
+			<PageContainer>
+				<Loader/>
+			</PageContainer>
+		);
 	}
 
 	const renderInviteOverlay = () => (

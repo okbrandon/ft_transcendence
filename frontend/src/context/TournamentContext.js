@@ -89,7 +89,11 @@ const TournamentProvider = ({ children }) => {
 		} else {
 			setTournament({
 				...data,
-				participants: data?.participants?.map(formatUserData) || [],
+				participants: data?.participants.sort((a, b) => {
+					if (a.userID === data.owner.userID) return -1;
+					if (b.userID === data.owner.userID) return 1;
+					return 0;
+				}).map(formatUserData),
 			});
 		}
 		console.log('TournamentContext.js: updateTournament', data);
@@ -181,7 +185,6 @@ const TournamentProvider = ({ children }) => {
 						addNotification('info', 'Reconnecting to the server...');
 					} else {
 						console.log('WebSocket for Tournaments failed to refresh the token');
-						addNotification('error', 'Session expired. Please log again.');
 					}
 				}
 			};

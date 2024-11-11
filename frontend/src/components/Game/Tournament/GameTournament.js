@@ -104,6 +104,7 @@ const GameTournament = () => {
 
 	useEffect(() => {
 		setUpcomingMatches(tournamentData.matches);
+		console.log('GameTournament.js: tournamentData', tournamentData);
 	}, [tournamentData]);
 
 	useEffect(() => {
