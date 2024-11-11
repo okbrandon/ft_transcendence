@@ -5,17 +5,19 @@ import os
 import time
 import jwt
 import httpx
+import threading
 
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
 
+from concurrent.futures import ThreadPoolExecutor
 from asgiref.sync import sync_to_async, async_to_sync
 
 from django.utils import timezone
 
 from ..models import User, Match, UserSettings, Tournament
 from ..util import generate_id, get_safe_profile, get_user_id_from_token
-from ..serializers import UserSerializer, UserSettingsSerializer
+from ..serializers import UserSerializer, UserSettingsSerializer, MatchSerializer
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -164,6 +166,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                 'ball': {},
                 'scores': {match.playerA['id']: 0},
                 'rewards': {match.playerA['id']: {'xp': 0, 'money': 0}},
+                'startedAt': None,
             }
             self.reset_ball(self.active_matches[match.matchID])
             logger.info(f"[{self.__class__.__name__}] New match state initialized for match: {match.matchID}")
@@ -261,6 +264,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                     match.playerA['id']: {'xp': 0, 'money': 0},
                     match.playerB['id']: {'xp': 0, 'money': 0}
                 },
+                'startedAt': None,
             }
             self.reset_ball(self.active_matches[match.matchID])
             logger.debug(f"[{self.__class__.__name__}] Reset ball for new match")
@@ -375,7 +379,15 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             await self.send_match_ready(match)
             logger.info(f"[{self.__class__.__name__}] Match {match.matchID} started with both players")
 
+    @database_sync_to_async
+    def update_match_started_at(self):
+        self.match.startedAt = timezone.now()
+        self.match.save()
+
     async def send_match_ready(self, match):
+        await self.update_match_started_at()
+        self.active_matches[match.matchID]['startedAt'] = str(self.match.startedAt)
+
         match_state = self.active_matches[match.matchID]
         await self.channel_layer.group_send(
             f"match_{match.matchID}",
@@ -389,7 +401,10 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
 
     async def delayed_match_start(self, match):
         await asyncio.sleep(5)
-        await self.start_match(match)
+        if match.matchID in self.active_matches:
+            await self.start_match(match)
+        else:
+            logger.info(f"[{self.__class__.__name__}] Match {match.matchID} was deleted before starting")
 
     async def match_ready(self, event):
         try:
@@ -625,27 +640,38 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
 
     @database_sync_to_async
     def start_match(self, match):
-        match.startedAt = timezone.now()
-        match.save()
+        match_state = self.active_matches[match.matchID]
+
         # Use async_to_sync to run the coroutine in a new event loop
-        async_to_sync(self._start_match_async)(match.matchID)
+        async_to_sync(self._start_match_async)(match.matchID, match_state)
         logger.info(f"[{self.__class__.__name__}] Match loop started for match: {match.matchID}")
 
-    async def _start_match_async(self, match_id):
+    async def _start_match_async(self, match_id, match_state):
         await self.channel_layer.group_send(
             f"match_{match_id}",
             {
                 "type": "match.begin",
-                "match_state": self.active_matches[match_id]
+                "match_state": match_state
             }
         )
-        asyncio.create_task(self.run_match_loop(match_id))
+        self._start_match_in_thread(match_id)
 
-    async def run_match_loop(self, match_id):
+    def _start_match_in_thread(self, match_id):
+        self.active_matches[match_id]['is_active'] = True
+        loop = asyncio.get_event_loop()
+        executor = ThreadPoolExecutor()
+        executor.submit(self.run_match_loop_sync, match_id, loop)
+
+    def stop_match(self, match_id):
+        # Set the is_active flag to False to stop the loop
+        if match_id in self.active_matches:
+            self.active_matches[match_id]['is_active'] = False
+
+    def run_match_loop_sync(self, match_id, loop):
         TERRAIN_WIDTH = 1200
         TERRAIN_HEIGHT = 750
         PADDLE_WIDTH = 10
-        PADDLE_HEIGHT = 60 # Paddle height is actually 120 but we're using half of it
+        PADDLE_HEIGHT = 60
         BALL_RADIUS = 25 / 2
         BALL_SPEED = 0.6
         BALL_MAX_SPEED = 19
@@ -657,7 +683,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         logger.info(f"[{self.__class__.__name__}] Starting match loop for match: {match_id}")
         logger.info(f"[{self.__class__.__name__}] FAST_MATCH: {FAST_MATCH}, MAX_SCORE: {MAX_SCORE}")
 
-        while match_id in self.active_matches:
+        while match_id in self.active_matches and self.active_matches[match_id].get('is_active', False):
             match_state = self.active_matches[match_id]
 
             # Update ball position
@@ -667,30 +693,30 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             # Check for collisions with top and bottom walls
             if match_state['ball']['y'] - BALL_RADIUS <= 0 or match_state['ball']['y'] + BALL_RADIUS >= TERRAIN_HEIGHT:
                 match_state['ball']['dy'] *= -1
-                await self.send_ball_hit(match_state['ball'])
+                asyncio.run_coroutine_threadsafe(self.send_ball_hit(match_state['ball']), loop)
 
             # Check for collisions with paddles
-            if (match_state['ball']['x'] - BALL_RADIUS <= PADDLE_WIDTH and  # Left side of ball hits Player A's paddle
-                match_state['ball']['y'] - BALL_RADIUS <= match_state['playerA']['paddle_y'] + PADDLE_HEIGHT and  # Ball's bottom is above paddle's bottom
-                match_state['ball']['y'] + BALL_RADIUS >= match_state['playerA']['paddle_y'] - PADDLE_HEIGHT):  # Ball's top is below paddle's top
+            if (match_state['ball']['x'] - BALL_RADIUS <= PADDLE_WIDTH and
+                match_state['ball']['y'] - BALL_RADIUS <= match_state['playerA']['paddle_y'] + PADDLE_HEIGHT and
+                match_state['ball']['y'] + BALL_RADIUS >= match_state['playerA']['paddle_y'] - PADDLE_HEIGHT):
                 match_state['ball']['dx'] *= -1
                 if abs(match_state['ball']['dx']) < BALL_MAX_SPEED:
                     match_state['ball']['dx'] *= 1.1
                 if abs(match_state['ball']['dy']) < BALL_MAX_SPEED:
                     match_state['ball']['dy'] *= 1.1
                 match_state['ball']['x'] = PADDLE_WIDTH + BALL_RADIUS
-                await self.send_paddle_hit(match_state['playerA'], match_state['ball'])
+                asyncio.run_coroutine_threadsafe(self.send_paddle_hit(match_state['playerA'], match_state['ball']), loop)
 
-            elif (match_state['ball']['x'] + BALL_RADIUS >= TERRAIN_WIDTH - PADDLE_WIDTH and  # Right side of ball hits Player B's paddle
-                match_state['ball']['y'] - BALL_RADIUS <= match_state['playerB']['paddle_y'] + PADDLE_HEIGHT and  # Ball's bottom is above paddle's bottom
-                match_state['ball']['y'] + BALL_RADIUS >= match_state['playerB']['paddle_y'] - PADDLE_HEIGHT):  # Ball's top is below paddle's top
+            elif (match_state['ball']['x'] + BALL_RADIUS >= TERRAIN_WIDTH - PADDLE_WIDTH and
+                match_state['ball']['y'] - BALL_RADIUS <= match_state['playerB']['paddle_y'] + PADDLE_HEIGHT and
+                match_state['ball']['y'] + BALL_RADIUS >= match_state['playerB']['paddle_y'] - PADDLE_HEIGHT):
                 match_state['ball']['dx'] *= -1
                 if abs(match_state['ball']['dx']) < BALL_MAX_SPEED:
                     match_state['ball']['dx'] *= 1.1
                 if abs(match_state['ball']['dy']) < BALL_MAX_SPEED:
                     match_state['ball']['dy'] *= 1.1
                 match_state['ball']['x'] = TERRAIN_WIDTH - PADDLE_WIDTH - BALL_RADIUS
-                await self.send_paddle_hit(match_state['playerB'], match_state['ball'])
+                asyncio.run_coroutine_threadsafe(self.send_paddle_hit(match_state['playerB'], match_state['ball']), loop)
 
             # Check for scoring
             if match_state['ball']['x'] <= 0:
@@ -698,23 +724,23 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                 match_state['rewards'][match_state['playerB']['id']]['xp'] += random.randint(3, 6)
                 match_state['rewards'][match_state['playerB']['id']]['money'] += random.randint(1, 3)
                 self.reset_ball(match_state)
-                await self.send_ball_scored(match_state['playerB'])
+                asyncio.run_coroutine_threadsafe(self.send_ball_scored(match_state['playerB']), loop)
             elif match_state['ball']['x'] + BALL_RADIUS >= TERRAIN_WIDTH:
                 match_state['scores'][match_state['playerA']['id']] += 1
                 match_state['rewards'][match_state['playerA']['id']]['xp'] += random.randint(3, 6)
                 match_state['rewards'][match_state['playerA']['id']]['money'] += random.randint(1, 3)
                 self.reset_ball(match_state)
-                await self.send_ball_scored(match_state['playerA'])
+                asyncio.run_coroutine_threadsafe(self.send_ball_scored(match_state['playerA']), loop)
 
             # Check if game has ended
             if match_state['scores'][match_state['playerA']['id']] >= MAX_SCORE or match_state['scores'][match_state['playerB']['id']] >= MAX_SCORE:
                 winner_id = match_state['playerA']['id'] if match_state['scores'][match_state['playerA']['id']] >= MAX_SCORE else match_state['playerB']['id']
-                await self.send_match_update()
-                await self.send_match_end(winner_id)
+                asyncio.run_coroutine_threadsafe(self.send_match_update(), loop)
+                asyncio.run_coroutine_threadsafe(self.send_match_end(winner_id), loop)
                 break
 
-            await self.send_match_update()
-            await asyncio.sleep(REFRESH_RATE)
+            asyncio.run_coroutine_threadsafe(self.send_match_update(), loop)
+            time.sleep(REFRESH_RATE)
 
     async def send_paddle_hit(self, player, ball):
         await self.channel_layer.group_send(
@@ -789,6 +815,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
 
             self.match.winnerID = winner_id
             self.match.finishedAt = timezone.now()
+            self.match.startedAt = timezone.datetime.fromisoformat(self.active_matches[match_id]['startedAt'])
             self.match.scores = self.active_matches[match_id]['scores']
             await self.save_match()
 
@@ -841,6 +868,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         await loop.run_in_executor(None, self.match.save)
 
     async def send_match_end(self, winner_id):
+        self.stop_match(self.match.matchID)
         try:
             end_match_data = await self.end_match(self.match.matchID, winner_id)
             await self.channel_layer.group_send(
