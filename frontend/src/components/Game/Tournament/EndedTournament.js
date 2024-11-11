@@ -13,12 +13,13 @@ import {
 	LeaveButtonContainer,
 } from '../styles/Tournament/EndedTournament.styled';
 import { useTournament } from '../../../context/TournamentContext';
-import Loader from '../../../styles/shared/Loader.styled';
 import TournamentStats from './TournamentStats';
 import Confetti from 'react-confetti';
+import { useAuth } from '../../../context/AuthContext';
 
 const EndedTournament = () => {
 	const navigate = useNavigate();
+	const { setUser } = useAuth();
 	const { endTournamentData, tournament } = useTournament();
 	const [matches, setMatches] = useState(null);
 	const [totalScores, setTotalScores] = useState(null);
@@ -27,7 +28,11 @@ const EndedTournament = () => {
 	useEffect(() => {
 		if (!endTournamentData) return;
 		setMatches(endTournamentData.matches.map(formatMatchData));
-	}, [endTournamentData]);
+		setUser(prev => ({
+			...prev,
+			tournamentID: null
+		}));
+	}, [endTournamentData, setUser]);
 
 	useEffect(() => {
 		if (!tournament || !matches) return;
@@ -51,11 +56,7 @@ const EndedTournament = () => {
 
 
 	if (!endTournamentData || !tournament || !matches || !totalScores) {
-		return (
-			<EndTournamentContainer $loading={true}>
-				<Loader/>
-			</EndTournamentContainer>
-		)
+		return <EndTournamentContainer $loading={true}/>;
 	}
 
 	const handleProfileClick = username => {

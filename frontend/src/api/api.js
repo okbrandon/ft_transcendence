@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import refreshToken from './token';
-import logger from './logger';
 
 export const isValidToken = () => {
 	return !isTokenExpired() || !isRefreshExpired();
@@ -14,14 +13,11 @@ export const isTokenExpired = () => {
 		const decodedToken = jwtDecode(token);
 
 		if (decodedToken.exp < Date.now() / 1000) {
-			logger('INFO: Token expired');
 			return true;
 		}
 	} else {
-		logger('INFO: No token found');
 		return true;
 	}
-	logger('INFO: Token is valid');
 	return false;
 };
 
@@ -32,14 +28,11 @@ export const isRefreshExpired = () => {
 		const decodedRefresh = jwtDecode(refresh);
 
 		if (decodedRefresh.exp < Date.now() / 1000) {
-			logger('INFO: Refresh expired');
 			return true;
 		}
 	} else {
-		logger('INFO: No refresh found');
 		return true;
 	}
-	logger('INFO: Refresh is valid');
 	return false;
 };
 
@@ -50,20 +43,23 @@ const API = axios.create({
 API.interceptors.request.use(
 	async (config) => {
 		try {
-			const token = localStorage.getItem('token');
+			let token = localStorage.getItem('token');
 			if (token && !isTokenExpired()) {
-				logger('interceptor: Token is valid');
 				config.headers.Authorization = `Bearer ${token}`;
 			} else {
-				logger('interceptor: Refreshing token');
-				const newToken = await refreshToken();
-				config.headers.Authorization = `Bearer ${newToken}`;
+				token = await refreshToken();
+				if (token) {
+					config.headers.Authorization = `Bearer ${token}`;
+				} else {
+					localStorage.clear();
+					window.location.href = '/signin';
+				}
 			}
 			return config;
 		} catch (error) {
 			localStorage.clear();
-			window.location.href = '/';
-			throw new Error(error);
+			window.location.href = '/signin';
+			return Promise.reject(error);
 		}
 	},
 	(error) => {

@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
-import logger from "../api/logger";
 import { formatUserData } from "../api/user";
+import refreshToken from "../api/token";
 import { useNotification } from "./NotificationContext";
 
 const WS_TOURNAMENT_URL = process.env.REACT_APP_ENV === 'production' ? '/ws/tournaments' : 'ws://localhost:8000/ws/tournaments';
@@ -11,23 +11,21 @@ export const TournamentContext = createContext({});
 
 const TournamentProvider = ({ children }) => {
 	const navigate = useNavigate();
-	const { user, setUser } = useAuth();
 	const { addNotification } = useNotification();
+	const { user, setUser } = useAuth();
 	const socketTournament = useRef(null);
 	const [tournament, setTournament] = useState(null);
 	const [endTournamentData, setEndTournamentData] = useState(null);
 	const [isStartDisabled, setIsStartDisabled] = useState(true);
 	const [resetMatch, setResetMatch] = useState(null);
 	const userIDRef = useRef(null);
-	const reconnectAttempts = useRef(0);
 	const heartbeatIntervalRef = useRef(null);
-	const maxReconnectAttempts = 5;
 
 	const sendMessage = useCallback((message) => {
 		if (socketTournament.current && socketTournament.current.readyState === WebSocket.OPEN) {
 			socketTournament.current.send(JSON.stringify(message));
 		} else {
-			logger('WebSocket for Tournaments is not open');
+			console.log('WebSocket for Tournaments is not open');
 		}
 	}, []);
 
@@ -108,18 +106,22 @@ const TournamentProvider = ({ children }) => {
 	}, [tournament]);
 
 	useEffect(() => {
-		const retryConnection = () => {
-			if (reconnectAttempts.current < maxReconnectAttempts) {
-				reconnectAttempts.current += 1;
-				console.log(`Attempting to reconnect... (Attempt ${reconnectAttempts.current})`);
-				connectWSTournament();
-			} else {
-				console.log('Max reconnection attempts reached.');
+		const connectWSTournament = async () => {
+			if (socketTournament.current && socketTournament.current.readyState === WebSocket.OPEN) {
+				socketTournament.current.close();
 			}
-		}
 
-		const connectWSTournament = () => {
+			let token = localStorage.getItem('token');
+			if (!token) {
+				token = await refreshToken();
+				if (!token) {
+					console.error('Unable to refresh the token. WebSocket connection aborted.');
+					return;
+				}
+			}
+
 			socketTournament.current = new WebSocket(WS_TOURNAMENT_URL);
+
 			socketTournament.current.onopen = () => {
 				console.log('WebSocket for Tournament connection opened');
 				identify();
@@ -163,7 +165,7 @@ const TournamentProvider = ({ children }) => {
 						navigate(`/tournaments/${data.d.tournamentID}/results`);
 						break;
 					default:
-						console.warn('TournamentContext.js: Unhandled event:', data.e);
+						console.log('TournamentContext.js: Unhandled event:', data.e);
 				}
 			};
 
@@ -171,10 +173,16 @@ const TournamentProvider = ({ children }) => {
 				console.error('WebSocket for Tournaments encountered an error:', error);
 			};
 
-			socketTournament.current.onclose = (event) => {
+			socketTournament.current.onclose = async event => {
 				if (event.code !== 1006) {
-					console.log('WebSocket for Tournaments closed');
-					retryConnection();
+					const newToken = await refreshToken();
+					if (newToken) {
+						connectWSTournament();
+						addNotification('info', 'Reconnecting to the server...');
+					} else {
+						console.log('WebSocket for Tournaments failed to refresh the token');
+						addNotification('error', 'Session expired. Please log again.');
+					}
 				}
 			};
 		};
@@ -188,11 +196,10 @@ const TournamentProvider = ({ children }) => {
 				console.log('WebSocket for Tournaments closed');
 			}
 		};
-	}, [identify, heartbeat, navigate, updateTournament]);
+	}, [identify, heartbeat, navigate, updateTournament, addNotification]);
 
 	return (
 		<TournamentContext.Provider value={{
-			sendMessage,
 			registerForTournament,
 			tournament,
 			isStartDisabled,

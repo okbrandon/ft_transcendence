@@ -1,9 +1,10 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import API from '../api/api';
 import { useLocation } from "react-router-dom";
-import logger from "../api/logger";
 import { getBlockedUsers, getFriends, getRequests } from "../scripts/relation";
 import { ChatProvider } from "./ChatContext";
+import refreshToken from "../api/token";
+import { useNotification } from "./NotificationContext";
 
 const WS_STATUS_URL =  process.env.REACT_APP_ENV === 'production' ? '/ws/status/?token=' : 'ws://localhost:8000/ws/status/?token='
 
@@ -13,6 +14,7 @@ export const RelationContext = createContext({
 
 const RelationProvider = ({ children }) => {
 	const location = useLocation();
+	const { addNotification } = useNotification();
 	const socketStatus = useRef(null);
 	const pathnameRef = useRef(location.pathname);
 	const [relations, setRelations] = useState([]);
@@ -51,11 +53,26 @@ const RelationProvider = ({ children }) => {
 	}, [isRefetch, userID]);
 
 	useEffect(() => {
-		const connectWSStatus = () => {
-			socketStatus.current = new WebSocket(WS_STATUS_URL + localStorage.getItem('token'));
+		const connectWSStatus = async () => {
+			if (socketStatus.current && socketStatus.current.readyState === WebSocket.OPEN) {
+				socketStatus.current.close();
+			}
+
+			let token = localStorage.getItem('token');
+			if (!token) {
+				token = await refreshToken();
+				if (!token) {
+					console.error('Unable to refresh the token. Websocket connection aborted.');
+					return;
+				}
+			}
+
+			socketStatus.current = new WebSocket(WS_STATUS_URL + token);
+
 			socketStatus.current.onopen = () => {
 				console.log('WebSocket for Status connection opened');
 			};
+
 			socketStatus.current.onmessage = event => {
 				const response = JSON.parse(event.data);
 				if (response.type === 'heartbeat') {
@@ -67,13 +84,19 @@ const RelationProvider = ({ children }) => {
 					setIsRefetch(true);
 				}
 			};
+
 			socketStatus.current.onerror = error => {
 				console.error('WebSocket for Status encountered an error:', error);
 			};
-			socketStatus.current.onclose = event => {
+
+			socketStatus.current.onclose = async event => {
 				if (event.code === 1006) {
-					console.log('WebSocket for Status encountered an error: Connection closed unexpectedly');
-					connectWSStatus();
+					const newToken = await refreshToken();
+					if (newToken) {
+						connectWSStatus();
+					} else {
+						console.log('Websocket for Status failed to refresh the token');
+					}
 				}
 			}
 		}
