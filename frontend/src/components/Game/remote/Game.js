@@ -4,7 +4,6 @@ import useWebSocket, { ReadyState } from "react-use-websocket";
 import GameProfiles from "../GameProfiles";
 import GameScene from "./GameScene";
 import { formatUserData } from "../../../api/user";
-import logger from "../../../api/logger";
 import { PageContainer } from "../styles/Game.styled";
 
 const Game = () => {
@@ -41,9 +40,9 @@ const Game = () => {
 	const handleReconnect = useCallback(() => {
 		if (reconnectAttempts.current < maxReconnectAttempts) {
 			reconnectAttempts.current += 1;
-			logger(`Attempting to reconnect... (Attempt ${reconnectAttempts.current})`);
+			console.log(`Attempting to reconnect... (Attempt ${reconnectAttempts.current})`);
 		} else {
-			logger('Max reconnection attempts reached. Redirecting to home.');
+			console.log('Max reconnection attempts reached. Redirecting to home.');
 			navigate('/');
 		}
 	}, [navigate]);

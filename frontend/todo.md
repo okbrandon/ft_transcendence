@@ -1,5 +1,4 @@
 # TODO
-- game: not using GameContext
 - tournaments:
  - when refreshing the page does the tournamentID changes ? -> breaks the tournament
  - tournament name < len

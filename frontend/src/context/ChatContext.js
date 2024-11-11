@@ -1,5 +1,4 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import logger from '../api/logger';
 import API from '../api/api';
 import { formatUserData } from '../api/user';
 import { useNotification } from './NotificationContext';
@@ -51,7 +50,7 @@ export const ChatProvider = ({ children }) => {
 		if (socketChat.current && socketChat.current.readyState === WebSocket.OPEN) {
 			socketChat.current.send(message);
 		} else {
-			logger('WebSocket for Chat is not open');
+			console.log('WebSocket for Chat is not open');
 		}
 	}, []);
 

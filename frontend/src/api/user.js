@@ -1,6 +1,5 @@
 import { getDate, getDuration } from '../scripts/match';
 import API from './api';
-import logger from './logger'
 
 export const formatUserData = user => {
 	if (user.displayName === null) {
@@ -17,7 +16,7 @@ export const formatUserData = user => {
 
 export const getUser = async () => {
 	try {
-		logger('Getting current user...');
+		console.log('Getting current user...');
 		const res = await API.get(`users/@me/profile`);
 		const user = formatUserData(res.data);
 		return user;
@@ -29,7 +28,7 @@ export const getUser = async () => {
 
 export const getUserById = async (id) => {
 	try {
-		logger('Getting user by username...');
+		console.log('Getting user by username...');
 		const res = await API.get(`users/${id}/profile`);
 
 		const user = formatUserData(res.data);

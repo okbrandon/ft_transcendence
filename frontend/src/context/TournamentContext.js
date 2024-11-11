@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
-import logger from "../api/logger";
 import { formatUserData } from "../api/user";
 import refreshToken from "../api/token";
 import { useNotification } from "./NotificationContext";
@@ -26,7 +25,7 @@ const TournamentProvider = ({ children }) => {
 		if (socketTournament.current && socketTournament.current.readyState === WebSocket.OPEN) {
 			socketTournament.current.send(JSON.stringify(message));
 		} else {
-			logger('WebSocket for Tournaments is not open');
+			console.log('WebSocket for Tournaments is not open');
 		}
 	}, []);
 
