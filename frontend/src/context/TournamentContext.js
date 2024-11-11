@@ -158,7 +158,7 @@ const TournamentProvider = ({ children }) => {
 						setIsStartDisabled(true);
 						setEndTournamentData({
 							...data.d,
-							winnerProfile: formatUserData(data.d.winnerProfile)
+							winner: formatUserData(data.d.winner)
 						});
 						navigate(`/tournaments/${data.d.tournamentID}/results`);
 						break;
