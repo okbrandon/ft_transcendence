@@ -27,7 +27,7 @@ import { useAuth } from "../../../context/AuthContext";
 
 const JoinTournament = () => {
 	const navigate = useNavigate();
-	const { user } = useAuth();
+	const { user, setUser } = useAuth();
 	const { addNotification } = useNotification();
 	const { tournament, updateTournament, isStartDisabled } = useTournament();
 	const { tournamentID } = useParams();
@@ -53,6 +53,10 @@ const JoinTournament = () => {
 	}, [tournamentID, addNotification, updateTournament]);
 
 	useEffect(() => {
+		if (tournament?.tournamentID) setUser(prev => ({ ...prev, tournamentID: tournament.tournamentID }));
+	}, [tournament?.tournamentID, setUser]);
+
+	useEffect(() => {
 		setActiveFriends(friends.filter(friend => !!friend.status.online));
 	}, [friends]);
 
@@ -60,7 +64,7 @@ const JoinTournament = () => {
 		try {
 			await API.post(`/tournaments/${tournamentID}/kick`, { user_id: userID });
 		} catch (error) {
-			console.error("Error kicking player:", error);
+			addNotification('error', error.response?.data?.error || 'Error kicking player');
 		}
 	};
 
@@ -68,13 +72,26 @@ const JoinTournament = () => {
 		setInvite(true);
 	};
 
-	const handleInviteFriends = async () => {
+	const handleInviteFriend = async (userID) => {
 		try {
-			const inviteeIDs = activeFriends.map(friend => friend.userID);
-			await API.put(`/tournaments/${tournamentID}`, { participants: inviteeIDs });
-			setInvite(false);
+			await API.put(`/tournaments/${tournamentID}/invite`, { participants: [userID] });
+			addNotification('success', 'Friend invited');
 		} catch (error) {
-			console.error("Error inviting friends:", error);
+			addNotification('error', error.response?.data?.error || 'Error inviting friend');
+		}
+	};
+
+	const handleLeave = async () => {
+		try {
+			const response = await API.delete(`/tournaments/@me`);
+			console.log('JoinTournament.js: handleLeave', response.data);
+			setUser(prev => ({
+				...prev,
+				tournamentID: null,
+			}));
+			navigate('/tournaments');
+		} catch (error) {
+			addNotification('error', error.response?.data?.error || 'Error leaving tournament');
 		}
 	};
 
@@ -82,7 +99,7 @@ const JoinTournament = () => {
 		try {
 			await API.post(`/tournaments/${tournamentID}/start`);
 		} catch (error) {
-			console.error("Error starting tournament:", error);
+			addNotification('error', error.response?.data?.error || 'Error starting tournament');
 		}
 	};
 
@@ -98,8 +115,11 @@ const JoinTournament = () => {
 					{activeFriends.length ? (
 						activeFriends.map((friend) => (
 							<FriendItem key={friend.userID}>
-								<FriendProfilePicture src={friend.avatarID} alt={`${friend.username}'s avatar`} />
-								{friend.displayName || friend.username}
+								<div className="friend-info">
+									<FriendProfilePicture src={friend.avatarID} alt={`${friend.username}'s avatar`} />
+									{friend.displayName}
+								</div>
+								<PongButton type="button" $width="150px" onClick={() => handleInviteFriend(friend.userID)}>Invite</PongButton>
 							</FriendItem>
 						))
 					) : (
@@ -109,9 +129,6 @@ const JoinTournament = () => {
 				<ButtonContainer>
 					<PongButton type="button" $width="150px" onClick={() => setInvite(false)}>
 						Cancel
-					</PongButton>
-					<PongButton type="button" $width="150px" onClick={handleInviteFriends}>
-						Invite
 					</PongButton>
 				</ButtonContainer>
 			</ModalContainer>
@@ -157,7 +174,7 @@ const JoinTournament = () => {
 						</WaitingMessage>
 					)}
 					<ButtonContainer $shouldMargin={!isStartDisabled}>
-						<PongButton type="button" $width="150px" onClick={() => navigate(-1)}>Back</PongButton>
+						<PongButton type="button" $width="150px" onClick={handleLeave}>Back</PongButton>
 						{user.userID === tournament.owner.userID && (
 							<>
 								<PongButton type="button" $width="150px" onClick={handleInvite}>Invite</PongButton>

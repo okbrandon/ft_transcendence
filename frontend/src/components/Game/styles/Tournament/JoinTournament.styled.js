@@ -58,6 +58,7 @@ export const PlayerListContainer = styled.div`
 		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 		padding-bottom: 1rem;
 		color: rgba(255, 255, 255, 0.8);
+		z-index: 0;
 	}
 `;
 
@@ -170,31 +171,40 @@ export const ModalContainer = styled.div`
 	justify-content: center;
 	align-items: center;
 	gap: 20px;
+
+	& > h2 {
+		width: 100%;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+		padding-bottom: 1rem;
+	}
 `;
 
 export const ActiveFriendContainer = styled.div`
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
 	align-items: center;
 	width: 100%;
 	height: 300px;
+	padding: 1rem;
 	overflow-y: auto;
 	scroll-behavior: smooth;
 `;
 
 export const FriendItem = styled.div`
 	display: flex;
-	justify-content: center;
+	justify-content: space-between;
 	align-items: center;
 	border-radius: 12px;
-	padding: 1rem;
+	padding: 1rem 2rem;
 	margin-bottom: 1rem;
-	font-size: 1.6rem;
 	font-family: 'Inter', sans-serif;
 	color: #fff;
 	background: linear-gradient(145deg, #2a2a2a, #383838);
-	width: 80%;
+	width: 100%;
+
+	& > .friend-info {
+		font-size: 1.2rem;
+	}
 `;
 
 export const FriendProfilePicture = styled.img`

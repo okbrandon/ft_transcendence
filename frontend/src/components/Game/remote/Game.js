@@ -170,6 +170,7 @@ const Game = () => {
 				gameStarted={gameStarted}
 				gameOver={gameOver}
 				endGameData={endGameData}
+				isTournament={false}
 			/>
 		</PageContainer>
 	)

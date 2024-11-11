@@ -13,7 +13,10 @@ const AuthProvider = ({ children }) => {
 		if (isLoggedIn) {
 			getUser()
 				.then(user => {
-					setUser(user);
+					setUser({
+						...user,
+						tournamentID: null,
+					});
 					localStorage.setItem('userID', user.userID);
 				})
 				.catch(err => {

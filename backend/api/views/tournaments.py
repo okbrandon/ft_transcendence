@@ -305,7 +305,7 @@ class TournamentInviteResponse(APIView):
                 f"tournament_{tournamentID}",
                 {
                     "type": "tournament_join",
-                    "user": get_safe_profile(request.user, me=False)
+                    "user": get_safe_profile(UserSerializer(request.user).data, me=False)
                 }
             )
             message = "Invite accepted and joined tournament successfully"

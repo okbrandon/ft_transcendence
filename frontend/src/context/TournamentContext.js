@@ -1,7 +1,9 @@
 import React, { createContext, useContext, useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthContext";
 import logger from "../api/logger";
 import { formatUserData } from "../api/user";
+import { useNotification } from "./NotificationContext";
 
 const WS_TOURNAMENT_URL = process.env.REACT_APP_ENV === 'production' ? '/ws/tournaments' : 'ws://localhost:8000/ws/tournaments';
 
@@ -9,11 +11,14 @@ export const TournamentContext = createContext({});
 
 const TournamentProvider = ({ children }) => {
 	const navigate = useNavigate();
+	const { user, setUser } = useAuth();
+	const { addNotification } = useNotification();
 	const socketTournament = useRef(null);
 	const [tournament, setTournament] = useState(null);
 	const [endTournamentData, setEndTournamentData] = useState(null);
 	const [isStartDisabled, setIsStartDisabled] = useState(true);
 	const [resetMatch, setResetMatch] = useState(null);
+	const userIDRef = useRef(null);
 	const reconnectAttempts = useRef(0);
 	const heartbeatIntervalRef = useRef(null);
 	const maxReconnectAttempts = 5;
@@ -38,11 +43,15 @@ const TournamentProvider = ({ children }) => {
 	}, [sendMessage]);
 
 	const registerForTournament = useCallback((tournamentID) => {
+		setUser(prev => ({
+			...prev,
+			tournamentID,
+		}));
 		sendMessage({
 			e: 'REGISTER_TOURNAMENT',
 			d: { tournamentID }
 		});
-	}, [sendMessage]);
+	}, [sendMessage, setUser]);
 
 	const updateTournament = useCallback((data, isJoin = undefined) => {
 		if (isJoin) {
@@ -60,18 +69,25 @@ const TournamentProvider = ({ children }) => {
 				};
 			});
 		} else if (isJoin === false) {
-			setTournament(prevTournament => {
-				if (!prevTournament || !data?.user?.userID) {
-					return prevTournament;
-				}
-				if (data.user.userID === prevTournament.owner?.userID) {
-					navigate(-1);
-				}
-				return {
-					...prevTournament,
-					participants: prevTournament.participants.filter(p => p.userID !== data.user.userID)
-				}
-			});
+			if (data?.message) {
+				setUser(prev => ({
+					...prev,
+					tournamentID: null,
+				}));
+				setTournament(null);
+				navigate('/tournaments');
+			} else {
+				setTournament(prevTournament => {
+					if (!prevTournament || !data?.user?.userID) {
+						return prevTournament;
+					}
+
+					return {
+						...prevTournament,
+						participants: prevTournament.participants.filter(p => p.userID !== data.user.userID)
+					}
+				});
+			}
 		} else {
 			setTournament({
 				...data,
@@ -80,7 +96,11 @@ const TournamentProvider = ({ children }) => {
 		}
 		console.log('TournamentContext.js: updateTournament', data);
 		console.log('TournamentContext.js: isJoin', isJoin);
-	}, [navigate]);
+	}, [navigate, setUser]);
+
+	useEffect(() => {
+		userIDRef.current = user?.userID || null;
+	}, [user?.userID])
 
 	useEffect(() => {
 		if (!tournament) return;
@@ -91,18 +111,17 @@ const TournamentProvider = ({ children }) => {
 		const retryConnection = () => {
 			if (reconnectAttempts.current < maxReconnectAttempts) {
 				reconnectAttempts.current += 1;
-				logger(`Attempting to reconnect... (Attempt ${reconnectAttempts.current})`);
-				setTimeout(connectWSTournament, 5000 * reconnectAttempts.current);
+				console.log(`Attempting to reconnect... (Attempt ${reconnectAttempts.current})`);
+				connectWSTournament();
 			} else {
-				logger('Max reconnection attempts reached.');
+				console.log('Max reconnection attempts reached.');
 			}
 		}
 
 		const connectWSTournament = () => {
 			socketTournament.current = new WebSocket(WS_TOURNAMENT_URL);
 			socketTournament.current.onopen = () => {
-				logger('WebSocket for Chat connection opened');
-				reconnectAttempts.current = 0;
+				console.log('WebSocket for Tournament connection opened');
 				identify();
 			};
 
@@ -139,7 +158,7 @@ const TournamentProvider = ({ children }) => {
 						setIsStartDisabled(true);
 						setEndTournamentData({
 							...data.d,
-							winner: formatUserData(data.d.winner)
+							winnerProfile: formatUserData(data.d.winnerProfile)
 						});
 						navigate(`/tournaments/${data.d.tournamentID}/results`);
 						break;
@@ -150,12 +169,13 @@ const TournamentProvider = ({ children }) => {
 
 			socketTournament.current.onerror = (error) => {
 				console.error('WebSocket for Tournaments encountered an error:', error);
-				retryConnection();
 			};
 
-			socketTournament.current.onclose = () => {
-				logger('WebSocket for Tournaments closed');
-				retryConnection();
+			socketTournament.current.onclose = (event) => {
+				if (event.code !== 1006) {
+					console.log('WebSocket for Tournaments closed');
+					retryConnection();
+				}
 			};
 		};
 
@@ -163,7 +183,10 @@ const TournamentProvider = ({ children }) => {
 
 		return () => {
 			if (heartbeatIntervalRef.current) clearInterval(heartbeatIntervalRef.current);
-			if (socketTournament.current) socketTournament.current.close();
+			if (socketTournament.current && socketTournament.current.readyState === WebSocket.OPEN) {
+				socketTournament.current.close();
+				console.log('WebSocket for Tournaments closed');
+			}
 		};
 	}, [identify, heartbeat, navigate, updateTournament]);
 

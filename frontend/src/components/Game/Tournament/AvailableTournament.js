@@ -61,7 +61,7 @@ const AvailableTournaments = ({ setOptions }) => {
 		<AvailableTournamentsSection>
 			<Title>Available Tournaments</Title>
 			<SearchContainer>
-				<BackButton onClick={() => navigate(-1)}><i className="bi bi-arrow-left"/></BackButton>
+				<BackButton onClick={() => setOptions('')}><i className="bi bi-arrow-left"/></BackButton>
 				<SearchBar
 					id="search-tournament"
 					type="text"

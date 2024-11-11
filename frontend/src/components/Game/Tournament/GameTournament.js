@@ -159,7 +159,10 @@ const GameTournament = () => {
 			'BALL_SCORED': () => setBorderScore(data.d.player),
 			'MATCH_END': () => {
 				setGameOver(true);
-				setEndGameData(data.d);
+				setEndGameData({
+					...data.d,
+					winnerProfile: data.d.winnerProfile ? formatUserData(data.d.winnerProfile) : null,
+				});
 			},
 			'HEARTBEAT_ACK': () => {},
 			'BALL_HIT': () => {
@@ -174,10 +177,6 @@ const GameTournament = () => {
 				playerSide: data.d.side,
 				opponent: data.d.opponent ? formatUserData(data.d.opponent) : null
 			})),
-			'PLAYER_JOIN': () => {
-				if (data.d.userID !== playerId.current)
-					setGameState(prevState => ({ ...prevState, opponent: formatUserData(data.d) }));
-			},
 			'PADDLE_HIT': () => {
 				setHitPos(data.d.ball);
 				const hit1 = new Audio('/sounds/pong-hit1.mp3');
@@ -221,6 +220,7 @@ const GameTournament = () => {
 				gameOver={gameOver}
 				endGameData={endGameData}
 				isSpectator={isSpectator}
+				isTournament={true}
 			/>
 		</PageContainer>
 	);

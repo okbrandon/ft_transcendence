@@ -8,10 +8,13 @@ import { useAuth } from '../../context/AuthContext';
 import RelationProvider from '../../context/RelationContext';
 import ConnectedNavBar from '../Navigation/ConnectedNavigation';
 import TournamentProvider from '../../context/TournamentContext';
+import API from '../../api/api';
+import { useNotification } from '../../context/NotificationContext';
 
 const Root = () => {
 	const location = useLocation();
-	const { isLoggedIn } = useAuth();
+	const { user, isLoggedIn, setUser } = useAuth();
+	const { addNotification } = useNotification();
 	const [showPersistentUI, setShowPersistentUI] = useState(true);
 	const [hasInteracted, setHasInteracted] = useState(false);
 	const [audio] = useState(new Audio('/sounds/pong-theme.mp3'));
@@ -34,6 +37,27 @@ const Root = () => {
 			document.body.removeEventListener('click', activateMusic);
 		}
 	}, [location, audio, activateMusic]);
+
+	useEffect(() => {
+		if (!user?.tournamentID) return;
+
+		const leaveTournament = async () => {
+			try {
+				await API.delete(`/tournaments/@me`);
+				setUser(prev => ({
+					...prev,
+					tournamentID: null,
+				}))
+				addNotification('info', "Due to you leaving, you've been removed from the tournament");
+			} catch (error) {
+				addNotification('error', error?.response?.data?.error || 'Error leaving tournament');
+			}
+		};
+		if (!location.pathname.includes(`/tournaments/${user.tournamentID}`)) {
+			leaveTournament();
+			console.log('index.js: leaving tournament');
+		}
+	}, [location, user?.tournamentID, addNotification, setUser]);
 
 	useEffect(() => {
 		if (hasInteracted && showPersistentUI && isLoggedIn) {

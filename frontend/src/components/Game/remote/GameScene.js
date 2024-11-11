@@ -6,7 +6,7 @@ import { getSkin } from "../../../api/user";
 import { lerp } from "../../../scripts/math";
 import Rewards from "./Rewards";
 
-const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderScore, sendMessage, activateTimer, setActivateTimer, gameStarted, gameOver, endGameData, isSpectator }) => {
+const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderScore, sendMessage, activateTimer, setActivateTimer, gameStarted, gameOver, endGameData, isSpectator, isTournament }) => {
 	const navigate = useNavigate();
 
 	const [borderColor, setBorderColor] = useState(null);
@@ -254,7 +254,7 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 				<Score>{scoreB}</Score>
 			</ScoresContainer>
 				{gameOver ? (
-					<Rewards endGameData={endGameData} isSpectator={isSpectator} />
+					<Rewards endGameData={endGameData} isSpectator={isSpectator} isTournament={isTournament}/>
 				) : (
 					<>
 						{activateTimer && (

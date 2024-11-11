@@ -191,7 +191,7 @@ export const RewardsContainer = styled.div`
 		grid-template-columns: 180px auto;
 		font-family: 'Poppins', sans-serif;
 		font-size: 1.5rem;
-		color: #fff;
+		color: rgba(255, 255, 255, 0.8);
 		align-items: center;
 
 		.label {
