@@ -5,10 +5,13 @@ import GameProfiles from "../GameProfiles";
 import GameScene from "./GameScene";
 import { formatUserData } from "../../../api/user";
 import { PageContainer } from "../styles/Game.styled";
+import { useAuth } from "../../../context/AuthContext";
 
 const Game = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
+	const { hasInteracted } = useAuth();
+	const hasInteractedRef = useRef(hasInteracted);
 	const [gameState, setGameState] = useState({
 		matchState: null,
 		player: null,
@@ -131,15 +134,19 @@ const Game = () => {
 					break;
 				case 'PADDLE_HIT':
 					setHitPos(data.d.ball);
-					const hit1 = new Audio('/sounds/pong-hit1.mp3');
-					hit1.volume = 0.2;
-					hit1.play();
+					if (hasInteractedRef.current) {
+						const hit1 = new Audio('/sounds/pong-hit1.mp3');
+						hit1.volume = 0.2;
+						hit1.play();
+					}
 					break;
 				case 'BALL_HIT':
 					setHitPos(data.d.ball);
-					const hit2 = new Audio('/sounds/pong-hit2.mp3');
-					hit2.volume = 0.2;
-					hit2.play();
+					if (hasInteractedRef.current) {
+						const hit2 = new Audio('/sounds/pong-hit2.mp3');
+						hit2.volume = 0.2;
+						hit2.play();
+					}
 					break;
 				case 'PADDLE_RATE_LIMIT': // ignoring
 					break;
@@ -148,6 +155,10 @@ const Game = () => {
 			}
 		}
 	}, [lastMessage, gameState.player?.userID, handleHeartbeatAck, navigate]);
+
+	useEffect(() => {
+		hasInteractedRef.current = hasInteracted;
+	}, [hasInteracted]);
 
 	return (
 		<PageContainer>
@@ -170,6 +181,7 @@ const Game = () => {
 				gameOver={gameOver}
 				endGameData={endGameData}
 				isTournament={false}
+				hasInteracted={hasInteractedRef.current}
 			/>
 		</PageContainer>
 	)

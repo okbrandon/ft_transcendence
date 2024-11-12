@@ -8,6 +8,7 @@ const AuthProvider = ({ children }) => {
 	const [isLoggedIn, setIsLoggedIn] = useState(() => isValidToken());
 	const [user, setUser] = useState(null);
 	const [loading, setLoading] = useState(true);
+	const [hasInteracted, setHasInteracted] = useState(false);
 
 	useEffect(() => {
 		if (isLoggedIn) {
@@ -37,6 +38,8 @@ const AuthProvider = ({ children }) => {
 			user,
 			setUser,
 			loading,
+			hasInteracted,
+			setHasInteracted
 		}}>
 			{ children }
 		</AuthContext.Provider>

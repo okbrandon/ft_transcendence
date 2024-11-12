@@ -16,11 +16,12 @@ import { useTournament } from '../../../context/TournamentContext';
 import TournamentStats from './TournamentStats';
 import Confetti from 'react-confetti';
 import { useAuth } from '../../../context/AuthContext';
+import Loader from '../../../styles/shared/Loader.styled';
 
 const EndedTournament = () => {
 	const navigate = useNavigate();
 	const { setUser } = useAuth();
-	const { endTournamentData, tournament } = useTournament();
+	const { endTournamentData, tournament, setTournament } = useTournament();
 	const [matches, setMatches] = useState(null);
 	const [totalScores, setTotalScores] = useState(null);
 	const [isHovered, setIsHovered] = useState(false);
@@ -54,14 +55,26 @@ const EndedTournament = () => {
 		}
 	}, [tournament, matches]);
 
-
 	if (!endTournamentData || !tournament || !matches || !totalScores) {
-		return <EndTournamentContainer $loading={true}/>;
+		return (
+			<EndTournamentContainer $loading={true}>
+				<Loader/>
+			</EndTournamentContainer>
+		);
 	}
 
 	const handleProfileClick = username => {
 		window.scrollTo(0, 0);
 		navigate(`/profile/${username}`);
+	};
+
+	const handleLeave = () => {
+		setUser(prev => ({
+			...prev,
+			tournamentID: null
+		}));
+		setTournament(null);
+		navigate('/playmenu');
 	};
 
 	const renderMatch = ({ playerA, playerB, duration }, index) => (
@@ -104,7 +117,7 @@ const EndedTournament = () => {
 					onMouseEnter={() => setIsHovered(true)}
 					onMouseLeave={() => setIsHovered(false)}
 				>
-					<i className={`bi bi-door-${isHovered ? 'open' : 'closed'}-fill`} onClick={() => navigate('/playmenu')}/>
+					<i className={`bi bi-door-${isHovered ? 'open' : 'closed'}-fill`} onClick={handleLeave}/>
 				</LeaveButtonContainer>
 				<TournamentHeader>
 					<h1>Overview</h1>
