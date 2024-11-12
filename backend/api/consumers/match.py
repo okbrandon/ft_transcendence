@@ -61,7 +61,10 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
 
         if event_type == 'HEARTBEAT':
             self.last_heartbeat = time.time()
-            await self.send_json({"e": "HEARTBEAT_ACK"})
+            try:
+                await self.send_json({"e": "HEARTBEAT_ACK"})
+            except Exception as _:
+                pass
         elif event_type == 'IDENTIFY':
             await self.handle_identify(data)
         elif event_type == 'MATCHMAKE_REQUEST':
@@ -150,8 +153,12 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
 
     async def handle_matchmake_request(self, data):
         match_type = data.get('match_type')
-        logger.info(f"[{self.__class__.__name__}] Matchmaking request received for type: {match_type}")
         match = await self.find_or_create_match(match_type)
+
+        logger.info(f"[{self.__class__.__name__}] Matchmaking request received for type: {match_type}")
+        if not match:
+            return
+
         self.match = match
         await self.channel_layer.group_add(
             f"match_{match.matchID}",
@@ -559,7 +566,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
     @database_sync_to_async
     def find_or_create_match(self, match_type):
         if match_type == '1v1':
-            available_match = Match.objects.filter(playerB__isnull=True, flags=0).first()
+            available_match = Match.objects.filter(playerB__isnull=True, flags__exact=0).first()
             if available_match and available_match.playerA['id'] != self.user.userID:
                 available_match.playerB = {"id": self.user.userID, "platform": "web"}
                 available_match.save()
@@ -591,6 +598,21 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             except Exception as e:
                 logger.error(f"[{self.__class__.__name__}] Failed to connect to bot: {str(e)}")
             return new_match
+        elif match_type == 'challenge':
+            available_match = Match.objects.filter(finishedAt__isnull=True, whitelist__userID=self.user.userID, flags__exact=4).first()
+
+            if available_match:
+                logger.info(f"[{self.__class__.__name__}] Found existing challenge match: {MatchSerializer(available_match).data}")
+
+                if available_match.playerA is None and available_match.playerB is None:
+                    available_match.playerA = {"id": self.user.userID, "platform": "web"}
+                if available_match.playerB is None and available_match.playerA['id'] != self.user.userID:
+                    available_match.playerB = {"id": self.user.userID, "platform": "web"}
+                available_match.save()
+
+                return available_match
+            else:
+                return None
 
     @database_sync_to_async
     def get_opponent_info(self, match, user):

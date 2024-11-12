@@ -3,6 +3,7 @@ import API from '../api/api';
 import { formatUserData } from '../api/user';
 import { useNotification } from './NotificationContext';
 import { useRelation } from './RelationContext';
+import { useNavigate } from 'react-router-dom';
 import refreshToken from '../api/token';
 
 const WS_CHAT_URL = process.env.REACT_APP_ENV === 'production' ? '/ws/chat/?token=' : 'ws://localhost:8000/ws/chat/?token=';
@@ -11,6 +12,7 @@ const ChatContext = createContext();
 
 export const ChatProvider = ({ children }) => {
 	const socketChat = useRef(null);
+	const navigate = useNavigate();
 	const { addNotification } = useNotification();
 	const { isRefetch, setIsRefetch } = useRelation();
 	const [conversations, setConversations] = useState([]);
@@ -179,6 +181,19 @@ export const ChatProvider = ({ children }) => {
 					} else if (userFrom.status === 'accepted') {
 						addNotification('info', `${userTo.displayName} accepted your friend request.`);
 					};
+				} else if (response.type === 'challenge_update') {
+					const formattedData = {
+						...response,
+						inviter: formatUserData(response.invite.inviter),
+						invitee: formatUserData(response.invite.invitee),
+					}
+
+					if (formattedData.invite.status === 'DECLINED') {
+						addNotification('info', `${formattedData.invite.invitee.displayName} denied your challenge.`);
+					} else if (formattedData.invite.status === 'ACCEPTED') {
+						addNotification('info', `${formattedData.invite.invitee.displayName} accepted your challenge.`);
+						navigate('/game-challenge');
+					}
 				}
 			};
 

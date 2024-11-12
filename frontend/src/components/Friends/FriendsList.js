@@ -76,6 +76,18 @@ const FriendsList = ({ friends }) => {
 			});
 	};
 
+	const handleChallenge = friend => {
+		if (loading) return;
+
+		API.post(`users/${friend.userID}/challenge`)
+			.then(() => {
+				addNotification("success", "Challenge sent");
+			})
+			.catch(err => {
+				addNotification("error", `${err?.response?.data?.error || "An error occurred."}`);
+			})
+	};
+
 	return (
 		<ListContainer>
 			{friends.length ? (
@@ -90,7 +102,7 @@ const FriendsList = ({ friends }) => {
 							</ProfileInfoContainer>
 						</ProfileInfo>
 						<Actions>
-							<PongButton type="button">{t('friends.subSections.friendList.inviteButton')}</PongButton>
+							<PongButton type="button" onClick={() => handleChallenge(friend)}>{t('friends.subSections.friendList.inviteButton')}</PongButton>
 							<PongButton
 								type="button"
 								onClick={() => handleFriendDM(friend.username)}

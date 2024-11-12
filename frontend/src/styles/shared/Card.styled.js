@@ -70,6 +70,14 @@ const Card = styled.div`
 		align-items: center;
 		justify-content: center;
 		gap: 10px;
+
+		& > .button-container {
+			width: 100%;
+			display: flex;
+			justify-content: center;
+			gap: 10px;
+			margin: 10px 0;
+		}
 	}
 
 	@keyframes blob-bounce {
@@ -99,8 +107,8 @@ const Card = styled.div`
 		z-index: 1;
 		top: 50%;
 		left: 50%;
-		width: 150px;
-		height: 150px;
+		width: 200px;
+		height: 200px;
 		border-radius: 50%;
 		background-color: #6a0dad;
 		opacity: 1;

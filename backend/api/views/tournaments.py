@@ -117,7 +117,8 @@ class Tournaments(APIView):
             # Send a message to the invitee
             message = conversation.messages.create(messageID=generate_id("msg"), sender=inviter, content="I invite you to join my tournament")
             message.messageType = 1
-            message.invite = invite
+            message.tournamentInvite = invite
+            message.save()
             conversation.save()
 
             safe_profile = get_safe_profile(UserSerializer(inviter).data, me=False)

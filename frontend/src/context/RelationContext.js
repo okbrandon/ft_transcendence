@@ -27,7 +27,7 @@ const RelationProvider = ({ children }) => {
 	const setActivity = useCallback(location => {
 		if (location === '/game-ai') {
 			return 'PLAYING_VS_AI';
-		} else if (location === '/game-classic') {
+		} else if (location === '/game-classic' || location === '/game-challenge') {
 			return 'PLAYING_MULTIPLAYER';
 		} else if (location === '/game-local') {
 			return 'PLAYING_LOCAL';

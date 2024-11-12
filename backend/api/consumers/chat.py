@@ -110,7 +110,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     conversation = await sync_to_async(Conversation.objects.get)(conversationID=conversation_id)
                     participants = await sync_to_async(list)(conversation.participants.all())
                     ai_user = next((user for user in participants if user.userID == "user_ai"), None)
-                    
+
                     if ai_user:
                         ai_response = await self.get_ai_response(content, conversation_id)
                         ai_message = await self.add_message_to_conversation(conversation_id, ai_user, ai_response)
@@ -170,6 +170,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "type": "friend_request",
                 "status": event["status"],
                 "data": event["data"]
+            }))
+        except Exception as _:
+            pass
+
+    async def challenge_update(self, event):
+        try:
+            await self.send(json.dumps({
+                "type": "challenge_update",
+                "invite": event["invite"]
             }))
         except Exception as _:
             pass

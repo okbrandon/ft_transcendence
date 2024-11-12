@@ -64,6 +64,7 @@ const Game = () => {
 	const retreiveGameMode = useCallback(() => {
 		if (location.pathname === '/game-ai') return 'ai';
 		if (location.pathname === '/game-classic') return '1v1';
+		if (location.pathname === '/game-challenge') return 'challenge';
 		return '';
 	}, [location.pathname]);
 

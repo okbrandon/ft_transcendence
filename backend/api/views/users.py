@@ -15,7 +15,8 @@ from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, Bl
 
 from django.contrib.auth.hashers import make_password
 from django.shortcuts import get_object_or_404
-from django.db import models
+from django.db import models, transaction
+from django.db.models import Count
 from django.http import Http404, HttpResponse
 from django.utils import timezone
 
@@ -23,8 +24,8 @@ from channels.layers import get_channel_layer
 
 from asgiref.sync import async_to_sync
 
-from ..models import User, Match, Relationship, UserSettings, Purchase, StoreItem
-from ..serializers import UserSerializer, UserSettingsSerializer, MatchSerializer, RelationshipSerializer
+from ..models import User, Match, Relationship, UserSettings, Purchase, StoreItem, ChallengeInvite, Conversation
+from ..serializers import UserSerializer, UserSettingsSerializer, MatchSerializer, RelationshipSerializer, MessageSerializer, ChallengeInviteSerializer
 from ..util import send_otp_via_sms, send_data_package_ready_email, get_safe_profile, generate_id
 from ..validators import *
 
@@ -573,3 +574,179 @@ class Stats():
             period = request.query_params.get('period', None)
             stats = Stats.get_user_stats(user, period)
             return Response(stats, status=status.HTTP_200_OK)
+
+class UserChallenge(APIView):
+
+    def get_object(self, identifier):
+        try:
+            return User.objects.get(models.Q(userID=identifier) | models.Q(username=identifier))
+        except User.DoesNotExist:
+            return None
+
+    def post(self, request, identifier, *args, **kwargs):
+        inviter = request.user
+        invitee = self.get_object(identifier)
+
+        if not invitee:
+            return Response({"error": "User does not exist"},
+                            status=status.HTTP_404_NOT_FOUND)
+        if invitee.userID == inviter.userID:
+            return Response({"error": "You cannot challenge yourself"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        blocked = Relationship.objects.filter(
+            models.Q(userA=invitee.userID, userB=inviter.userID, status=2) |
+            models.Q(userA=inviter.userID, userB=invitee.userID, status=2)
+        ).exists()
+
+        if blocked:
+            return Response({"error": "Relationship does not allow this challenge"},
+                            status=status.HTTP_403_FORBIDDEN)
+
+        channel_layer = get_channel_layer()
+        invite = ChallengeInvite.objects.create(
+            inviteID=generate_id("cid"),
+            inviter=inviter,
+            invitee=invitee,
+            status='PENDING'
+        )
+        invite.save()
+
+        # Create or get conversation for the invite
+        existing_conversation = Conversation.objects.filter(
+            participants__userID__in=[inviter.userID, invitee.userID],
+            conversationType='private_message'
+        ).annotate(participant_count=Count('participants')).filter(participant_count=2).exists()
+
+        if not existing_conversation:
+            new_conversation = Conversation.objects.create(conversationID=generate_id("conv"), conversationType='private_message')
+            new_conversation.receipientID = inviter.userID
+            new_conversation.participants.add(inviter, invitee)
+            new_conversation.save()
+            conversation = new_conversation
+        else:
+            conversation = Conversation.objects.filter(
+                participants__userID__in=[inviter.userID, invitee.userID],
+                conversationType='private_message'
+            ).annotate(participant_count=Count('participants')).filter(participant_count=2).first()
+
+        # Send a message to the invitee
+        message = conversation.messages.create(messageID=generate_id("msg"), sender=inviter, content="I've challenged you to a match!")
+        message.messageType = 3
+        message.challengeInvite = invite
+        message.save()
+        conversation.save()
+
+        safe_profile = get_safe_profile(UserSerializer(inviter).data, me=False)
+
+        # Send message to channel layer
+        async_to_sync(channel_layer.group_send)(
+            f"chat_{invitee.userID}",
+            {
+                "type": "conversation_update",
+                "conversationID": conversation.conversationID,
+                "sender": safe_profile,
+                "message": MessageSerializer(message).data
+            }
+        )
+
+        return Response({"status": "Challenge invite sent"}, status=status.HTTP_200_OK)
+
+class UserChallengeInviteResponse(APIView):
+
+    def get_object(self, identifier):
+        try:
+            return User.objects.get(models.Q(userID=identifier) | models.Q(username=identifier))
+        except User.DoesNotExist:
+            return None
+
+    @transaction.atomic
+    def post(self, request, identifier, inviteID, action):
+        if action not in ['accept', 'deny']:
+            return Response({"error": "Invalid action"}, status=status.HTTP_400_BAD_REQUEST)
+
+        invitee = request.user
+        inviter = self.get_object(identifier)
+        channel_layer = get_channel_layer()
+
+        if not inviter:
+            return Response({"error": "User does not exist"},
+                            status=status.HTTP_404_NOT_FOUND)
+
+        invite = ChallengeInvite.objects.filter(
+            inviteID=inviteID,
+        ).first()
+
+        # Check if the invitation is valid
+        if not invite:
+            return Response({"error": "Invite does not exist"},
+                            status=status.HTTP_404_NOT_FOUND)
+
+        if invite.status != 'PENDING':
+            return Response({"error": "Invite is not pending"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if the inviter is available to play
+        if inviter.status['online'] != True:
+            return Response({"error": "Inviter is not online"},
+                            status=status.HTTP_400_BAD_REQUEST)
+        if inviter.status['activity'] != 'HOME':
+            return Response({"error": "Inviter is not free to play"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        # Action processing
+        if action == 'accept':
+            invite.status = 'ACCEPTED'
+            invite.save()
+
+            new_match = Match.objects.create(
+                matchID=generate_id("match"),
+                # playerA={"id": inviter.userID, "platform": "web"},
+                winnerID=None,
+                scores={},
+                finishedAt=None,
+                flags=4
+            )
+            new_match.whitelist.add(inviter, invitee)
+            new_match.save()
+
+            # Avert the inviter that the challenge has been accepted
+            async_to_sync(channel_layer.group_send)(
+                f"chat_{inviter.userID}",
+                {
+                    "type": "challenge_update",
+                    "invite": ChallengeInviteSerializer(invite).data
+                }
+            )
+
+            message = "Invite accepted and joined the match successfully"
+        else:
+            invite.status = 'DECLINED'
+            invite.save()
+
+            # Avert the inviter that the challenge has been denied
+            async_to_sync(channel_layer.group_send)(
+                f"chat_{inviter.userID}",
+                {
+                    "type": "challenge_update",
+                    "invite": ChallengeInviteSerializer(invite).data
+                }
+            )
+
+            message = "Invite declined successfully"
+
+        # Updating the invitation message to type 0 (basic message)
+        conversation = Conversation.objects.filter(
+            participants__userID__in=[inviter.userID, invitee.userID],
+            conversationType='private_message'
+        ).annotate(participant_count=Count('participants')).filter(participant_count=2).first()
+
+        if conversation:
+            conv_message = conversation.messages.filter(challengeInvite__inviteID__exact=inviteID).first()
+
+            if conv_message:
+                conv_message.messageType = 0
+                conv_message.save()
+                conversation.save()
+
+        return Response({"status": message}, status=status.HTTP_200_OK)

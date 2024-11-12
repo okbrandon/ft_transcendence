@@ -81,6 +81,7 @@ const Router = createBrowserRouter(createRoutesFromElements(
 				<Route element={ <GameRoutes/> }>
 					<Route path="game-classic" element={ <Game/> }/>
 					<Route path="game-ai" element={ <Game/> }/>
+					<Route path="game-challenge" element={ <Game/> }/>
 					<Route path="playmenu" element={ <PlayMenu/> }/>
 					<Route path="game-local" element={ <GameLocal/> }/>
 				</Route>

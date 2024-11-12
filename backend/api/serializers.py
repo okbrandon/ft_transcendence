@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import User, Match, Message, Conversation, Token, Relationship, UserSettings, StoreItem, Purchase, VerificationCode, Tournament, TournamentInvite
+from .models import User, Match, Message, Conversation, Token, Relationship, UserSettings, StoreItem, Purchase, VerificationCode, Tournament, TournamentInvite, ChallengeInvite
 from .util import get_safe_profile
 
 class UserSerializer(serializers.ModelSerializer):
@@ -13,6 +13,8 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ["userID", "mfaToken", "oauthAccountID", "flags", "money"]
 
 class MatchSerializer(serializers.ModelSerializer):
+    whitelist = UserSerializer(many=True)
+
     class Meta:
         model = Match
         fields = ["matchID", "playerA", "playerB", "scores", "winnerID", "startedAt", "finishedAt", "flags", "whitelist"]
@@ -81,13 +83,22 @@ class TournamentInviteSerializer(serializers.ModelSerializer):
         model = TournamentInvite
         fields = ['inviteID', 'tournament', 'inviter', 'invitee', 'status', 'createdAt']
 
+class ChallengeInviteSerializer(serializers.ModelSerializer):
+    inviter = UserSerializer()
+    invitee = UserSerializer()
+
+    class Meta:
+        model = ChallengeInvite
+        fields = ['inviteID', 'inviter', 'invitee', 'status']
+
 class MessageSerializer(serializers.ModelSerializer):
     sender = UserSerializer()
-    invite = TournamentInviteSerializer()
+    tournamentInvite = TournamentInviteSerializer()
+    challengeInvite = ChallengeInviteSerializer()
 
     class Meta:
         model = Message
-        fields = ['messageID', 'content', 'sender', 'messageType', 'invite', 'createdAt']
+        fields = ['messageID', 'content', 'sender', 'messageType', 'tournamentInvite', 'challengeInvite', 'createdAt']
 
 class ConversationSerializer(serializers.ModelSerializer):
     participants = UserSerializer(many=True)

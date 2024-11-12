@@ -44,6 +44,8 @@ urlpatterns = [
     path('users/search', UserSearch.as_view()), # GET
     path('users/@me/stats', Stats.UserMe.as_view()), # GET
     path('users/<identifier>/stats', Stats.User.as_view()), # GET
+    path('users/<identifier>/challenge', UserChallenge.as_view()), # POST
+    path('users/<identifier>/challenge/<str:inviteID>/<str:action>', UserChallengeInviteResponse.as_view()), # POST
 
     path('store/items', StoreItemsList.as_view()), # GET
     path('users/@me/purchases', UserPurchasesList.as_view()), # GET

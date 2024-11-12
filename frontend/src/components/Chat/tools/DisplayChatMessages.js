@@ -39,6 +39,27 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 		}
 	}
 
+	const handleAcceptChallengeInvite = async (challengerID, inviteID) => {
+		try {
+			await API.post(`/users/${challengerID}/challenge/${inviteID}/accept`);
+			addNotification('success', 'Challenge invite accepted');
+			navigate('/game-challenge');
+		} catch (error) {
+			console.log(error);
+			addNotification('error', error?.response?.data?.error || 'Error accepting challenge invite');
+		}
+	}
+
+	const handleDenyChallengeInvite = async (challengerID, inviteID) => {
+		try {
+			await API.post(`/users/${challengerID}/challenge/${inviteID}/deny`);
+			addNotification('success', 'Challenge invite denied');
+		} catch (error) {
+			console.log(error);
+			addNotification('error', error?.response?.data?.error || 'Error denying challenge invite');
+		}
+	}
+
 	if (!realConvo || realConvo.messages.length === 0) {
 		return (
 			<NewConversationMessage>
@@ -47,6 +68,7 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 		);
 	} else {
 		let previousSenderID = null;
+		console.log(realConvo);
 
 		return (
 			<ChatBubbleContainer>
@@ -54,40 +76,33 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 					const isSameSender = message.sender.userID === previousSenderID;
 					previousSenderID = message.sender.userID;
 
-					if (message.messageType === 0) {
-						return (
-							<MessageWrapper key={index} $isHost={message.sender.userID === userID}>
-								{message.sender.userID === userID ? (
-									<BubbleDetails>
-										{!isSameSender && <MessageUsername $isHost={false}>You</MessageUsername>}
-										<HostBubble data-time={formatTimestamp(message.createdAt)} $isRounded={isSameSender}>
-											{message.content}
-										</HostBubble>
-									</BubbleDetails>
-								) : (
-									<BubbleDetails>
-										{!isSameSender && (
-											<MessageUsername $isHost={true}>
-												<Avatar src={message.sender.avatarID} alt={message.sender.username} />
-												{message.sender.username}
-											</MessageUsername>
-										)}
-										<SenderBubble data-time={formatTimestamp(message.createdAt)} $isRounded={isSameSender}>
-											{message.content}
-										</SenderBubble>
-									</BubbleDetails>
-								)}
-							</MessageWrapper>
-						);
-					} else {
+					if (message.messageType === 1) { // Tournament invite
 						return (
 							<MessageWrapper key={index} $isHost={false}>
 								<BubbleDetails>
 									<Card $width={'270px'} $height={'200px'}>
 										<div className='bg'>
 											<h3>Tournament</h3>
-											<p>I invite you to join <b>{message.invite.tournament.name}</b></p>
-											<button onClick={() => handleAcceptTournamentInvite(message.invite.tournament.tournamentID)}>Join</button>
+											<p>I invite you to join <b>{message.tournamentInvite.tournament.name}</b></p>
+											<button onClick={() => handleAcceptTournamentInvite(message.tournamentInvite.tournament.tournamentID)}>Join</button>
+										</div>
+										<div className='blob'/>
+									</Card>
+								</BubbleDetails>
+							</MessageWrapper>
+						)
+					} else if (message.messageType === 3) { // Challenge invite
+						return (
+							<MessageWrapper key={index} $isHost={false}>
+								<BubbleDetails>
+									<Card $width={'290px'} $height={'250px'}>
+										<div className='bg'>
+											<h3>Challenge</h3>
+											<p>I challenge you to play against <b>me</b></p>
+											<div className='button-container'>
+												<button onClick={() => handleAcceptChallengeInvite(message.sender.userID, message.challengeInvite.inviteID)}>Accept</button>
+												<button onClick={() => handleDenyChallengeInvite(message.sender.userID, message.challengeInvite.inviteID)}>Decline</button>
+											</div>
 										</div>
 										<div className='blob'/>
 									</Card>
@@ -95,6 +110,30 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 							</MessageWrapper>
 						)
 					}
+					return (
+						<MessageWrapper key={index} $isHost={message.sender.userID === userID}>
+							{message.sender.userID === userID ? (
+								<BubbleDetails>
+									{!isSameSender && <MessageUsername $isHost={false}>You</MessageUsername>}
+									<HostBubble data-time={formatTimestamp(message.createdAt)} $isRounded={isSameSender}>
+										{message.content}
+									</HostBubble>
+								</BubbleDetails>
+							) : (
+								<BubbleDetails>
+									{!isSameSender && (
+										<MessageUsername $isHost={true}>
+											<Avatar src={message.sender.avatarID} alt={message.sender.username} />
+											{message.sender.username}
+										</MessageUsername>
+									)}
+									<SenderBubble data-time={formatTimestamp(message.createdAt)} $isRounded={isSameSender}>
+										{message.content}
+									</SenderBubble>
+								</BubbleDetails>
+							)}
+						</MessageWrapper>
+					);
 				})}
 				<div ref={messagesEndRef} />
 			</ChatBubbleContainer>

@@ -93,12 +93,29 @@ export const DirectMessage = ({
 		setIsBlockModalOpen(false);
 	}
 
+	const handleInvite = () => {
+		if (!otherUser || !otherUser.userID) return;
+		if (otherUser.userID === userID) {
+			addNotification('error', 'You cannot invite yourself');
+			return;
+		}
+
+		API.post(`users/${otherUser.userID}/challenge`)
+			.then(() => {
+				addNotification("success", "Challenge sent");
+			})
+			.catch(err => {
+				addNotification("error", `${err?.response?.data?.error || "An error occurred."}`);
+			})
+	}
+
 	const handleDropdownAction = (action) => {
 		switch (action) {
 			case 'profile':
 				navigate(`/profile/${username}`);
 				break;
 			case 'invite':
+				handleInvite();
 				break;
 			case 'block':
 				setIsBlockModalOpen(true);
