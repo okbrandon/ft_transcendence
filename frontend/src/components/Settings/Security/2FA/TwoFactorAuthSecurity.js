@@ -67,37 +67,37 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setShowTwoFactorAuth }) => {
 	return (
 		<>
 			<Backdrop/>
-			<FormContainer onSubmit={handleSubmit}>
-				<h1>{t('auth.twoFactor.title')}</h1>
-				<p>{t('auth.twoFactor.subTitle')}</p>
+				<FormContainer onSubmit={handleSubmit}>
+					<h1>{t('auth.twoFactor.title')}</h1>
+					<p>{t('auth.twoFactor.subTitle')} caca</p>
 
-				<OTPInputComponent setAuthCode={setAuthCode} setDisableVerify={setDisableVerify}/>
+					<OTPInputComponent setAuthCode={setAuthCode} setDisableVerify={setDisableVerify}/>
 
-				{error && <ErrorMessage>{error}</ErrorMessage>}
+					{error && <ErrorMessage>{error}</ErrorMessage>}
 
-				<AvailablePlatformsContainer>
-					{availablePlatforms ? availablePlatforms.filter(platform => platform !== 'app').map(platform => (
-						<PlatformButton
-							key={platform}
-							type="button"
-							onClick={() => handlePlatform(platform)}
-						>
-							{platform === "email" && <i className="bi bi-envelope-fill"/>}
-							{platform === "sms" && <i className="bi bi-chat-left-text-fill"/>}
-						</PlatformButton>
-					)) : (
-						<p>{t('auth.twoFactor.noAvailablePlatform')}</p>
-					)}
-				</AvailablePlatformsContainer>
+					<AvailablePlatformsContainer>
+						{availablePlatforms ? availablePlatforms.filter(platform => platform !== 'app').map(platform => (
+							<PlatformButton
+								key={platform}
+								type="button"
+								onClick={() => handlePlatform(platform)}
+							>
+								{platform === "email" && <i className="bi bi-envelope-fill"/>}
+								{platform === "sms" && <i className="bi bi-chat-left-text-fill"/>}
+							</PlatformButton>
+						)) : (
+							<p>{t('auth.twoFactor.noAvailablePlatform')}</p>
+						)}
+					</AvailablePlatformsContainer>
 
-				<PongButton type="submit" disabled={disableVerify}>
-					{t('auth.twoFactor.verifyButton')}
-				</PongButton>
+					<PongButton type="submit" disabled={disableVerify}>
+						{t('auth.twoFactor.verifyButton')}
+					</PongButton>
 
-				<PongButton type="button" onClick={() => setShowTwoFactorAuth(false)}>
-					{t('auth.twoFactor.backButton')}
-				</PongButton>
-			</FormContainer>
+					<PongButton type="button" onClick={() => setShowTwoFactorAuth(false)}>
+						{t('auth.twoFactor.backButton')}
+					</PongButton>
+				</FormContainer>
 		</>
 	);
 };
