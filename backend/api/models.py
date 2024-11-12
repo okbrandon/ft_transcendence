@@ -127,6 +127,20 @@ class TournamentInvite(models.Model):
     def __str__(self):
         return f"Invite to {self.tournament.name} for {self.invitee.username}"
 
+class ChallengeInvite(models.Model):
+    inviteID = models.CharField(max_length=48, unique=True)
+    inviter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_challenge_invites')
+    invitee = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_challenge_invites')
+    status = models.CharField(max_length=20, choices=[
+        ('PENDING', 'Pending'),
+        ('ACCEPTED', 'Accepted'),
+        ('DECLINED', 'Declined')
+    ], default='PENDING')
+    createdAt = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Challenge invite from {self.inviter.username} to {self.invitee.username}"
+
 class VerificationCode(models.Model):
     userID = models.CharField(max_length=48)
     code = models.CharField(max_length=48)
