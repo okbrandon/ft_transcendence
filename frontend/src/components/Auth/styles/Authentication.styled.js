@@ -33,7 +33,6 @@ export const Outline = styled.div`
 		border-radius: 0;
 		transition: all 0.2s;
 		transform: scale(0.99);
-		border: 3px solid red;
 
 		&:hover {
 			border-radius: 20px;
