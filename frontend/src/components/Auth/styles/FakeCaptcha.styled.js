@@ -5,27 +5,41 @@ export const FakeCaptchaContainer = styled.div`
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	gap: 20px;
-	border-radius: 15px;
+	gap: 10px;
+	padding: 0 7em 3em 7em;
+	border-radius: 25px;
+	transition: 0.4s ease-in-out;
 	padding: 50px;
 	width: 600px;
-	margin-top: 80px;
 	font-family: 'Inter', sans-serif;
-	background: transparent;
+	background-color: #171717;
 	border: 1px solid rgba(255, 255, 255, 0.1);
 	box-shadow: 0 4px 15px rgba(164, 69, 178, 0.5), 0 0 10px rgba(59, 130, 246, 0.5);
+	position: relative;
 
 	& > h1 {
-		font-family: 'Orbitron', sans-serif;
 		font-size: 2.5rem;
 		margin-bottom: 20px;
-		text-shadow: 0px 4px 10px rgba(164, 69, 178, 0.7);
+		color: white;
 	}
 
 	& > p {
 		color: #ababab;
 		font-size: 13px;
 		z-index: 2;
+	}
+
+	& > i {
+		position: absolute;
+		top: 20px;
+		left: 25px;
+		color: white;
+		font-size: 1.5rem;
+
+		&:hover {
+			color: #ababab;
+			cursor: pointer;
+		}
 	}
 `;
 
