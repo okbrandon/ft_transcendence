@@ -12,12 +12,12 @@ import {
 import { useNotification } from '../../../context/NotificationContext.js';
 import API from '../../../api/api.js';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../../context/AuthContext.js';
 import Card from '../../../styles/shared/Card.styled.js';
+import { useTournament } from '../../../context/TournamentContext.js';
 
 const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) => {
 	const { addNotification } = useNotification();
-	const { setUser } = useAuth();
+	const { registerForTournament } = useTournament();
 	const navigate = useNavigate();
 
 	const formatTimestamp = (timestamp) => {
@@ -31,12 +31,8 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 	const handleAcceptTournamentInvite = async (tournamentID) => {
 		try {
 			await API.post(`/tournaments/${tournamentID}/invite/accept`);
-			addNotification('success', 'Tournament invite accepted');
-			setUser(prev => ({
-				...prev,
-				tournamentID,
-			}));
 			navigate(`/tournaments/${tournamentID}`);
+			registerForTournament(tournamentID);
 		} catch (error) {
 			console.log(error);
 			addNotification('error', error?.response?.data?.error || 'Error accepting tournament invite');

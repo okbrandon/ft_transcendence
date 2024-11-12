@@ -6,7 +6,7 @@ import { getSkin } from "../../../api/user";
 import { lerp } from "../../../scripts/math";
 import Rewards from "./Rewards";
 
-const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderScore, sendMessage, activateTimer, setActivateTimer, gameStarted, gameOver, endGameData, isSpectator, isTournament }) => {
+const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderScore, sendMessage, activateTimer, setActivateTimer, gameStarted, gameOver, endGameData, isSpectator, isTournament, hasInteracted }) => {
 	const navigate = useNavigate();
 
 	const [borderColor, setBorderColor] = useState(null);
@@ -152,18 +152,22 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 		const side = borderScore.pos === 'A' ? 'left' : 'right';
 		if (side === playerSide) {
 			setBorderColor('green')
-			const wonSound = new Audio('/sounds/pong-won.mp3');
-			wonSound.volume = 0.2;
-			wonSound.play();
+			if (hasInteracted) {
+				const wonSound = new Audio('/sounds/pong-won.mp3');
+				wonSound.volume = 0.2;
+				wonSound.play();
+			}
 		} else {
 			setBorderColor('red');
-			const lostSound = new Audio('/sounds/pong-lost.mp3');
-			lostSound.volume = 0.2;
-			lostSound.play();
+			if (hasInteracted) {
+				const lostSound = new Audio('/sounds/pong-lost.mp3');
+				lostSound.volume = 0.2;
+				lostSound.play();
+			}
 		}
 		const timeoutID = setTimeout(() => setBorderColor(null), 500);
 		return () => clearTimeout(timeoutID);
-	}, [borderScore, playerSide]);
+	}, [borderScore, playerSide, hasInteracted]);
 
 	useEffect(() => {
 		if (!canvas.current) return;

@@ -12,10 +12,9 @@ import { useNotification } from '../../context/NotificationContext';
 
 const Root = () => {
 	const location = useLocation();
-	const { user, isLoggedIn, setUser } = useAuth();
+	const { user, isLoggedIn, setUser, hasInteracted, setHasInteracted } = useAuth();
 	const { addNotification } = useNotification();
 	const [showPersistentUI, setShowPersistentUI] = useState(true);
-	const [hasInteracted, setHasInteracted] = useState(false);
 	const [audio] = useState(new Audio('/sounds/pong-theme.mp3'));
 	const [audioGame] = useState(new Audio('/sounds/pong-ingame.mp3'));
 
@@ -23,7 +22,7 @@ const Root = () => {
 		if (!hasInteracted) {
 			setHasInteracted(true);
 		}
-	}, [hasInteracted]);
+	}, [hasInteracted, setHasInteracted]);
 
 	useEffect(() => {
 		setShowPersistentUI(!location.pathname.includes('/game'));
@@ -39,14 +38,11 @@ const Root = () => {
 
 	useEffect(() => {
 		if (!user?.tournamentID) return;
+		console.log('index.js:', user.tournamentID);
 
 		const leaveTournament = async () => {
 			try {
 				await API.delete(`/tournaments/@me`);
-				setUser(prev => ({
-					...prev,
-					tournamentID: null,
-				}))
 				addNotification('info', "Due to you leaving, you've been removed from the tournament");
 			} catch (error) {
 				addNotification('error', error?.response?.data?.error || 'Error leaving tournament');
