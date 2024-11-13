@@ -17,7 +17,6 @@ import {
 import PongButton from "../../../styles/shared/PongButton.styled";
 import { getSkin } from "../../../api/user";
 import { useAuth } from "../../../context/AuthContext";
-import { hasIn } from "lodash";
 
 const GameLocal = () => {
 	const navigate = useNavigate();

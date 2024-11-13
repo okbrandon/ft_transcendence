@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Spinner from "react-bootstrap/Spinner";
 import { useRelation } from "../../../context/RelationContext";
 import { useTournament } from "../../../context/TournamentContext";
@@ -26,7 +26,6 @@ import Loader from "../../../styles/shared/Loader.styled";
 import { useAuth } from "../../../context/AuthContext";
 
 const JoinTournament = () => {
-	const navigate = useNavigate();
 	const { user, setUser } = useAuth();
 	const { addNotification } = useNotification();
 	const { tournament, updateTournament, isStartDisabled } = useTournament();
