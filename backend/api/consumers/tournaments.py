@@ -201,12 +201,14 @@ class TournamentManager:
             # Set startedAt to now if it's null
             await self.set_match_start_time(next_match['matchID'])
 
+            matches = await self.get_matches()
             await self.channel_layer.group_send(
                 f"tournament_{self.tournament.tournamentID}",
                 {
                     "type": "match.begin",
                     "matchID": next_match['matchID'],
-                    "players": next_match['players']
+                    "players": next_match['players'],
+                    "matches": matches
                 }
             )
 
@@ -539,7 +541,8 @@ class TournamentConsumer(AsyncJsonWebsocketConsumer):
                 "e": "TOURNAMENT_MATCH_BEGIN",
                 "d": {
                     "matchID": event["matchID"],
-                    "players": event["players"]
+                    "players": event["players"],
+                    "matches": event["matches"]
                 }
             })
             logger.info(f"Match begin event sent for match: {event['matchID']}")

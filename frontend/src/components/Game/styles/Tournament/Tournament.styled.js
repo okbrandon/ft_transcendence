@@ -61,3 +61,69 @@ export const OptionButton = styled.button`
 		color: rgba(255, 255, 255, 0.5);
 	}
 `;
+
+export const UpcomingMatches = styled.div`
+	position: absolute;
+	right: 30px;
+	top: 100px;
+	width: 300px;
+	background-color: rgba(20, 20, 30, 0.8);
+	border-radius: 10px;
+	padding: 20px;
+	box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+	font-family: 'Orbitron', sans-serif;
+	color: #fff;
+
+	h3 {
+		font-size: 1.5rem;
+		color: #f0f0f0;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+		padding-bottom: 10px;
+		margin-bottom: 20px;
+	}
+
+	.match {
+		background-color: rgba(40, 40, 60, 0.6);
+		border-radius: 8px;
+		padding: 10px;
+		margin-bottom: 15px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		transition: all 0.3s ease;
+
+		&:hover {
+			background-color: rgba(60, 60, 80, 0.9);
+		}
+
+		.player {
+			width: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			font-size: 1.2rem;
+			color: #b0b0b0;
+		}
+	}
+	.current-match {
+		border: 2px solid rgba(164, 69, 178, 0.8); /* Softer purple to match your theme */
+		border-radius: 8px; /* Rounded corners for a smoother look */
+		box-shadow: 0 0 15px rgba(164, 69, 178, 0.6),
+					0 0 30px rgba(80, 120, 200, 0.2); /* Neon glow with complementary color */
+		background: rgba(0, 0, 0, 0.3); /* Semi-transparent background for emphasis */
+		transition: transform 0.3s ease, box-shadow 0.3s ease;
+	}
+
+	.scrollable {
+		max-height: 400px;
+		overflow-y: auto;
+
+		&::-webkit-scrollbar {
+			width: 6px;
+		}
+		&::-webkit-scrollbar-thumb {
+			background-color: rgba(164, 69, 178, 0.6);
+			border-radius: 10px;
+		}
+	}
+`;

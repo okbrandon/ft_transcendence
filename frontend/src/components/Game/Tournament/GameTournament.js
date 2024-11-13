@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import GameProfiles from "../GameProfiles";
 import GameScene from "../remote/GameScene";
@@ -7,11 +7,126 @@ import { formatUserData } from "../../../api/user";
 import { PageContainer } from "../styles/Game.styled";
 import { useTournament } from "../../../context/TournamentContext";
 import { useAuth } from "../../../context/AuthContext";
+import { UpcomingMatches } from "../styles/Tournament/Tournament.styled";
+
+/*
+[
+    {
+        "matchID": "match_MTczMTUxODkzNjU4MDg3NTA",
+        "players": [
+            {
+                "userID": "user_MTczMTUxODU5MTcyMDgzNjU",
+                "username": "test1",
+                "displayName": null,
+                "lang": "EN",
+                "avatarID": null,
+                "bannerID": null,
+                "bio": null,
+                "flags": 1,
+                "status": {
+                    "online": true,
+                    "activity": "HOME",
+                    "last_seen": "2024-11-13T17:28:55.877539+00:00"
+                },
+                "xp": 9
+            },
+            {
+                "userID": "user_MTczMTUxODU5MTg1MzcxOTU",
+                "username": "test2",
+                "displayName": null,
+                "lang": "EN",
+                "avatarID": null,
+                "bannerID": null,
+                "bio": null,
+                "flags": 1,
+                "status": {
+                    "online": true,
+                    "activity": "HOME",
+                    "last_seen": "2024-11-13T17:28:56.042366+00:00"
+                },
+                "xp": 26
+            }
+        ],
+        "playerA": {
+            "id": "user_MTczMTUxODU5MTcyMDgzNjU",
+            "platform": "web"
+        },
+        "playerB": {
+            "id": "user_MTczMTUxODU5MTg1MzcxOTU",
+            "platform": "web"
+        },
+        "scores": {},
+        "winnerID": null,
+        "startedAt": "2024-11-13T17:28:56.636602Z",
+        "finishedAt": null,
+        "flags": 4
+    },
+    {
+        "matchID": "match_MTczMTUxODkzNjU4OTExNzA",
+        "players": [
+            {
+                "userID": "user_MTczMTUxODU5MTk4MTE3Nw",
+                "username": "test3",
+                "displayName": null,
+                "lang": "EN",
+                "avatarID": null,
+                "bannerID": null,
+                "bio": null,
+                "flags": 1,
+                "status": {
+                    "online": true,
+                    "activity": "HOME",
+                    "last_seen": "2024-11-13T17:28:54.861187+00:00"
+                },
+                "xp": 0
+            },
+            {
+                "userID": "user_MTczMTUxODU5MjExMjE4OTU",
+                "username": "test4",
+                "displayName": null,
+                "lang": "EN",
+                "avatarID": null,
+                "bannerID": null,
+                "bio": null,
+                "flags": 1,
+                "status": {
+                    "online": true,
+                    "activity": "HOME",
+                    "last_seen": "2024-11-13T17:28:55.664874+00:00"
+                },
+                "xp": 21
+            }
+        ],
+        "playerA": {
+            "id": "user_MTczMTUxODU5MTk4MTE3Nw",
+            "platform": "web"
+        },
+        "playerB": {
+            "id": "user_MTczMTUxODU5MjExMjE4OTU",
+            "platform": "web"
+        },
+        "scores": {},
+        "winnerID": null,
+        "startedAt": null,
+        "finishedAt": null,
+        "flags": 4
+    },
+    {
+        "matchID": "match_MTczMTUxODkzNjU5ODU0OTQ",
+        "players": [],
+        "playerA": null,
+        "playerB": null,
+        "scores": {},
+        "winnerID": null,
+        "startedAt": null,
+        "finishedAt": null,
+        "flags": 4
+    }
+]
+*/
 
 const GameTournament = () => {
 	const navigate = useNavigate();
-	const location = useLocation();
-	const tournamentData = location.state?.tournamentData;
 	const { resetMatch, setResetMatch } = useTournament();
 	const { hasInteracted } = useAuth();
 	const hasInteractedRef = useRef(hasInteracted);
@@ -77,6 +192,8 @@ const GameTournament = () => {
 		if (!resetMatch) return;
 		const matchUrl = process.env.REACT_APP_ENV === 'production' ? '/ws/match' : 'ws://localhost:8000/ws/match';
 
+		console.log('GameTournament.js: resetMatch', resetMatch);
+
 		setSocketUrl(`${matchUrl}?t=${Date.now()}`);
 		currentMatchId.current = resetMatch.matchID;
 
@@ -87,6 +204,11 @@ const GameTournament = () => {
 		setActivateTimer(false);
 		setGameOver(false);
 		setIsSpectator(false);
+		setUpcomingMatches(Object.values(resetMatch.matches).map(match => ({
+			currentMatchID: resetMatch.matchID,
+			matchID: match.matchID,
+			players: match.players.map(formatUserData)
+		})));
 
 		const [playerA, playerB] = resetMatch.players;
 		setGameState(prevState => ({
@@ -102,10 +224,6 @@ const GameTournament = () => {
 		console.log('GameTournament.js: match resseted');
 	}, [resetMatch, setResetMatch]);
 
-	useEffect(() => {
-		setUpcomingMatches(tournamentData.matches);
-		console.log('GameTournament.js: tournamentData', tournamentData);
-	}, [tournamentData]);
 
 	useEffect(() => {
 		if (readyState === ReadyState.OPEN && heartbeatIntervalTime) {
@@ -233,6 +351,20 @@ const GameTournament = () => {
 				isSpectator={isSpectator}
 				isTournament={true}
 			/>
+			<UpcomingMatches>
+				<h3>Upcoming Matches</h3>
+				<div className="scrollable">
+					{upcomingMatches.map((match, index) => (
+						<div key={index} className={`match ${match.currentMatchID === match.matchID && 'current-match'}`}>
+							<span className={`player`}>
+								{(match.players?.[0] && <span>{match.players?.[0]?.displayName}</span>) || <span className="unkwown">N/A</span>}
+								vs
+								{(match.players?.[1] && <span>{match.players?.[1]?.displayName}</span>) || <span className="unkwown">N/A</span>}
+							</span>
+						</div>
+					))}
+				</div>
+			</UpcomingMatches>
 		</PageContainer>
 	);
 };
