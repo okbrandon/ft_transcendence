@@ -90,7 +90,9 @@ const FriendsList = ({ friends }) => {
 							</ProfileInfoContainer>
 						</ProfileInfo>
 						<Actions>
-							<PongButton type="button">{t('friends.subSections.friendList.inviteButton')}</PongButton>
+							{friend.userID !== 'user_ai' && (
+								<PongButton type="button">{t('friends.subSections.friendList.inviteButton')}</PongButton>
+							)}
 							<PongButton
 								type="button"
 								onClick={() => handleFriendDM(friend.username)}
