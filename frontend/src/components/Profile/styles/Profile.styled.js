@@ -26,9 +26,9 @@ export const UserProfileBannerContainer = styled.div`
 
 export const UserProfileBanner = styled.div`
 	width: 100%;
+	height: 300px;
 	border-top-left-radius: 10px;
 	border-top-right-radius: 10px;
-	height: 299px;
 	background-repeat: no-repeat;
 	${props => props.$path ? `background-image: url(${props.$path});` : 'background-color: #111;'}
 	background-size: cover;

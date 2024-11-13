@@ -65,7 +65,7 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 					addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 				});
 		}
-	}, [addNotification, profileUser.userID, relation, setIsRefetch, loading]);
+	}, [addNotification, profileUser, relation, setIsRefetch, loading, setFriends]);
 
 	const handleRemoveFriend = useCallback(() => {
 		if (loading) return;
