@@ -5,7 +5,6 @@ export const PageContainer = styled.div`
 	position: relative;
 	flex-direction: column;
 	align-items: center;
-	justify-content: center;
 	height: 100vh;
 	background:
 		radial-gradient(circle at 20% 20%, rgba(75, 0, 130, 0.2), transparent 50%),
@@ -13,6 +12,7 @@ export const PageContainer = styled.div`
 		linear-gradient(135deg, #000000 0%, #111111 100%);
 	background-size: cover;
 	background-position: center;
+	padding-top: 35px;
 `;
 
 export const GameSceneContainer = styled.div`
@@ -27,15 +27,15 @@ export const GameSceneContainer = styled.div`
 
 	@keyframes borderHit {
 		0% {
-			border: 3px solid rgba(255, 255, 255, 0.7); /* Slightly stronger border */
+			border: 3px solid rgba(255, 255, 255, 0.7);
 			box-shadow: 0 0 30px rgba(164, 69, 178, 1), 0 0 40px rgba(59, 130, 246, 0.8);
 		}
 		50% {
-			border: 3px solid rgba(255, 255, 255, 0.4); /* Softer border */
+			border: 3px solid rgba(255, 255, 255, 0.4);
 			box-shadow: 0 0 25px rgba(164, 69, 178, 0.8), 0 0 35px rgba(59, 130, 246, 0.6);
 		}
 		100% {
-			border: 3px solid rgba(255, 255, 255, 0.2); /* Faint border */
+			border: 3px solid rgba(255, 255, 255, 0.2);
 			box-shadow: 0 0 20px rgba(164, 69, 178, 0.6), 0 0 30px rgba(59, 130, 246, 0.4);
 		}
 	}
@@ -47,7 +47,7 @@ export const GameSceneContainer = styled.div`
 			transform: scale(1.005);
 		}
 		100% {
-			border: 3px solid rgba(255, 255, 255, 0.2); /* Faint border */
+			border: 3px solid rgba(255, 255, 255, 0.2);
 			box-shadow: 0 0 20px rgba(164, 69, 178, 0.6), 0 0 30px rgba(59, 130, 246, 0.4);
 			transform: scale(1);
 		}
@@ -55,12 +55,12 @@ export const GameSceneContainer = styled.div`
 
 	@keyframes borderHitRed {
 		0% {
-			border: 3px solid rgba(255, 0, 0, 0.7); /* Stronger red border */
+			border: 3px solid rgba(255, 0, 0, 0.7);
 			box-shadow: 0 0 30px rgba(255, 0, 0, 1), 0 0 40px rgba(139, 0, 0, 0.8);
 			transform: scale(1.005);
 		}
 		100% {
-			border: 3px solid rgba(255, 255, 255, 0.2); /* Faint border */
+			border: 3px solid rgba(255, 255, 255, 0.2);
 			box-shadow: 0 0 20px rgba(164, 69, 178, 0.6), 0 0 30px rgba(59, 130, 246, 0.4);
 			transform: scale(1);
 		}
