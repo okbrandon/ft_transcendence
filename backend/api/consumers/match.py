@@ -14,6 +14,7 @@ from concurrent.futures import ThreadPoolExecutor
 from asgiref.sync import sync_to_async, async_to_sync
 
 from django.utils import timezone
+from django.core.cache import cache
 
 from ..models import User, Match, UserSettings, Tournament
 from ..util import generate_id, get_safe_profile, get_user_id_from_token
@@ -248,8 +249,16 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         await self.send_match_join(match, side)
 
         if match.playerA and match.playerB:
-            await self.send_match_ready(match)
-            logger.info(f"[{self.__class__.__name__}] Tournament match {match.matchID} started with both players")
+            current_time = time.time()
+            cache_key = f"match_ready_{match.matchID}"
+            last_sent = await sync_to_async(cache.get)(cache_key, 0)
+
+            if current_time - last_sent >= 5:
+                await self.send_match_ready(match)
+                await sync_to_async(cache.set)(cache_key, current_time, timeout=30)
+                logger.info(f"[{self.__class__.__name__}] Tournament match {match.matchID} started with both players")
+            else:
+                logger.debug(f"[{self.__class__.__name__}] Skipped sending match ready for {match.matchID} due to rate limiting")
 
     async def update_match_state(self, match):
         if match.matchID not in self.active_matches:
