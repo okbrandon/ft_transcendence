@@ -240,29 +240,69 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         is_whitelisted = await self.is_user_whitelisted(self.user, match)
         logger.debug(f"[{self.__class__.__name__}] Is user whitelisted: {is_whitelisted}")
 
-        if is_whitelisted:
-            logger.debug(f"[{self.__class__.__name__}] User is whitelisted, proceeding with match join")
-            await self.join_match_as_player(match)
-        else:
-            logger.debug(f"[{self.__class__.__name__}] User is not whitelisted, joining as spectator")
-            self.is_spectator = True
-            await self.handle_spectate_request({"match_id": match_id})
+        cache_key = f"player_join_handling_{match_id}"
 
-        logger.debug(f"[{self.__class__.__name__}] handle_tournament_match_join completed for match {match_id}")
+        sleep_time = random.uniform(0.5, 2)
+        logger.info(f"[{self.__class__.__name__}] [LOCK] Waiting ({sleep_time}s) before match lock {match_id}, player is {self.user.username}")
+        await asyncio.sleep(sleep_time)
+
+        start_time = time.time()
+        while await sync_to_async(cache.get)(cache_key):
+            await asyncio.sleep(1)
+            elapsed = time.time() - start_time
+            if elapsed > 10:
+                await self.send_tournament_match_join_failed("Join timeout, abnormally long wait")
+                return
+            logger.info(f"[{self.__class__.__name__}] [LOCK] Waiting for match lock {match_id}, player is {self.user.username}")
+
+        await sync_to_async(cache.set)(cache_key, True, timeout=15)
+        logger.info(f"[{self.__class__.__name__}] [LOCK] Locking match {match_id}, player is {self.user.username}")
+
+        try:
+            if is_whitelisted:
+                logger.debug(f"[{self.__class__.__name__}] User is whitelisted, proceeding with match join")
+                asyncio.create_task(self.join_match_as_player(match))
+            else:
+                logger.debug(f"[{self.__class__.__name__}] User is not whitelisted, joining as spectator")
+                self.is_spectator = True
+                await self.handle_spectate_request({"match_id": match_id})
+
+            logger.debug(f"[{self.__class__.__name__}] handle_tournament_match_join completed for match {match_id}")
+        finally:
+            logger.info(f"[{self.__class__.__name__}] [LOCK] Handling done {match_id}, player is {self.user.username}")
+            await asyncio.sleep(1)
+            await sync_to_async(cache.delete)(cache_key)
+            logger.info(f"[{self.__class__.__name__}] [LOCK] Removing cache key {match_id}, player is {self.user.username}")
 
     async def join_match_as_player(self, match):
         side = "left" if match.playerA['id'] == self.user.userID else "right"
         await self.update_match_state(match)
         await self.send_match_join(match, side)
 
-        if match.playerA and match.playerB:
-            current_time = time.time()
-            cache_key = f"match_ready_{match.matchID}"
-            last_sent = await sync_to_async(cache.get)(cache_key, 0)
+        match_state = self.active_matches[match.matchID]
+        logger.info(f"[{self.__class__.__name__}] Match state: {match_state}")
 
-            if current_time - last_sent >= 5:
+        if match_state['playerA']['connected'] and match_state['playerB']['connected']:
+            current_time = time.time()
+            match_ready_cache_key = f"match_ready_{match.matchID}"
+            last_sent = await sync_to_async(cache.get)(match_ready_cache_key, 0)
+
+            if current_time - last_sent >= 12:
+                self.active_matches[match.matchID]['playerA']['connected'] = False
+                self.active_matches[match.matchID]['playerB']['connected'] = False
+
+                join_handling_cache_key = f"player_join_handling_{match.matchID}"
+                start_time = time.time()
+                while await sync_to_async(cache.get)(join_handling_cache_key):
+                    await asyncio.sleep(1)
+                    elapsed = time.time() - start_time
+                    if elapsed > 10:
+                        await self.send_tournament_match_join_failed("Join timeout, abnormally long wait")
+                        return
+                    logger.info(f"[{self.__class__.__name__}] [LOCK - INSIDE FUNC] Waiting for match lock {match.matchID}, player is {self.user.username}")
+
+                await sync_to_async(cache.set)(match_ready_cache_key, current_time, timeout=30)
                 await self.send_match_ready(match)
-                await sync_to_async(cache.set)(cache_key, current_time, timeout=30)
                 logger.info(f"[{self.__class__.__name__}] Tournament match {match.matchID} started with both players")
             else:
                 logger.debug(f"[{self.__class__.__name__}] Skipped sending match ready for {match.matchID} due to rate limiting")
@@ -271,8 +311,8 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         if match.matchID not in self.active_matches:
             logger.debug(f"[{self.__class__.__name__}] Initializing new match state for {match.matchID}")
             self.active_matches[match.matchID] = {
-                'playerA': {'id': match.playerA['id'], 'paddle_y': 375, 'pos': 'A'},
-                'playerB': {'id': match.playerB['id'], 'paddle_y': 375, 'pos': 'B'},
+                'playerA': {'id': match.playerA['id'], 'paddle_y': 375, 'pos': 'A', 'connected': False},
+                'playerB': {'id': match.playerB['id'], 'paddle_y': 375, 'pos': 'B', 'connected': False},
                 'ball': {},
                 'scores': {match.playerA['id']: 0, match.playerB['id']: 0},
                 'spectators': [],
@@ -284,6 +324,13 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
             }
             self.reset_ball(self.active_matches[match.matchID])
             logger.debug(f"[{self.__class__.__name__}] Reset ball for new match")
+
+        if match.playerA['id'] == self.user.userID:
+            self.active_matches[match.matchID]['playerA']['connected'] = True
+            logger.debug(f"[{self.__class__.__name__}] Player A connected for match {match.matchID}")
+        elif match.playerB['id'] == self.user.userID:
+            self.active_matches[match.matchID]['playerB']['connected'] = True
+            logger.debug(f"[{self.__class__.__name__}] Player B connected for match {match.matchID}")
 
     async def send_match_join(self, match, side):
         await self.send_json({
