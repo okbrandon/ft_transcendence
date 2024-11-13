@@ -76,18 +76,17 @@ class UserProfileMe(APIView):
 
                     updated_fields[field] = data[field]
 
-            if 'password' in updated_fields:
-                if me.mfaToken:
-                    otp = data.get('otp')
-                    if not otp:
-                        return Response({"error": "OTP is required to change password when MFA is enabled."}, status=status.HTTP_400_BAD_REQUEST)
-                    totp = pyotp.TOTP(me.mfaToken)
-                    if not totp.verify(otp):
-                        return Response({"error": "Invalid OTP."}, status=status.HTTP_400_BAD_REQUEST)
-                updated_fields['password'] = make_password(updated_fields['password'])
+            sensitive_fields = ['password', 'phone_number', 'email']
+            if any(field in updated_fields for field in sensitive_fields) and me.mfaToken:
+                otp = data.get('otp')
+                if not otp:
+                    return Response({"error": "OTP is required to change sensitive information when MFA is enabled."}, status=status.HTTP_400_BAD_REQUEST)
+                totp = pyotp.TOTP(me.mfaToken)
+                if not totp.verify(otp):
+                    return Response({"error": "Invalid OTP."}, status=status.HTTP_400_BAD_REQUEST)
 
-            if 'phone_number' in updated_fields:
-                send_otp_via_sms(updated_fields['phone_number'])
+            if 'password' in updated_fields:
+                updated_fields['password'] = make_password(updated_fields['password'])
 
             for field, value in updated_fields.items():
                 setattr(me, field, value)
@@ -288,6 +287,17 @@ class UserRelationshipsMe(APIView):
 
         if not target_user_id or relationship_type is None:
             return Response({"error": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if target_user_id == "user_ai":
+            if relationship_type == 2: # tries to block prune
+                return Response({"error": "There's no escaping prune, nice try."}, status=status.HTTP_400_BAD_REQUEST)
+            relationship = Relationship.objects.create(
+                relationshipID=generate_id("rel"),
+                userA=me.userID,
+                userB=target_user_id,
+                status=1  # Accepted/friends status
+            )
+            return Response({"status": "AI friend added, you must feel very lonely. don't worry Prune is a good friend."}, status=status.HTTP_200_OK)
 
         try:
             target_user = User.objects.get(userID=target_user_id)
