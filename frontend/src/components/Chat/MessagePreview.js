@@ -81,10 +81,10 @@ export const MessagePreview = () => {
 			>
 				<ProfilePicture
 					src={friend.avatarID}
-					alt={`${friend.username}'s profile picture`}
+					alt={`${friend.displayName || friend.username}'s profile picture`}
 				/>
 				<MessageContent>
-					<Sender>{friend.username}</Sender>
+					<Sender>{friend.displayName || friend.username}</Sender>
 					<MessageText>{truncateText(message, 24)}</MessageText>
 				</MessageContent>
 			</PreviewContainer>

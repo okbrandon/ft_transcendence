@@ -69,7 +69,7 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 										{!isSameSender && (
 											<MessageUsername $isHost={true}>
 												<Avatar src={message.sender.avatarID} alt={message.sender.username} />
-												{message.sender.username}
+												{message.sender.displayName || message.sender.username}
 											</MessageUsername>
 										)}
 										<SenderBubble data-time={formatTimestamp(message.createdAt)} $isRounded={isSameSender}>
