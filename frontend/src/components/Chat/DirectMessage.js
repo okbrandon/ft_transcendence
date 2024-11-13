@@ -163,9 +163,9 @@ export const DirectMessage = ({
 			<DirectMessageContainer $isOpen={isOpen} $isMinimized={isMinimized}>
 				<Header onClick={toggleMinimization}>
 					<div style={{display: 'flex', alignItems: 'center',gap: '5px'}}>
-						<ProfilePicture src={otherUser.avatarID} alt={`${otherUser.username}'s profile picture`} $header />
+						<ProfilePicture src={otherUser.avatarID} alt={`${otherUser.displayName || otherUser.username}'s profile picture`} $header />
 						<OnlineStatus $status={otherUser.status?.online || false} />
-						<Username onClick={toggleDropdown}>{username}</Username>
+						<Username onClick={toggleDropdown}>{otherUser.displayName || otherUser.username}</Username>
 					</div>
 					<Dropdown ref={dropdownRef} $isOpen={isDropdownOpen}>
 						{/* Brandon translate the buttons below */}
