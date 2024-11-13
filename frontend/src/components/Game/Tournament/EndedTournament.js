@@ -10,13 +10,14 @@ import {
 	WinnerDiv,
 	WinnerContainer,
 	WinnerInfo,
-	LeaveButtonContainer,
 } from '../styles/Tournament/EndedTournament.styled';
 import { useTournament } from '../../../context/TournamentContext';
 import TournamentStats from './TournamentStats';
 import Confetti from 'react-confetti';
 import { useAuth } from '../../../context/AuthContext';
 import Loader from '../../../styles/shared/Loader.styled';
+import Tabs from "react-bootstrap/Tabs";
+import Tab from "react-bootstrap/Tab";
 
 const EndedTournament = () => {
 	const navigate = useNavigate();
@@ -24,7 +25,6 @@ const EndedTournament = () => {
 	const { endTournamentData, tournament, setTournament } = useTournament();
 	const [matches, setMatches] = useState(null);
 	const [totalScores, setTotalScores] = useState(null);
-	const [isHovered, setIsHovered] = useState(false);
 
 	useEffect(() => {
 		if (!endTournamentData) return;
@@ -113,30 +113,34 @@ const EndedTournament = () => {
 				</Background>
 			</WinnerContainer>
 			<TournamentOverview>
-				<LeaveButtonContainer
-					onMouseEnter={() => setIsHovered(true)}
-					onMouseLeave={() => setIsHovered(false)}
-				>
-					<i className={`bi bi-door-${isHovered ? 'open' : 'closed'}-fill`} onClick={handleLeave}/>
-				</LeaveButtonContainer>
+				<button id='leave-button' onClick={handleLeave}>Leave</button>
 				<TournamentHeader>
 					<h1>Overview</h1>
 					<h2>{tournament.name} - {tournament.isPublic ? 'Public' : 'Private'} tournament</h2>
 				</TournamentHeader>
-				<MatchCardTable>
-					<thead>
-						<tr>
-							<th>round</th>
-							<th colSpan={2}>players</th>
-							<th>Duration</th>
-							<th>Scores</th>
-						</tr>
-					</thead>
-					<tbody>
-						{matches.map((match, index) => renderMatch(match, index))}
-					</tbody>
-				</MatchCardTable>
-				<TournamentStats totalScores={totalScores}/>
+				<Tabs
+					defaultActiveKey="matches"
+					className="mb-3"
+				>
+					<Tab eventKey="matches" title="Matches">
+						<MatchCardTable>
+							<thead>
+								<tr>
+									<th>round</th>
+									<th colSpan={2}>players</th>
+									<th>Duration</th>
+									<th>Scores</th>
+								</tr>
+							</thead>
+							<tbody>
+								{matches.map((match, index) => renderMatch(match, index))}
+							</tbody>
+						</MatchCardTable>
+					</Tab>
+					<Tab eventKey="stats" title="Stats">
+						<TournamentStats totalScores={totalScores}/>
+					</Tab>
+				</Tabs>
 			</TournamentOverview>
 		</EndTournamentContainer>
 	);
