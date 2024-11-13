@@ -92,6 +92,9 @@ const Security = ({ user, setUser }) => {
 		if (!submissionData.password) {
 			delete submissionData.password;
 		}
+		if (!submissionData.phone_number) {
+			delete submissionData.phone_number;
+		}
 
 		const errorMessage = checkSecurityRestrictions(submissionData, cfPassword);
 
