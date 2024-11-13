@@ -89,15 +89,17 @@ const Security = ({ user, setUser }) => {
 
 		const submissionData = { ...formData };
 
-		if (!submissionData.password) {
-			delete submissionData.password;
-		}
+		['password', 'phone_number', 'email'].forEach(field => {
+			if (!submissionData[field]) {
+				delete submissionData[field];
+			}
+		});
 
 		const errorMessage = checkSecurityRestrictions(submissionData, cfPassword);
 
 		if (errorMessage) {
 			setError(errorMessage);
-		} else if (submissionData.password && has2FA) {
+		} else if ((submissionData.password || submissionData.email || submissionData.phone_number) && has2FA) {
 			setShowTwoFactorAuth(true);
 		} else {
 			setLoading(true);
