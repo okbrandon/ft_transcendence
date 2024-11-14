@@ -49,18 +49,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         connection_count_key = f"chat_user_connections_{self.user.userID}"
         connection_count = cache.get(connection_count_key, 0)
-
         cache.set(connection_count_key, connection_count + 1, timeout=None)
-        if connection_count + 1 >= 2:
-            try:
-                self.send(json.dumps({
-                    "type": "connection_error",
-                    "message": "You can only have 2 connections at the same time"
-                }))
-                await self.close(code=42)
-            except Exception as _:
-                pass
-            return
 
         await self.channel_layer.group_add(
             self.user_group_name,

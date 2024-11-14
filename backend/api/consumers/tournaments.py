@@ -226,13 +226,13 @@ class TournamentManager:
             return next_match
         finally:
             await self.delete_lock(lock_key)
-    
+
     async def notify_upcoming_match(self, userID, imminent):
         channel_layer = get_channel_layer()
         group_name = f"chat_{userID}"
-        
+
         message = "Your match is starting soon!" if imminent else "Your match is coming up next. Please be ready!"
-        
+
         try:
             logger.info(f"Sending upcoming match notification to user {userID}. Message: {message}")
             await channel_layer.group_send(
@@ -355,13 +355,6 @@ class TournamentConsumer(AsyncJsonWebsocketConsumer):
         logger.info(f"Disconnecting with close code: {close_code}")
         if self.heartbeat_task:
             self.heartbeat_task.cancel()
-        if self.user:
-            connection_count_key = f"tournament_user_connections_{self.user.userID}"
-            connection_count = cache.get(connection_count_key, 0) - 1
-            if connection_count > 0:
-                cache.set(connection_count_key, connection_count, timeout=None)
-            else:
-                cache.delete(connection_count_key)
         if self.user and self.tournament:
             await self.channel_layer.group_discard(f"tournament_{self.tournament.tournamentID}", self.channel_name)
             await self.send_tournament_leave()
@@ -407,20 +400,6 @@ class TournamentConsumer(AsyncJsonWebsocketConsumer):
             if not self.user:
                 logger.warning(f"User {user_id} not found")
                 await self.close()
-                return
-
-            connection_count_key = f"tournament_user_connections_{self.user.userID}"
-            connection_count = cache.get(connection_count_key, 0)
-
-            cache.set(connection_count_key, connection_count + 1, timeout=None)
-            if connection_count + 1 >= 2:
-                try:
-                    self.send(json.dumps({
-                        "e": "CONNECTION_ERROR"
-                    }))
-                    await self.close(code=42)
-                except Exception as _:
-                    pass
                 return
 
             try:
