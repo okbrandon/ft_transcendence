@@ -13,10 +13,12 @@ import {
 import PongButton from "../../../styles/shared/PongButton.styled";
 import { useTournament } from "../../../context/TournamentContext";
 import API from "../../../api/api";
+import { useNotification } from "../../../context/NotificationContext";
 import { useTranslation } from "react-i18next";
 
 const AvailableTournaments = ({ setOptions }) => {
 	const navigate = useNavigate();
+	const { addNotification } = useNotification();
 	const [searchQuery, setSearchQuery] = useState("");
 	const [tournaments, setTournaments] = useState([]);
 	const { registerForTournament } = useTournament();
@@ -49,13 +51,9 @@ const AvailableTournaments = ({ setOptions }) => {
 				await API.post(`/tournaments/${tournamentID}/join`);
 				navigate(`/tournaments/${tournamentID}`);
 				registerForTournament(tournamentID);
-			} else {
-				// For private tournaments, we might need to handle invites differently
-				console.log("This is a private tournament. Invite handling not implemented.");
 			}
 		} catch (error) {
-			console.error("Error joining tournament:", error);
-			// Handle errors (e.g., tournament full, already joined, etc.)
+			addNotification("error", error.response?.data?.error || "Error joining tournament");
 		}
 	};
 

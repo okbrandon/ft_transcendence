@@ -10,122 +10,6 @@ import { useAuth } from "../../../context/AuthContext";
 import { UpcomingMatches } from "../styles/Tournament/Tournament.styled";
 import { useTranslation } from "react-i18next";
 
-/*
-[
-    {
-        "matchID": "match_MTczMTUxODkzNjU4MDg3NTA",
-        "players": [
-            {
-                "userID": "user_MTczMTUxODU5MTcyMDgzNjU",
-                "username": "test1",
-                "displayName": null,
-                "lang": "EN",
-                "avatarID": null,
-                "bannerID": null,
-                "bio": null,
-                "flags": 1,
-                "status": {
-                    "online": true,
-                    "activity": "HOME",
-                    "last_seen": "2024-11-13T17:28:55.877539+00:00"
-                },
-                "xp": 9
-            },
-            {
-                "userID": "user_MTczMTUxODU5MTg1MzcxOTU",
-                "username": "test2",
-                "displayName": null,
-                "lang": "EN",
-                "avatarID": null,
-                "bannerID": null,
-                "bio": null,
-                "flags": 1,
-                "status": {
-                    "online": true,
-                    "activity": "HOME",
-                    "last_seen": "2024-11-13T17:28:56.042366+00:00"
-                },
-                "xp": 26
-            }
-        ],
-        "playerA": {
-            "id": "user_MTczMTUxODU5MTcyMDgzNjU",
-            "platform": "web"
-        },
-        "playerB": {
-            "id": "user_MTczMTUxODU5MTg1MzcxOTU",
-            "platform": "web"
-        },
-        "scores": {},
-        "winnerID": null,
-        "startedAt": "2024-11-13T17:28:56.636602Z",
-        "finishedAt": null,
-        "flags": 4
-    },
-    {
-        "matchID": "match_MTczMTUxODkzNjU4OTExNzA",
-        "players": [
-            {
-                "userID": "user_MTczMTUxODU5MTk4MTE3Nw",
-                "username": "test3",
-                "displayName": null,
-                "lang": "EN",
-                "avatarID": null,
-                "bannerID": null,
-                "bio": null,
-                "flags": 1,
-                "status": {
-                    "online": true,
-                    "activity": "HOME",
-                    "last_seen": "2024-11-13T17:28:54.861187+00:00"
-                },
-                "xp": 0
-            },
-            {
-                "userID": "user_MTczMTUxODU5MjExMjE4OTU",
-                "username": "test4",
-                "displayName": null,
-                "lang": "EN",
-                "avatarID": null,
-                "bannerID": null,
-                "bio": null,
-                "flags": 1,
-                "status": {
-                    "online": true,
-                    "activity": "HOME",
-                    "last_seen": "2024-11-13T17:28:55.664874+00:00"
-                },
-                "xp": 21
-            }
-        ],
-        "playerA": {
-            "id": "user_MTczMTUxODU5MTk4MTE3Nw",
-            "platform": "web"
-        },
-        "playerB": {
-            "id": "user_MTczMTUxODU5MjExMjE4OTU",
-            "platform": "web"
-        },
-        "scores": {},
-        "winnerID": null,
-        "startedAt": null,
-        "finishedAt": null,
-        "flags": 4
-    },
-    {
-        "matchID": "match_MTczMTUxODkzNjU5ODU0OTQ",
-        "players": [],
-        "playerA": null,
-        "playerB": null,
-        "scores": {},
-        "winnerID": null,
-        "startedAt": null,
-        "finishedAt": null,
-        "flags": 4
-    }
-]
-*/
-
 const GameTournament = () => {
 	const navigate = useNavigate();
 	const { resetMatch, setResetMatch } = useTournament();
@@ -153,6 +37,7 @@ const GameTournament = () => {
 	const currentMatchId = useRef(null);
 	const playerId = useRef(null);
 	const isSpectatorRef = useRef(false);
+	const playerIdRef = useRef(null);
 
 	const heartbeatInterval = useRef(null);
 	const reconnectAttempts = useRef(0);
@@ -309,7 +194,7 @@ const GameTournament = () => {
 				opponent: data.d.opponent ? formatUserData(data.d.opponent) : null
 			})),
 			'PLAYER_JOIN': () => {
-				if (data.d.userID !== gameState.player?.userID)
+				if (data.d.userID !== playerIdRef.current)
 					setGameState(prevState => ({ ...prevState, opponent: formatUserData(data.d) }));
 			},
 			'PADDLE_HIT': () => setHitPos(data.d.ball),
@@ -326,6 +211,12 @@ const GameTournament = () => {
 	useEffect(() => {
 		isSpectatorRef.current = isSpectator;
 	}, [isSpectator]);
+
+	useEffect(() => {
+		if (gameState.player?.userID){
+			playerIdRef.current = gameState.player.userID;
+		}
+	}, [gameState.player]);
 
 	useEffect(() => {
 		hasInteractedRef.current = hasInteracted;
