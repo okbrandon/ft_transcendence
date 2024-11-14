@@ -44,12 +44,20 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setShowTwoFactorAuth }) => {
 
 		const submissionData = { ...formData };
 
+		console.log('TwofactorAuthSecurity submissionData before:', submissionData);
+		['password', 'phone_number', 'email'].forEach(field => {
+			if (!submissionData[field]) {
+				delete submissionData[field];
+			}
+		});
+		console.log('TwofactorAuthSecurity submissionData after:', submissionData);
+
 		API.patch('users/@me/profile', { ...submissionData, otp: authCode })
 			.then(() => {
 				addNotification('success', t('settings.security.successMessage'));
 				getUser()
 					.then(res => {
-						setUser(res.data);
+						setUser(res);
 					})
 					.catch(err => {
 						setError(err.response.data.error);

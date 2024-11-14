@@ -21,7 +21,7 @@ const Settings = () => {
 	const navigate = useNavigate();
 	const { t } = useTranslation();
 
-	if (loading) {
+	if (!user || loading) {
 		return (
 			<PageContainer>
 				<Loader/>
