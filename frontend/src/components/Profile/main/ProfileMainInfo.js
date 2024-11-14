@@ -126,6 +126,10 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 								Settings
 							</ActionButton>
 						</ActionsContainer>
+					) : profileUser.userID === 'user_ai' ? (
+						<ActionsContainer>
+							{/* No buttons for AI user */}
+						</ActionsContainer>
 					) : (
 						<ActionsContainer>
 							<ActionButton

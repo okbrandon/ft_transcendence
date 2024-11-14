@@ -103,19 +103,22 @@ const FriendsList = ({ friends }) => {
 						</ProfileInfo>
 						<Actions>
 							{friend.userID !== 'user_ai' && (
-								<PongButton type="button" onClick={() => handleChallenge(friend)}>{t('friends.subSections.friendList.inviteButton')}</PongButton>
+								<>
+									<PongButton type="button" onClick={() => handleChallenge(friend)}>{t('friends.subSections.friendList.inviteButton')}</PongButton>
+									<PongButton
+										type="button"
+										$backgroundColor="#ff5555"
+										onClick={() => handleRemove(friend.relationshipID)}
+									>
+										{t('friends.subSections.friendList.deleteButton')}
+									</PongButton>
+								</>
 							)}
 							<PongButton
 								type="button"
 								onClick={() => handleFriendDM(friend.username)}
 							>
-								{t('friends.subSections.friendList.messageButton')}</PongButton>
-							<PongButton
-								type="button"
-								$backgroundColor="#ff5555"
-								onClick={() => handleRemove(friend.relationshipID)}
-							>
-								{t('friends.subSections.friendList.deleteButton')}
+								{t('friends.subSections.friendList.messageButton')}
 							</PongButton>
 						</Actions>
 					</ListCard>
