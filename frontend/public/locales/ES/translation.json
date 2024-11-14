@@ -581,5 +581,60 @@
 				"defaultScore": "Puntuación"
 			}
 		}
+	},
+	"privacyPolicy": {
+		"title": "Política de Privacidad",
+		"lastUpdated": "Última Actualización: {{date}}",
+		"intro": "Tu privacidad es importante para nosotros. Esta Política de Privacidad describe cómo recopilamos, usamos y protegemos tu información.",
+		"sections": {
+			"informationWeCollect": {
+				"title": "Información que Recopilamos",
+				"description": "Recopilamos los siguientes tipos de información:",
+				"details": {
+					"account": "Detalles de la Cuenta",
+					"profile": "Comunicación del Perfil",
+					"gameplay": "Datos del Juego",
+					"communications": "Comunicaciones",
+					"transactions": "Transacciones"
+				},
+				"examples": {
+					"account": "IDs de usuario, nombres de usuario, direcciones de correo electrónico y contraseñas (almacenadas de forma segura).",
+					"profile": "Nombres de visualización, avatares, biografías y preferencias de idioma.",
+					"gameplay": "Partidas, puntuaciones, torneos, fichas de juego y configuraciones de usuario.",
+					"communications": "Mensajes y datos de conversación para chats e invitaciones a torneos.",
+					"transactions": "Historial de compras de artículos de la tienda."
+				}
+			},
+			"howWeUseInformation": {
+				"title": "Cómo Usamos Tu Información",
+				"description": "Usamos la información recopilada para:",
+				"details": [
+					"Crear y gestionar tu cuenta.",
+					"Facilitar el juego, las partidas y los torneos.",
+					"Habilitar la mensajería y las notificaciones.",
+					"Garantizar la seguridad de la cuenta y prevenir fraudes."
+				]
+			},
+			"dataSharing": {
+				"title": "Compartición de Datos",
+				"description": "Podemos compartir cierta información con proveedores de servicios externos:",
+				"examples": {
+					"email": "Direcciones de Correo Electrónico",
+					"phone": "Números de Teléfono"
+				},
+				"links": {
+					"emailService": "https://resend.com/",
+					"phoneService": "https://www.plivo.com/sms/"
+				}
+			},
+			"dataRetention": {
+				"title": "Retención de Datos",
+				"description": "Retenemos tus datos mientras tu cuenta esté activa. Si eliminas tu cuenta, eliminaremos tus datos, excepto donde sea legalmente requerido mantenerlos."
+			},
+			"security": {
+				"title": "Seguridad",
+				"description": "Usamos medidas estándar de la industria para proteger tus datos. Sin embargo, ningún sistema es completamente seguro; por favor, protege tu cuenta."
+			}
+		}
 	}
 }

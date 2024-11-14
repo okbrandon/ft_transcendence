@@ -581,5 +581,60 @@
 				"defaultScore": "Score"
 			}
 		}
+	},
+	"privacyPolicy": {
+		"title": "Privacy Policy",
+		"lastUpdated": "Last Updated: {{date}}",
+		"intro": "Your privacy is important to us. This Privacy Policy outlines how we collect, use, and protect your information.",
+		"sections": {
+			"informationWeCollect": {
+				"title": "Information We Collect",
+				"description": "We collect the following types of information:",
+				"details": {
+					"account": "Account Details",
+					"profile": "Profile Communication",
+					"gameplay": "Gameplay Data",
+					"communications": "Communications",
+					"transactions": "Transactions"
+				},
+				"examples": {
+					"account": "User IDs, usernames, email addresses, and passwords (stored securely).",
+					"profile": "Display names, avatars, bios, and language preferences.",
+					"gameplay": "Matches, scores, tournaments, game tokens, and user settings.",
+					"communications": "Messages and conversation data for chats and tournament invites.",
+					"transactions": "Purchase history for store items."
+				}
+			},
+			"howWeUseInformation": {
+				"title": "How We Use Your Information",
+				"description": "We use the collected information to:",
+				"details": [
+					"Create and manage your account.",
+					"Facilitate gameplay, matches, and tournaments.",
+					"Enable messaging and notifications.",
+					"Ensure account security and prevent fraud."
+				]
+			},
+			"dataSharing": {
+				"title": "Data Sharing",
+				"description": "We may share certain information with third-party service providers:",
+				"examples": {
+					"email": "Email Addresses",
+					"phone": "Phone Numbers"
+				},
+				"links": {
+					"emailService": "https://resend.com/",
+					"phoneService": "https://www.plivo.com/sms/"
+				}
+			},
+			"dataRetention": {
+				"title": "Data Retention",
+				"description": "We retain your data as long as your account is active. If you delete your account, we will remove your data, except where legally required to keep it."
+			},
+			"security": {
+				"title": "Security",
+				"description": "We use industry-standard measures to protect your data. However, no system is completely secure—please safeguard your account."
+			}
+		}
 	}
 }

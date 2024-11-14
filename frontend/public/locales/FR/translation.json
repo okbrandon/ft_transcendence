@@ -581,5 +581,60 @@
 				"defaultScore": "Score"
 			}
 		}
+	},
+	"privacyPolicy": {
+		"title": "Politique de Confidentialité",
+		"lastUpdated": "Dernière mise à jour : {{date}}",
+		"intro": "Votre vie privée est importante pour nous. Cette politique de confidentialité décrit comment nous collectons, utilisons et protégeons vos informations.",
+		"sections": {
+			"informationWeCollect": {
+				"title": "Informations que nous collectons",
+				"description": "Nous collectons les types d'informations suivants :",
+				"details": {
+					"account": "Détails du compte",
+					"profile": "Communication de profil",
+					"gameplay": "Données de jeu",
+					"communications": "Communications",
+					"transactions": "Transactions"
+				},
+				"examples": {
+					"account": "Identifiants utilisateur, noms d'utilisateur, adresses e-mail et mots de passe (stockés en toute sécurité).",
+					"profile": "Noms d'affichage, avatars, biographies et préférences linguistiques.",
+					"gameplay": "Matchs, scores, tournois, jetons de jeu et paramètres utilisateur.",
+					"communications": "Messages et données de conversation pour les chats et les invitations aux tournois.",
+					"transactions": "Historique des achats pour les articles de la boutique."
+				}
+			},
+			"howWeUseInformation": {
+				"title": "Comment nous utilisons vos informations",
+				"description": "Nous utilisons les informations collectées pour :",
+				"details": [
+					"Créer et gérer votre compte.",
+					"Faciliter le jeu, les matchs et les tournois.",
+					"Activer la messagerie et les notifications.",
+					"Assurer la sécurité du compte et prévenir la fraude."
+				]
+			},
+			"dataSharing": {
+				"title": "Partage de données",
+				"description": "Nous pouvons partager certaines informations avec des prestataires de services tiers :",
+				"examples": {
+					"email": "Adresses e-mail",
+					"phone": "Numéros de téléphone"
+				},
+				"links": {
+					"emailService": "https://resend.com/",
+					"phoneService": "https://www.plivo.com/sms/"
+				}
+			},
+			"dataRetention": {
+				"title": "Conservation des données",
+				"description": "Nous conservons vos données tant que votre compte est actif. Si vous supprimez votre compte, nous supprimerons vos données, sauf si la loi nous oblige à les conserver."
+			},
+			"security": {
+				"title": "Sécurité",
+				"description": "Nous utilisons des mesures conformes aux normes de l'industrie pour protéger vos données. Cependant, aucun système n'est complètement sécurisé - veuillez protéger votre compte."
+			}
+		}
 	}
 }
