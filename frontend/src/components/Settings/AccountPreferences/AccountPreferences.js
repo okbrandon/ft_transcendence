@@ -60,6 +60,8 @@ const AccountPreferences = ({ user, setUser }) => {
 			return t('restrictions.username.required');
 		} else if (data.username.length < 4 || data.username.length > 16) {
 			return t('restrictions.username.invalidLength');
+		} else if (/42$/.test(data.username)) {
+			return ('Username cannot end with 42'); // Brandon this needs translation
 		} else if (/[^a-zA-Z0-9]/.test(data.username)) {
 			return t('restrictions.username.invalidCharacters');
 		} else if (data.displayName && (data.displayName.length < 4 || data.displayName.length > 16)) {
