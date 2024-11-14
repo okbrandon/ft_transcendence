@@ -353,5 +353,50 @@
 				"noResults": "Aucune demande d'ami trouvée."
 			}
 		}
+	},
+	"chat": {
+		"block": {
+			"title": "Bloquer",
+			"selfBlock": "Vous ne pouvez pas vous bloquer vous-même.",
+			"userBlocked": "L'utilisateur {{username}} a été bloqué.",
+			"confirmMessage": "Êtes-vous sûr de vouloir bloquer {{username}} ? Vous ne pourrez plus voir ses messages ni recevoir de défis de sa part."
+		},
+		"invite": {
+			"challenge": {
+				"title": "Défi",
+				"content": "Je te défie de jouer contre <0>moi</0> !",
+				"acceptButton": "Accepter",
+				"declineButton": "Refuser"
+			},
+			"tournament": {
+				"title": "Tournoi",
+				"content": "Je t'invite à rejoindre <0>{{tournamentName}}</0>",
+				"acceptButton": "Rejoindre"
+			},
+			"selfInvite": "Vous ne pouvez pas vous défier vous-même.",
+			"inviteSent": "Défi envoyé à {{username}}.",
+			"inviteAccepted": "Invitation acceptée",
+			"inviteDeclined": "Invitation refusée",
+			"errorAccept": "Échec de l'acceptation de l'invitation",
+			"errorDecline": "Échec du refus de l'invitation"
+		},
+		"profile": {
+			"title": "Profil"
+		},
+		"message": {
+			"title": "Messages",
+			"placeholder": "Tapez un message...",
+			"sentByMe": "Vous : ",
+			"noFriends": "Faites-vous des amis pour pouvoir discuter avec eux !",
+			"noMessages": "Première fois que vous discutez avec {{username}}. Ne soyez pas timide, dites bonjour !",
+			"newConversation": "Commencer une nouvelle conversation"
+		},
+		"searchBar": {
+			"placeholder": "Rechercher parmi vos amis..."
+		},
+		"confirmModal": {
+			"cancelButton": "Annuler",
+			"confirmButton": "Confirmer"
+		}
 	}
 }

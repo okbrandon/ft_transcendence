@@ -26,6 +26,7 @@ import DisplayChatMessages from './tools/DisplayChatMessages';
 import useClickOutside from './tools/hooks/useClickOutside';
 import { getRelationFromUsername } from '../../scripts/relation';
 import { useChat } from '../../context/ChatContext';
+import { useTranslation } from 'react-i18next';
 
 export const DirectMessage = ({
 	isOpen,
@@ -53,6 +54,8 @@ export const DirectMessage = ({
 	const realConvo = conversations.find(c => c.conversationID === conversationID);
 	const otherUser = realConvo.participants.find(id => id.userID !== userID);
 
+	const { t } = useTranslation();
+
 	useEffect(() => {
 		if (!relations) return;
 
@@ -77,13 +80,13 @@ export const DirectMessage = ({
 
 		if (!other || !other.userID) return;
 		if (other.userID === userID) {
-			addNotification('error', 'You cannot block yourself');
+			addNotification('error', t('chat.block.selfBlock'));
 			return;
 		}
 
 		API.put('users/@me/relationships', { user: other.userID, type: 2 })
 			.then(() => {
-				addNotification('warning', `User ${username} blocked.`);
+				addNotification('warning', t('chat.block.blocked', { username: `${username}` }));
 				setIsRefetch(true);
 				handleCloseChat();
 			})
@@ -96,13 +99,13 @@ export const DirectMessage = ({
 	const handleInvite = () => {
 		if (!otherUser || !otherUser.userID) return;
 		if (otherUser.userID === userID) {
-			addNotification('error', 'You cannot invite yourself');
+			addNotification('error', t('chat.invite.selfInvite'));
 			return;
 		}
 
 		API.post(`users/${otherUser.userID}/challenge`)
 			.then(() => {
-				addNotification("success", "Challenge sent");
+				addNotification("success", t('chat.invite.inviteSent', { username: `${username}` }));
 			})
 			.catch(err => {
 				addNotification("error", `${err?.response?.data?.error || "An error occurred."}`);
@@ -168,10 +171,9 @@ export const DirectMessage = ({
 						<Username onClick={toggleDropdown}>{otherUser.displayName || otherUser.username}</Username>
 					</div>
 					<Dropdown ref={dropdownRef} $isOpen={isDropdownOpen}>
-						{/* Brandon translate the buttons below */}
-						<DropdownItem data-action="profile" onClick={() => handleDropdownAction('profile')}>Profile</DropdownItem>
-						<DropdownItem data-action="invite" onClick={() => handleDropdownAction('invite')}>Invite</DropdownItem>
-						<DropdownItem data-action="block" onClick={() => handleDropdownAction('block')}>Block</DropdownItem>
+						<DropdownItem data-action="profile" onClick={() => handleDropdownAction('profile')}>{t('chat.profile.title')}</DropdownItem>
+						<DropdownItem data-action="invite" onClick={() => handleDropdownAction('invite')}>{t('chat.invite.challenge.title')}</DropdownItem>
+						<DropdownItem data-action="block" onClick={() => handleDropdownAction('block')}>{t('chat.block.title')}</DropdownItem>
 					</Dropdown>
 					<ActionButtonContainer>
 						<Arrow ArrowAnimate={!isMinimized} />
@@ -194,7 +196,7 @@ export const DirectMessage = ({
 							<ChatInput
 								id="chat-input"
 								as="textarea"
-								placeholder="Type a message..." // Brandon translate this line
+								placeholder={t('chat.message.placeholder')}
 								value={content}
 								onChange={handleInputChange}
 								onKeyDown={e => {
@@ -228,9 +230,8 @@ export const DirectMessage = ({
 				isOpen={isBlockModalOpen}
 				onClose={() => setIsBlockModalOpen(false)}
 				onConfirm={handleBlockUser}
-				// Brandon translate -> "Block User", "message"
-				title="Block User"
-				message={`Are you sure you want to block ${username}? You won't be able to see their messages or receive invitations from them.`}
+				title={t('chat.block.title')}
+				message={t('chat.block.confirmMessage', { username: `${username}` })}
 			/>
 		</>
 	);

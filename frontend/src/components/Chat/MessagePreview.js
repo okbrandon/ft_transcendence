@@ -3,6 +3,7 @@ import ProfilePicture from './styles/global/ProfilePicture.styled';
 import ScrollableComponent from './tools/ScrollableComponent';
 import { useChat } from '../../context/ChatContext';
 import { useRelation } from '../../context/RelationContext';
+import { useTranslation } from 'react-i18next';
 
 const PreviewContainer = styled.div`
 	padding: 20px;
@@ -51,6 +52,7 @@ export const MessagePreview = () => {
 	const { conversations, handleSelectChat, unreadCounts } = useChat();
 	const { friends } = useRelation();
 	const userID = localStorage.getItem('userID');
+	const { t } = useTranslation();
 
 	const handleSelectFriend = (friend) => {
 		const convo = conversations.find((convo) => {
@@ -70,7 +72,7 @@ export const MessagePreview = () => {
 
 	const renderFriendPreview = (friend, index, message, lastMessageUserId = null, convId) => {
 		if (lastMessageUserId && lastMessageUserId === userID) {
-			message = 'You: ' + message; // Brandon don't forget to translate this line as well
+			message = t('chat.message.sentByMe') + message;
 		}
 
 		return (
@@ -92,7 +94,7 @@ export const MessagePreview = () => {
 	};
 
 	if (friends.length === 0) {
-		return <NoFriendsMessage>Make some friends so you can chat with them !</NoFriendsMessage>; // Brandon translate this line
+		return <NoFriendsMessage>{t('chat.message.noFriends')}</NoFriendsMessage>;
 	}
 
 	return (
@@ -103,7 +105,7 @@ export const MessagePreview = () => {
 
 				if (friendExists) {
 					if (convo.messages.length === 0) {
-						return renderFriendPreview(other, index, 'Start a new conversation'); // Brandon translate this line
+						return renderFriendPreview(other, index, t('chat.message.newConversation'));
 					}
 					const lastMessage = convo.messages[convo.messages.length - 1];
 					return renderFriendPreview(other, index, lastMessage.content, lastMessage.sender.userID, convo.conversationID);

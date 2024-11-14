@@ -353,5 +353,50 @@
 				"noResults": "No se encontraron solicitudes de amistad."
 			}
 		}
+	},
+	"chat": {
+		"block": {
+			"title": "Bloquear",
+			"selfBlock": "No puedes bloquearte a ti mismo.",
+			"userBlocked": "El usuario {{username}} ha sido bloqueado.",
+			"confirmMessage": "¿Estás seguro de que deseas bloquear a {{username}}? No podrás ver sus mensajes ni recibir desafíos de ellos."
+		},
+		"invite": {
+			"challenge": {
+				"title": "Desafío",
+				"content": "¡Te desafío a jugar contra <0>mí</0>!",
+				"acceptButton": "Aceptar",
+				"declineButton": "Rechazar"
+			},
+			"tournament": {
+				"title": "Torneo",
+				"content": "Te invito a unirte a <0>{{tournamentName}}</0>",
+				"acceptButton": "Unirse"
+			},
+			"selfInvite": "No puedes desafiarte a ti mismo.",
+			"inviteSent": "Desafío enviado a {{username}}.",
+			"inviteAccepted": "Invitación aceptada",
+			"inviteDeclined": "Invitación rechazada",
+			"errorAccept": "No se pudo aceptar la invitación",
+			"errorDecline": "No se pudo rechazar la invitación"
+		},
+		"profile": {
+			"title": "Perfil"
+		},
+		"message": {
+			"title": "Mensajes",
+			"placeholder": "Escribe un mensaje...",
+			"sentByMe": "Tú: ",
+			"noFriends": "¡Haz algunos amigos para poder chatear con ellos!",
+			"noMessages": "Primera vez chateando con {{username}}. ¡No seas tímido, saluda!",
+			"newConversation": "Iniciar una nueva conversación"
+		},
+		"searchBar": {
+			"placeholder": "Buscar entre tus amigos..."
+		},
+		"confirmModal": {
+			"cancelButton": "Cancelar",
+			"confirmButton": "Confirmar"
+		}
 	}
 }

@@ -14,11 +14,13 @@ import API from '../../../api/api.js';
 import { useNavigate } from 'react-router-dom';
 import Card from '../../../styles/shared/Card.styled.js';
 import { useTournament } from '../../../context/TournamentContext.js';
+import { useTranslation, Trans } from 'react-i18next';
 
 const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) => {
 	const { addNotification } = useNotification();
 	const { registerForTournament } = useTournament();
 	const navigate = useNavigate();
+	const { t } = useTranslation();
 
 	const formatTimestamp = (timestamp) => {
 		const date = new Date(timestamp);
@@ -31,39 +33,40 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 	const handleAcceptTournamentInvite = async (tournamentID) => {
 		try {
 			await API.post(`/tournaments/${tournamentID}/invite/accept`);
+			addNotification('success', t('chat.invite.inviteAccepted'));
 			navigate(`/tournaments/${tournamentID}`);
 			registerForTournament(tournamentID);
 		} catch (error) {
 			console.log(error);
-			addNotification('error', error?.response?.data?.error || 'Error accepting tournament invite');
+			addNotification('error', error?.response?.data?.error || t('chat.invite.errorAccept'));
 		}
 	}
 
 	const handleAcceptChallengeInvite = async (challengerID, inviteID) => {
 		try {
 			await API.post(`/users/${challengerID}/challenge/${inviteID}/accept`);
-			addNotification('success', 'Challenge invite accepted');
+			addNotification('success', t('chat.invite.inviteAccepted'));
 			navigate('/game-challenge');
 		} catch (error) {
 			console.log(error);
-			addNotification('error', error?.response?.data?.error || 'Error accepting challenge invite');
+			addNotification('error', error?.response?.data?.error || t('chat.invite.errorAccept'));
 		}
 	}
 
 	const handleDenyChallengeInvite = async (challengerID, inviteID) => {
 		try {
 			await API.post(`/users/${challengerID}/challenge/${inviteID}/deny`);
-			addNotification('success', 'Challenge invite denied');
+			addNotification('success', t('chat.invite.inviteDeclined'));
 		} catch (error) {
 			console.log(error);
-			addNotification('error', error?.response?.data?.error || 'Error denying challenge invite');
+			addNotification('error', error?.response?.data?.error || t('chat.invite.errorDecline'));
 		}
 	}
 
 	if (!realConvo || realConvo.messages.length === 0) {
 		return (
 			<NewConversationMessage>
-				It's your first time chatting with {otherUser}. Say hi, don't be shy!
+				{t('chat.message.noMessages', { username: `${otherUser}` })}
 			</NewConversationMessage>
 		);
 	} else {
@@ -82,9 +85,13 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 								<BubbleDetails>
 									<Card $width={'270px'} $height={'200px'}>
 										<div className='bg'>
-											<h3>Tournament</h3>
-											<p>I invite you to join <b>{message.tournamentInvite.tournament.name}</b></p>
-											<button onClick={() => handleAcceptTournamentInvite(message.tournamentInvite.tournament.tournamentID)}>Join</button>
+											<h3>{t('chat.invite.tournament.title')}</h3>
+											<p>
+												<Trans i18nKey="chat.invite.tournament.content" components={[<strong key="first"/>]} values={{
+													tournamentName: `${message.tournamentInvite.tournament.name}`
+												}} />
+											</p>
+											<button onClick={() => handleAcceptTournamentInvite(message.tournamentInvite.tournament.tournamentID)}>{t('chat.invite.tournament.acceptButton')}</button>
 										</div>
 										<div className='blob'/>
 									</Card>
@@ -97,11 +104,13 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 								<BubbleDetails>
 									<Card $width={'290px'} $height={'250px'}>
 										<div className='bg'>
-											<h3>Challenge</h3>
-											<p>I challenge you to play against <b>me</b></p>
+											<h3>{t('chat.invite.challenge.title')}</h3>
+											<p>
+												<Trans i18nKey="chat.invite.challenge.content" components={[<strong key="first"/>]} />
+											</p>
 											<div className='button-container'>
-												<button onClick={() => handleAcceptChallengeInvite(message.sender.userID, message.challengeInvite.inviteID)}>Accept</button>
-												<button onClick={() => handleDenyChallengeInvite(message.sender.userID, message.challengeInvite.inviteID)}>Decline</button>
+												<button onClick={() => handleAcceptChallengeInvite(message.sender.userID, message.challengeInvite.inviteID)}>{t('chat.invite.challenge.acceptButton')}</button>
+												<button onClick={() => handleDenyChallengeInvite(message.sender.userID, message.challengeInvite.inviteID)}>{t('chat.invite.challenge.declineButton')}</button>
 											</div>
 										</div>
 										<div className='blob'/>
@@ -114,7 +123,7 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 						<MessageWrapper key={index} $isHost={message.sender.userID === userID}>
 							{message.sender.userID === userID ? (
 								<BubbleDetails>
-									{!isSameSender && <MessageUsername $isHost={false}>You</MessageUsername>}
+									{!isSameSender && <MessageUsername $isHost={false}>{t('chat.message.sentByMe')}</MessageUsername>}
 									<HostBubble data-time={formatTimestamp(message.createdAt)} $isRounded={isSameSender}>
 										{message.content}
 									</HostBubble>
