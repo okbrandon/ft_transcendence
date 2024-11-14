@@ -88,6 +88,14 @@ const TournamentProvider = ({ children }) => {
 						participants: prevTournament.participants.filter(p => p.userID !== data.user.userID)
 					}
 				});
+				if (data?.user?.userID === userIDRef.current) {
+					setUser(prev => ({
+						...prev,
+						tournamentID: null,
+					}));
+					setTournament(null);
+					navigate('/tournaments');
+				}
 			}
 		} else {
 			setTournament({
