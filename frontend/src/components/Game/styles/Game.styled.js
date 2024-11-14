@@ -5,6 +5,7 @@ export const PageContainer = styled.div`
 	position: relative;
 	flex-direction: column;
 	align-items: center;
+	justify-content: center;
 	height: 100vh;
 	background:
 		radial-gradient(circle at 20% 20%, rgba(75, 0, 130, 0.2), transparent 50%),
@@ -12,7 +13,7 @@ export const PageContainer = styled.div`
 		linear-gradient(135deg, #000000 0%, #111111 100%);
 	background-size: cover;
 	background-position: center;
-	padding-top: 35px;
+	padding-bottom: 40px;
 `;
 
 export const GameSceneContainer = styled.div`
