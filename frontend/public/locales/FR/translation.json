@@ -138,7 +138,7 @@
 	},
 	"profile": {
 		"about": {
-			"title": "À PROPOS",
+			"title": "À propos",
 			"bio": {
 				"notSet": "Rien d'intéressant ici."
 			},
@@ -150,10 +150,10 @@
 			}
 		},
 		"skinDisplay": {
-			"title": "AFFICHAGE DES SKINS"
+			"title": "Apparence de raquette"
 		},
 		"matchHistory": {
-			"title": "HISTORIQUE DES MATCHS",
+			"title": "Historique des matchs",
 			"table": {
 				"opponent": "Adversaire",
 				"duration": "Durée",
@@ -166,24 +166,24 @@
 			"noResults": "Aucun historique de match trouvé."
 		},
 		"winRate": {
-			"title": "TAUX DE VICTOIRE",
+			"title": "Taux de victoire",
 			"lifetime": {
-				"title": "Tout le temps"
+				"title": "Depuis toujours"
 			},
 			"lastFive": {
-				"title": "5 Derniers Jeux"
+				"title": "5 derniers matchs"
 			}
 		},
 		"stats": {
 			"features": {
 				"first": {
-					"title": "CLASSEMENT"
+					"title": "Wins"
 				},
 				"second": {
-					"title": "VICTOIRES"
+					"title": "Loss"
 				},
 				"third": {
-					"title": "RATIO"
+					"title": "Ratio"
 				}
 			},
 			"donut": {

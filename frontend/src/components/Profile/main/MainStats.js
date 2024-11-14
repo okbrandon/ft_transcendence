@@ -9,18 +9,18 @@ const MainStats = ({ userID, matches }) => {
 	return (
 		<MainStatsContainer>
 			<MainStatsItem>
-				<h2>Wins</h2>
+				<h2>{t('profile.stats.features.first.title')}</h2>
 				<p>{calculateTotalWins(matches, userID)}</p>
 			</MainStatsItem>
 			<MainStatsItem style={{
 				borderRight: '1px solid #ccc',
 				borderLeft: '1px solid #ccc'
 			}}>
-				<h2>Loss</h2>
+				<h2>{t('profile.stats.features.second.title')}</h2>
 				<p>{calculateTotalDefeats(matches, userID)}</p>
 			</MainStatsItem>
 			<MainStatsItem>
-				<h2>Ratio</h2>
+				<h2>{t('profile.stats.features.third.title')}</h2>
 				<p>{calculateWinDefeatRatio(matches, userID)}</p>
 			</MainStatsItem>
 		</MainStatsContainer>

@@ -138,7 +138,7 @@
 	},
 	"profile": {
 		"about": {
-			"title": "ABOUT",
+			"title": "About",
 			"bio": {
 				"notSet": "Nothing interesting here."
 			},
@@ -150,10 +150,10 @@
 			}
 		},
 		"skinDisplay": {
-			"title": "SKIN DISPLAY"
+			"title": "Paddle Skin"
 		},
 		"matchHistory": {
-			"title": "MATCH HISTORY",
+			"title": "Match History",
 			"table": {
 				"opponent": "Opponent",
 				"duration": "Duration",
@@ -166,7 +166,7 @@
 			"noResults": "No match history found."
 		},
 		"winRate": {
-			"title": "WINRATE",
+			"title": "Win Rate",
 			"lifetime": {
 				"title": "All Time"
 			},
@@ -177,13 +177,13 @@
 		"stats": {
 			"features": {
 				"first": {
-					"title": "RANKING"
+					"title": "Wins"
 				},
 				"second": {
-					"title": "WINS"
+					"title": "Loss"
 				},
 				"third": {
-					"title": "RATIO"
+					"title": "Ratio"
 				}
 			},
 			"donut": {

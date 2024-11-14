@@ -138,7 +138,7 @@
 	},
 	"profile": {
 		"about": {
-			"title": "ACERCA DE",
+			"title": "Acerca de",
 			"bio": {
 				"notSet": "Nada interesante aquí."
 			},
@@ -150,10 +150,10 @@
 			}
 		},
 		"skinDisplay": {
-			"title": "MOSTRAR SKIN"
+			"title": "Skin de Paleta"
 		},
 		"matchHistory": {
-			"title": "HISTORIAL DE PARTIDAS",
+			"title": "Historial de Partidas",
 			"table": {
 				"opponent": "Oponente",
 				"duration": "Duración",
@@ -166,24 +166,24 @@
 			"noResults": "No se encontró historial de partidas."
 		},
 		"winRate": {
-			"title": "PORCENTAJE DE VICTORIAS",
+			"title": "Tasa de Victorias",
 			"lifetime": {
-				"title": "Total"
+				"title": "Todo el Tiempo"
 			},
 			"lastFive": {
-				"title": "Últimas 5 Partidas"
+				"title": "Últimos 5 Juegos"
 			}
 		},
 		"stats": {
 			"features": {
 				"first": {
-					"title": "RANKING"
+					"title": "Wins"
 				},
 				"second": {
-					"title": "VICTORIAS"
+					"title": "Loss"
 				},
 				"third": {
-					"title": "RATIO"
+					"title": "Ratio"
 				}
 			},
 			"donut": {

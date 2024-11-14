@@ -7,7 +7,7 @@ const Balance = ({ profileUser }) => {
 
 	return (
 		<UserInfoItemContainer>
-			<UserInfoItemTitle>Balance</UserInfoItemTitle>
+			<UserInfoItemTitle>{t('profile.about.balance.title')}</UserInfoItemTitle>
 				<BalanceContainer>
 					<p>{t('store.currency.icon')} {profileUser.money}</p>
 				</BalanceContainer>
