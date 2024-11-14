@@ -4,7 +4,7 @@ import { useAuth } from "../../../context/AuthContext";
 import { OverlayContainer, RewardsContainer } from "../styles/Game.styled";
 import PongButton from "../../../styles/shared/PongButton.styled";
 import Card from "../../../styles/shared/Card.styled";
-import { useTranslation, Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 const Rewards = ({ endGameData, isSpectator = false, isTournament }) => {
 	const navigate = useNavigate();
