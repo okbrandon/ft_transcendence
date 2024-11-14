@@ -580,6 +580,9 @@ class UserChallenge(APIView):
         if invitee.userID == inviter.userID:
             return Response({"error": "You cannot challenge yourself"},
                             status=status.HTTP_400_BAD_REQUEST)
+        if invitee.userID == "user_ai":
+            return Response({"error": "Challenge Prune via the matchmaking system"},
+                            status=status.HTTP_400_BAD_REQUEST)
 
         blocked = Relationship.objects.filter(
             models.Q(userA=invitee.userID, userB=inviter.userID, status=2) |
@@ -659,6 +662,9 @@ class UserChallengeInviteResponse(APIView):
         if not inviter:
             return Response({"error": "User does not exist"},
                             status=status.HTTP_404_NOT_FOUND)
+        if inviter.userID == invitee.userID:
+            return Response({"error": "Abnormal behavior detected"},
+                            status=status.HTTP_400_BAD_REQUEST)
 
         invite = ChallengeInvite.objects.filter(
             inviteID=inviteID,
