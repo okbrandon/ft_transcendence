@@ -61,19 +61,6 @@ class AuthRegister(APIView):
             status=1  # Accepted/friends status
         )
 
-        # Create the conversation between the user and the AI
-        friend = User.objects.get(userID='user_ai')
-        existing_conversation = Conversation.objects.filter(
-            participants__userID__in=[user.userID, 'user_ai'],
-            conversationType='private_message'
-        ).annotate(participant_count=Count('participants')).filter(participant_count=2).exists()
-
-        if not existing_conversation:
-            new_conversation = Conversation.objects.create(conversationID=generate_id("conv"), conversationType='private_message')
-            new_conversation.receipientID = user.userID
-            new_conversation.participants.add(user, friend)
-            new_conversation.save()
-
         if not skip_email_verification:
             verification_code = generate_id('code')
             VerificationCode.objects.create(
