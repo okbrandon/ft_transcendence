@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
@@ -20,15 +20,16 @@ const TwoFactorAuthSignIn = ({ username, password, setIsTwoFactorAuth, available
 	const [otpSent, setOtpSent] = useState(false);
 	const [error, setError] = useState("");
 	const { t } = useTranslation();
+	const tRef = useRef(t);
 
 	useEffect(() => {
 		if (!otpSent) return;
-		addNotification('info', t('auth.twoFactor.successMessage'));
+		addNotification('info', tRef.current('auth.twoFactor.successMessage'));
 		const timeout = setTimeout(() => {
 			setOtpSent(false);
 		}, 5000);
 		return () => clearTimeout(timeout);
-	}, [otpSent, addNotification, t]);
+	}, [otpSent, addNotification]);
 
 	const handlePlatform = platform => {
 		if (otpSent) return;

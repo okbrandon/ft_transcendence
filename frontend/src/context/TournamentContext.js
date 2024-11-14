@@ -22,6 +22,7 @@ const TournamentProvider = ({ children }) => {
 	const userIDRef = useRef(null);
 	const heartbeatIntervalRef = useRef(null);
 	const { t } = useTranslation();
+	const tRef = useRef(t);
 
 	const sendMessage = useCallback((message) => {
 		if (socketTournament.current && socketTournament.current.readyState === WebSocket.OPEN) {
@@ -185,7 +186,7 @@ const TournamentProvider = ({ children }) => {
 					const newToken = await refreshToken();
 					if (newToken) {
 						connectWSTournament();
-						addNotification('info', t('game.tournaments.reconnectMessage'));
+						addNotification('info', tRef.current('game.tournaments.reconnectMessage'));
 					} else {
 						console.log('WebSocket for Tournaments failed to refresh the token');
 					}
@@ -202,7 +203,7 @@ const TournamentProvider = ({ children }) => {
 				console.log('WebSocket for Tournaments closed');
 			}
 		};
-	}, [identify, heartbeat, navigate, updateTournament, addNotification, t]);
+	}, [identify, heartbeat, navigate, updateTournament, addNotification]);
 
 	return (
 		<TournamentContext.Provider value={{

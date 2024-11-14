@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import NavBar from '../Navigation/Navigation';
 import Chat from '../Chat/Chat';
@@ -19,6 +19,7 @@ const Root = () => {
 	const [audio] = useState(new Audio('/sounds/pong-theme.mp3'));
 	const [audioGame] = useState(new Audio('/sounds/pong-ingame.mp3'));
 	const { t } = useTranslation();
+	const tRef = useRef(t);
 
 	const activateMusic = useCallback(() => {
 		if (!hasInteracted) {
@@ -45,7 +46,7 @@ const Root = () => {
 		const leaveTournament = async () => {
 			try {
 				await API.delete(`/tournaments/@me`);
-				addNotification('info', t('game.tournaments.leaveMessage'));
+				addNotification('info', tRef.current('game.tournaments.leaveMessage'));
 			} catch (error) {
 				addNotification('error', error?.response?.data?.error || 'Error leaving tournament');
 			}
@@ -54,7 +55,7 @@ const Root = () => {
 			leaveTournament();
 			console.log('index.js: leaving tournament');
 		}
-	}, [location, user?.tournamentID, addNotification, setUser, t]);
+	}, [location, user?.tournamentID, addNotification, setUser]);
 
 	useEffect(() => {
 		if (hasInteracted && showPersistentUI && isLoggedIn) {
