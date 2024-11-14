@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import NavBar from '../Navigation/Navigation';
 import Chat from '../Chat/Chat';
@@ -9,6 +9,7 @@ import ConnectedNavBar from '../Navigation/ConnectedNavigation';
 import TournamentProvider from '../../context/TournamentContext';
 import API from '../../api/api';
 import { useNotification } from '../../context/NotificationContext';
+import { useTranslation } from 'react-i18next';
 
 const Root = () => {
 	const location = useLocation();
@@ -17,6 +18,8 @@ const Root = () => {
 	const [showPersistentUI, setShowPersistentUI] = useState(true);
 	const [audio] = useState(new Audio('/sounds/pong-theme.mp3'));
 	const [audioGame] = useState(new Audio('/sounds/pong-ingame.mp3'));
+	const { t } = useTranslation();
+	const tRef = useRef(t);
 
 	const activateMusic = useCallback(() => {
 		if (!hasInteracted) {
@@ -43,7 +46,7 @@ const Root = () => {
 		const leaveTournament = async () => {
 			try {
 				await API.delete(`/tournaments/@me`);
-				addNotification('info', "Due to you leaving, you've been removed from the tournament");
+				addNotification('info', tRef.current('game.tournaments.leaveMessage'));
 			} catch (error) {
 				addNotification('error', error?.response?.data?.error || 'Error leaving tournament');
 			}

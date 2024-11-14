@@ -30,12 +30,12 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setShowTwoFactorAuth }) => {
 	const handlePlatform = useCallback(platform => {
 		API.post('auth/totp/request', { platform })
 			.then(() => {
-				addNotification('success', 'Request sent');
+				addNotification('success', t('auth.twoFactor.requestSent'));
 			})
 			.catch(err => {
 				addNotification('error', `${err?.response?.data?.error || 'An error occurred'}`);
 			});
-	}, [addNotification]);
+	}, [addNotification, t]);
 
 	const handleSubmit = e => {
 		e.preventDefault();
@@ -46,7 +46,7 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setShowTwoFactorAuth }) => {
 
 		API.patch('users/@me/profile', { ...submissionData, otp: authCode })
 			.then(() => {
-				addNotification('success', 'Security updated successfully');
+				addNotification('success', t('settings.security.successMessage'));
 				getUser()
 					.then(res => {
 						setUser(res.data);
@@ -69,7 +69,7 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setShowTwoFactorAuth }) => {
 			<Backdrop/>
 				<FormContainer onSubmit={handleSubmit}>
 					<h1>{t('auth.twoFactor.title')}</h1>
-					<p>{t('auth.twoFactor.subTitle')} caca</p>
+					<p>{t('auth.twoFactor.subTitle')}</p>
 
 					<OTPInputComponent setAuthCode={setAuthCode} setDisableVerify={setDisableVerify}/>
 

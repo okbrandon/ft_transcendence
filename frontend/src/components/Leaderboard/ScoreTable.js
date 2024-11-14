@@ -2,29 +2,30 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ScoreTableStyled, Trophy, Username } from './styles/ScoreTable.styled';
 import { formatUserData } from '../../api/user';
-
-const statHeaders = {
-	gamesPlayed: 'Games Played',
-	gamesWon: 'Games Won',
-	gamesLost: 'Games Lost',
-	score: 'Score'
-};
+import { useTranslation } from 'react-i18next';
 
 const ScoreTable = ({ data, selectedStat }) => {
 	const navigate = useNavigate();
+	const { t } = useTranslation();
+
+	const statHeaders = {
+		gamesPlayed: t('leaderboard.stats.gamesPlayed'),
+		gamesWon: t('leaderboard.stats.gamesWon'),
+		gamesLost: t('leaderboard.stats.gamesLost'),
+		score: t('leaderboard.stats.score')
+	};
 
 	const handleClickUsername = (username) => {
 		navigate(`/profile/${username}`);
 	}
 
-	// Brandon: translate each table headers
 	return (
 		<ScoreTableStyled>
 			<thead>
 			<tr>
-				<th>Pos</th>
-				<th>Player Name</th>
-				<th>{statHeaders[selectedStat] || 'Score'}</th>
+				<th>{t('leaderboard.table.columns.position')}</th>
+				<th>{t('leaderboard.table.columns.username')}</th>
+				<th>{statHeaders[selectedStat] || t('leaderboard.table.columns.defaultScore')}</th>
 			</tr>
 			</thead>
 			<tbody>

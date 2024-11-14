@@ -4,29 +4,31 @@ import {
 	TimeFrameButton,
 	TimeFrameContainer
 } from '../styles/Leaderboard.styled';
+import { useTranslation } from 'react-i18next';
 
 const TimeFrameButtons = ({ timeFrame, handleTimeFrameChange }) => {
+	const { t } = useTranslation();
+
 	return (
 		<TimeFrameContainer>
 			<BackgroundContainer>
-				{/* Brandon: translate each buttons */}
 				<TimeFrameButton
 					onClick={() => handleTimeFrameChange('lifetime')}
 					$isActive={timeFrame === 'lifetime'}
 				>
-					Lifetime
+					{t('leaderboard.timeFrame.lifetime')}
 				</TimeFrameButton>
 				<TimeFrameButton
 					onClick={() => handleTimeFrameChange('daily')}
 					$isActive={timeFrame === 'daily'}
 				>
-					Daily
+					{t('leaderboard.timeFrame.daily')}
 				</TimeFrameButton>
 				<TimeFrameButton
 					onClick={() => handleTimeFrameChange('weekly')}
 					$isActive={timeFrame === 'weekly'}
 				>
-					Weekly
+					{t('leaderboard.timeFrame.weekly')}
 				</TimeFrameButton>
 			</BackgroundContainer>
 		</TimeFrameContainer>

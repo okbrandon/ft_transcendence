@@ -15,6 +15,7 @@
 			"subTitle": "Tapez le texte suivant pour prouver que vous n'êtes pas un robot :",
 			"phrase": "Je ne suis pas un robot.",
 			"errorMessage": "Veuillez taper la phrase exacte.",
+			"successMessage": "Compte créé avec succès. Veuillez vérifier votre e-mail.",
 			"submitButton": "Soumettre"
 		},
 		"signIn": {
@@ -48,7 +49,8 @@
 			"successMessage": "L'OTP a été configuré sur votre plateforme choisie.",
 			"disableButton": "Désactiver l'authentification à deux facteurs",
 			"enableButton": "Activer l'authentification à deux facteurs",
-			"scanMessage": "Scannez ce code QR avec votre application d'authentification pour configurer l'OTP."
+			"scanMessage": "Scannez ce code QR avec votre application d'authentification pour configurer l'OTP.",
+			"requestSent": "Une demande a été envoyée."
 		}
 	},
 	"restrictions": {
@@ -56,6 +58,7 @@
 			"required": "Le nom d'utilisateur est requis.",
 			"invalidLength": "Le nom d'utilisateur doit comporter entre 4 et 16 caractères.",
 			"invalidCharacters": "Le nom d'utilisateur ne doit contenir que des caractères alphanumériques.",
+			"invalidFormat": "Le nom d'utilisateur ne peut pas se terminer par '42'.",
 			"errorKeyword": "Nom d'utilisateur"
 		},
 		"displayName": {
@@ -106,7 +109,8 @@
 		"title": "PONG",
 		"subTitle": "42 ft_transcendence",
 		"authors": "Créé par <0>{{firstAuthor}}</0>, <1>{{secondAuthor}}</1>, <2>{{thirdAuthor}}</2> et <3>{{fourthAuthor}}</3>",
-		"copyright": "PONG 2024"
+		"copyright": "PONG 2024",
+		"privacyPolicy": "Politique de confidentialité"
 	},
 	"home": {
 		"welcome": "Secouez la raquette !",
@@ -136,7 +140,7 @@
 	},
 	"profile": {
 		"about": {
-			"title": "À PROPOS",
+			"title": "À propos",
 			"bio": {
 				"notSet": "Rien d'intéressant ici."
 			},
@@ -148,10 +152,10 @@
 			}
 		},
 		"skinDisplay": {
-			"title": "AFFICHAGE DES SKINS"
+			"title": "Apparence de raquette"
 		},
 		"matchHistory": {
-			"title": "HISTORIQUE DES MATCHS",
+			"title": "Historique des matchs",
 			"table": {
 				"opponent": "Adversaire",
 				"duration": "Durée",
@@ -164,24 +168,24 @@
 			"noResults": "Aucun historique de match trouvé."
 		},
 		"winRate": {
-			"title": "TAUX DE VICTOIRE",
+			"title": "Taux de victoire",
 			"lifetime": {
-				"title": "Tout le temps"
+				"title": "Depuis toujours"
 			},
 			"lastFive": {
-				"title": "5 Derniers Jeux"
+				"title": "5 derniers matchs"
 			}
 		},
 		"stats": {
 			"features": {
 				"first": {
-					"title": "CLASSEMENT"
+					"title": "Wins"
 				},
 				"second": {
-					"title": "VICTOIRES"
+					"title": "Loss"
 				},
 				"third": {
-					"title": "RATIO"
+					"title": "Ratio"
 				}
 			},
 			"donut": {
@@ -308,6 +312,7 @@
 		"privacy": {
 			"title": "Confidentialité des données",
 			"subTitle": "Revenez dans quelques minutes pendant que nous préparons vos données...",
+			"downloadingMessage": "Vos données sont en cours de téléchargement...",
 			"subSections": {
 				"downloadData": {
 					"title": "Télécharger les données",
@@ -323,6 +328,7 @@
 		},
 		"visibility": {
 			"title": "Visibilité",
+			"successMessage": "L'utilisateur a été débloqué.",
 			"subSections": {
 				"blockedUsers": {
 					"title": "Utilisateurs bloqués",
@@ -335,7 +341,7 @@
 	},
 	"friends": {
 		"title": "AMIS",
-		"placeholder": "Rechercher un ami...",
+		"placeholder": "Rechercher parmi vos amis...",
 		"subSections": {
 			"friendList": {
 				"title": "Amis",
@@ -350,6 +356,302 @@
 				"declineButton": "Refuser",
 				"cancelButton": "Annuler",
 				"noResults": "Aucune demande d'ami trouvée."
+			}
+		},
+		"statuses": {
+			"playing": {
+				"ai": "Joue contre l'IA",
+				"multiplayer": "Joue contre un joueur",
+				"local": "Joue localement"
+			},
+			"home": "Dans le lobby",
+			"offline": "Profite de la vie..."
+		},
+		"notifications": {
+			"friendRemoved": "Cette amitié a été terminée.",
+			"challengeSent": "Demande de défi envoyée."
+		}
+	},
+	"chat": {
+		"block": {
+			"title": "Bloquer",
+			"selfBlock": "Vous ne pouvez pas vous bloquer vous-même.",
+			"userBlocked": "L'utilisateur {{username}} a été bloqué.",
+			"confirmMessage": "Êtes-vous sûr de vouloir bloquer {{username}} ? Vous ne pourrez plus voir ses messages ni recevoir de défis de sa part."
+		},
+		"invite": {
+			"challenge": {
+				"title": "Défi",
+				"content": "Je te défie de jouer contre <0>moi</0> !",
+				"acceptButton": "Accepter",
+				"declineButton": "Refuser"
+			},
+			"tournament": {
+				"title": "Tournoi",
+				"content": "Je t'invite à rejoindre <0>{{tournamentName}}</0>",
+				"acceptButton": "Rejoindre"
+			},
+			"selfInvite": "Vous ne pouvez pas vous défier vous-même.",
+			"inviteSent": "Défi envoyé à {{username}}.",
+			"inviteAccepted": "Invitation acceptée",
+			"inviteDeclined": "Invitation refusée",
+			"errorAccept": "Échec de l'acceptation de l'invitation",
+			"errorDecline": "Échec du refus de l'invitation"
+		},
+		"profile": {
+			"title": "Profil"
+		},
+		"message": {
+			"title": "Messages",
+			"placeholder": "Tapez un message...",
+			"sentByMe": "Vous : ",
+			"noFriends": "Faites-vous des amis pour pouvoir discuter avec eux !",
+			"noMessages": "Première fois que vous discutez avec {{username}}. Ne soyez pas timide, dites bonjour !",
+			"newConversation": "Commencer une nouvelle conversation"
+		},
+		"searchBar": {
+			"placeholder": "Rechercher parmi vos amis..."
+		},
+		"confirmModal": {
+			"cancelButton": "Annuler",
+			"confirmButton": "Confirmer"
+		},
+		"notifications": {
+			"messageReceived": "{{username}} vous a envoyé un message.",
+			"friendRequest": {
+				"received": "{{username}} vous a envoyé une demande d'ami.",
+				"accepted": "{{username}} a accepté votre demande d'ami.",
+				"declined": "{{username}} a refusé votre demande d'ami."
+			},
+			"challenge": {
+				"accepted": "{{username}} a accepté votre défi.",
+				"declined": "{{username}} a refusé votre défi."
+			}
+		}
+	},
+	"game": {
+		"local": {
+			"playerA": {
+				"title": "Joueur 1",
+				"won": "Joueur 1 Gagne"
+			},
+			"playerB": {
+				"title": "Joueur 2",
+				"won": "Joueur 2 Gagne"
+			},
+			"startMessage": "Appuyez sur une touche pour commencer le jeu"
+		},
+		"remote": {
+			"winner": {
+				"title": "{{username}} a gagné!",
+				"subTitle": "Vous avez gagné!"
+			},
+			"loser": {
+				"subTitle": "Vous avez perdu..."
+			},
+			"rewards": {
+				"experience": {
+					"title": "Expérience",
+					"amount": "{{amount}} XP"
+				},
+				"money": {
+					"title": "Argent",
+					"amount": "{{amount}} 🪙"
+				}
+			},
+			"profiles": {
+				"playerA": {
+					"title": "En attente de joueur"
+				},
+				"playerB": {
+					"title": "En attente d'adversaire"
+				},
+				"spectator": {
+					"title": "Vous regardez ce jeu"
+				}
+			}
+		},
+		"tournaments": {
+			"title": "Tournois Disponibles",
+			"searchBar": {
+				"placeholder": "Rechercher un tournoi..."
+			},
+			"listing": {
+				"noTournaments": "Aucun tournoi disponible.",
+				"players": "Joueurs: {{players}}/{{maxPlayers}}",
+				"status": "Statut: {{status}}",
+				"joinButton": "Rejoindre"
+			},
+			"setup": {
+				"title": "Configuration du Tournoi",
+				"subSections": {
+					"name": "Nom du Tournoi",
+					"maxPlayers": "Participants Max:",
+					"isPublic": {
+						"title": "Tournoi Public:",
+						"yes": "Oui",
+						"no": "Non"
+					}
+				},
+				"createButton": "CRÉER",
+				"backButton": "RETOUR"
+			},
+			"lobbyPage": {
+				"title": "Tournoi",
+				"listing": {
+					"title": "Joueurs",
+					"waitingMessage": "En attente de plus de joueurs..."
+				},
+				"invite": {
+					"title": "Inviter des Amis",
+					"noFriends": "Aucun ami actif disponible à inviter",
+					"inviteButton": "Inviter",
+					"cancelButton": "Annuler",
+					"successMessage": "Invitation envoyée avec succès."
+				},
+				"status": "{{players}}/{{maxPlayers}} joueurs",
+				"backButton": "Retour",
+				"inviteButton": "Inviter",
+				"startButton": "Commencer"
+			},
+			"endPage": {
+				"winner": {
+					"title": "GAGNANT"
+				},
+				"overview": {
+					"title": "Aperçu",
+					"public": "Tournoi public",
+					"private": "Tournoi privé",
+					"matches": {
+						"title": "Matchs",
+						"columns": {
+							"round": "TOUR",
+							"players": "JOUEURS",
+							"duration": "DURÉE",
+							"scores": "SCORES"
+						}
+					}
+				},
+				"stats": {
+					"title": "Scores",
+					"text": "Points totaux"
+				},
+				"leaveButton": "Quitter"
+			},
+			"gamePage": {
+				"upcomingMatches": {
+					"title": "Matchs à Venir",
+					"noPlayer": "N/A"
+				}
+			},
+			"leaveMessage": "En raison de votre départ, vous avez été retiré du tournoi",
+			"reconnectMessage": "Reconnexion au serveur. Veuillez patienter..."
+		},
+		"leave": {
+			"title": "Appuyez sur <0>Q</0> pour quitter le jeu",
+			"button": "Retourner au Menu Principal"
+		},
+		"gameOver": "Jeu Terminé!"
+	},
+	"playMenu": {
+		"title": "Sélectionner le Mode de Jeu",
+		"ai": {
+			"title": "IA"
+		},
+		"tournament": {
+			"title": "Tournoi",
+			"options": {
+				"title": "Sélectionner une Option",
+				"createButton": {
+					"title": "Créer un Tournoi",
+					"subTitle": "Commencer et héberger un nouveau tournoi."
+				},
+				"joinButton": {
+					"title": "Rejoindre un Tournoi",
+					"subTitle": "Entrer dans un tournoi existant."
+				},
+				"backButton": "Retour"
+			}
+		},
+		"1v1": {
+			"title": "1 contre 1"
+		},
+		"local": {
+			"title": "Local"
+		}
+	},
+	"leaderboard": {
+		"stats": {
+			"gamesPlayed": "Parties Jouées",
+			"gamesWon": "Parties Gagnées",
+			"gamesLost": "Parties Perdues",
+			"score": "Score"
+		},
+		"timeFrame": {
+			"lifetime": "Tout le temps",
+			"daily": "Quotidien",
+			"weekly": "Hebdomadaire"
+		},
+		"table": {
+			"columns": {
+				"position": "Pos",
+				"username": "Nom du Joueur",
+				"defaultScore": "Score"
+			}
+		}
+	},
+	"privacyPolicy": {
+		"title": "Politique de Confidentialité",
+		"lastUpdated": "Dernière mise à jour : {{date}}",
+		"intro": "Votre vie privée est importante pour nous. Cette politique de confidentialité décrit comment nous collectons, utilisons et protégeons vos informations.",
+		"sections": {
+			"informationWeCollect": {
+				"title": "Informations que nous collectons",
+				"description": "Nous collectons les types d'informations suivants :",
+				"details": {
+					"account": "Détails du compte",
+					"profile": "Communication de profil",
+					"gameplay": "Données de jeu",
+					"communications": "Communications",
+					"transactions": "Transactions"
+				},
+				"examples": {
+					"account": "Identifiants utilisateur, noms d'utilisateur, adresses e-mail et mots de passe (stockés en toute sécurité).",
+					"profile": "Noms d'affichage, avatars, biographies et préférences linguistiques.",
+					"gameplay": "Matchs, scores, tournois, jetons de jeu et paramètres utilisateur.",
+					"communications": "Messages et données de conversation pour les chats et les invitations aux tournois.",
+					"transactions": "Historique des achats pour les articles de la boutique."
+				}
+			},
+			"howWeUseInformation": {
+				"title": "Comment nous utilisons vos informations",
+				"description": "Nous utilisons les informations collectées pour :",
+				"details": [
+					"Créer et gérer votre compte.",
+					"Faciliter le jeu, les matchs et les tournois.",
+					"Activer la messagerie et les notifications.",
+					"Assurer la sécurité du compte et prévenir la fraude."
+				]
+			},
+			"dataSharing": {
+				"title": "Partage de données",
+				"description": "Nous pouvons partager certaines informations avec des prestataires de services tiers :",
+				"examples": {
+					"email": "Adresses e-mail",
+					"phone": "Numéros de téléphone"
+				},
+				"links": {
+					"emailService": "https://resend.com/",
+					"phoneService": "https://www.plivo.com/sms/"
+				}
+			},
+			"dataRetention": {
+				"title": "Conservation des données",
+				"description": "Nous conservons vos données tant que votre compte est actif. Si vous supprimez votre compte, nous supprimerons vos données, sauf si la loi nous oblige à les conserver."
+			},
+			"security": {
+				"title": "Sécurité",
+				"description": "Nous utilisons des mesures conformes aux normes de l'industrie pour protéger vos données. Cependant, aucun système n'est complètement sécurisé - veuillez protéger votre compte."
 			}
 		}
 	}

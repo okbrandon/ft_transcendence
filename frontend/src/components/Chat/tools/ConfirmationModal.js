@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 
 const ModalOverlay = styled.div`
 	position: fixed;
@@ -58,17 +59,18 @@ const MessageContent = styled.p`
 `;
 
 const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message }) => {
+	const { t } = useTranslation();
+
 	if (!isOpen) return null;
 
-	// Brandon translate -> "Cancel" and "Confirm"
 	return (
 		<ModalOverlay>
 			<ModalContent>
 				<ModalTitle>{title}</ModalTitle>
 				<MessageContent>{message}</MessageContent>
 				<ModalButtons>
-					<CancelButton onClick={onClose}>Cancel</CancelButton>
-					<ConfirmButton onClick={onConfirm}>Confirm</ConfirmButton>
+					<CancelButton onClick={onClose}>{t('chat.confirmModal.cancelButton')}</CancelButton>
+					<ConfirmButton onClick={onConfirm}>{t('chat.confirmModal.confirmButton')}</ConfirmButton>
 				</ModalButtons>
 			</ModalContent>
 		</ModalOverlay>

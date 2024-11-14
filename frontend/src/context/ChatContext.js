@@ -5,6 +5,7 @@ import { useNotification } from './NotificationContext';
 import { useRelation } from './RelationContext';
 import { useNavigate } from 'react-router-dom';
 import refreshToken from '../api/token';
+import { useTranslation } from 'react-i18next';
 
 const WS_CHAT_URL = process.env.REACT_APP_ENV === 'production' ? '/ws/chat/?token=' : 'ws://localhost:8000/ws/chat/?token=';
 
@@ -18,6 +19,8 @@ export const ChatProvider = ({ children }) => {
 	const [conversations, setConversations] = useState([]);
 	const [unreadCounts, setUnreadCounts] = useState({});
 	const [sendNotification, setSendNotification] = useState(null);
+	const { t } = useTranslation();
+	const tRef = useRef(t);
 
 	// State for managing direct messages
 	const [directMessage, setDirectMessage] = useState({
@@ -102,7 +105,7 @@ export const ChatProvider = ({ children }) => {
 
 	useEffect(() => {
 		if (sendNotification) {
-			addNotification('info', `${sendNotification} sent you a message.`);
+			addNotification('info', tRef.current('chat.notifications.messageReceived', { username: `${sendNotification}` }));
 			setSendNotification(null);
 		}
 	}, [sendNotification, addNotification]);
@@ -175,11 +178,11 @@ export const ChatProvider = ({ children }) => {
 					});
 					setIsRefetch(true);
 					if (userFrom.status === 'pending') {
-						addNotification('info', `You have a friend request from ${userFrom.displayName}.`);
+						addNotification('info', tRef.current('chat.notifications.friendRequest.received', { username: `${userFrom.displayName}` }));
 					} else if (userFrom.status === 'rejected') {
-						addNotification('info', `${userTo.displayName} rejected your friend request.`);
+						addNotification('info', tRef.current('chat.notifications.friendRequest.declined', { username: `${userTo.displayName}` }));
 					} else if (userFrom.status === 'accepted') {
-						addNotification('info', `${userTo.displayName} accepted your friend request.`);
+						addNotification('info', tRef.current('chat.notifications.friendRequest.accepted', { username: `${userTo.displayName}` }));
 					};
 				} else if (response.type === 'challenge_update') {
 					const formattedData = {
@@ -189,9 +192,9 @@ export const ChatProvider = ({ children }) => {
 					}
 
 					if (formattedData.invite.status === 'DECLINED') {
-						addNotification('info', `${formattedData.invite.invitee.displayName} denied your challenge.`);
+						addNotification('info', tRef.current('chat.notifications.challenge.accepted', { username: `${formattedData.invite.invitee.displayName}` }));
 					} else if (formattedData.invite.status === 'ACCEPTED') {
-						addNotification('info', `${formattedData.invite.invitee.displayName} accepted your challenge.`);
+						addNotification('info', tRef.current('chat.notifications.challenge.declined', { username: `${formattedData.invite.invitee.displayName}` }));
 						navigate('/game-challenge');
 					}
 				}

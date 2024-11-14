@@ -14,6 +14,7 @@ import PongButton from "../../../styles/shared/PongButton.styled";
 import { useTournament } from "../../../context/TournamentContext";
 import API from "../../../api/api";
 import { useNotification } from "../../../context/NotificationContext";
+import { useTranslation } from "react-i18next";
 
 const AvailableTournaments = ({ setOptions }) => {
 	const navigate = useNavigate();
@@ -21,6 +22,7 @@ const AvailableTournaments = ({ setOptions }) => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [tournaments, setTournaments] = useState([]);
 	const { registerForTournament } = useTournament();
+	const { t } = useTranslation();
 
 	useEffect(() => {
 		fetchTournaments();
@@ -57,13 +59,13 @@ const AvailableTournaments = ({ setOptions }) => {
 
 	return (
 		<AvailableTournamentsSection>
-			<Title>Available Tournaments</Title>
+			<Title>{t('game.tournaments.title')}</Title>
 			<SearchContainer>
 				<BackButton onClick={() => setOptions('')}><i className="bi bi-arrow-left"/></BackButton>
 				<SearchBar
 					id="search-tournament"
 					type="text"
-					placeholder="Search for a tournament..."
+					placeholder={t('game.tournaments.searchBar.placeholder')}
 					value={searchQuery}
 					onChange={(e) => setSearchQuery(e.target.value)}
 				/>
@@ -73,16 +75,16 @@ const AvailableTournaments = ({ setOptions }) => {
 					{tournaments.length ? filteredTournaments.map((tournament) => (
 						<TournamentCard key={tournament.tournamentID}>
 							<h3>{tournament.name}</h3>
-							<p>Players: {tournament.participants.length}/{tournament.maxParticipants}</p>
-							<p>Status: {tournament.status}</p>
+							<p>{t('game.tournaments.listing.players', { players: `${tournament.participants.length}/${tournament.maxParticipants}` })}</p>
+							<p>{t('game.tournaments.listing.status', { status: `${tournament.status}`})}</p>
 							{tournament.status === 'PENDING' && (
 								<PongButton onClick={() => handleJoinTournament(tournament.tournamentID)}>
-									Join
+									{t('game.tournaments.listing.joinButton')}
 								</PongButton>
 							)}
 						</TournamentCard>
 					)) : (
-						<p>No tournaments available</p>
+						<p>{t('game.tournaments.listing.noTournaments')}</p>
 					)}
 				</TournamentList>
 			</AvailableTournamentsContainer>

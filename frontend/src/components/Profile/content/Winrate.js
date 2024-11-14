@@ -14,7 +14,7 @@ const Winrate = ({ userID, matches }) => {
 
 	return (
 		<UserInfoItemContainer>
-			<UserInfoItemTitle>Winrate</UserInfoItemTitle>
+			<UserInfoItemTitle>{t('profile.winRate.title')}</UserInfoItemTitle>
 			<WinrateContainer>
 				<WinrateCard>
 					<h3>{t('profile.winRate.lifetime.title')}</h3>

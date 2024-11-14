@@ -4,6 +4,7 @@ import { useAuth } from "./AuthContext";
 import { formatUserData } from "../api/user";
 import refreshToken from "../api/token";
 import { useNotification } from "./NotificationContext";
+import { useTranslation } from "react-i18next";
 
 const WS_TOURNAMENT_URL = process.env.REACT_APP_ENV === 'production' ? '/ws/tournaments' : 'ws://localhost:8000/ws/tournaments';
 
@@ -20,6 +21,8 @@ const TournamentProvider = ({ children }) => {
 	const [resetMatch, setResetMatch] = useState(null);
 	const userIDRef = useRef(null);
 	const heartbeatIntervalRef = useRef(null);
+	const { t } = useTranslation();
+	const tRef = useRef(t);
 
 	const sendMessage = useCallback((message) => {
 		if (socketTournament.current && socketTournament.current.readyState === WebSocket.OPEN) {
@@ -183,7 +186,7 @@ const TournamentProvider = ({ children }) => {
 					const newToken = await refreshToken();
 					if (newToken) {
 						connectWSTournament();
-						addNotification('info', 'Reconnecting to the server...');
+						addNotification('info', tRef.current('game.tournaments.reconnectMessage'));
 					} else {
 						console.log('WebSocket for Tournaments failed to refresh the token');
 					}

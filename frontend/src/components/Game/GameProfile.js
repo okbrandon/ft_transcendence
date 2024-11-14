@@ -1,8 +1,11 @@
 import React from "react";
 import { Profile, ProfileImage, ProfileName } from "./styles/Game.styled";
 import Spinner from "react-bootstrap/Spinner";
+import { useTranslation } from "react-i18next";
 
 const GameProfile = ({ side, playerSide, player, opponent }) => {
+	const { t } = useTranslation();
+
 	return (
 		<Profile>
 			{playerSide === side ? (
@@ -13,7 +16,7 @@ const GameProfile = ({ side, playerSide, player, opponent }) => {
 						</>
 					) : (
 						<>
-							Waiting for player
+							{t('game.remote.profiles.playerA.title')}
 							<Spinner animation="border" size="sm"/>
 						</>
 					)
@@ -25,7 +28,7 @@ const GameProfile = ({ side, playerSide, player, opponent }) => {
 						</>
 					) : (
 						<>
-							Waiting for opponent
+							{t('game.remote.profiles.playerB.title')}
 							<Spinner animation="border" size="sm"/>
 						</>
 					)
