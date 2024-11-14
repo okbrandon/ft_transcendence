@@ -115,6 +115,8 @@ class UserProfileMe(APIView):
         me.password = ""
         me.flags = 1<<2
         me.money = 0
+        me.status = None
+        me.xp = 0
         me.save()
 
         tokens = OutstandingToken.objects.filter(user=me)
@@ -158,30 +160,6 @@ class UserProfile(APIView):
             profile['relationship'] = None
 
         return Response(profile, status=status.HTTP_200_OK)
-
-class UserDeleteMe(APIView):
-    def get(self, request, *args, **kwargs):
-        me = request.user
-        return Response({"scheduled_deletion": me.flags & (1 << 4) == (1 << 4)}, status=status.HTTP_200_OK)
-
-    def delete(self, request, *args, **kwargs):
-        me = request.user
-
-        if me.flags & (1 << 4) != (1 << 4):
-            return Response({"error": "User is not scheduled for deletion"}, status=status.HTTP_400_BAD_REQUEST)
-
-        me.flags = me.flags & ~(1 << 4)
-        me.save()
-
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-    def post(self, request, *args, **kwargs):
-        me = request.user
-        me.flags = me.flags | (1 << 4)
-        me.save()
-
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
 
 class UserHarvestMe(APIView):
     def get(self, request, *args, **kwargs):
