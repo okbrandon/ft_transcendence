@@ -18,6 +18,7 @@ import { useAuth } from '../../../context/AuthContext';
 import Loader from '../../../styles/shared/Loader.styled';
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
+import { useTranslation } from 'react-i18next';
 
 const EndedTournament = () => {
 	const navigate = useNavigate();
@@ -25,6 +26,7 @@ const EndedTournament = () => {
 	const { endTournamentData, tournament, setTournament } = useTournament();
 	const [matches, setMatches] = useState(null);
 	const [totalScores, setTotalScores] = useState(null);
+	const { t } = useTranslation();
 
 	useEffect(() => {
 		if (!endTournamentData) return;
@@ -92,7 +94,7 @@ const EndedTournament = () => {
 			<WinnerContainer>
 				<Confetti recycle={false} numberOfPieces={500} style={{height: '100%'}}/>
 				<WinnerDiv>
-					<h2>WINNER</h2>
+					<h2>{t('game.tournaments.endPage.winner.title')}</h2>
 					<WinnerInfo $background={endTournamentData.winner.bannerID}>
 						<img src={endTournamentData.winner.avatarID} alt={`${endTournamentData.winner.displayName}'s avatar`}/>
 						<div className='info'>
@@ -113,23 +115,23 @@ const EndedTournament = () => {
 				</Background>
 			</WinnerContainer>
 			<TournamentOverview>
-				<button id='leave-button' onClick={handleLeave}>Leave</button>
+				<button id='leave-button' onClick={handleLeave}>{t('game.tournaments.endPage.leaveButton')}</button>
 				<TournamentHeader>
-					<h1>Overview</h1>
-					<h2>{tournament.name} - {tournament.isPublic ? 'Public' : 'Private'} tournament</h2>
+					<h1>{t('game.tournaments.endPage.overview.title')}</h1>
+					<h2>{tournament.name} - {tournament.isPublic ? t('game.tournaments.endPage.overview.public') : t('game.tournaments.endPage.overview.private')}</h2>
 				</TournamentHeader>
 				<Tabs
 					defaultActiveKey="matches"
 					className="mb-3"
 				>
-					<Tab eventKey="matches" title="Matches">
+					<Tab eventKey="matches" title={t('game.tournaments.endPage.overview.matches.title')}>
 						<MatchCardTable>
 							<thead>
 								<tr>
-									<th>round</th>
-									<th colSpan={2}>players</th>
-									<th>Duration</th>
-									<th>Scores</th>
+									<th>{t('game.tournaments.endPage.overview.matches.columns.round')}</th>
+									<th colSpan={2}>{t('game.tournaments.endPage.overview.matches.columns.players')}</th>
+									<th>{t('game.tournaments.endPage.overview.matches.columns.duration')}</th>
+									<th>{t('game.tournaments.endPage.overview.matches.columns.scores')}</th>
 								</tr>
 							</thead>
 							<tbody>

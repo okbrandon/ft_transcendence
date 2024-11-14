@@ -8,6 +8,7 @@ import { PageContainer } from "../styles/Game.styled";
 import { useTournament } from "../../../context/TournamentContext";
 import { useAuth } from "../../../context/AuthContext";
 import { UpcomingMatches } from "../styles/Tournament/Tournament.styled";
+import { useTranslation } from "react-i18next";
 
 /*
 [
@@ -158,6 +159,8 @@ const GameTournament = () => {
 	const token = useRef(localStorage.getItem('token'));
 
 	const maxReconnectAttempts = 5;
+
+	const { t } = useTranslation();
 
 	const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl, {
 		onOpen: () => {
@@ -354,14 +357,14 @@ const GameTournament = () => {
 				isTournament={true}
 			/>
 			<UpcomingMatches>
-				<h3>Upcoming Matches</h3>
+				<h3>{t('game.tournaments.gamePage.upcomingMatches.title')}</h3>
 				<div className="scrollable">
 					{upcomingMatches.map((match, index) => (
 						<div key={index} className={`match ${match.currentMatchID === match.matchID && 'current-match'}`}>
 							<span className={`player`}>
-								{(match.players?.[0] && <span>{match.players?.[0]?.displayName}</span>) || <span className="unkwown">N/A</span>}
+								{(match.players?.[0] && <span>{match.players?.[0]?.displayName}</span>) || <span className="unkwown">{t('game.tournaments.gamePage.upcomingMatches.noPlayer')}</span>}
 								vs
-								{(match.players?.[1] && <span>{match.players?.[1]?.displayName}</span>) || <span className="unkwown">N/A</span>}
+								{(match.players?.[1] && <span>{match.players?.[1]?.displayName}</span>) || <span className="unkwown">{t('game.tournaments.gamePage.upcomingMatches.noPlayer')}</span>}
 							</span>
 						</div>
 					))}

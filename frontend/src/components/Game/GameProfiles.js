@@ -1,8 +1,11 @@
 import React from "react";
 import { PressQContainer, ProfilesContainer } from "./styles/Game.styled";
 import GameProfile from "./GameProfile";
+import { useTranslation, Trans } from "react-i18next";
 
 const GameProfiles = ({ player, opponent, playerSide, isSpectator }) => {
+	const { t } = useTranslation();
+
 	return (
 		<ProfilesContainer>
 			<GameProfile
@@ -13,9 +16,11 @@ const GameProfiles = ({ player, opponent, playerSide, isSpectator }) => {
 			/>
 			<PressQContainer>
 				{isSpectator ? (
-					<p>You are spectating this game</p>
+					<p>{t('game.remote.profiles.spectator.title')}</p>
 				) : (
-					<p>Press <b>Q</b> to quit game</p>
+					<p>
+						<Trans i18nKey="game.leave.title" components={[<strong key="first"/>]} />
+					</p>
 				)}
 			</PressQContainer>
 			<GameProfile

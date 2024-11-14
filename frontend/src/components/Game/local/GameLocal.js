@@ -17,6 +17,7 @@ import {
 import PongButton from "../../../styles/shared/PongButton.styled";
 import { getSkin } from "../../../api/user";
 import { useAuth } from "../../../context/AuthContext";
+import { useTranslation, Trans } from "react-i18next";
 
 const GameLocal = () => {
 	const navigate = useNavigate();
@@ -59,6 +60,8 @@ const GameLocal = () => {
 
 	// Paddle movement speed
 	const paddleSpeed = 0.1;
+
+	const { t } = useTranslation();
 
 	// Setting up paddle movement
 	const movePaddle = useCallback((direction, paddle, delta) => {
@@ -303,12 +306,14 @@ const GameLocal = () => {
 			<ProfilesContainer>
 				<Profile>
 					<ProfileImage src='/images/default-profile.webp' alt='Player 1'/>
-					<ProfileName>Player 1</ProfileName>
+					<ProfileName>{t('game.local.playerA.title')}</ProfileName>
 				</Profile>
-				<p style={{margin: '0 auto'}}>Press <b>Q</b> to quit game</p>
+				<p style={{margin: '0 auto'}}>
+					<Trans i18nKey="game.leave.title" components={[<strong key="first"/>]} />
+				</p>
 				<Profile>
 					<ProfileImage src='/images/default-profile.webp' alt='Player 2'/>
-					<ProfileName>Player 2</ProfileName>
+					<ProfileName>{t('game.local.playerB.title')}</ProfileName>
 				</Profile>
 			</ProfilesContainer>
 			<GameSceneContainer className={isHit ? "hit" : ""}>
@@ -319,9 +324,9 @@ const GameLocal = () => {
 				</ScoresContainer>
 				{gameOver ? (
 					<OverlayContainer>
-						<h1>Game Over!</h1>
-						<p>{scoreA >= 10 ? 'Player 1 Wins' : 'Player 2 Wins'}</p>
-						<PongButton onClick={() => navigate('/playmenu')}>Go Back to Main Menu</PongButton>
+						<h1>{t('game.gameOver')}</h1>
+						<p>{scoreA >= 10 ? t('game.local.playerA.won') : t('game.local.playerB.won')}</p>
+						<PongButton onClick={() => navigate('/playmenu')}>{t('game.leave.button')}</PongButton>
 					</OverlayContainer>
 				) : (
 					<>
@@ -332,7 +337,7 @@ const GameLocal = () => {
 						) : (
 							!isGameStarted && (
 								<OverlayContainer>
-									Press any key to start the game
+									{t('game.local.startMessage')}
 								</OverlayContainer>
 							)
 						)}

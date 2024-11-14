@@ -4,48 +4,50 @@ import { useAuth } from "../../../context/AuthContext";
 import { OverlayContainer, RewardsContainer } from "../styles/Game.styled";
 import PongButton from "../../../styles/shared/PongButton.styled";
 import Card from "../../../styles/shared/Card.styled";
+import { useTranslation, Trans } from "react-i18next";
 
 const Rewards = ({ endGameData, isSpectator = false, isTournament }) => {
 	const navigate = useNavigate();
 	const { user } = useAuth();
+	const { t } = useTranslation();
 
 	console.log('Rewards.js:', endGameData);
 
 	return (
 		<OverlayContainer>
-			<h1>Game Over!</h1>
+			<h1>{t('game.gameOver')}</h1>
 			{isSpectator ? (
 				<Card $width="250px" $height="190px">
 					<div className="bg">
 						<img src={endGameData.winnerProfile.avatarID} alt={`${endGameData.winnerProfile.displayName}'s avatar`}/>
-						{endGameData.winnerProfile.displayName} won !
+						{t('game.remote.winner.title', { username: `${endGameData.winnerProfile.displayName}` })}
 					</div>
 					<div className="blob"/>
 				</Card>
 			) : (
 				<>
-					<p>{endGameData.winner === user.userID ? 'You won!' : 'You lost.'}</p>
+					<p>{endGameData.winner === user.userID ? t('game.remote.winner.subTitle') : t('game.remote.loser.subTitle')}</p>
 					<RewardsContainer>
 						{endGameData.winner === user.userID ? (
 							<>
 								<p>
-									<span className="label">Experience:</span>
-									<span>{endGameData.rewards.winner.xp} xp</span>
+									<span className="label">{t('game.remote.rewards.experience.title')}</span>
+									<span>{t('game.remote.rewards.experience.amount', { amount: `${endGameData.rewards.winner.xp}` })}</span>
 								</p>
 								<p>
-									<span className="label">Money:</span>
-									<span>{endGameData.rewards.winner.money} <i className="bi bi-coin"/></span>
+									<span className="label">{t('game.remote.rewards.money.title')}</span>
+									<span>{t('game.remote.rewards.money.amount', { amount: `${endGameData.rewards.winner.xp}` })}</span>
 								</p>
 							</>
 						) : (
 							<>
 								<p>
-									<span className="label">Experience:</span>
-									<span>{endGameData.rewards.loser.xp} xp</span>
+									<span className="label">{t('game.remote.rewards.experience.title')}</span>
+									<span>{t('game.remote.rewards.experience.amount', { amount: `${endGameData.rewards.loser.xp}` })}</span>
 								</p>
 								<p>
-									<span className="label">Money:</span>
-									<span>{endGameData.rewards.loser.money} <i className="bi bi-coin"/></span>
+									<span className="label">{t('game.remote.rewards.money.title')}</span>
+									<span>{t('game.remote.rewards.money.amount', { amount: `${endGameData.rewards.loser.xp}` })}</span>
 								</p>
 							</>
 						)}
@@ -53,7 +55,7 @@ const Rewards = ({ endGameData, isSpectator = false, isTournament }) => {
 				</>
 			)}
 			{!isTournament && (
-				<PongButton onClick={() => navigate('/playmenu')}>Go Back to Main Menu</PongButton>
+				<PongButton onClick={() => navigate('/playmenu')}>{t('game.leave.button')}</PongButton>
 			)}
 		</OverlayContainer>
 	);

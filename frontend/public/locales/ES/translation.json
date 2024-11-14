@@ -412,5 +412,154 @@
 			"cancelButton": "Cancelar",
 			"confirmButton": "Confirmar"
 		}
+	},
+	"game": {
+		"local": {
+			"playerA": {
+				"title": "Jugador 1",
+				"won": "Jugador 1 Gana"
+			},
+			"playerB": {
+				"title": "Jugador 2",
+				"won": "Jugador 2 Gana"
+			},
+			"startMessage": "Presiona cualquier tecla para comenzar el juego"
+		},
+		"remote": {
+			"winner": {
+				"title": "{{username}} ganó!",
+				"subTitle": "¡Ganaste!"
+			},
+			"loser": {
+				"subTitle": "Perdiste..."
+			},
+			"rewards": {
+				"experience": {
+					"title": "Experiencia",
+					"amount": "{{amount}} XP"
+				},
+				"money": {
+					"title": "Dinero",
+					"amount": "{{amount}} 🪙"
+				}
+			},
+			"profiles": {
+				"playerA": {
+					"title": "Esperando jugador"
+				},
+				"playerB": {
+					"title": "Esperando oponente"
+				},
+				"spectator": {
+					"title": "Estás observando este juego"
+				}
+			}
+		},
+		"tournaments": {
+			"title": "Torneos Disponibles",
+			"searchBar": {
+				"placeholder": "Buscar un torneo..."
+			},
+			"listing": {
+				"noTournaments": "No hay torneos disponibles.",
+				"players": "Jugadores: {{players}}/{{maxPlayers}}",
+				"status": "Estado: {{status}}",
+				"joinButton": "Unirse"
+			},
+			"setup": {
+				"title": "Configuración del Torneo",
+				"subSections": {
+					"name": "Nombre del Torneo",
+					"maxPlayers": "Máximo de Participantes:",
+					"isPublic": {
+						"title": "Torneo Público:",
+						"yes": "Sí",
+						"no": "No"
+					}
+				},
+				"createButton": "CREAR",
+				"backButton": "ATRÁS"
+			},
+			"lobbyPage": {
+				"title": "Torneo",
+				"listing": {
+					"title": "Jugadores",
+					"waitingMessage": "Esperando más jugadores..."
+				},
+				"invite": {
+					"title": "Invitar Amigos",
+					"noFriends": "No hay amigos activos disponibles para invitar",
+					"inviteButton": "Invitar",
+					"cancelButton": "Cancelar",
+					"successMessage": "Invitación enviada con éxito."
+				},
+				"status": "{{players}}/{{maxPlayers}} jugadores",
+				"backButton": "Atrás",
+				"inviteButton": "Invitar",
+				"startButton": "Comenzar"
+			},
+			"endPage": {
+				"winner": {
+					"title": "GANADOR"
+				},
+				"overview": {
+					"title": "Resumen",
+					"public": "Torneo público",
+					"private": "Torneo privado",
+					"matches": {
+						"title": "Partidos",
+						"columns": {
+							"round": "RONDA",
+							"players": "JUGADORES",
+							"duration": "DURACIÓN",
+							"scores": "PUNTUACIONES"
+						}
+					}
+				},
+				"stats": {
+					"title": "Puntuaciones",
+					"text": "Puntos totales"
+				},
+				"leaveButton": "Salir"
+			},
+			"gamePage": {
+				"upcomingMatches": {
+					"title": "Próximos Partidos",
+					"noPlayer": "N/A"
+				}
+			}
+		},
+		"leave": {
+			"title": "Presiona <0>Q</0> para salir del juego",
+			"button": "Volver al Menú Principal"
+		},
+		"gameOver": "¡Juego Terminado!"
+	},
+	"playMenu": {
+		"title": "Seleccionar Modo de Juego",
+		"ai": {
+			"title": "IA"
+		},
+		"tournament": {
+			"title": "Torneo",
+			"options": {
+				"title": "Seleccionar una Opción",
+				"createButton": {
+					"title": "Crear un Torneo",
+					"subTitle": "Iniciar y organizar un nuevo torneo."
+				},
+				"joinButton": {
+					"title": "Unirse a un Torneo",
+					"subTitle": "Entrar en un torneo existente."
+				},
+				"backButton": "Atrás"
+			}
+		},
+		"1v1": {
+			"title": "1 vs 1"
+		},
+		"local": {
+			"title": "Local"
+		}
 	}
 }
