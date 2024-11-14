@@ -2,6 +2,7 @@ import asyncio
 import jwt
 import logging
 import time
+import json
 
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.layers import get_channel_layer
@@ -229,13 +230,13 @@ class TournamentManager:
     async def send_prune_message(self, user_id, content):
         prune_user = await sync_to_async(User.objects.get)(userID="user_ai")
         conversation = await self.get_or_create_prune_conversation(user_id)
-        
+
         message = await sync_to_async(conversation.messages.create)(
             messageID=generate_id("msg"),
             sender=prune_user,
             content=content
         )
-        
+
         await self.channel_layer.group_send(
             f"chat_{user_id}",
             {
@@ -249,12 +250,12 @@ class TournamentManager:
     def get_or_create_prune_conversation(self, user_id):
         user = User.objects.get(userID=user_id)
         prune_user = User.objects.get(userID="user_ai")
-        
+
         conversation = Conversation.objects.filter(
             participants__userID__in=[user_id, "user_ai"],
             conversationType='private_message'
         ).annotate(participant_count=Count('participants')).filter(participant_count=2).first()
-        
+
         if not conversation:
             conversation = Conversation.objects.create(
                 conversationID=generate_id("conv"),
@@ -262,7 +263,7 @@ class TournamentManager:
             )
             conversation.participants.add(user, prune_user)
             conversation.save()
-        
+
         return conversation
 
     @sync_to_async
@@ -372,6 +373,13 @@ class TournamentConsumer(AsyncJsonWebsocketConsumer):
         logger.info(f"Disconnecting with close code: {close_code}")
         if self.heartbeat_task:
             self.heartbeat_task.cancel()
+        if self.user:
+            connection_count_key = f"tournament_user_connections_{self.user.userID}"
+            connection_count = cache.get(connection_count_key, 0) - 1
+            if connection_count > 0:
+                cache.set(connection_count_key, connection_count, timeout=None)
+            else:
+                cache.delete(connection_count_key)
         if self.user and self.tournament:
             await self.channel_layer.group_discard(f"tournament_{self.tournament.tournamentID}", self.channel_name)
             await self.send_tournament_leave()
@@ -419,7 +427,25 @@ class TournamentConsumer(AsyncJsonWebsocketConsumer):
                 await self.close()
                 return
 
-            await self.send_json({"e": "READY", "d": get_safe_profile(UserSerializer(self.user).data, me=False)})
+            connection_count_key = f"tournament_user_connections_{self.user.userID}"
+            connection_count = cache.get(connection_count_key, 0)
+
+            cache.set(connection_count_key, connection_count + 1, timeout=None)
+            if connection_count + 1 >= 2:
+                try:
+                    self.send(json.dumps({
+                        "type": "error",
+                        "message": "You can only have 2 connections at the same time"
+                    }))
+                    await self.close()
+                except Exception as _:
+                    pass
+                return
+
+            try:
+                await self.send_json({"e": "READY", "d": get_safe_profile(UserSerializer(self.user).data, me=False)})
+            except Exception as _:
+                pass
             logger.info(f"User {user_id} identified successfully")
 
             current_tournament = await self.get_user_current_tournament(self.user)
