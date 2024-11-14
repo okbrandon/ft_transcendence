@@ -527,7 +527,8 @@
 					"title": "Upcoming Matches",
 					"noPlayer": "N/A"
 				}
-			}
+			},
+			"leaveMessage": "Due to you leaving, you've been removed from the tournament"
 		},
 		"leave": {
 			"title": "Press <0>Q</0> to quit the game",

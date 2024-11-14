@@ -527,7 +527,8 @@
 					"title": "Matchs à Venir",
 					"noPlayer": "N/A"
 				}
-			}
+			},
+			"leaveMessage": "En raison de votre départ, vous avez été retiré du tournoi"
 		},
 		"leave": {
 			"title": "Appuyez sur <0>Q</0> pour quitter le jeu",

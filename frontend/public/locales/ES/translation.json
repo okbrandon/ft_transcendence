@@ -527,7 +527,8 @@
 					"title": "Próximos Partidos",
 					"noPlayer": "N/A"
 				}
-			}
+			},
+			"leaveMessage": "Debido a que te has ido, has sido eliminado del torneo"
 		},
 		"leave": {
 			"title": "Presiona <0>Q</0> para salir del juego",
