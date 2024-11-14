@@ -284,6 +284,7 @@
 			"saveButton": "Enregistrer les modifications",
 			"loadingButton": "Enregistrement...",
 			"successMessage": "Modifications enregistrées avec succès.",
+			"noChanges": "Aucune modification détectée.",
 			"subSections": {
 				"signIn": {
 					"title": "Connexion",
