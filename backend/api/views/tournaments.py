@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from ..models import Tournament, TournamentInvite, User, Conversation
+from ..models import Tournament, TournamentInvite, User, Conversation, Relationship
 from ..serializers import TournamentSerializer, UserSerializer, MessageSerializer
 from ..util import generate_id, get_safe_profile
 from django.db import transaction
@@ -79,10 +79,23 @@ class Tournaments(APIView):
         channel_layer = get_channel_layer()
 
         for invitee_id in invitee_ids:
+            if invitee_id == "user_ai":
+                return Response({"error": "Cannot invite AI user"}, status=status.HTTP_400_BAD_REQUEST)
+
             try:
                 invitee = User.objects.get(userID=invitee_id)
             except User.DoesNotExist:
                 return Response({"error": f"User {invitee_id} not found"}, status=status.HTTP_404_NOT_FOUND)
+
+            # Check if the inviter is friend with the invitee
+            friendship = Relationship.objects.filter(
+                (Q(userA=inviter.userID, userB=invitee.userID) |
+                 Q(userA=invitee.userID, userB=inviter.userID)),
+                status=1  # Assuming status 1 means accepted friendship
+            ).exists()
+
+            if not friendship:
+                return Response({"error": f"You are not friends with {invitee.username}"}, status=status.HTTP_400_BAD_REQUEST)
 
             # Check if the invitee is already subscribed to a tournament
             if Tournament.objects.filter(participants=invitee, status='PENDING').exists():
