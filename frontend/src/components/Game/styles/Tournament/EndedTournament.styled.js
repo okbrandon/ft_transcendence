@@ -91,6 +91,7 @@ export const WinnerInfo = styled.div`
 		width: 150px;
 		height: 150px;
 		border-radius: 25%;
+		object-fit: cover;
 		border: 3px solid #3f3f3f;
 		box-shadow: 0 0 100px rgba(255, 255, 255, 0.7);
 	}
