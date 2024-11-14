@@ -118,22 +118,20 @@ async def get_user_id_from_token(token):
         user_id = payload.get('user_id')
 
         if not user_id:
-            logger.warning(f"[UserIDFromToken] {token}: Token payload missing user_id")
             return None
 
         user = await sync_to_async(User.objects.get)(id=user_id)
         if not user:
-            logger.warning(f"[UserIDFromToken] {token}: User not found")
             return None
 
         user_serializer = UserSerializer(user).data
         return user_serializer['userID']
     except jwt.ExpiredSignatureError:
-        logger.warning(f"[UserIDFromToken] {token}: Expired token")
+        logger.error(f"[Token to User] {token}: Token has expired")
         return None
     except jwt.InvalidTokenError:
-        logger.warning(f"[UserIDFromToken] {token}: Invalid token")
+        logger.error(f"[Token to User] {token}: Invalid token")
         return None
     except Exception as e:
-        logger.error(f"[UserIDFromToken] {token}: {e}")
+        logger.error(f"[Token to User] {token}: {e}")
         return None

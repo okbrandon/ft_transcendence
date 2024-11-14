@@ -9,7 +9,6 @@ from datetime import timedelta
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 
@@ -26,7 +25,7 @@ from asgiref.sync import async_to_sync
 
 from ..models import User, Match, Relationship, UserSettings, Purchase, StoreItem, ChallengeInvite, Conversation
 from ..serializers import UserSerializer, UserSettingsSerializer, MatchSerializer, RelationshipSerializer, MessageSerializer, ChallengeInviteSerializer
-from ..util import send_otp_via_sms, get_safe_profile, generate_id
+from ..util import get_safe_profile, generate_id
 from ..validators import *
 
 logging.basicConfig(level=logging.INFO)
@@ -79,7 +78,7 @@ class UserProfileMe(APIView):
 
             sensitive_fields = ['password', 'phone_number', 'email']
             changed_sensitive_fields = [field for field in sensitive_fields if field in updated_fields]
-            
+
             for field in changed_sensitive_fields:
                 if field == 'password':
                     if not check_password(updated_fields[field], me.password):

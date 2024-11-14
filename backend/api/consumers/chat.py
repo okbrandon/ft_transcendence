@@ -1,27 +1,18 @@
-import logging
 import urllib.parse
 import httpx
 import json
-import asyncio
-import random
 import os
-import time
 
-from channels.generic.websocket import AsyncWebsocketConsumer, AsyncJsonWebsocketConsumer
-from channels.db import database_sync_to_async
+from channels.generic.websocket import AsyncWebsocketConsumer
 
-from asgiref.sync import sync_to_async, async_to_sync
+from asgiref.sync import sync_to_async
 
 from django.db.models import Q, Count
-from django.utils import timezone
 from django.core.cache import cache
 
-from ..models import Conversation, User, Relationship, Match, UserSettings, Tournament
+from ..models import Conversation, User, Relationship
 from ..util import generate_id, get_safe_profile, get_user_id_from_token
-from ..serializers import UserSerializer, UserSettingsSerializer, MessageSerializer
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+from ..serializers import UserSerializer, MessageSerializer
 
 class ChatConsumer(AsyncWebsocketConsumer):
 
@@ -33,14 +24,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         token = query_params.get('token', [None])[0]
 
         if token is None:
-            logger.info(f"[{self.__class__.__name__}] Connection attempt without token")
             await self.close()
             return
 
         userID = await get_user_id_from_token(token)
 
         if userID is None:
-            logger.info(f"[{self.__class__.__name__}] Connection attempt with invalid token")
             await self.close()
             return
 
@@ -58,9 +47,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         if connection_count <= 0:
             await self.ensure_conversations_exist(self.user)
-            logger.info(f"[{self.__class__.__name__}] User {self.user.username} connected, conversations ensured")
-        else:
-            logger.info(f"[{self.__class__.__name__}] User {self.user.username} reconnected")
         await self.accept()
 
     async def disconnect(self, close_code):
@@ -75,10 +61,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
             if connection_count > 0:
                 cache.set(connection_count_key, connection_count, timeout=None)
-                logger.info(f"[{self.__class__.__name__}] User {self.user.username} disconnected, {connection_count} connections remaining")
             else:
                 cache.delete(connection_count_key)
-                logger.info(f"[{self.__class__.__name__}] User {self.user.username} disconnected")
 
     async def receive(self, text_data):
         try:
@@ -102,7 +86,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     if len(content) > 256:
                         raise Exception("Message content exceeds 256 characters")
 
-                    logger.info(f"[{self.__class__.__name__}] Received message from {self.user.username}: {json_data}")
                     message = await self.add_message_to_conversation(conversation_id, self.user, content)
                     await self.notify_new_message(conversation_id, self.user, message)
 

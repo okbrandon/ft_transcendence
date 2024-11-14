@@ -4,7 +4,6 @@ import json
 import asyncio
 
 from channels.generic.websocket import AsyncWebsocketConsumer
-from channels.db import database_sync_to_async
 
 from asgiref.sync import sync_to_async
 
@@ -32,14 +31,12 @@ class StatusConsumer(AsyncWebsocketConsumer):
         token = query_params.get('token', [None])[0]
 
         if token is None:
-            logger.info(f"[{self.__class__.__name__}] Connection attempt without token")
             await self.close()
             return
 
         userID = await get_user_id_from_token(token)
 
         if userID is None:
-            logger.info(f"[{self.__class__.__name__}] Connection attempt with invalid token")
             await self.close()
             return
 
@@ -57,7 +54,6 @@ class StatusConsumer(AsyncWebsocketConsumer):
 
         await self.accept()
         self.heartbeat_task = asyncio.create_task(self.check_heartbeat())
-        logger.info(f"[{self.__class__.__name__}] User {self.user.username} connected")
 
     async def disconnect(self, close_code):
 
@@ -74,12 +70,10 @@ class StatusConsumer(AsyncWebsocketConsumer):
 
             if connection_count > 0:
                 cache.set(connection_count_key, connection_count, timeout=None)
-                logger.info(f"[{self.__class__.__name__}] User {self.user.username} disconnected, {connection_count} connections remaining")
             else:
                 cache.delete(connection_count_key)
                 await self.update_user_status(False, None)
                 await self.notify_friends_connection(self.user)
-                logger.info(f"[{self.__class__.__name__}] User {self.user.username} disconnected")
 
     async def receive(self, text_data):
         try:
@@ -170,7 +164,7 @@ class StatusConsumer(AsyncWebsocketConsumer):
             self.failed_heartbeats += 1
 
             if self.failed_heartbeats >= 3:
-                logger.info(f"[{self.__class__.__name__}] User {self.user.username} missed 3 heartbeats, closing connection")
+                logger.warning(f"[{self.__class__.__name__}] User {self.user.username} missed 3 heartbeats, closing connection")
                 await self.close(code=4000)
                 break
 
