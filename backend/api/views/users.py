@@ -674,6 +674,14 @@ class UserChallengeInviteResponse(APIView):
             return Response({"error": "Inviter is not free to play"},
                             status=status.HTTP_400_BAD_REQUEST)
 
+        # Check if the invitee is available to play
+        if invitee.status['online'] != True:
+            return Response({"error": "Invitee is not online"},
+                            status=status.HTTP_400_BAD_REQUEST)
+        if invitee.status['activity'] != 'HOME':
+            return Response({"error": "Invitee is not free to play"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
         # Action processing
         if action == 'accept':
             invite.status = 'ACCEPTED'
@@ -685,7 +693,7 @@ class UserChallengeInviteResponse(APIView):
                 winnerID=None,
                 scores={},
                 finishedAt=None,
-                flags=4
+                flags=5
             )
             new_match.whitelist.add(inviter, invitee)
             new_match.save()

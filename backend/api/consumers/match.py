@@ -569,10 +569,10 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
         match_state['spectators'].append(self.user.userID)
         playerA = await self.get_user_from_id(match.playerA['id'])
         playerB = await self.get_user_from_id(match.playerB['id']) if match.playerB else None
-        
+
         playerA_data = UserSerializer(playerA).data
         playerB_data = UserSerializer(playerB).data if playerB else None
-        
+
         safe_playerA = get_safe_profile(playerA_data, me=False)
         safe_playerB = get_safe_profile(playerB_data, me=False) if playerB_data else None
 
@@ -663,7 +663,7 @@ class MatchConsumer(AsyncJsonWebsocketConsumer):
                 logger.error(f"[{self.__class__.__name__}] Failed to connect to bot: {str(e)}")
             return new_match
         elif match_type == 'challenge':
-            available_match = Match.objects.filter(finishedAt__isnull=True, whitelist__userID=self.user.userID, flags__exact=4).first()
+            available_match = Match.objects.filter(finishedAt__isnull=True, whitelist__userID=self.user.userID, flags__exact=5).first()
 
             if available_match:
                 logger.info(f"[{self.__class__.__name__}] Found existing challenge match: {MatchSerializer(available_match).data}")
