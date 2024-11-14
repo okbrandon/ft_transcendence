@@ -437,7 +437,7 @@ class TournamentConsumer(AsyncJsonWebsocketConsumer):
                         "type": "connection_error",
                         "message": "You can only have 2 connections at the same time"
                     }))
-                    await self.close()
+                    await self.close(code=42)
                 except Exception as _:
                     pass
                 return
