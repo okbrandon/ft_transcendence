@@ -197,7 +197,14 @@ const GameTournament = () => {
 				if (data.d.userID !== playerIdRef.current)
 					setGameState(prevState => ({ ...prevState, opponent: formatUserData(data.d) }));
 			},
-			'PADDLE_HIT': () => setHitPos(data.d.ball),
+			'PADDLE_HIT': () => {
+				setHitPos(data.d.ball);
+				if (hasInteractedRef.current) {
+					const hit1 = new Audio('/sounds/pong-hit1.mp3');
+					hit1.volume = 0.2;
+					hit1.play();
+				}
+			},
 		};
 
 		const handler = handlers[data.e];
