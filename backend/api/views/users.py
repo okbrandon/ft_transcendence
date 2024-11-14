@@ -26,7 +26,7 @@ from asgiref.sync import async_to_sync
 
 from ..models import User, Match, Relationship, UserSettings, Purchase, StoreItem, ChallengeInvite, Conversation
 from ..serializers import UserSerializer, UserSettingsSerializer, MatchSerializer, RelationshipSerializer, MessageSerializer, ChallengeInviteSerializer
-from ..util import send_otp_via_sms, send_data_package_ready_email, get_safe_profile, generate_id
+from ..util import send_otp_via_sms, get_safe_profile, generate_id
 from ..validators import *
 
 logging.basicConfig(level=logging.INFO)
@@ -488,7 +488,6 @@ class UserExports(APIView):
             response = HttpResponse(file.read(), content_type='application/zip')
             response['Content-Disposition'] = f'attachment; filename="{user_id}.zip"'
 
-            send_data_package_ready_email(request.user.email)
             return response
 
 class Stats():

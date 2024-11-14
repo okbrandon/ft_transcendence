@@ -94,29 +94,6 @@ def send_otp_via_email(to: str, otp: str):
     email = resend.Emails.send(params)
     return email
 
-def send_data_package_ready_email(to: str):
-    resend.api_key = os.getenv("RESEND_API_KEY")
-
-    params: resend.Emails.SendParams = {
-        "from": "noreply@transcendence.evan.sh",
-        "to": to,
-        "subject": "Your Data Package is Ready",
-        "html": f"""
-            <h1>Your Data Package is Ready</h1>
-            <p>We've prepared your data package as requested.</p>
-            <p>To download your user package:</p>
-            <ol>
-                <li>Log in to your account</li>
-                <li>Go to Settings</li>
-                <li>Click on 'Data Privacy'</li>
-                <li>You'll find the option to download your user package there</li>
-            </ol>
-            <p>Thank you for being a part of our community!</p>
-        """,
-    }
-
-    email = resend.Emails.send(params)
-
 def get_safe_profile(data: dict, me: bool, many: bool = False):
     if many:
         return [get_safe_profile(item, me, False) for item in data]
