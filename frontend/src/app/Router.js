@@ -42,12 +42,6 @@ const PrivateRoutes = () => {
 	);
 };
 
-const GameRoutes = () => {
-	return (
-		<Outlet/>
-	);
-};
-
 const AuthenticationRoutes = () => {
 	const { isLoggedIn, setIsLoggedIn } = useAuth();
 
@@ -78,15 +72,13 @@ const Router = createBrowserRouter(createRoutesFromElements(
 				<Route path="tournaments" element={ <Tournament/> }/>
 				<Route path="tournaments/create" element={ <CreateTournament /> }/>
 				<Route path="tournaments/:tournamentID" element={ <JoinTournament/> }/>
-				<Route path="tournaments/:tournamentID/game" element={ <GameTournament /> }/>
 				<Route path="tournaments/:tournamentID/results" element={ <EndedTournament /> }/>
-				<Route element={ <GameRoutes/> }>
-					<Route path="game-classic" element={ <Game/> }/>
-					<Route path="game-ai" element={ <Game/> }/>
-					<Route path="game-challenge" element={ <Game/> }/>
-					<Route path="playmenu" element={ <PlayMenu/> }/>
-					<Route path="game-local" element={ <GameLocal/> }/>
-				</Route>
+				<Route path="tournaments/:tournamentID/game" element={ <GameTournament /> }/>
+				<Route path="game-classic" element={ <Game/> }/>
+				<Route path="game-ai" element={ <Game/> }/>
+				<Route path="game-challenge" element={ <Game/> }/>
+				<Route path="playmenu" element={ <PlayMenu/> }/>
+				<Route path="game-local" element={ <GameLocal/> }/>
 			</Route>
 		</Route>
 		<Route path="callback" element={ <Callback/> }/>

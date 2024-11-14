@@ -221,7 +221,7 @@ export const ChatProvider = ({ children }) => {
 				console.log('WebSocket for Chat closed');
 			}
 		};
-	}, [addNotification, setIsRefetch]);
+	}, [addNotification, setIsRefetch, navigate]);
 
 	const contextValue = useMemo(() => ({
 		conversations,
