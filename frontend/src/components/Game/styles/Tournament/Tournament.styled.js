@@ -101,16 +101,16 @@ export const UpcomingMatches = styled.div`
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			font-size: 1.2rem;
+			font-size: 0.6rem;
 			color: #b0b0b0;
 		}
 	}
 	.current-match {
-		border: 2px solid rgba(164, 69, 178, 0.8); /* Softer purple to match your theme */
-		border-radius: 8px; /* Rounded corners for a smoother look */
+		border: 2px solid rgba(164, 69, 178, 0.8);
+		border-radius: 8px;
 		box-shadow: 0 0 15px rgba(164, 69, 178, 0.6),
-					0 0 30px rgba(80, 120, 200, 0.2); /* Neon glow with complementary color */
-		background: rgba(0, 0, 0, 0.3); /* Semi-transparent background for emphasis */
+					0 0 30px rgba(80, 120, 200, 0.2);
+		background: rgba(0, 0, 0, 0.3);
 		transition: transform 0.3s ease, box-shadow 0.3s ease;
 	}
 
