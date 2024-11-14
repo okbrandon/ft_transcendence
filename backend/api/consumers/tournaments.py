@@ -434,8 +434,7 @@ class TournamentConsumer(AsyncJsonWebsocketConsumer):
             if connection_count + 1 >= 2:
                 try:
                     self.send(json.dumps({
-                        "type": "connection_error",
-                        "message": "You can only have 2 connections at the same time"
+                        "e": "CONNECTION_ERROR"
                     }))
                     await self.close(code=42)
                 except Exception as _:
