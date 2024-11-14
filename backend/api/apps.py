@@ -90,13 +90,13 @@ def update_users_statuses(sender, **kwargs):
     User.objects.bulk_update(users, ['status'])
 
 def create_test_accounts(sender, **kwargs):
-    from .models import User
+    from .models import User, Relationship
 
     if os.environ.get('SKIP_EMAIL_VERIFICATION', '').lower() == 'true':
         for i in range(1, 5):
             username = f'test{i}'
             if not User.objects.filter(username=username).exists():
-                User.objects.create(
+                user = User.objects.create(
                     userID=generate_id('user'),
                     username=username,
                     email=f'{username}@example.com',
@@ -104,4 +104,11 @@ def create_test_accounts(sender, **kwargs):
                     lang='EN',
                     flags=1,  # Set EMAIL_VERIFIED flag
                     money=100000
+                )
+
+                Relationship.objects.create(
+                    relationshipID=generate_id("rel"),
+                    userA=user.userID,
+                    userB="user_ai",
+                    status=1  # Accepted/friends status
                 )

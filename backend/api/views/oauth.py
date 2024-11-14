@@ -15,7 +15,7 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from ..util import generate_id, send_welcome_email
-from ..models import User
+from ..models import User, Relationship
 
 @permission_classes([AllowAny])
 class OAuth42Login(APIView):
@@ -82,6 +82,13 @@ class OAuth42Callback(APIView):
 
         if created:
             send_welcome_email(user.email)
+            # Create a relationship with the AI user
+            Relationship.objects.create(
+                relationshipID=generate_id("rel"),
+                userA=user.userID,
+                userB="user_ai",
+                status=1  # Accepted/friends status
+            )
 
         login(request, user)
 
