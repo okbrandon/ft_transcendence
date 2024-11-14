@@ -6,7 +6,7 @@ import { useNotification } from "../../context/NotificationContext";
 import { apiLogin } from "../../api/auth";
 import { useAuth } from "../../context/AuthContext";
 import OTPInputComponent from "./OTPInput";
-import { FormContainer } from "./styles/Authentication.styled";
+import { FormContainer, Outline } from "./styles/Authentication.styled";
 import { AvailablePlatformsContainer, PlatformButton } from "./styles/TwoFactorAuth.styled";
 import PongButton from "../../styles/shared/PongButton.styled";
 import ErrorMessage from "../../styles/shared/ErrorMessage.styled";
@@ -57,39 +57,43 @@ const TwoFactorAuthSignIn = ({ username, password, setIsTwoFactorAuth, available
 	};
 
 	return (
-		<>
-			<FormContainer onSubmit={handleSubmit}>
-				<h1>{t('auth.twoFactor.title')}</h1>
-				<p>{t('auth.twoFactor.subTitle')}</p>
+		<Outline>
+			<div className="card">
+				<div className="card2">
+					<FormContainer onSubmit={handleSubmit}>
+						<h1>{t('auth.twoFactor.title')}</h1>
+						<p>{t('auth.twoFactor.subTitle')}</p>
 
-				<OTPInputComponent setAuthCode={setAuthCode} setDisableVerify={setDisableVerify}/>
+						<OTPInputComponent setAuthCode={setAuthCode} setDisableVerify={setDisableVerify}/>
 
-				{error && <ErrorMessage>{error}</ErrorMessage>}
+						{error && <ErrorMessage>{error}</ErrorMessage>}
 
-				<AvailablePlatformsContainer>
-					{availablePlatforms ? availablePlatforms.filter(platform => platform !== 'app').map((platform) => (
-						<PlatformButton
-							key={platform}
-							type="button"
-							onClick={() => handlePlatform(platform)}
-							disabled={otpSent}
-						>
-							{platform === "email" && <i className="bi bi-envelope-fill"/>}
-							{platform === "sms" && <i className="bi bi-chat-left-text-fill"/>}
-						</PlatformButton>
-					)) : (
-						<p>{t('auth.twoFactor.noAvailablePlatform')}</p>
-					)}
-				</AvailablePlatformsContainer>
+						<AvailablePlatformsContainer>
+							{availablePlatforms ? availablePlatforms.filter(platform => platform !== 'app').map((platform) => (
+								<PlatformButton
+									key={platform}
+									type="button"
+									onClick={() => handlePlatform(platform)}
+									disabled={otpSent}
+								>
+									{platform === "email" && <i className="bi bi-envelope-fill"/>}
+									{platform === "sms" && <i className="bi bi-chat-left-text-fill"/>}
+								</PlatformButton>
+							)) : (
+								<p>{t('auth.twoFactor.noAvailablePlatform')}</p>
+							)}
+						</AvailablePlatformsContainer>
 
-				<PongButton type="submit" disabled={disableVerify}>
-					{t('auth.twoFactor.verifyButton')}
-				</PongButton>
-				<PongButton type="AuthButton" onClick={() => setIsTwoFactorAuth(false)}>
-					{t('auth.twoFactor.backButton')}
-				</PongButton>
-			</FormContainer>
-		</>
+						<PongButton type="submit" disabled={disableVerify}>
+							{t('auth.twoFactor.verifyButton')}
+						</PongButton>
+						<PongButton type="AuthButton" onClick={() => setIsTwoFactorAuth(false)}>
+							{t('auth.twoFactor.backButton')}
+						</PongButton>
+					</FormContainer>
+				</div>
+			</div>
+		</Outline>
 	);
 };
 

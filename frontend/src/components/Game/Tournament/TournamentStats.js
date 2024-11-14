@@ -53,7 +53,7 @@ const TournamentStats = ({ totalScores }) => {
 	};
 
 	return (
-		<LineStatsContainer style={{height: '28vh', width: '90%'}}>
+		<LineStatsContainer id="linestats" style={{height: '450px', width: '90%'}}>
 			<ReactApexChart
 				options={options}
 				series={series}

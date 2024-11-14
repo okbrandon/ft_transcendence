@@ -72,7 +72,7 @@ const AvailableTournaments = ({ setOptions }) => {
 			</SearchContainer>
 			<AvailableTournamentsContainer>
 				<TournamentList>
-					{filteredTournaments.map((tournament) => (
+					{tournaments.length ? filteredTournaments.map((tournament) => (
 						<TournamentCard key={tournament.tournamentID}>
 							<h3>{tournament.name}</h3>
 							<p>Players: {tournament.participants.length}/{tournament.maxParticipants}</p>
@@ -83,7 +83,9 @@ const AvailableTournaments = ({ setOptions }) => {
 								</PongButton>
 							)}
 						</TournamentCard>
-					))}
+					)) : (
+						<p>No tournaments available</p>
+					)}
 				</TournamentList>
 			</AvailableTournamentsContainer>
 		</AvailableTournamentsSection>

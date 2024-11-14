@@ -140,7 +140,7 @@ const TournamentProvider = ({ children }) => {
 						heartbeatIntervalRef.current = setInterval(heartbeat, heartbeatInterval);
 						break;
 					case 'TOURNAMENT_READY':
-						navigate(`/tournaments/${data.d.tournament.tournamentID}/game`, { state: { tournamentData: data.d } });
+						navigate(`/tournaments/${data.d.tournament.tournamentID}/game`);
 						setEndTournamentData(null);
 						break;
 					case 'TOURNAMENT_JOIN':
@@ -151,6 +151,7 @@ const TournamentProvider = ({ children }) => {
 						updateTournament(data.d, false);
 						break;
 					case 'TOURNAMENT_MATCH_BEGIN':
+						console.log('TournamentContext.js: upcoming matches', data.d.matches);
 						setTimeout(() => {
 							setResetMatch(data.d);
 						}, 3000);

@@ -1,10 +1,16 @@
 import React, { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
-import Button from 'react-bootstrap/Button';
-import { AuthenticationSection, FormContainer, LanguageDropdownButton } from './styles/Authentication.styled';
+import {
+	AuthenticationSection,
+	FormContainer,
+	LanguageDropdownButton,
+	Outline,
+	SubmitButton
+} from './styles/Authentication.styled';
 import FakeCaptcha from './FakeCaptcha';
 import ErrorMessage from '../../styles/shared/ErrorMessage.styled';
 import { useTranslation } from 'react-i18next';
+import { Background } from '../Game/styles/Tournament/EndedTournament.styled';
 
 const SignUp = () => {
 	const [formData, setFormData] = useState({
@@ -77,79 +83,111 @@ const SignUp = () => {
 
 	return (
 		<AuthenticationSection>
+			<Background>
+				<span/>
+				<span/>
+				<span/>
+				<span/>
+				<span/>
+				<span/>
+				<span/>
+				<span/>
+			</Background>
 			{!showFakeCaptcha ? (
-				<FormContainer onSubmit={handleSubmit}>
-					<h1>{t('auth.signUp.title')}</h1>
-					<LanguageDropdownButton
-						id="lang"
-						value={formData.lang}
-						onChange={handleChange}
-						autoComplete='off'
-					>
-						<option value="EN">🇬🇧 English</option>
-						<option value="ES">🇪🇸 Español</option>
-						<option value="FR">🇫🇷 Français</option>
-					</LanguageDropdownButton>
-					<FormContainer.Group className="mb-3">
-						<FormContainer.Control
-							id="username"
-							type="username"
-							placeholder=" "
-							value={formData.username}
-							onChange={handleChange}
-							isInvalid={error && error.includes(t('restrictions.username.errorKeyword'))}
-							autoComplete='username'
-						/>
-						<span>{t('auth.signUp.usernameTitle')}</span>
-					</FormContainer.Group>
-					<FormContainer.Group className="mb-3">
-						<FormContainer.Control
-							id="email"
-							type="email"
-							placeholder=" "
-							value={formData.email}
-							onChange={handleChange}
-							isInvalid={error && error.includes(t('restrictions.email.errorKeyword'))}
-							autoComplete='email'
-						/>
-						<span>{t('auth.signUp.emailTitle')}</span>
-					</FormContainer.Group>
-					<FormContainer.Group className="mb-3">
-						<FormContainer.Control
-							id="password"
-							type={showPassword ? 'text' : 'password'}
-							placeholder=" "
-							value={formData.password}
-							onChange={handleChange}
-							isInvalid={error && error.includes(t('restrictions.password.errorKeyword'))}
-							autoComplete='new-password'
-						/>
-						<span>{t('auth.signUp.passwordTitle')}</span>
-						<i className={`bi ${showPassword ? 'bi-eye-fill' : 'bi-eye'}`} onClick={() => setShowPassword(prev => !prev)}/>
-					</FormContainer.Group>
-					<FormContainer.Group className="mb-3">
-						<FormContainer.Control
-							id="cfpassword"
-							type={showCfPassword ? 'text' : 'password'}
-							placeholder=" "
-							value={cfPassword}
-							onChange={e => setCfPassword(e.target.value)}
-							isInvalid={error && error.includes(t('restrictions.password.errorKeyword'))}
-							autoComplete='new-password'
-						/>
-						<span>{t('auth.signUp.confirmPasswordTitle')}</span>
-						<i className={`bi ${showCfPassword ? 'bi-eye-fill' : 'bi-eye'}`} onClick={() => setShowCfPassword(prev => !prev)}/>
-					</FormContainer.Group>
-					<p>{t('auth.signUp.alreadyRegistered')}<Link to="/signin">{t('auth.signUp.loginButton')}</Link></p>
-					{error && <ErrorMessage>{error}</ErrorMessage>}
-					<Button variant='light' type='submit'>{t('auth.signUp.registerButton')}</Button>
-				</FormContainer>
+				<Outline>
+					<div className='card'>
+						<div className='card2'>
+							<FormContainer onSubmit={handleSubmit}>
+								<h1>{t('auth.signUp.title')}</h1>
+								<LanguageDropdownButton
+									id="lang"
+									value={formData.lang}
+									onChange={handleChange}
+									autoComplete='off'
+								>
+									<option value="EN">🇬🇧 English</option>
+									<option value="ES">🇪🇸 Español</option>
+									<option value="FR">🇫🇷 Français</option>
+								</LanguageDropdownButton>
+								<FormContainer.Group className="mb-3">
+									<div className='input-icon'>
+										<i className="bi bi-person"/>
+									</div>
+									<FormContainer.Control
+										id="username"
+										type="username"
+										placeholder={t('auth.signUp.usernameTitle')}
+										value={formData.username}
+										onChange={handleChange}
+										isInvalid={error && error.includes(t('restrictions.username.errorKeyword'))}
+										autoComplete='username'
+									/>
+								</FormContainer.Group>
+								<FormContainer.Group className="mb-3">
+									<div className='input-icon'>
+										<i className='bi bi-envelope'/>
+									</div>
+									<FormContainer.Control
+										id="email"
+										type="email"
+										placeholder={t('auth.signUp.emailTitle')}
+										value={formData.email}
+										onChange={handleChange}
+										isInvalid={error && error.includes(t('restrictions.email.errorKeyword'))}
+										autoComplete='email'
+									/>
+								</FormContainer.Group>
+								<FormContainer.Group className="mb-3">
+									<div className='input-icon'>
+										<i className='bi bi-lock'/>
+									</div>
+									<FormContainer.Control
+										id="password"
+										type={showPassword ? 'text' : 'password'}
+										placeholder={t('auth.signUp.passwordTitle')}
+										value={formData.password}
+										onChange={handleChange}
+										isInvalid={error && error.includes(t('restrictions.password.errorKeyword'))}
+										autoComplete='new-password'
+									/>
+									<i className={`bi ${showPassword ? 'bi-eye-fill' : 'bi-eye'}`} onClick={() => setShowPassword(prev => !prev)}/>
+								</FormContainer.Group>
+								<FormContainer.Group className="mb-3">
+									<div className='input-icon'>
+										<i className='bi bi-lock'/>
+									</div>
+									<FormContainer.Control
+										id="cfpassword"
+										type={showCfPassword ? 'text' : 'password'}
+										placeholder={t('auth.signUp.confirmPasswordTitle')}
+										value={cfPassword}
+										onChange={e => setCfPassword(e.target.value)}
+										isInvalid={error && error.includes(t('restrictions.password.errorKeyword'))}
+										autoComplete='new-password'
+									/>
+									<i className={`bi ${showCfPassword ? 'bi-eye-fill' : 'bi-eye'}`} onClick={() => setShowCfPassword(prev => !prev)}/>
+								</FormContainer.Group>
+								<p>{t('auth.signUp.alreadyRegistered')}<Link to="/signin">{t('auth.signUp.loginButton')}</Link></p>
+								{error && <ErrorMessage>{error}</ErrorMessage>}
+								<SubmitButton type='submit'>{t('auth.signUp.registerButton')}</SubmitButton>
+							</FormContainer>
+						</div>
+					</div>
+				</Outline>
 			) : (
-				<FakeCaptcha
-					formData={formData}
-					setShowFakeCaptcha={setShowFakeCaptcha}
-					setErrorSignUp={setError}
-				/>
+				<>
+					<Outline>
+						<div className='card'>
+							<div className='card2'>
+								<FakeCaptcha
+									formData={formData}
+									setShowFakeCaptcha={setShowFakeCaptcha}
+									setErrorSignUp={setError}
+								/>
+							</div>
+						</div>
+					</Outline>
+				</>
 			)}
 		</AuthenticationSection>
 	);

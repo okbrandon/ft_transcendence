@@ -8,4 +8,11 @@ export const FooterContainer = styled.div`
 	background-color: #000;
 	z-index: 100;
 	padding: 30px 0;
+
+	& .privacy-policy {
+		&:hover {
+			cursor: pointer;
+			color: rgba(255, 255, 255, 0.8);
+		}
+	}
 `;

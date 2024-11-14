@@ -11,7 +11,7 @@ export const AvailablePlatformsContainer = styled.div`
 `;
 
 export const PlatformButton = styled.button`
-	max-width: 50px;
+	max-width: 70px;
 	border: none;
 	border-radius: 5px;
 	background-color: rgba(164, 69, 178, 0.5);

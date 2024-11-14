@@ -113,19 +113,72 @@ export const TournamentOverview = styled.div`
 	height: calc(100vh - 80px);
 	display: flex;
 	flex-direction: column;
-	align-items: center;
 	margin-top: 20px;
 	position: relative;
-`;
+	padding: 50px;
 
-export const LeaveButtonContainer = styled.div`
-	position: absolute;
-	font-size: 3rem;
-	top: 0;
-	left: 60px;
-
-	& > i {
+	& > #leave-button {
+		font-family: 'Inter', sans-serif;
+		position: absolute;
+		top: 0;
+		right: 20px;
+		background-color: rgba(200, 50, 50, 0.8);
+		color: #fff;
+		border-radius: 5px;
+		border: 1px solid #cc3333;
+		padding: 10px 20px;
 		cursor: pointer;
+		transition: all 0.3s ease;
+		font-size: 1rem;
+		text-transform: uppercase;
+
+		&:hover {
+			background-color: rgba(255, 50, 50, 0.9);
+			box-shadow: 0 0 15px rgba(255, 50, 50, 0.5);
+		}
+	}
+
+	.nav-tabs {
+		margin-top: 40px;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	}
+
+	.nav-link {
+		background-color: rgba(0, 0, 0, 0.2);
+		color: #fff;
+		border: 1px solid #333;
+		border-radius: 5px;
+		margin-right: 5px;
+		transition: all 0.3s ease;
+		font-family: "Orbitron", sans-serif;
+		font-size: 1rem;
+		padding: 0.8rem 1rem;
+		text-align: center;
+		text-transform: uppercase;
+		letter-spacing: 1px;
+
+		&:hover {
+			background-color: rgba(255, 255, 255, 0.1);
+			color: #fff;
+			border: 1px solid #333;
+			box-shadow: 0 0 10px rgba(164, 69, 178, 0.3);
+		}
+
+		&.active {
+			background-color: rgba(164, 69, 178, 0.1);
+			color: #fff;
+			border: 1px solid #333;
+			box-shadow: 0 0 15px rgba(164, 69, 178, 0.7);
+		}
+	}
+
+	.tab-content {
+		margin-top: 20px;
+
+		& table,
+		& #linestats {
+			margin: 0 auto;
+		}
 	}
 `;
 
@@ -183,10 +236,18 @@ export const MatchCardTable = styled.table`
 		z-index: 1;
 	}
 
+	th {
+		border-bottom: 1px solid #292933;
+	}
+	tr {
+		&:not(:last-child) {
+			border-bottom: 1px solid #292933;
+		}
+	}
+
 	th, td {
 		padding: 20px;
 		text-align: center;
-		border-bottom: 1px solid #2e2e3d;
 	}
 
 	td.versus {
@@ -209,7 +270,7 @@ export const MatchCardTable = styled.table`
 
 	tbody {
 		display: block;
-		max-height: 30vh;
+		max-height: 380px;
 		overflow-y: auto;
 		width: 100%;
 

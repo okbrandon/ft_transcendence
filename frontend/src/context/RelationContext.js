@@ -4,7 +4,6 @@ import { useLocation } from "react-router-dom";
 import { getBlockedUsers, getFriends, getRequests } from "../scripts/relation";
 import { ChatProvider } from "./ChatContext";
 import refreshToken from "../api/token";
-import { useNotification } from "./NotificationContext";
 
 const WS_STATUS_URL =  process.env.REACT_APP_ENV === 'production' ? '/ws/status/?token=' : 'ws://localhost:8000/ws/status/?token='
 
@@ -14,7 +13,6 @@ export const RelationContext = createContext({
 
 const RelationProvider = ({ children }) => {
 	const location = useLocation();
-	const { addNotification } = useNotification();
 	const socketStatus = useRef(null);
 	const pathnameRef = useRef(location.pathname);
 	const [relations, setRelations] = useState([]);

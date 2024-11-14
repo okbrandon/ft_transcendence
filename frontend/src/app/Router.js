@@ -28,6 +28,7 @@ import GameLocal from '../components/Game/local/GameLocal';
 import GameTournament from '../components/Game/Tournament/GameTournament';
 import CreateTournament from '../components/Game/Tournament/CreateTournament';
 import EndedTournament from '../components/Game/Tournament/EndedTournament';
+import Privacy from '../components/Privacy/Privacy';
 
 const PrivateRoutes = () => {
 	const { isLoggedIn, setIsLoggedIn } = useAuth();
@@ -63,6 +64,7 @@ const Router = createBrowserRouter(createRoutesFromElements(
 	<>
 		<Route path="/" element={ <Root/> }>
 			<Route index element={ <Home/> }/>
+			<Route path="privacy-policy" element={ <Privacy/> }/>
 			<Route element={ <AuthenticationRoutes/> }>
 				<Route path="signin" element={ <SignIn/> }/>
 				<Route path="signup" element={ <SignUp/> }/>
