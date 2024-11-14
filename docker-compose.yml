@@ -4,7 +4,7 @@ services:
     restart: always
     env_file: .env
     volumes:
-      - ./data_postgres:/var/lib/postgresql/data
+      - data_postgres:/var/lib/postgresql/data
     networks:
       - transcendence
     ports:
@@ -83,3 +83,6 @@ services:
 networks:
   transcendence:
     driver: bridge
+
+volumes:
+  data_postgres:
