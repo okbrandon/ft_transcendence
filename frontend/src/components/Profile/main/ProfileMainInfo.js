@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import { useNotification } from '../../../context/NotificationContext';
@@ -26,6 +26,7 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 		|| relation[0].status !== 0));
 	const disableBlockUser = !!(relation.length && relation[0].status === 2);
 	const { t } = useTranslation();
+	const tRef = useRef(t);
 
 	useEffect(() => {
 		if (!loading) return;
@@ -41,7 +42,7 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 		if (relation.length && relation[0].status === 0) {
 			API.put('users/@me/relationships', { user: profileUser.userID, type: 1 })
 				.then(() => {
-					addNotification('success', t('friends.notifications.friendAccepted'));
+					addNotification('success', tRef.current('friends.notifications.friendAccepted'));
 					setIsRefetch(true);
 				})
 				.catch(err => {
@@ -50,7 +51,7 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 		} else if (profileUser.userID === 'user_ai') {
 			API.put('users/@me/relationships', { user: profileUser.userID, type: 1 })
 				.then(() => {
-					addNotification('success', t('friends.notifications.pruneAccepted'));
+					addNotification('success', tRef.current('friends.notifications.pruneAccepted'));
 					setIsRefetch(true);
 					setFriends(prevFriends => [...prevFriends, { userID: profileUser.userID, username: profileUser.username, status: 1 }]);
 				})
@@ -60,7 +61,7 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 		} else {
 			API.put('users/@me/relationships', { user: profileUser.userID, type: 0 })
 				.then(() => {
-					addNotification('success', t('friends.notifications.friendRequestSent'));
+					addNotification('success', tRef.current('friends.notifications.friendRequestSent'));
 					setIsRefetch(true);
 				})
 				.catch(err => {
@@ -74,7 +75,7 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 		setLoading(true);
 		API.delete(`users/@me/relationships/${relation[0].relationshipID}`)
 			.then(() => {
-				addNotification('success', t('friends.notifications.friendRemoved'));
+				addNotification('success', tRef.current('friends.notifications.friendRemoved'));
 				setRelations(prevRelations => prevRelations.filter(prevRelation => prevRelation.relationshipID !== relation[0].relationshipID));
 				setFriends(prevFriends => prevFriends.filter(friend => friend.relationshipID !== relation[0].relationshipID));
 			})
@@ -88,7 +89,7 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 		setLoading(true);
 		API.put('users/@me/relationships', { user: profileUser.userID, type: 2 })
 			.then(() => {
-				addNotification('warning', t('friends.notifications.userBlocked'));
+				addNotification('warning', tRef.current('friends.notifications.userBlocked'));
 				setIsRefetch(true);
 			})
 			.catch(err => {
