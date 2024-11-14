@@ -75,7 +75,7 @@ const AvailableTournaments = ({ setOptions }) => {
 					{tournaments.length ? filteredTournaments.map((tournament) => (
 						<TournamentCard key={tournament.tournamentID}>
 							<h3>{tournament.name}</h3>
-							<p>{t('game.tournaments.listing.players', { players: `${tournament.participants.length}/${tournament.maxParticipants}` })}</p>
+							<p>{t('game.tournaments.listing.players', { players: `${tournament.participants.length}`, maxPlayers: `${tournament.maxParticipants}` })}</p>
 							<p>{t('game.tournaments.listing.status', { status: `${tournament.status}`})}</p>
 							{tournament.status === 'PENDING' && (
 								<PongButton onClick={() => handleJoinTournament(tournament.tournamentID)}>
