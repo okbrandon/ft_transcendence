@@ -415,6 +415,18 @@
 		"confirmModal": {
 			"cancelButton": "Annuler",
 			"confirmButton": "Confirmer"
+		},
+		"notifications": {
+			"messageReceived": "{{username}} vous a envoyé un message.",
+			"friendRequest": {
+				"received": "{{username}} vous a envoyé une demande d'ami.",
+				"accepted": "{{username}} a accepté votre demande d'ami.",
+				"declined": "{{username}} a refusé votre demande d'ami."
+			},
+			"challenge": {
+				"accepted": "{{username}} a accepté votre défi.",
+				"declined": "{{username}} a refusé votre défi."
+			}
 		}
 	},
 	"game": {
@@ -532,7 +544,8 @@
 					"noPlayer": "N/A"
 				}
 			},
-			"leaveMessage": "En raison de votre départ, vous avez été retiré du tournoi"
+			"leaveMessage": "En raison de votre départ, vous avez été retiré du tournoi",
+			"reconnectMessage": "Reconnexion au serveur. Veuillez patienter..."
 		},
 		"leave": {
 			"title": "Appuyez sur <0>Q</0> pour quitter le jeu",
