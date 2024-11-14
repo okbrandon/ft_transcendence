@@ -83,7 +83,7 @@ class UserProfileMe(APIView):
                 if not otp:
                     return Response({"error": "OTP is required to change sensitive information when MFA is enabled."}, status=status.HTTP_400_BAD_REQUEST)
                 totp = pyotp.TOTP(me.mfaToken)
-                if not totp.verify(otp):
+                if not totp.verify(otp, valid_window=6):
                     return Response({"error": "Invalid OTP."}, status=status.HTTP_400_BAD_REQUEST)
 
             if 'password' in updated_fields:
