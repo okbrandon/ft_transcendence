@@ -290,15 +290,7 @@ class UserRelationshipsMe(APIView):
             return Response({"error": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
 
         if target_user_id == "user_ai":
-            if relationship_type == 2: # tries to block prune
-                return Response({"error": "There's no escaping prune, nice try."}, status=status.HTTP_400_BAD_REQUEST)
-            relationship = Relationship.objects.create(
-                relationshipID=generate_id("rel"),
-                userA=me.userID,
-                userB=target_user_id,
-                status=1  # Accepted/friends status
-            )
-            return Response({"status": "AI friend added, you must feel very lonely. don't worry Prune is a good friend."}, status=status.HTTP_200_OK)
+            return Response({"error": "There's no escaping prune, nice try."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             target_user = User.objects.get(userID=target_user_id)
@@ -356,6 +348,13 @@ class UserRelationshipsMe(APIView):
             Relationship,
             relationshipID=relationshipID
         )
+
+        # Check if the user is part of the relationship
+        if me.userID != relationship.userA and me.userID != relationship.userB:
+            return Response({"error": "You are not part of this relationship"}, status=status.HTTP_403_FORBIDDEN)
+
+        if relationship.userA == "user_ai" or relationship.userB == "user_ai":
+            return Response({"error": "There's no escaping prune, nice try."}, status=status.HTTP_400_BAD_REQUEST)
 
         if relationship.status == 0:
             if me.userID != relationship.userA:
