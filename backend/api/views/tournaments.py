@@ -101,6 +101,9 @@ class Tournaments(APIView):
             if Tournament.objects.filter(participants=invitee, status='PENDING').exists():
                 return Response({"error": f"User {invitee.username} is already subscribed to a tournament"}, status=status.HTTP_400_BAD_REQUEST)
 
+            if TournamentInvite.objects.filter(tournament=tournament, invitee=invitee, status='PENDING').exists():
+                return Response({"error": f"User {invitee.username} is already invited to the tournament"}, status=status.HTTP_400_BAD_REQUEST)
+
             invite = TournamentInvite.objects.create(
                 inviteID=generate_id("tid"),
                 tournament=tournament,

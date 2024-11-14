@@ -10,13 +10,14 @@ from rest_framework.permissions import AllowAny
 from rest_framework.decorators import permission_classes
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from django.db.models import Count
 from django.contrib.auth import login, authenticate
 from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import make_password
 from django.utils import timezone
 from django.contrib.auth.hashers import check_password
 
-from ..models import User, VerificationCode, Relationship
+from ..models import User, VerificationCode, Relationship, Conversation
 from ..serializers import UserSerializer
 from ..util import generate_id, send_verification_email, send_otp_via_email, send_otp_via_sms
 from ..backends import AuthBackend
@@ -59,6 +60,19 @@ class AuthRegister(APIView):
             userB="user_ai",
             status=1  # Accepted/friends status
         )
+
+        # Create the conversation between the user and the AI
+        friend = User.objects.get(userID='user_ai')
+        existing_conversation = Conversation.objects.filter(
+            participants__userID__in=[user.userID, 'user_ai'],
+            conversationType='private_message'
+        ).annotate(participant_count=Count('participants')).filter(participant_count=2).exists()
+
+        if not existing_conversation:
+            new_conversation = Conversation.objects.create(conversationID=generate_id("conv"), conversationType='private_message')
+            new_conversation.receipientID = user.userID
+            new_conversation.participants.add(user, friend)
+            new_conversation.save()
 
         if not skip_email_verification:
             verification_code = generate_id('code')
