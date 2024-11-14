@@ -67,9 +67,7 @@ const RelationProvider = ({ children }) => {
 
 			socketStatus.current = new WebSocket(WS_STATUS_URL + token);
 
-			socketStatus.current.onopen = () => {
-				console.log('WebSocket for Status connection opened');
-			};
+			socketStatus.current.onopen = () => {};
 
 			socketStatus.current.onmessage = event => {
 				const response = JSON.parse(event.data);
@@ -92,8 +90,6 @@ const RelationProvider = ({ children }) => {
 					const newToken = await refreshToken();
 					if (newToken) {
 						connectWSStatus();
-					} else {
-						console.log('Websocket for Status failed to refresh the token');
 					}
 				}
 			}
@@ -104,7 +100,6 @@ const RelationProvider = ({ children }) => {
 		return () => {
 			if (socketStatus.current && socketStatus.current.readyState === WebSocket.OPEN) {
 				socketStatus.current.close();
-				console.log('WebSocket for Status closed');
 			}
 		};
 	}, [setActivity]);

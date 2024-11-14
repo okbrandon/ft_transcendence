@@ -33,8 +33,6 @@ const CreateTournament = ({ setOptions }) => {
 				isPublic,
 				maxParticipants
 			});
-			console.log('CreateTournament: tournament created');
-			console.log('CreateTournament:', user.tournamentID);
 			registerForTournament(response.data.tournamentID);
 			navigate(`/tournaments/${response.data.tournamentID}`);
 		} catch (error) {

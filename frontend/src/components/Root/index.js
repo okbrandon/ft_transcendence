@@ -41,7 +41,6 @@ const Root = () => {
 
 	useEffect(() => {
 		if (!user?.tournamentID) return;
-		console.log('index.js:', user.tournamentID);
 
 		const leaveTournament = async () => {
 			try {
@@ -53,7 +52,6 @@ const Root = () => {
 		};
 		if (!location.pathname.includes(`/tournaments/${user.tournamentID}`)) {
 			leaveTournament();
-			console.log('index.js: leaving tournament');
 		}
 	}, [location, user?.tournamentID, addNotification, setUser]);
 

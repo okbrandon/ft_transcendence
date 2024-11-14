@@ -54,8 +54,6 @@ export const ChatProvider = ({ children }) => {
 	const sendMessage = useCallback(message => {
 		if (socketChat.current && socketChat.current.readyState === WebSocket.OPEN) {
 			socketChat.current.send(message);
-		} else {
-			console.log('WebSocket for Chat is not open');
 		}
 	}, []);
 
@@ -127,9 +125,7 @@ export const ChatProvider = ({ children }) => {
 
 			socketChat.current = new WebSocket(WS_CHAT_URL + token);
 
-			socketChat.current.onopen = () => {
-				console.log('WebSocket for Chat connection opened')
-			};
+			socketChat.current.onopen = () => {};
 
 			socketChat.current.onmessage = event => {
 				const response = JSON.parse(event.data);
@@ -211,8 +207,6 @@ export const ChatProvider = ({ children }) => {
 					const newToken = await refreshToken();
 					if (newToken) {
 						connectWSChat();
-					} else {
-						console.log('Websocket for Chat failed to refresh the token');
 					}
 				}
 			};
@@ -223,7 +217,6 @@ export const ChatProvider = ({ children }) => {
 		return () => {
 			if (socketChat.current && socketChat.current.readyState === WebSocket.OPEN) {
 				socketChat.current.close();
-				console.log('WebSocket for Chat closed');
 			}
 		};
 	}, [addNotification, setIsRefetch, navigate]);

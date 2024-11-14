@@ -27,11 +27,7 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactor
 
 	const handlePlatform = (platform) => {
 		API.post('auth/totp/request', { platform })
-			.then(() => {
-				console.log('2FA: Request sent');
-			})
 			.catch(err => {
-				console.log('2FA: Request failed');
 				setError(err.response.data.error);
 			});
 	};
@@ -49,13 +45,11 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactor
 
 		setDisableVerify(true);
 		API.patch('users/@me/profile', { ...submissionData, otp: authCode })
-			.then(res => {
-				console.log('2FA: Success');
+			.then(() => {
 				setSuccess(t('settings.security.successMessage'));
 				getUser()
 					.then(res => {
 						setUser(res);
-						console.log('User data refetched and updated in context:', res.data);
 					})
 					.catch(err => {
 						setError(err.response.data.error);

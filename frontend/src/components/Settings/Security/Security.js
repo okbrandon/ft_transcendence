@@ -150,6 +150,7 @@ const Security = ({ user, setUser }) => {
 					formData={formData}
 					setUser={setUser}
 					setShowTwoFactorAuth={setShowTwoFactorAuth}
+					setMainError={setError}
 				/>
 			)}
 		</>

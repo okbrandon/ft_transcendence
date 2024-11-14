@@ -27,8 +27,6 @@ const TournamentProvider = ({ children }) => {
 	const sendMessage = useCallback((message) => {
 		if (socketTournament.current && socketTournament.current.readyState === WebSocket.OPEN) {
 			socketTournament.current.send(JSON.stringify(message));
-		} else {
-			console.log('WebSocket for Tournaments is not open');
 		}
 	}, []);
 
@@ -107,8 +105,6 @@ const TournamentProvider = ({ children }) => {
 				}).map(formatUserData),
 			});
 		}
-		console.log('TournamentContext.js: updateTournament', data);
-		console.log('TournamentContext.js: isJoin', isJoin);
 	}, [navigate, setUser]);
 
 	useEffect(() => {
@@ -138,7 +134,6 @@ const TournamentProvider = ({ children }) => {
 			socketTournament.current = new WebSocket(WS_TOURNAMENT_URL);
 
 			socketTournament.current.onopen = () => {
-				console.log('WebSocket for Tournament connection opened');
 				identify();
 			};
 
@@ -162,7 +157,6 @@ const TournamentProvider = ({ children }) => {
 						updateTournament(data.d, false);
 						break;
 					case 'TOURNAMENT_MATCH_BEGIN':
-						console.log('TournamentContext.js: upcoming matches', data.d.matches);
 						setTimeout(() => {
 							setResetMatch(data.d);
 						}, 3000);
@@ -181,7 +175,7 @@ const TournamentProvider = ({ children }) => {
 						navigate(`/tournaments/${data.d.tournamentID}/results`);
 						break;
 					default:
-						console.log('TournamentContext.js: Unhandled event:', data.e);
+						break;
 				}
 			};
 
@@ -195,8 +189,6 @@ const TournamentProvider = ({ children }) => {
 					if (newToken) {
 						connectWSTournament();
 						addNotification('info', tRef.current('game.tournaments.reconnectMessage'));
-					} else {
-						console.log('WebSocket for Tournaments failed to refresh the token');
 					}
 				}
 			};
@@ -208,7 +200,6 @@ const TournamentProvider = ({ children }) => {
 			if (heartbeatIntervalRef.current) clearInterval(heartbeatIntervalRef.current);
 			if (socketTournament.current && socketTournament.current.readyState === WebSocket.OPEN) {
 				socketTournament.current.close();
-				console.log('WebSocket for Tournaments closed');
 			}
 		};
 	}, [identify, heartbeat, navigate, updateTournament, addNotification]);

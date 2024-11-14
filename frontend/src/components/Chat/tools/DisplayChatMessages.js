@@ -37,7 +37,6 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 			navigate(`/tournaments/${tournamentID}`);
 			registerForTournament(tournamentID);
 		} catch (error) {
-			console.log(error);
 			addNotification('error', error?.response?.data?.error || t('chat.invite.errorAccept'));
 		}
 	}
@@ -48,7 +47,6 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 			addNotification('success', t('chat.invite.inviteAccepted'));
 			navigate('/game-challenge?inviteID=' + inviteID);
 		} catch (error) {
-			console.log(error);
 			addNotification('error', error?.response?.data?.error || t('chat.invite.errorAccept'));
 		}
 	}
@@ -58,7 +56,6 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 			await API.post(`/users/${challengerID}/challenge/${inviteID}/deny`);
 			addNotification('success', t('chat.invite.inviteDeclined'));
 		} catch (error) {
-			console.log(error);
 			addNotification('error', error?.response?.data?.error || t('chat.invite.errorDecline'));
 		}
 	}
@@ -71,7 +68,6 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 		);
 	} else {
 		let previousSenderID = null;
-		console.log(realConvo);
 
 		return (
 			<ChatBubbleContainer>

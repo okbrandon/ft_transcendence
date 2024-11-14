@@ -9,7 +9,7 @@ import ErrorMessage from '../../../../styles/shared/ErrorMessage.styled';
 import { useNotification } from '../../../../context/NotificationContext';
 import { useTranslation } from 'react-i18next';
 
-const TwoFactorAuthSecurity = ({ formData, setUser, setShowTwoFactorAuth }) => {
+const TwoFactorAuthSecurity = ({ formData, setUser, setShowTwoFactorAuth, setMainError }) => {
 	const { addNotification } = useNotification();
 	const [availablePlatforms, setAvailablePlatforms] = useState([]);
 	const [authCode, setAuthCode] = useState('');
@@ -44,17 +44,16 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setShowTwoFactorAuth }) => {
 
 		const submissionData = { ...formData };
 
-		console.log('TwofactorAuthSecurity submissionData before:', submissionData);
 		['password', 'phone_number', 'email'].forEach(field => {
 			if (!submissionData[field]) {
 				delete submissionData[field];
 			}
 		});
-		console.log('TwofactorAuthSecurity submissionData after:', submissionData);
 
 		API.patch('users/@me/profile', { ...submissionData, otp: authCode })
 			.then(() => {
 				addNotification('success', t('settings.security.successMessage'));
+				setMainError('');
 				getUser()
 					.then(res => {
 						setUser(res);

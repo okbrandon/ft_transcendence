@@ -49,11 +49,9 @@ const GameTournament = () => {
 
 	const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl, {
 		onOpen: () => {
-			console.log("Match WebSocket connection opened");
 			reconnectAttempts.current = 0;
 		},
 		onClose: (event) => {
-			console.log("Match WebSocket connection closed");
 			if (event.code === 1006 && !gameOver) handleReconnect();
 		},
 		shouldReconnect: () => !gameOver,
@@ -64,9 +62,7 @@ const GameTournament = () => {
 	const handleReconnect = useCallback(() => {
 		if (reconnectAttempts.current < maxReconnectAttempts) {
 			reconnectAttempts.current += 1;
-			console.log(`Attempting to reconnect... (Attempt ${reconnectAttempts.current})`);
 		} else {
-			console.log('Max reconnection attempts reached. Redirecting to home.');
 			navigate('/');
 		}
 	}, [navigate]);
@@ -79,8 +75,6 @@ const GameTournament = () => {
 	useEffect(() => {
 		if (!resetMatch) return;
 		const matchUrl = process.env.REACT_APP_ENV === 'production' ? '/ws/match' : 'ws://localhost:8000/ws/match';
-
-		console.log('GameTournament.js: resetMatch', resetMatch);
 
 		setSocketUrl(`${matchUrl}?t=${Date.now()}`);
 		currentMatchId.current = resetMatch.matchID;
@@ -109,7 +103,6 @@ const GameTournament = () => {
 		playerId.current = playerA.userID;
 		setKey(prevKey => prevKey + 1);
 		setResetMatch(null);
-		console.log('GameTournament.js: match resseted');
 	}, [resetMatch, setResetMatch]);
 
 
@@ -210,8 +203,6 @@ const GameTournament = () => {
 		const handler = handlers[data.e];
 		if (handler) {
 			handler();
-		} else {
-			console.log('GameTournament.js: Unhandled message:', data);
 		}
 	}, [lastMessage, sendMessage]);
 

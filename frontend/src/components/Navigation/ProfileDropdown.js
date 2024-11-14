@@ -21,7 +21,6 @@ const ProfileDropdown = () => {
 		try {
 			if (user.tournamentID) {
 				await API.delete(`/tournaments/@me`);
-				console.log('ProfileDropdown.js: successfully left tournament');
 			}
 			setIsLoggedIn(false);
 			setUser(null);

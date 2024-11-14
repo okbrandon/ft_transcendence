@@ -11,8 +11,6 @@ const Rewards = ({ endGameData, isSpectator = false, isTournament }) => {
 	const { user } = useAuth();
 	const { t } = useTranslation();
 
-	console.log('Rewards.js:', endGameData);
-
 	return (
 		<OverlayContainer>
 			<h1>{t('game.gameOver')}</h1>

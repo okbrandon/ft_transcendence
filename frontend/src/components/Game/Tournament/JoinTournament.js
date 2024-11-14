@@ -41,7 +41,6 @@ const JoinTournament = () => {
 		const fetchTournament = async () => {
 			try {
 				const response = await API.get(`/tournaments/${tournamentID}`);
-				console.log('JoinTournament.js: fetchTournament', response.data);
 				updateTournament(response.data);
 			} catch (error) {
 				addNotification('error', error.response?.data?.error || 'Error fetching tournament data');
@@ -84,8 +83,7 @@ const JoinTournament = () => {
 
 	const handleLeave = async () => {
 		try {
-			const response = await API.delete(`/tournaments/@me`);
-			console.log('JoinTournament.js: handleLeave', response.data);
+			await API.delete(`/tournaments/@me`);
 		} catch (error) {
 			addNotification('error', error.response?.data?.error || 'Error leaving tournament');
 		}

@@ -16,7 +16,6 @@ export const formatUserData = user => {
 
 export const getUser = async () => {
 	try {
-		console.log('Getting current user...');
 		const res = await API.get(`users/@me/profile`);
 		const user = formatUserData(res.data);
 		return user;
@@ -28,7 +27,6 @@ export const getUser = async () => {
 
 export const getUserById = async (id) => {
 	try {
-		console.log('Getting user by username...');
 		const res = await API.get(`users/${id}/profile`);
 
 		const user = formatUserData(res.data);

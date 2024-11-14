@@ -43,9 +43,7 @@ const Game = () => {
 	const handleReconnect = useCallback(() => {
 		if (reconnectAttempts.current < maxReconnectAttempts) {
 			reconnectAttempts.current += 1;
-			console.log(`Attempting to reconnect... (Attempt ${reconnectAttempts.current})`);
 		} else {
-			console.log('Max reconnection attempts reached. Redirecting to home.');
 			navigate('/');
 		}
 	}, [navigate]);
@@ -152,7 +150,7 @@ const Game = () => {
 				case 'PADDLE_RATE_LIMIT': // ignoring
 					break;
 				default:
-					console.log('Unhandled message:', data);
+					break;
 			}
 		}
 	}, [lastMessage, gameState.player?.userID, handleHeartbeatAck, navigate]);

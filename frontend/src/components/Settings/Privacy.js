@@ -53,7 +53,6 @@ const Privacy = () => {
 				link.click();
 				document.body.removeChild(link);
 				window.URL.revokeObjectURL(blobUrl);
-				console.log('Data harvested');
 				setIsHarvesting(true);
 				addNotification('success', t('settings.privacy.downloadingMessage'));
 			})
