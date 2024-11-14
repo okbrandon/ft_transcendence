@@ -28,8 +28,8 @@ const CreateTournament = ({ setOptions }) => {
 		try {
 			const response = await API.post('/tournaments', {
 				name: tournamentName,
-				isPublic: isPublic,
-				maxParticipants: maxParticipants
+				isPublic,
+				maxParticipants
 			});
 			console.log('CreateTournament: tournament created');
 			console.log('CreateTournament:', user.tournamentID);
@@ -56,14 +56,13 @@ const CreateTournament = ({ setOptions }) => {
 					/>
 				</FormGroup>
 				<FormGroup>
-					<FormLabel htmlFor="max-participants">Max Participants:</FormLabel>
+					<FormLabel htmlFor="max-participants">Participants:</FormLabel>
 					<FormSelect
 						id="max-participants"
 						value={maxParticipants}
 						onChange={(e) => setMaxParticipants(parseInt(e.target.value))}
 					>
 						<option value="4">4</option>
-						<option value="6">6</option>
 						<option value="8">8</option>
 					</FormSelect>
 				</FormGroup>

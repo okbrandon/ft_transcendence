@@ -84,6 +84,12 @@ export const TournamentList = styled.div`
 	gap: 2rem;
 	width: 100%;
 	padding-bottom: 2rem;
+
+	& > p {
+		width: 100%;
+		text-align: center;
+		color: #ccc;
+	}
 `;
 
 export const TournamentCard = styled.div`
