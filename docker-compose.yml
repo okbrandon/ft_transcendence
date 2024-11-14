@@ -3,6 +3,8 @@ services:
     image: postgres
     restart: always
     env_file: .env
+    volumes:
+      - ./data_postgres:/var/lib/postgresql/data
     networks:
       - transcendence
     ports:
@@ -13,7 +15,7 @@ services:
     restart: on-failure
     env_file: .env
     volumes:
-      - ./certs_data:/certs
+      - ./data_certs:/certs
     networks:
       - transcendence
 
@@ -29,7 +31,7 @@ services:
     networks:
       - transcendence
     volumes:
-      - ./certs_data:/certs
+      - ./data_certs:/certs
 
   backend:
     build: ./backend
@@ -41,8 +43,8 @@ services:
     networks:
       - transcendence
     volumes:
-      - ./exports_data:/exports
-      - ./certs_data:/certs
+      - ./data_exports:/exports
+      - ./data_certs:/certs
 
   harvester:
     build: ./harvester
@@ -51,7 +53,7 @@ services:
     depends_on:
       - postgres
     volumes:
-      - ./exports_data:/exports
+      - ./data_exports:/exports
     networks:
       - transcendence
 
@@ -65,7 +67,7 @@ services:
     networks:
       - transcendence
     volumes:
-      - ./certs_data:/certs
+      - ./data_certs:/certs
 
   pongbot:
     build: ./pongbot
@@ -76,7 +78,7 @@ services:
     networks:
       - transcendence
     volumes:
-      - ./certs_data:/certs
+      - ./data_certs:/certs
 
 networks:
   transcendence:

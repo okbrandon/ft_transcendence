@@ -64,6 +64,7 @@ clean: down ## Stop the project and remove all the stopped containers / unused n
 
 cleanv: down ## Stop the project and remove all the volumes
 	@ docker volume prune -af
+	@ rm -rf data_*
 
 fclean: cleanv ## Stop the project and remove all the stopped containers / unused networks / dangling images / unused build caches / volumes
 	@ docker system prune -af
