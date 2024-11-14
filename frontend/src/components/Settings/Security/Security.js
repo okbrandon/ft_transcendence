@@ -53,6 +53,7 @@ const Security = ({ user, setUser }) => {
 			...data,
 			[id]: value,
 		}));
+
 	}, []);
 
 	const checkSecurityRestrictions = useCallback((data, cfPassword) => {
@@ -70,11 +71,9 @@ const Security = ({ user, setUser }) => {
 			return t('restrictions.password.missingSpecial');
 		} else if (password && password !== cfPassword) {
 			return t('restrictions.password.noMatch');
-		} else if (!email) {
-			return t('restrictions.email.required');
-		} else if (email.length > 64) {
+		} else if (email && email.length > 64) {
 			return t('restrictions.email.invalidLength');
-		} else if (!/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+		} else if (email && !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
 			return t('restrictions.email.invalidFormat');
 		} else if (phone_number && !/^\+[1-9]\d{1,14}$/.test(phone_number)) {
 			return t('restrictions.phoneNumber.invalidFormat');
@@ -87,11 +86,11 @@ const Security = ({ user, setUser }) => {
 		e.preventDefault();
 		if (loading) return;
 
-		const submissionData = { ...formData };
+		const submissionData = {};
 
 		['password', 'phone_number', 'email'].forEach(field => {
-			if (!submissionData[field]) {
-				delete submissionData[field];
+			if (formData[field] && formData[field] !== user[field] && formData[field].trim() !== '') {
+				submissionData[field] = formData[field];
 			}
 		});
 
@@ -99,9 +98,9 @@ const Security = ({ user, setUser }) => {
 
 		if (errorMessage) {
 			setError(errorMessage);
-		} else if ((submissionData.password || submissionData.email || submissionData.phone_number) && has2FA) {
+		} else if (Object.keys(submissionData).length > 0 && has2FA) {
 			setShowTwoFactorAuth(true);
-		} else {
+		} else if (Object.keys(submissionData).length > 0) {
 			setLoading(true);
 			API.patch('users/@me/profile', submissionData)
 				.then(() => {

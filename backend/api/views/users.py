@@ -13,7 +13,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password, check_password
 from django.shortcuts import get_object_or_404
 from django.db import models, transaction
 from django.db.models import Count
@@ -49,7 +49,7 @@ class UserProfileMe(APIView):
             updated_fields = {}
 
             for field in allowed_fields:
-                if field in data:
+                if field in data and data[field] != '':
                     if field == 'username' and me.oauthAccountID and data[field] != me.username:
                         return Response({"error": "Cannot change username for OAuth accounts."}, status=status.HTTP_400_BAD_REQUEST)
                     elif field == 'username' and data[field] != me.username:
@@ -78,7 +78,16 @@ class UserProfileMe(APIView):
                     updated_fields[field] = data[field]
 
             sensitive_fields = ['password', 'phone_number', 'email']
-            if any(field in updated_fields for field in sensitive_fields) and me.mfaToken:
+            changed_sensitive_fields = [field for field in sensitive_fields if field in updated_fields]
+            
+            for field in changed_sensitive_fields:
+                if field == 'password':
+                    if not check_password(updated_fields[field], me.password):
+                        changed_sensitive_fields.remove(field)
+                elif getattr(me, field) == updated_fields[field]:
+                    changed_sensitive_fields.remove(field)
+
+            if changed_sensitive_fields and me.mfaToken:
                 otp = data.get('otp')
                 if not otp:
                     return Response({"error": "OTP is required to change sensitive information when MFA is enabled."}, status=status.HTTP_400_BAD_REQUEST)
