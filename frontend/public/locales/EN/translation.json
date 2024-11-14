@@ -107,7 +107,8 @@
 		"title": "PONG",
 		"subTitle": "42 ft_transcendence",
 		"authors": "Made by <0>{{firstAuthor}}</0>, <1>{{secondAuthor}}</1>, <2>{{thirdAuthor}}</2>, and <3>{{fourthAuthor}}</3>",
-		"copyright": "PONG 2024"
+		"copyright": "PONG 2024",
+		"privacyPolicy": "Privacy Policy"
 	},
 	"home": {
 		"welcome": "Wiggle your Paddle!",
