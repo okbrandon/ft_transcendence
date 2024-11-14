@@ -25,14 +25,6 @@ class Match(models.Model):
     def __str__(self):
         return self.matchID
 
-class GameToken(models.Model):
-    token = models.CharField(max_length=48, unique=True)
-    matchID = models.CharField(max_length=48)
-    userID = models.CharField(max_length=48)
-
-    def __str__(self):
-        return self.matchID
-
 class StoreItem(models.Model):
     itemID = models.CharField(max_length=48, unique=True)
     name = models.CharField(max_length=100)

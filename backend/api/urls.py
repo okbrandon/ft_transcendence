@@ -6,20 +6,14 @@ from rest_framework_simplejwt.views import (
 from .views.auth import *
 from .views.users import *
 from .views.tournaments import *
-from .views.internal import *
 from .views.oauth import *
 from .views.store import *
 from .views.verification import *
 from .views.conversations import *
 from .views.leaderboards import *
-from .views.matches import *
 
 from django.http import JsonResponse
 from django.urls import path
-
-class HealthCheck(APIView):
-    def get(self, request, *args, **kwargs):
-        return JsonResponse({"status": "healthy"}, status=200)
 
 urlpatterns = [
     path('auth/register', AuthRegister.as_view()),
@@ -56,16 +50,11 @@ urlpatterns = [
 
     path('verify', VerifyEmail.as_view()),
 
-    # path('tournaments/<tournamentID>', TournamentInfo.as_view()), # GET, DELETE, PATCH
-    # path('tournaments', TournamentCreate.as_view()), # POST
-
     path('leaderboards/daily', Leaderboards.Daily.as_view()), # GET
     path('leaderboards/weekly', Leaderboards.Weekly.as_view()), # GET
     path('leaderboards/lifetime', Leaderboards.Lifetime.as_view()), # GET
 
 	path('chat/conversations', ConversationListView.as_view()),
-
-    path('matches', MatchCreate.as_view()),
 
     path('tournaments', Tournaments.as_view()),
     path('tournaments/@me', UserCurrentTournament.as_view()),
@@ -75,6 +64,4 @@ urlpatterns = [
     path('tournaments/<str:tournamentID>/invite/<str:action>', TournamentInviteResponse.as_view()),
     path('tournaments/<str:tournamentID>/kick', KickUserFromTournament.as_view()),
     path('tournaments/<str:tournamentID>/start', ForceTournamentStart.as_view()),
-
-    path('health', HealthCheck.as_view()),
 ]
