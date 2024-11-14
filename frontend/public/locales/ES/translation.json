@@ -49,7 +49,8 @@
 			"successMessage": "OTP se ha configurado en la plataforma elegida.",
 			"disableButton": "Desactivar 2FA",
 			"enableButton": "Activar 2FA",
-			"scanMessage": "Escanea este código QR con tu aplicación de autenticación para configurar OTP."
+			"scanMessage": "Escanea este código QR con tu aplicación de autenticación para configurar OTP.",
+			"requestSent": "Se ha enviado una solicitud."
 		}
 	},
 	"restrictions": {
@@ -57,6 +58,7 @@
 			"required": "Se requiere un nombre de usuario.",
 			"invalidLength": "El nombre de usuario debe tener entre 4 y 16 caracteres.",
 			"invalidCharacters": "El nombre de usuario solo puede contener caracteres alfanuméricos.",
+			"invalidFormat": "El nombre de usuario no puede terminar con '42'.",
 			"errorKeyword": "Nombre de usuario"
 		},
 		"displayName": {
@@ -310,6 +312,7 @@
 		"privacy": {
 			"title": "Privacidad de datos",
 			"subTitle": "Vuelve en unos minutos mientras preparamos tus datos...",
+			"downloadingMessage": "Tus datos se están descargando...",
 			"subSections": {
 				"downloadData": {
 					"title": "Descargar datos",
@@ -325,6 +328,7 @@
 		},
 		"visibility": {
 			"title": "Visibilidad",
+			"successMessage": "El usuario ha sido desbloqueado.",
 			"subSections": {
 				"blockedUsers": {
 					"title": "Usuarios bloqueados",

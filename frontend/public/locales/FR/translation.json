@@ -49,7 +49,8 @@
 			"successMessage": "L'OTP a été configuré sur votre plateforme choisie.",
 			"disableButton": "Désactiver l'authentification à deux facteurs",
 			"enableButton": "Activer l'authentification à deux facteurs",
-			"scanMessage": "Scannez ce code QR avec votre application d'authentification pour configurer l'OTP."
+			"scanMessage": "Scannez ce code QR avec votre application d'authentification pour configurer l'OTP.",
+			"requestSent": "Une demande a été envoyée."
 		}
 	},
 	"restrictions": {
@@ -57,6 +58,7 @@
 			"required": "Le nom d'utilisateur est requis.",
 			"invalidLength": "Le nom d'utilisateur doit comporter entre 4 et 16 caractères.",
 			"invalidCharacters": "Le nom d'utilisateur ne doit contenir que des caractères alphanumériques.",
+			"invalidFormat": "Le nom d'utilisateur ne peut pas se terminer par '42'.",
 			"errorKeyword": "Nom d'utilisateur"
 		},
 		"displayName": {
@@ -310,6 +312,7 @@
 		"privacy": {
 			"title": "Confidentialité des données",
 			"subTitle": "Revenez dans quelques minutes pendant que nous préparons vos données...",
+			"downloadingMessage": "Vos données sont en cours de téléchargement...",
 			"subSections": {
 				"downloadData": {
 					"title": "Télécharger les données",
@@ -325,6 +328,7 @@
 		},
 		"visibility": {
 			"title": "Visibilité",
+			"successMessage": "L'utilisateur a été débloqué.",
 			"subSections": {
 				"blockedUsers": {
 					"title": "Utilisateurs bloqués",
