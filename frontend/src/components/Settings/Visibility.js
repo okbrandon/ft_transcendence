@@ -39,7 +39,7 @@ const Visibility = () => {
 		setLoading(true);
 		API.delete(`users/@me/relationships/${relationshipID}`)
 			.then(() => {
-				addNotification('success', 'User unblocked');
+				addNotification('success', t('settings.visibility.successMessage'));
 				setIsRefetch(true);
 			})
 			.catch(err => {

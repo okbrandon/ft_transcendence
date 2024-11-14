@@ -3,9 +3,11 @@ import { StyledCanvas, UserInfoItemContainer, UserInfoItemTitle } from "../style
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { roundedRectShape } from "../../../scripts/gameShapes";
+import { useTranslation } from "react-i18next";
 
 const DisplaySkin = ({ currentSkin }) => {
 	const canvasRef = useRef(null);
+	const { t } = useTranslation();
 
 	const getPaddleMaterial = useCallback(skin => {
 		const textureLoader = new THREE.TextureLoader();
@@ -98,7 +100,7 @@ const DisplaySkin = ({ currentSkin }) => {
 
     return (
         <UserInfoItemContainer>
-            <UserInfoItemTitle>Paddle Skin</UserInfoItemTitle>
+            <UserInfoItemTitle>{t('profile.skinDisplay.title')}</UserInfoItemTitle>
 			<StyledCanvas ref={canvasRef} />
         </UserInfoItemContainer>
     );

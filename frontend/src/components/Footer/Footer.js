@@ -20,7 +20,7 @@ const Footer = () => {
 						fourthAuthor: "Hanmin"
 					}} />
 			</p>
-			<p className="privacy-policy" onClick={() => navigate('/privacy-policy')}>Privacy Policy</p>
+			<p className="privacy-policy" onClick={() => navigate('/privacy-policy')}>{t('footer.privacyPolicy')}</p>
 			<p>&copy; {t('footer.copyright')}</p>
 		</FooterContainer>
 	);

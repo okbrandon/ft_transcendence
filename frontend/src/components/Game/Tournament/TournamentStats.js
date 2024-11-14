@@ -1,10 +1,12 @@
 import React from "react";
 import ReactApexChart from 'react-apexcharts';
 import { LineStatsContainer } from "../../Profile/styles/Stats.styled";
+import { useTranslation } from "react-i18next";
 
 const TournamentStats = ({ totalScores }) => {
+	const { t } = useTranslation();
 	const series = [{
-		name: 'Scores',
+		name: t('game.tournaments.endPage.stats.title'),
 		data: Object.values(totalScores),
 	}];
 	const categories = Object.keys(totalScores);
@@ -21,7 +23,7 @@ const TournamentStats = ({ totalScores }) => {
 			curve: 'smooth',
 		},
 		title: {
-			text: 'Total points', // Brandon to be translated
+			text: t('game.tournaments.endPage.stats.text'),
 			align: 'left',
 			style: {
 				color: '#ffffff',

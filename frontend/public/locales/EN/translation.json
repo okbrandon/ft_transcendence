@@ -15,6 +15,7 @@
 			"subTitle": "Type the following text to prove you're not a robot:",
 			"phrase": "I am not a robot.",
 			"errorMessage": "Please type the exact phrase.",
+			"successMessage": "Account created successfully. Please verify your email.",
 			"submitButton": "Submit"
 		},
 		"signIn": {
@@ -48,7 +49,8 @@
 			"successMessage": "OTP has been set to your chosen platform.",
 			"disableButton": "Disable 2FA",
 			"enableButton": "Enable 2FA",
-			"scanMessage": "Scan this QR code with your authenticator app to set up OTP."
+			"scanMessage": "Scan this QR code with your authenticator app to set up OTP.",
+			"requestSent": "A request has been sent."
 		}
 	},
 	"restrictions": {
@@ -56,6 +58,7 @@
 			"required": "Username is required.",
 			"invalidLength": "Username must be 4-16 characters long.",
 			"invalidCharacters": "Username must contain only alphanumeric characters.",
+			"invalidFormat": "Username cannot end with '42'.",
 			"errorKeyword": "Username"
 		},
 		"displayName": {
@@ -106,7 +109,8 @@
 		"title": "PONG",
 		"subTitle": "42 ft_transcendence",
 		"authors": "Made by <0>{{firstAuthor}}</0>, <1>{{secondAuthor}}</1>, <2>{{thirdAuthor}}</2>, and <3>{{fourthAuthor}}</3>",
-		"copyright": "PONG 2024"
+		"copyright": "PONG 2024",
+		"privacyPolicy": "Privacy Policy"
 	},
 	"home": {
 		"welcome": "Wiggle your Paddle!",
@@ -136,7 +140,7 @@
 	},
 	"profile": {
 		"about": {
-			"title": "ABOUT",
+			"title": "About",
 			"bio": {
 				"notSet": "Nothing interesting here."
 			},
@@ -148,10 +152,10 @@
 			}
 		},
 		"skinDisplay": {
-			"title": "SKIN DISPLAY"
+			"title": "Paddle Skin"
 		},
 		"matchHistory": {
-			"title": "MATCH HISTORY",
+			"title": "Match History",
 			"table": {
 				"opponent": "Opponent",
 				"duration": "Duration",
@@ -164,7 +168,7 @@
 			"noResults": "No match history found."
 		},
 		"winRate": {
-			"title": "WINRATE",
+			"title": "Win Rate",
 			"lifetime": {
 				"title": "All Time"
 			},
@@ -175,13 +179,13 @@
 		"stats": {
 			"features": {
 				"first": {
-					"title": "RANKING"
+					"title": "Wins"
 				},
 				"second": {
-					"title": "WINS"
+					"title": "Loss"
 				},
 				"third": {
-					"title": "RATIO"
+					"title": "Ratio"
 				}
 			},
 			"donut": {
@@ -308,6 +312,7 @@
 		"privacy": {
 			"title": "Data Privacy",
 			"subTitle": "Come back in a few minutes while we prepare your data...",
+			"downloadingMessage": "Your data is being downloaded...",
 			"subSections": {
 				"downloadData": {
 					"title": "Download Data",
@@ -323,6 +328,7 @@
 		},
 		"visibility": {
 			"title": "Visibility",
+			"successMessage": "User has been unblocked.",
 			"subSections": {
 				"blockedUsers": {
 					"title": "Blocked Users",
@@ -335,7 +341,7 @@
 	},
 	"friends": {
 		"title": "FRIENDS",
-		"placeholder": "Search for a friend...",
+		"placeholder": "Search among your friends...",
 		"subSections": {
 			"friendList": {
 				"title": "Friends",
@@ -350,6 +356,302 @@
 				"declineButton": "Decline",
 				"cancelButton": "Revoke",
 				"noResults": "No friend requests found."
+			}
+		},
+		"statuses": {
+			"playing": {
+				"ai": "Playing against AI",
+				"multiplayer": "Playing against a player",
+				"local": "Playing locally"
+			},
+			"home": "In lobby",
+			"offline": "Touching grass..."
+		},
+		"notifications": {
+			"friendRemoved": "This friendship has been terminated.",
+			"challengeSent": "Challenge request has been sent."
+		}
+	},
+	"chat": {
+		"block": {
+			"title": "Block",
+			"selfBlock": "You cannot block yourself.",
+			"userBlocked": "User {{username}} has been blocked.",
+			"confirmMessage": "Are you sure you want to block {{username}}? You won't be able to see their messages or receive challenges from them."
+		},
+		"invite": {
+			"challenge": {
+				"title": "Challenge",
+				"content": "I challenge you to play against <0>me</0>!",
+				"acceptButton": "Accept",
+				"declineButton": "Decline"
+			},
+			"tournament": {
+				"title": "Tournament",
+				"content": "I invite you to join <0>{{tournamentName}}</0>",
+				"acceptButton": "Join"
+			},
+			"selfInvite": "You cannot challenge yourself.",
+			"inviteSent": "Challenge sent to {{username}}.",
+			"inviteAccepted": "Invitation accepted",
+			"inviteDeclined": "Invitation declined",
+			"errorAccept": "Failed to accept invitation",
+			"errorDecline": "Failed to decline invitation"
+		},
+		"profile": {
+			"title": "Profile"
+		},
+		"message": {
+			"title": "Messages",
+			"placeholder": "Type a message...",
+			"sentByMe": "You: ",
+			"noFriends": "Make some friends so you can chat with them!",
+			"noMessages": "First time chatting with {{username}}. Don't be shy, say hi!",
+			"newConversation": "Start a new conversation"
+		},
+		"searchBar": {
+			"placeholder": "Search among your friends..."
+		},
+		"confirmModal": {
+			"cancelButton": "Cancel",
+			"confirmButton": "Confirm"
+		},
+		"notifications": {
+			"messageReceived": "{{username}} sent you a message.",
+			"friendRequest": {
+				"received": "{{username}} sent you a friend request.",
+				"accepted": "{{username}} accepted your friend request.",
+				"declined": "{{username}} declined your friend request."
+			},
+			"challenge": {
+				"accepted": "{{username}} denied your challenge.",
+				"declined": "{{username}} accepted your challenge."
+			}
+		}
+	},
+	"game": {
+		"local": {
+			"playerA": {
+				"title": "Player 1",
+				"won": "Player 1 Wins"
+			},
+			"playerB": {
+				"title": "Player 2",
+				"won": "Player 2 Wins"
+			},
+			"startMessage": "Press any key to start the game"
+		},
+		"remote": {
+			"winner": {
+				"title": "{{username}} won!",
+				"subTitle": "You won!"
+			},
+			"loser": {
+				"subTitle": "You lost..."
+			},
+			"rewards": {
+				"experience": {
+					"title": "Experience",
+					"amount": "{{amount}} XP"
+				},
+				"money": {
+					"title": "Money",
+					"amount": "{{amount}} 🪙"
+				}
+			},
+			"profiles": {
+				"playerA": {
+					"title": "Waiting for player"
+				},
+				"playerB": {
+					"title": "Waiting for opponent"
+				},
+				"spectator": {
+					"title": "You are spectating this game"
+				}
+			}
+		},
+		"tournaments": {
+			"title": "Available Tournaments",
+			"searchBar": {
+				"placeholder": "Search for a tournament..."
+			},
+			"listing": {
+				"noTournaments": "No tournaments available.",
+				"players": "Players: {{players}}/{{maxPlayers}}",
+				"status": "Status: {{status}}",
+				"joinButton": "Join"
+			},
+			"setup": {
+				"title": "Tournament Setup",
+				"subSections": {
+					"name": "Tournament Name",
+					"maxPlayers": "Max Participants:",
+					"isPublic": {
+						"title": "Public Tournament:",
+						"yes": "Yes",
+						"no": "No"
+					}
+				},
+				"createButton": "CREATE",
+				"backButton": "BACK"
+			},
+			"lobbyPage": {
+				"title": "Tournament",
+				"listing": {
+					"title": "Players",
+					"waitingMessage": "Waiting for more players..."
+				},
+				"invite": {
+					"title": "Invite Friends",
+					"noFriends": "No active friends available to invite",
+					"inviteButton": "Invite",
+					"cancelButton": "Cancel",
+					"successMessage": "Invitation sent successfully."
+				},
+				"status": "{{players}}/{{maxPlayers}} players",
+				"backButton": "Back",
+				"inviteButton": "Invite",
+				"startButton": "Start"
+			},
+			"endPage": {
+				"winner": {
+					"title": "WINNER"
+				},
+				"overview": {
+					"title": "Overview",
+					"public": "Public tournament",
+					"private": "Private tournament",
+					"matches": {
+						"title": "Matches",
+						"columns": {
+							"round": "ROUND",
+							"players": "PLAYERS",
+							"duration": "DURATION",
+							"scores": "SCORES"
+						}
+					}
+				},
+				"stats": {
+					"title": "Scores",
+					"text": "Total points"
+				},
+				"leaveButton": "Leave"
+			},
+			"gamePage": {
+				"upcomingMatches": {
+					"title": "Upcoming Matches",
+					"noPlayer": "N/A"
+				}
+			},
+			"leaveMessage": "Due to you leaving, you've been removed from the tournament",
+			"reconnectMessage": "Reconnecting to the server. Please wait..."
+		},
+		"leave": {
+			"title": "Press <0>Q</0> to quit the game",
+			"button": "Go Back to Main Menu"
+		},
+		"gameOver": "Game Over!"
+	},
+	"playMenu": {
+		"title": "Select Game Mode",
+		"ai": {
+			"title": "AI"
+		},
+		"tournament": {
+			"title": "Tournament",
+			"options": {
+				"title": "Select an Option",
+				"createButton": {
+					"title": "Create a Tournament",
+					"subTitle": "Start and host a new tournament."
+				},
+				"joinButton": {
+					"title": "Join a Tournament",
+					"subTitle": "Enter an existing tournament."
+				},
+				"backButton": "Back"
+			}
+		},
+		"1v1": {
+			"title": "1 vs 1"
+		},
+		"local": {
+			"title": "Local"
+		}
+	},
+	"leaderboard": {
+		"stats": {
+			"gamesPlayed": "Games Played",
+			"gamesWon": "Games Won",
+			"gamesLost": "Games Lost",
+			"score": "Score"
+		},
+		"timeFrame": {
+			"lifetime": "Lifetime",
+			"daily": "Daily",
+			"weekly": "Weekly"
+		},
+		"table": {
+			"columns": {
+				"position": "Pos",
+				"username": "Player Name",
+				"defaultScore": "Score"
+			}
+		}
+	},
+	"privacyPolicy": {
+		"title": "Privacy Policy",
+		"lastUpdated": "Last Updated: {{date}}",
+		"intro": "Your privacy is important to us. This Privacy Policy outlines how we collect, use, and protect your information.",
+		"sections": {
+			"informationWeCollect": {
+				"title": "Information We Collect",
+				"description": "We collect the following types of information:",
+				"details": {
+					"account": "Account Details",
+					"profile": "Profile Communication",
+					"gameplay": "Gameplay Data",
+					"communications": "Communications",
+					"transactions": "Transactions"
+				},
+				"examples": {
+					"account": "User IDs, usernames, email addresses, and passwords (stored securely).",
+					"profile": "Display names, avatars, bios, and language preferences.",
+					"gameplay": "Matches, scores, tournaments, game tokens, and user settings.",
+					"communications": "Messages and conversation data for chats and tournament invites.",
+					"transactions": "Purchase history for store items."
+				}
+			},
+			"howWeUseInformation": {
+				"title": "How We Use Your Information",
+				"description": "We use the collected information to:",
+				"details": [
+					"Create and manage your account.",
+					"Facilitate gameplay, matches, and tournaments.",
+					"Enable messaging and notifications.",
+					"Ensure account security and prevent fraud."
+				]
+			},
+			"dataSharing": {
+				"title": "Data Sharing",
+				"description": "We may share certain information with third-party service providers:",
+				"examples": {
+					"email": "Email Addresses",
+					"phone": "Phone Numbers"
+				},
+				"links": {
+					"emailService": "https://resend.com/",
+					"phoneService": "https://www.plivo.com/sms/"
+				}
+			},
+			"dataRetention": {
+				"title": "Data Retention",
+				"description": "We retain your data as long as your account is active. If you delete your account, we will remove your data, except where legally required to keep it."
+			},
+			"security": {
+				"title": "Security",
+				"description": "We use industry-standard measures to protect your data. However, no system is completely secure—please safeguard your account."
 			}
 		}
 	}

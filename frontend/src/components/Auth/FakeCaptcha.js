@@ -33,7 +33,7 @@ const FakeCaptcha = ({ formData, setShowFakeCaptcha, setErrorSignUp }) => {
 		if (inputValue === correctText) {
 			apiSignup(formData)
 				.then(() => {
-					addNotification('success', 'Account created successfully. Please verify your email.');
+					addNotification('success', t('auth.fakeCaptcha.successMessage'));
 					navigate("/signin");
 				})
 				.catch(err => {

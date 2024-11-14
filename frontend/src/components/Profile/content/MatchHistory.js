@@ -40,7 +40,7 @@ const MatchHistory = ({ userID, matches }) => {
 
 	return (
 		<>
-			<h2>Match History</h2>
+			<h2>{t('profile.matchHistory.title')}</h2>
 			<MatchHistoryContainer>
 				<MatchCardTable>
 					<thead>

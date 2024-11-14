@@ -55,7 +55,7 @@ const Privacy = () => {
 				window.URL.revokeObjectURL(blobUrl);
 				console.log('Data harvested');
 				setIsHarvesting(true);
-				addNotification('success', 'Download started');
+				addNotification('success', t('settings.privacy.downloadingMessage'));
 			})
 			.catch(err => {
 				addNotification('error', `${err?.response?.data?.error || 'An error occurred'}`);
@@ -68,7 +68,7 @@ const Privacy = () => {
 		setLoading(true);
 		API.post('users/@me/harvest')
 			.then(() => {
-				addNotification('success', 'Data harvesting scheduled');
+				addNotification('success', t('settings.privacy.subTitle'));
 				setIsHarvesting(true);
 			})
 			.catch(err => {

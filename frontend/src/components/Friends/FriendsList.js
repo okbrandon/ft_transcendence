@@ -36,15 +36,15 @@ const FriendsList = ({ friends }) => {
 
 	const setActivityDescription = activity => {
 		if (activity === "PLAYING_VS_AI") {
-			return "Playing vs AI";
+			return t('friends.statuses.playing.ai');
 		} else if (activity === "PLAYING_MULTIPLAYER") {
-			return "Playing multiplayer";
+			return t('friends.statuses.playing.multiplayer');
 		} else if (activity === "PLAYING_LOCAL") {
-			return "Playing local";
+			return t('friends.statuses.playing.local');
 		} else if (activity === "HOME") {
-			return "In lobby";
+			return t('friends.statuses.home');
 		}
-		return "Touching grass...";
+		return t('friends.statuses.offline');
 	};
 
 	const handleProfile = username => {
@@ -67,7 +67,7 @@ const FriendsList = ({ friends }) => {
 		setLoading(true);
 		API.delete(`users/@me/relationships/${relationshipID}`)
 			.then(() => {
-				addNotification("success", "Friend removed");
+				addNotification("success", t('friends.notifications.friendRemoved'));
 				setRelations(prevRelations => prevRelations.filter(relation => relation.relationshipID !== relationshipID));
 				setFriends(prevFriends => prevFriends.filter(friend => friend.relationshipID !== relationshipID));
 			})
@@ -81,7 +81,7 @@ const FriendsList = ({ friends }) => {
 
 		API.post(`users/${friend.userID}/challenge`)
 			.then(() => {
-				addNotification("success", "Challenge sent");
+				addNotification("success", t('friends.notifications.challengeSent'));
 			})
 			.catch(err => {
 				addNotification("error", `${err?.response?.data?.error || "An error occurred."}`);

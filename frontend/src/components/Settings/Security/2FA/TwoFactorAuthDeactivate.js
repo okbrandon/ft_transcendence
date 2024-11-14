@@ -29,7 +29,7 @@ const TwoFactorAuthDeactivate = ({ setShow2FA, setShowQRCode, setIs2FAEnabled })
 	const handlePlatform = platform => {
 		API.post('auth/totp/request', { platform })
 			.then(() => {
-				addNotification('success', 'Request sent');
+				addNotification('success', t('auth.twoFactor.requestSent'));
 			})
 			.catch(err => {
 				addNotification('error', `${err?.response?.data?.error || 'An error occurred'}`);

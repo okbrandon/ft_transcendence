@@ -24,6 +24,7 @@ import API from "../../../api/api";
 import { useNotification } from "../../../context/NotificationContext";
 import Loader from "../../../styles/shared/Loader.styled";
 import { useAuth } from "../../../context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 const JoinTournament = () => {
 	const { user, setUser } = useAuth();
@@ -34,6 +35,7 @@ const JoinTournament = () => {
 	const [invite, setInvite] = useState(false);
 	const [activeFriends, setActiveFriends] = useState([]);
 	const [loading, setLoading] = useState(true);
+	const { t } = useTranslation();
 
 	useEffect(() => {
 		const fetchTournament = async () => {
@@ -74,7 +76,7 @@ const JoinTournament = () => {
 	const handleInviteFriend = async (userID) => {
 		try {
 			await API.put(`/tournaments/${tournamentID}/invite`, { participants: [userID] });
-			addNotification('success', 'Friend invited');
+			addNotification('success', t('game.tournaments.lobbyPage.invite.successMessage'));
 		} catch (error) {
 			addNotification('error', error.response?.data?.error || 'Error inviting friend');
 		}
@@ -108,7 +110,7 @@ const JoinTournament = () => {
 	const renderInviteOverlay = () => (
 		<ModalOverlay>
 			<ModalContainer>
-				<h2>Invite Friends</h2>
+				<h2>{t('game.tournaments.lobbyPage.invite.title')}</h2>
 				<ActiveFriendContainer>
 					{activeFriends.length ? (
 						activeFriends.map((friend) => (
@@ -117,16 +119,16 @@ const JoinTournament = () => {
 									<FriendProfilePicture src={friend.avatarID} alt={`${friend.username}'s avatar`} />
 									{friend.displayName}
 								</div>
-								<PongButton type="button" $width="150px" onClick={() => handleInviteFriend(friend.userID)}>Invite</PongButton>
+								<PongButton type="button" $width="150px" onClick={() => handleInviteFriend(friend.userID)}>{t('game.tournaments.lobbyPage.invite.inviteButton')}</PongButton>
 							</FriendItem>
 						))
 					) : (
-						<p>No active friends available to invite</p>
+						<p>{t('game.tournaments.lobbyPage.invite.noFriends')}</p>
 					)}
 				</ActiveFriendContainer>
 				<ButtonContainer>
 					<PongButton type="button" $width="150px" onClick={() => setInvite(false)}>
-						Cancel
+						{t('game.tournaments.lobbyPage.invite.cancelButton')}
 					</PongButton>
 				</ButtonContainer>
 			</ModalContainer>
@@ -137,12 +139,12 @@ const JoinTournament = () => {
 		<>
 			<PageContainer>
 				<TournamentHeader>
-					<h1>Tournament</h1>
+					<h1>{t('game.tournaments.lobbyPage.title')}</h1>
 					<h2>{tournament.name}</h2>
 				</TournamentHeader>
 				<JoinTournamentContainer>
 					<PlayerListContainer>
-						<h3>Players</h3>
+						<h3>{t('game.tournaments.lobbyPage.listing.title')}</h3>
 						<PlayerList>
 							{tournament.participants.map((player) => (
 								<PlayerCard key={player.userID}>
@@ -159,7 +161,7 @@ const JoinTournament = () => {
 							{isStartDisabled && (
 								<WaitingMessage>
 									<div className="waiting-text">
-										waiting for more players
+										{t('game.tournaments.lobbyPage.listing.waitingMessage')}
 										<Spinner animation="border" variant="spinner-border" />
 									</div>
 								</WaitingMessage>
@@ -168,15 +170,17 @@ const JoinTournament = () => {
 					</PlayerListContainer>
 					{isStartDisabled && (
 						<WaitingMessage>
-							<p>{tournament.participants.length} / {tournament.maxParticipants} players</p>
+							<p>
+								{t('game.tournaments.lobbyPage.status', { players: `${tournament.participants.length}`, maxPlayers: `${tournament.maxParticipants}` })}
+							</p>
 						</WaitingMessage>
 					)}
 					<ButtonContainer $shouldMargin={!isStartDisabled}>
-						<PongButton type="button" $width="150px" onClick={handleLeave}>Back</PongButton>
+						<PongButton type="button" $width="150px" onClick={handleLeave}>{t('game.tournaments.lobbyPage.backButton')}</PongButton>
 						{user.userID === tournament.owner.userID && (
 							<>
-								<PongButton type="button" $width="150px" onClick={handleInvite}>Invite</PongButton>
-								<PongButton type="button" $width="150px" disabled={isStartDisabled} onClick={handleStartTournament}>Start</PongButton>
+								<PongButton type="button" $width="150px" onClick={handleInvite}>{t('game.tournaments.lobbyPage.inviteButton')}</PongButton>
+								<PongButton type="button" $width="150px" disabled={isStartDisabled} onClick={handleStartTournament}>{t('game.tournaments.lobbyPage.startButton')}</PongButton>
 							</>
 						)}
 					</ButtonContainer>
