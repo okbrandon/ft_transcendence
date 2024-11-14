@@ -46,7 +46,7 @@ const DisplayChatMessages = ({ realConvo, userID, messagesEndRef, otherUser }) =
 		try {
 			await API.post(`/users/${challengerID}/challenge/${inviteID}/accept`);
 			addNotification('success', t('chat.invite.inviteAccepted'));
-			navigate('/game-challenge');
+			navigate('/game-challenge?inviteID=' + inviteID);
 		} catch (error) {
 			console.log(error);
 			addNotification('error', error?.response?.data?.error || t('chat.invite.errorAccept'));

@@ -8,3 +8,4 @@ __pycache__/
 .vscode/
 certs/*.crt
 certs/*.key
+certs_data/
