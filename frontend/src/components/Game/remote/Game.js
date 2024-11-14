@@ -4,12 +4,14 @@ import useWebSocket, { ReadyState } from "react-use-websocket";
 import GameProfiles from "../GameProfiles";
 import GameScene from "./GameScene";
 import { formatUserData } from "../../../api/user";
-import logger from "../../../api/logger";
 import { PageContainer } from "../styles/Game.styled";
+import { useAuth } from "../../../context/AuthContext";
 
 const Game = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
+	const { hasInteracted } = useAuth();
+	const hasInteractedRef = useRef(hasInteracted);
 	const [gameState, setGameState] = useState({
 		matchState: null,
 		player: null,
@@ -41,9 +43,9 @@ const Game = () => {
 	const handleReconnect = useCallback(() => {
 		if (reconnectAttempts.current < maxReconnectAttempts) {
 			reconnectAttempts.current += 1;
-			logger(`Attempting to reconnect... (Attempt ${reconnectAttempts.current})`);
+			console.log(`Attempting to reconnect... (Attempt ${reconnectAttempts.current})`);
 		} else {
-			logger('Max reconnection attempts reached. Redirecting to home.');
+			console.log('Max reconnection attempts reached. Redirecting to home.');
 			navigate('/');
 		}
 	}, [navigate]);
@@ -62,6 +64,7 @@ const Game = () => {
 	const retreiveGameMode = useCallback(() => {
 		if (location.pathname === '/game-ai') return 'ai';
 		if (location.pathname === '/game-classic') return '1v1';
+		if (location.pathname === '/game-challenge') return 'challenge';
 		return '';
 	}, [location.pathname]);
 
@@ -132,9 +135,19 @@ const Game = () => {
 					break;
 				case 'PADDLE_HIT':
 					setHitPos(data.d.ball);
+					if (hasInteractedRef.current) {
+						const hit1 = new Audio('/sounds/pong-hit1.mp3');
+						hit1.volume = 0.2;
+						hit1.play();
+					}
 					break;
 				case 'BALL_HIT':
 					setHitPos(data.d.ball);
+					if (hasInteractedRef.current) {
+						const hit2 = new Audio('/sounds/pong-hit2.mp3');
+						hit2.volume = 0.2;
+						hit2.play();
+					}
 					break;
 				case 'PADDLE_RATE_LIMIT': // ignoring
 					break;
@@ -143,6 +156,10 @@ const Game = () => {
 			}
 		}
 	}, [lastMessage, gameState.player?.userID, handleHeartbeatAck, navigate]);
+
+	useEffect(() => {
+		hasInteractedRef.current = hasInteracted;
+	}, [hasInteracted]);
 
 	return (
 		<PageContainer>
@@ -164,6 +181,8 @@ const Game = () => {
 				gameStarted={gameStarted}
 				gameOver={gameOver}
 				endGameData={endGameData}
+				isTournament={false}
+				hasInteracted={hasInteractedRef.current}
 			/>
 		</PageContainer>
 	)

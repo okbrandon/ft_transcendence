@@ -6,7 +6,7 @@ import { getSkin } from "../../../api/user";
 import { lerp } from "../../../scripts/math";
 import Rewards from "./Rewards";
 
-const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderScore, sendMessage, activateTimer, setActivateTimer, gameStarted, gameOver, endGameData, isSpectator }) => {
+const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderScore, sendMessage, activateTimer, setActivateTimer, gameStarted, gameOver, endGameData, isSpectator, isTournament, hasInteracted }) => {
 	const navigate = useNavigate();
 
 	const [borderColor, setBorderColor] = useState(null);
@@ -41,10 +41,6 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 		SCALEX: 22 / 1200,
 		SCALEY: 15 / 750,
 	}), []);
-
-	useEffect(() => {
-		console.log('gameOver status:', gameOver);
-	}, [gameOver]);
 
 	useEffect(() => {
 		if (player && playerSide) {
@@ -154,11 +150,24 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 	useEffect(() => {
 		if (!borderScore) return;
 		const side = borderScore.pos === 'A' ? 'left' : 'right';
-		if (side === playerSide) setBorderColor('green');
-		else setBorderColor('red');
+		if (side === playerSide) {
+			setBorderColor('green')
+			if (hasInteracted) {
+				const wonSound = new Audio('/sounds/pong-won.mp3');
+				wonSound.volume = 0.2;
+				wonSound.play();
+			}
+		} else {
+			setBorderColor('red');
+			if (hasInteracted) {
+				const lostSound = new Audio('/sounds/pong-lost.mp3');
+				lostSound.volume = 0.2;
+				lostSound.play();
+			}
+		}
 		const timeoutID = setTimeout(() => setBorderColor(null), 500);
 		return () => clearTimeout(timeoutID);
-	}, [borderScore, playerSide]);
+	}, [borderScore, playerSide, hasInteracted]);
 
 	useEffect(() => {
 		if (!canvas.current) return;
@@ -249,7 +258,7 @@ const GameScene = ({ player, opponent, matchState, playerSide, hitPos, borderSco
 				<Score>{scoreB}</Score>
 			</ScoresContainer>
 				{gameOver ? (
-					<Rewards endGameData={endGameData} isSpectator={isSpectator} />
+					<Rewards endGameData={endGameData} isSpectator={isSpectator} isTournament={isTournament}/>
 				) : (
 					<>
 						{activateTimer && (

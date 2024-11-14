@@ -24,7 +24,7 @@ const PodiumPlayer = ({ player, position, selectedStat }) => {
 
 	return (
 		<PodiumBase className={positionClass}>
-			<PlayerAvatar src={formattedPlayer.avatarID ? formattedPlayer.avatarID : 'images/default-profile.png'} alt={formattedPlayer.displayName} $position={positionClass} />
+			<PlayerAvatar src={formattedPlayer.avatarID ? formattedPlayer.avatarID : 'images/default-profile.webp'} alt={formattedPlayer.displayName} $position={positionClass} />
 			<PlayerInfo $position={positionClass}>
 				<div style={{paddingTop: '10px', fontWeight: 'bold'}}>
 					{formattedPlayer.displayName !== 'N/A' ? (

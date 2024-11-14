@@ -10,7 +10,8 @@ class Match(models.Model):
     playerB = models.JSONField(null=True)
     scores = models.JSONField(default=dict) # ex: {"user_202020202020": 5, "user_202020202021", 3}
     winnerID = models.CharField(max_length = 48, null=True)
-    startedAt = models.DateTimeField(auto_now_add=True)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    startedAt = models.DateTimeField(null=True)
     finishedAt = models.DateTimeField(null=True)
     flags = models.IntegerField(default=0) # 1<<0 = AI, 1<<1 = 1v1
     tournament = models.ForeignKey('Tournament', on_delete=models.SET_NULL, null=True, blank=True, related_name='matches')
@@ -126,6 +127,20 @@ class TournamentInvite(models.Model):
     def __str__(self):
         return f"Invite to {self.tournament.name} for {self.invitee.username}"
 
+class ChallengeInvite(models.Model):
+    inviteID = models.CharField(max_length=48, unique=True)
+    inviter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_challenge_invites')
+    invitee = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_challenge_invites')
+    status = models.CharField(max_length=20, choices=[
+        ('PENDING', 'Pending'),
+        ('ACCEPTED', 'Accepted'),
+        ('DECLINED', 'Declined')
+    ], default='PENDING')
+    createdAt = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Challenge invite from {self.inviter.username} to {self.invitee.username}"
+
 class VerificationCode(models.Model):
     userID = models.CharField(max_length=48)
     code = models.CharField(max_length=48)
@@ -134,7 +149,6 @@ class VerificationCode(models.Model):
 
     def __str__(self):
         return f"VerificationCode(userID={self.userID}, code={self.code})"
-
 
 class UserSettings(models.Model):
     userID = models.CharField(max_length = 48, unique = True)
@@ -155,9 +169,11 @@ class Conversation(models.Model):
 class Message(models.Model):
     messageID = models.CharField(primary_key=True, max_length=48, default="", editable=False)
     conversation = models.ForeignKey(Conversation, null=True, related_name='messages', on_delete=models.CASCADE)
-    content = models.CharField(max_length=256)
+    content = models.CharField(max_length=1024)
     sender = models.ForeignKey(User, null=True, related_name='sent_messages', on_delete=models.CASCADE)
-    messageType = models.IntegerField(default=0)
+    messageType = models.IntegerField(default=0) # 0 = basic message, 1 = tournament invitation, 2 = ephemeral message, 3 = challenge invitation
+    tournamentInvite = models.ForeignKey(TournamentInvite, null=True, related_name='messages', on_delete=models.CASCADE)
+    challengeInvite = models.ForeignKey(ChallengeInvite, null=True, related_name='messages', on_delete=models.CASCADE)
     createdAt = models.DateTimeField(null=True, auto_now_add=True)
 
     def __str__(self):

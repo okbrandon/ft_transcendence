@@ -8,12 +8,16 @@ const AuthProvider = ({ children }) => {
 	const [isLoggedIn, setIsLoggedIn] = useState(() => isValidToken());
 	const [user, setUser] = useState(null);
 	const [loading, setLoading] = useState(true);
+	const [hasInteracted, setHasInteracted] = useState(false);
 
 	useEffect(() => {
 		if (isLoggedIn) {
 			getUser()
 				.then(user => {
-					setUser(user);
+					setUser({
+						...user,
+						tournamentID: null,
+					});
 					localStorage.setItem('userID', user.userID);
 				})
 				.catch(err => {
@@ -34,6 +38,8 @@ const AuthProvider = ({ children }) => {
 			user,
 			setUser,
 			loading,
+			hasInteracted,
+			setHasInteracted
 		}}>
 			{ children }
 		</AuthContext.Provider>

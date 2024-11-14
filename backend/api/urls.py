@@ -44,6 +44,8 @@ urlpatterns = [
     path('users/search', UserSearch.as_view()), # GET
     path('users/@me/stats', Stats.UserMe.as_view()), # GET
     path('users/<identifier>/stats', Stats.User.as_view()), # GET
+    path('users/<identifier>/challenge', UserChallenge.as_view()), # POST
+    path('users/<identifier>/challenge/<str:inviteID>/<str:action>', UserChallengeInviteResponse.as_view()), # POST
 
     path('store/items', StoreItemsList.as_view()), # GET
     path('users/@me/purchases', UserPurchasesList.as_view()), # GET
@@ -66,13 +68,13 @@ urlpatterns = [
     path('matches', MatchCreate.as_view()),
 
     path('tournaments', Tournaments.as_view()),
+    path('tournaments/@me', UserCurrentTournament.as_view()),
     path('tournaments/<str:tournamentID>', TournamentDetail.as_view()),
     path('tournaments/<str:tournamentID>/join', JoinPublicTournament.as_view()),
     path('tournaments/<str:tournamentID>/invite', Tournaments.as_view()),
     path('tournaments/<str:tournamentID>/invite/<str:action>', TournamentInviteResponse.as_view()),
     path('tournaments/<str:tournamentID>/kick', KickUserFromTournament.as_view()),
     path('tournaments/<str:tournamentID>/start', ForceTournamentStart.as_view()),
-    path('tournaments/@me', UserCurrentTournament.as_view()),
 
     path('health', HealthCheck.as_view()),
 ]

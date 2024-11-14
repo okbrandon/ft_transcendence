@@ -27,8 +27,8 @@ import { useAuth } from '../context/AuthContext';
 import GameLocal from '../components/Game/local/GameLocal';
 import GameTournament from '../components/Game/Tournament/GameTournament';
 import CreateTournament from '../components/Game/Tournament/CreateTournament';
-import TournamentOverview from '../components/Game/Tournament/EndedTournamentPages/TournamentOverview';
 import EndedTournament from '../components/Game/Tournament/EndedTournament';
+import Privacy from '../components/Privacy/Privacy';
 
 const PrivateRoutes = () => {
 	const { isLoggedIn, setIsLoggedIn } = useAuth();
@@ -64,6 +64,7 @@ const Router = createBrowserRouter(createRoutesFromElements(
 	<>
 		<Route path="/" element={ <Root/> }>
 			<Route index element={ <Home/> }/>
+			<Route path="privacy-policy" element={ <Privacy/> }/>
 			<Route element={ <AuthenticationRoutes/> }>
 				<Route path="signin" element={ <SignIn/> }/>
 				<Route path="signup" element={ <SignUp/> }/>
@@ -77,11 +78,12 @@ const Router = createBrowserRouter(createRoutesFromElements(
 				<Route path="tournaments" element={ <Tournament/> }/>
 				<Route path="tournaments/create" element={ <CreateTournament /> }/>
 				<Route path="tournaments/:tournamentID" element={ <JoinTournament/> }/>
-				<Route path="tournaments/:tournamentID/play" element={ <GameTournament /> }/>
+				<Route path="tournaments/:tournamentID/game" element={ <GameTournament /> }/>
 				<Route path="tournaments/:tournamentID/results" element={ <EndedTournament /> }/>
 				<Route element={ <GameRoutes/> }>
 					<Route path="game-classic" element={ <Game/> }/>
 					<Route path="game-ai" element={ <Game/> }/>
+					<Route path="game-challenge" element={ <Game/> }/>
 					<Route path="playmenu" element={ <PlayMenu/> }/>
 					<Route path="game-local" element={ <GameLocal/> }/>
 				</Route>

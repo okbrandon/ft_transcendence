@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import User, Match, Message, Conversation, Token, Relationship, UserSettings, StoreItem, Purchase, VerificationCode, Tournament
+from .models import User, Match, Message, Conversation, Token, Relationship, UserSettings, StoreItem, Purchase, VerificationCode, Tournament, TournamentInvite, ChallengeInvite
 from .util import get_safe_profile
 
 class UserSerializer(serializers.ModelSerializer):
@@ -13,6 +13,8 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ["userID", "mfaToken", "oauthAccountID", "flags", "money"]
 
 class MatchSerializer(serializers.ModelSerializer):
+    whitelist = UserSerializer(many=True)
+
     class Meta:
         model = Match
         fields = ["matchID", "playerA", "playerB", "scores", "winnerID", "startedAt", "finishedAt", "flags", "whitelist"]
@@ -61,12 +63,42 @@ class UserSettingsSerializer(serializers.ModelSerializer):
         model = UserSettings
         fields = ["userID", "selectedPaddleSkin"]
 
+class TournamentSerializer(serializers.ModelSerializer):
+    participants = serializers.SerializerMethodField()
+    owner = UserSerializer()
+
+    class Meta:
+        model = Tournament
+        fields = ['tournamentID', 'name', 'startDate', 'endDate', 'maxParticipants', 'participants', 'status', 'winnerID', 'createdAt', 'isPublic', 'owner']
+
+    def get_participants(self, obj):
+        return [get_safe_profile(UserSerializer(participant).data, me=False) for participant in obj.participants.all()]
+
+class TournamentInviteSerializer(serializers.ModelSerializer):
+    tournament = TournamentSerializer()
+    inviter = UserSerializer()
+    invitee = UserSerializer()
+
+    class Meta:
+        model = TournamentInvite
+        fields = ['inviteID', 'tournament', 'inviter', 'invitee', 'status', 'createdAt']
+
+class ChallengeInviteSerializer(serializers.ModelSerializer):
+    inviter = UserSerializer()
+    invitee = UserSerializer()
+
+    class Meta:
+        model = ChallengeInvite
+        fields = ['inviteID', 'inviter', 'invitee', 'status']
+
 class MessageSerializer(serializers.ModelSerializer):
     sender = UserSerializer()
+    tournamentInvite = TournamentInviteSerializer()
+    challengeInvite = ChallengeInviteSerializer()
 
     class Meta:
         model = Message
-        fields = ['messageID', 'content', 'sender', 'messageType', 'createdAt']
+        fields = ['messageID', 'content', 'sender', 'messageType', 'tournamentInvite', 'challengeInvite', 'createdAt']
 
 class ConversationSerializer(serializers.ModelSerializer):
     participants = UserSerializer(many=True)
@@ -75,13 +107,3 @@ class ConversationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Conversation
         fields = ['conversationID', 'conversationType', 'receipientID', 'participants', 'messages']
-
-class TournamentSerializer(serializers.ModelSerializer):
-    participants = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Tournament
-        fields = ['tournamentID', 'name', 'startDate', 'endDate', 'maxParticipants', 'participants', 'status', 'winnerID', 'createdAt', 'isPublic', 'owner']
-
-    def get_participants(self, obj):
-        return [get_safe_profile(UserSerializer(participant).data, me=False) for participant in obj.participants.all()]

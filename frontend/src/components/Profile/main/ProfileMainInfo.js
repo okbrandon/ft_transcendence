@@ -45,6 +45,16 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 				.catch(err => {
 					addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 				});
+		} else if (profileUser.userID === 'user_ai') {
+			API.put('users/@me/relationships', { user: profileUser.userID, type: 1 })
+				.then(() => {
+					addNotification('success', 'Prune has accepted your friend request.');
+					setIsRefetch(true);
+					setFriends(prevFriends => [...prevFriends, { userID: profileUser.userID, username: profileUser.username, status: 1 }]);
+				})
+				.catch(err => {
+					addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
+				});
 		} else {
 			API.put('users/@me/relationships', { user: profileUser.userID, type: 0 })
 				.then(() => {
@@ -55,7 +65,7 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 					addNotification('error', `${err?.response?.data?.error || 'An error occurred.'}`);
 				});
 		}
-	}, [addNotification, profileUser.userID, relation, setIsRefetch, loading]);
+	}, [addNotification, profileUser, relation, setIsRefetch, loading, setFriends]);
 
 	const handleRemoveFriend = useCallback(() => {
 		if (loading) return;

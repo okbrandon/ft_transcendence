@@ -1,5 +1,8 @@
 # TODO
-- tournaments
+- tournaments:
+ - when refreshing the page does the tournamentID changes ? -> breaks the tournament
+ - tournament name < len
+ - Prune messages
 - Game: send invite
 
 # localhost:8888 -> things to change

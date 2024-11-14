@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Image from 'react-bootstrap/Image';
-import Button from 'react-bootstrap/Button';
 import { apiLogin } from '../../api/auth';
 import {
 	AuthenticationSection,
 	FormContainer,
-	FortyTwoButton
+	FortyTwoButton,
+	Outline,
+	SubmitButton
 } from './styles/Authentication.styled';
 import { useAuth } from '../../context/AuthContext';
 import TwoFactorAuthSignIn from './TwoFactorAuthSignIn';
 import ErrorMessage from '../../styles/shared/ErrorMessage.styled';
 import { useTranslation } from 'react-i18next';
 import { useNotification } from '../../context/NotificationContext';
+import { Background } from '../Game/styles/Tournament/EndedTournament.styled';
 
 const SignIn = () => {
 	const navigate = useNavigate();
@@ -70,46 +72,66 @@ const SignIn = () => {
 	};
 
 	const renderForm = () => (
-		<FormContainer onSubmit={handleSubmit}>
-			<h1>{t('auth.signIn.title')}</h1>
-			<FortyTwoButton variant='light' onClick={handleFortyTwo}>
-				<Image src='/images/42_Logo.png' alt='42 Logo'/>
-				{t('auth.signIn.fortyTwoProvider')}
-			</FortyTwoButton>
-			<p>{t('auth.signIn.providerDivider')}</p>
-			<FormContainer.Group className="mb-3">
-				<FormContainer.Control
-					id="username"
-					type="username"
-					placeholder=" "
-					value={username}
-					onChange={e => setUsername(e.target.value)}
-					isInvalid={error && error.includes(t('restrictions.username.errorKeyword'))}
-					autoComplete='username'
-				/>
-				<span>{t('auth.signIn.usernameTitle')}</span>
-			</FormContainer.Group>
-			<FormContainer.Group className="mb-3">
-				<FormContainer.Control
-					id="password"
-					type={showPassword ? 'text' : 'password'}
-					placeholder=" "
-					value={password}
-					onChange={e => setPassword(e.target.value)}
-					isInvalid={error && error.includes(t('restrictions.password.errorKeyword'))}
-					autoComplete='current-password'
-				/>
-				<span>{t('auth.signIn.passwordTitle')}</span>
-				<i className={`bi ${showPassword ? 'bi-eye-fill' : 'bi-eye'}`} onClick={toggleShowPassword}/>
-			</FormContainer.Group>
-			<p>{t('auth.signIn.notRegistered')}<Link to="/signup">{t('auth.signIn.registerButton')}</Link></p>
-			{error && <ErrorMessage>{error}</ErrorMessage>}
-			<Button variant='light' type='submit' disabled={loading}>{t('auth.signIn.loginButton')}</Button>
-		</FormContainer>
+		<Outline>
+			<div className='card'>
+				<div className='card2'>
+					<FormContainer onSubmit={handleSubmit}>
+						<h1>{t('auth.signIn.title')}</h1>
+						<FortyTwoButton type='button' onClick={handleFortyTwo}>
+							<Image src='/images/42-logo.webp' alt='42 Logo'/>
+							{t('auth.signIn.fortyTwoProvider')}
+						</FortyTwoButton>
+						<p>{t('auth.signIn.providerDivider')}</p>
+						<FormContainer.Group className="mb-3">
+							<div className='input-icon'>
+								<i className="bi bi-person"/>
+							</div>
+							<FormContainer.Control
+								id="username"
+								type="text"
+								placeholder={t('auth.signIn.usernameTitle')}
+								value={username}
+								onChange={e => setUsername(e.target.value)}
+								isInvalid={error && error.includes(t('restrictions.username.errorKeyword'))}
+								autoComplete='username'
+							/>
+						</FormContainer.Group>
+						<FormContainer.Group className="mb-3">
+							<div className='input-icon'>
+								<i className="bi bi-lock"/>
+							</div>
+							<FormContainer.Control
+								id="password"
+								type={showPassword ? 'text' : 'password'}
+								placeholder={t('auth.signIn.passwordTitle')}
+								value={password}
+								onChange={e => setPassword(e.target.value)}
+								isInvalid={error && error.includes(t('restrictions.password.errorKeyword'))}
+								autoComplete='current-password'
+							/>
+							<i className={`bi ${showPassword ? 'bi-eye-fill' : 'bi-eye'}`} onClick={toggleShowPassword}/>
+						</FormContainer.Group>
+						<p>{t('auth.signIn.notRegistered')}<Link to="/signup">{t('auth.signIn.registerButton')}</Link></p>
+						{error && <ErrorMessage>{error}</ErrorMessage>}
+						<SubmitButton type='submit' disabled={loading}>{t('auth.signIn.loginButton')}</SubmitButton>
+					</FormContainer>
+				</div>
+			</div>
+		</Outline>
 	);
 
 	return (
 		<AuthenticationSection>
+			<Background>
+				<span/>
+				<span/>
+				<span/>
+				<span/>
+				<span/>
+				<span/>
+				<span/>
+				<span/>
+			</Background>
 			{!isTwoFactorAuth ? (
 				renderForm()
 			) : (

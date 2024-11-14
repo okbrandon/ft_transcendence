@@ -1,9 +1,10 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import logger from '../api/logger';
 import API from '../api/api';
 import { formatUserData } from '../api/user';
 import { useNotification } from './NotificationContext';
 import { useRelation } from './RelationContext';
+import { useNavigate } from 'react-router-dom';
+import refreshToken from '../api/token';
 
 const WS_CHAT_URL = process.env.REACT_APP_ENV === 'production' ? '/ws/chat/?token=' : 'ws://localhost:8000/ws/chat/?token=';
 
@@ -11,6 +12,7 @@ const ChatContext = createContext();
 
 export const ChatProvider = ({ children }) => {
 	const socketChat = useRef(null);
+	const navigate = useNavigate();
 	const { addNotification } = useNotification();
 	const { isRefetch, setIsRefetch } = useRelation();
 	const [conversations, setConversations] = useState([]);
@@ -50,7 +52,7 @@ export const ChatProvider = ({ children }) => {
 		if (socketChat.current && socketChat.current.readyState === WebSocket.OPEN) {
 			socketChat.current.send(message);
 		} else {
-			logger('WebSocket for Chat is not open');
+			console.log('WebSocket for Chat is not open');
 		}
 	}, []);
 
@@ -106,12 +108,29 @@ export const ChatProvider = ({ children }) => {
 	}, [sendNotification, addNotification]);
 
 	useEffect(() => {
-		const connectWSChat = () => {
-			socketChat.current = new WebSocket(WS_CHAT_URL + localStorage.getItem('token'));
-			socketChat.current.onopen = () => logger('WebSocket for Chat connection opened');
+		const connectWSChat = async () => {
+			if (socketChat.current && socketChat.current.readyState === WebSocket.OPEN) {
+				socketChat.current.close();
+			}
+
+			let token = localStorage.getItem('token');
+			if (!token) {
+				token = await refreshToken();
+				if (!token) {
+					console.error('Unable to refresh the token. Websocket connection aborted.');
+					return;
+				}
+			}
+
+			socketChat.current = new WebSocket(WS_CHAT_URL + token);
+
+			socketChat.current.onopen = () => {
+				console.log('WebSocket for Chat connection opened')
+			};
 
 			socketChat.current.onmessage = event => {
 				const response = JSON.parse(event.data);
+
 				if (response.type === 'conversation_update') {
 					const conversationID = response.conversationID;
 					const message = response.message;
@@ -162,15 +181,34 @@ export const ChatProvider = ({ children }) => {
 					} else if (userFrom.status === 'accepted') {
 						addNotification('info', `${userTo.displayName} accepted your friend request.`);
 					};
+				} else if (response.type === 'challenge_update') {
+					const formattedData = {
+						...response,
+						inviter: formatUserData(response.invite.inviter),
+						invitee: formatUserData(response.invite.invitee),
+					}
+
+					if (formattedData.invite.status === 'DECLINED') {
+						addNotification('info', `${formattedData.invite.invitee.displayName} denied your challenge.`);
+					} else if (formattedData.invite.status === 'ACCEPTED') {
+						addNotification('info', `${formattedData.invite.invitee.displayName} accepted your challenge.`);
+						navigate('/game-challenge');
+					}
 				}
 			};
+
 			socketChat.current.onerror = error => {
 				console.error('WebSocket for Chat encountered an error:', error);
 			};
-			socketChat.current.onclose = event => {
+
+			socketChat.current.onclose = async event => {
 				if (event.code === 1006) {
-					logger('WebSocket for Chat encountered an error: Connection closed unexpectedly');
-					connectWSChat();
+					const newToken = await refreshToken();
+					if (newToken) {
+						connectWSChat();
+					} else {
+						console.log('Websocket for Chat failed to refresh the token');
+					}
 				}
 			};
 		}
@@ -180,7 +218,7 @@ export const ChatProvider = ({ children }) => {
 		return () => {
 			if (socketChat.current && socketChat.current.readyState === WebSocket.OPEN) {
 				socketChat.current.close();
-				logger('WebSocket for Chat closed');
+				console.log('WebSocket for Chat closed');
 			}
 		};
 	}, [addNotification, setIsRefetch]);

@@ -6,23 +6,34 @@ import { useRelation } from '../../context/RelationContext';
 import { useChat } from '../../context/ChatContext';
 import { ProfileDropdownButton } from './styles/Navigation.styled';
 import { useTranslation } from 'react-i18next';
+import { useNotification } from '../../context/NotificationContext';
+import API from '../../api/api';
 
 const ProfileDropdown = () => {
 	const navigate = useNavigate();
 	const { setIsLoggedIn, user, setUser } = useAuth();
 	const { setRelations, setFriends, setRequests, setBlockedUsers } = useRelation();
 	const { setConversations } = useChat();
+	const { addNotification } = useNotification();
 	const { t } = useTranslation();
 
-	const handleLogout = () => {
-		setIsLoggedIn(false);
-		setUser(null);
-		setRelations([]);
-		setFriends([]);
-		setRequests([]);
-		setBlockedUsers([]);
-		setConversations([]);
-		localStorage.clear();
+	const handleLogout = async () => {
+		try {
+			if (user.tournamentID) {
+				await API.delete(`/tournaments/@me`);
+				console.log('ProfileDropdown.js: successfully left tournament');
+			}
+			setIsLoggedIn(false);
+			setUser(null);
+			setRelations([]);
+			setFriends([]);
+			setRequests([]);
+			setBlockedUsers([]);
+			setConversations([]);
+			localStorage.clear();
+		} catch (error) {
+			addNotification('error', error.response?.data?.error || 'Error logging out');
+		}
 	};
 
 	return (

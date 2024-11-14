@@ -93,12 +93,29 @@ export const DirectMessage = ({
 		setIsBlockModalOpen(false);
 	}
 
+	const handleInvite = () => {
+		if (!otherUser || !otherUser.userID) return;
+		if (otherUser.userID === userID) {
+			addNotification('error', 'You cannot invite yourself');
+			return;
+		}
+
+		API.post(`users/${otherUser.userID}/challenge`)
+			.then(() => {
+				addNotification("success", "Challenge sent");
+			})
+			.catch(err => {
+				addNotification("error", `${err?.response?.data?.error || "An error occurred."}`);
+			})
+	}
+
 	const handleDropdownAction = (action) => {
 		switch (action) {
 			case 'profile':
 				navigate(`/profile/${username}`);
 				break;
 			case 'invite':
+				handleInvite();
 				break;
 			case 'block':
 				setIsBlockModalOpen(true);
@@ -145,9 +162,11 @@ export const DirectMessage = ({
 		<>
 			<DirectMessageContainer $isOpen={isOpen} $isMinimized={isMinimized}>
 				<Header onClick={toggleMinimization}>
-					<ProfilePicture src={otherUser.avatarID} alt={`${otherUser.username}'s profile picture`} $header />
-					<OnlineStatus $status={otherUser.status?.online || false} />
-					<Username onClick={toggleDropdown}>{username}</Username>
+					<div style={{display: 'flex', alignItems: 'center',gap: '5px'}}>
+						<ProfilePicture src={otherUser.avatarID} alt={`${otherUser.displayName || otherUser.username}'s profile picture`} $header />
+						<OnlineStatus $status={otherUser.status?.online || false} />
+						<Username onClick={toggleDropdown}>{otherUser.displayName || otherUser.username}</Username>
+					</div>
 					<Dropdown ref={dropdownRef} $isOpen={isDropdownOpen}>
 						{/* Brandon translate the buttons below */}
 						<DropdownItem data-action="profile" onClick={() => handleDropdownAction('profile')}>Profile</DropdownItem>

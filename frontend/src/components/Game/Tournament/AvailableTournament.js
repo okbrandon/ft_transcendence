@@ -45,8 +45,8 @@ const AvailableTournaments = ({ setOptions }) => {
 
 			if (tournament.isPublic) {
 				await API.post(`/tournaments/${tournamentID}/join`);
-				registerForTournament(tournamentID);
 				navigate(`/tournaments/${tournamentID}`);
+				registerForTournament(tournamentID);
 			} else {
 				// For private tournaments, we might need to handle invites differently
 				console.log("This is a private tournament. Invite handling not implemented.");
@@ -61,7 +61,7 @@ const AvailableTournaments = ({ setOptions }) => {
 		<AvailableTournamentsSection>
 			<Title>Available Tournaments</Title>
 			<SearchContainer>
-				<BackButton onClick={() => navigate(-1)}><i className="bi bi-arrow-left"/></BackButton>
+				<BackButton onClick={() => setOptions('')}><i className="bi bi-arrow-left"/></BackButton>
 				<SearchBar
 					id="search-tournament"
 					type="text"
@@ -72,7 +72,7 @@ const AvailableTournaments = ({ setOptions }) => {
 			</SearchContainer>
 			<AvailableTournamentsContainer>
 				<TournamentList>
-					{filteredTournaments.map((tournament) => (
+					{tournaments.length ? filteredTournaments.map((tournament) => (
 						<TournamentCard key={tournament.tournamentID}>
 							<h3>{tournament.name}</h3>
 							<p>Players: {tournament.participants.length}/{tournament.maxParticipants}</p>
@@ -83,7 +83,9 @@ const AvailableTournaments = ({ setOptions }) => {
 								</PongButton>
 							)}
 						</TournamentCard>
-					))}
+					)) : (
+						<p>No tournaments available</p>
+					)}
 				</TournamentList>
 			</AvailableTournamentsContainer>
 		</AvailableTournamentsSection>

@@ -1,24 +1,54 @@
-import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+
+let isRefreshing = false;
+let refreshSubscribers = [];
+
+const onRefreshed = newToken => {
+	refreshSubscribers.forEach(callback => callback(newToken));
+	refreshSubscribers = [];
+};
+
+const addRefreshSubscriber = callback => {
+	refreshSubscribers.push(callback);
+};
 
 const refreshToken = async () => {
 	const refresh = localStorage.getItem("refresh");
 
 	if (!refresh) {
-		throw new Error("No refresh token found");
+		return null;
 	}
 
-	const decoded = jwtDecode(refresh);
+	try {
+		if (isRefreshing) {
+			return new Promise(resolve => {
+				addRefreshSubscriber(resolve);
+			});
+		}
 
-	if (decoded.exp < Date.now() / 1000) {
-		throw new Error("Refresh token expired");
+		isRefreshing = true;
+
+		const response = await axios.post(
+			process.env.REACT_APP_ENV === "production"
+			? "/api/v1/auth/token/refresh"
+			: "http://localhost:8000/api/v1/auth/token/refresh",
+			{ refresh }
+		);
+
+		const newToken = response.data.access;
+		localStorage.setItem("token", newToken);
+
+		isRefreshing = false;
+		onRefreshed(newToken);
+
+		return newToken;
+	} catch (error) {
+		localStorage.clear();
+		window.location.href = "/signin";
+		throw error;
+	} finally {
+		isRefreshing = false;
 	}
-
-	const response = await axios.post(process.env.REACT_APP_ENV === 'production' ? '/api/v1/auth/token/refresh' : 'http://localhost:8000/api/v1/auth/token/refresh', { refresh });
-	const newToken = response.data.access;
-
-	localStorage.setItem("token", newToken);
-	return newToken;
 };
 
 export default refreshToken;

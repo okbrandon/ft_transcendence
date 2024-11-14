@@ -84,6 +84,7 @@ const FakeCaptcha = ({ formData, setShowFakeCaptcha, setErrorSignUp }) => {
 
 	return (
 		<FakeCaptchaContainer>
+			<i className="bi bi-arrow-left" onClick={() => setShowFakeCaptcha(false)}/>
 			<h1>{t('auth.fakeCaptcha.title')}</h1>
 			<p>{t('auth.fakeCaptcha.subTitle')}</p>
 			<FakeCaptchaInput>

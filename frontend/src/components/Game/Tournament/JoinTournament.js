@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import Spinner from "react-bootstrap/Spinner";
 import { useRelation } from "../../../context/RelationContext";
 import { useTournament } from "../../../context/TournamentContext";
@@ -15,85 +15,45 @@ import {
 	PageContainer,
 	PlayerCard,
 	PlayerList,
+	PlayerListContainer,
+	TournamentHeader,
 	WaitingMessage,
 } from "../styles/Tournament/JoinTournament.styled";
 import PongButton from "../../../styles/shared/PongButton.styled";
 import API from "../../../api/api";
+import { useNotification } from "../../../context/NotificationContext";
+import Loader from "../../../styles/shared/Loader.styled";
+import { useAuth } from "../../../context/AuthContext";
 
 const JoinTournament = () => {
-	const navigate = useNavigate();
+	const { user, setUser } = useAuth();
+	const { addNotification } = useNotification();
+	const { tournament, updateTournament, isStartDisabled } = useTournament();
 	const { tournamentID } = useParams();
 	const { friends } = useRelation();
 	const [invite, setInvite] = useState(false);
 	const [activeFriends, setActiveFriends] = useState([]);
-	const [isStartDisabled, setIsStartDisabled] = useState(true);
-	const [tournament, setTournament] = useState(null);
 	const [loading, setLoading] = useState(true);
-	const { addEventListener } = useTournament();
-
-	const updateTournament = useCallback((updatedTournament) => {
-		setTournament(updatedTournament);
-		setIsStartDisabled(updatedTournament?.participants?.length < 2);
-	}, []);
-
-	const handleTournamentUpdate = useCallback((data) => {
-		console.log('Received tournament update:', data);
-		switch (data.e) {
-			case 'TOURNAMENT_JOIN':
-				updateTournament(prevTournament => {
-					if (!prevTournament || !Array.isArray(prevTournament.participants)) {
-						console.error('Invalid tournament data:', prevTournament);
-						return prevTournament;
-					}
-					const newUser = data.d?.user;
-					if (!newUser || prevTournament.participants.some(p => p.userID === newUser.userID)) {
-						return prevTournament;
-					}
-					return {
-						...prevTournament,
-						participants: [...prevTournament.participants, newUser]
-					};
-				});
-				break;
-			case 'TOURNAMENT_LEAVE':
-			case 'TOURNAMENT_KICK':
-				updateTournament(prevTournament => {
-					if (!prevTournament || !data.d?.user?.userID) {
-						console.error('Invalid data for tournament update:', { prevTournament, data });
-						return prevTournament;
-					}
-					const newTournament = {
-						...prevTournament,
-						participants: prevTournament.participants.filter(p => p.userID !== data.d.user.userID)
-					};
-					if (data.d.user.userID === prevTournament.owner?.userID) {
-						navigate(-1);
-					}
-					return newTournament;
-				});
-				break;
-			default:
-				console.warn('Unhandled tournament update event:', data.e);
-		}
-	}, [navigate, updateTournament]);
 
 	useEffect(() => {
 		const fetchTournament = async () => {
 			try {
 				const response = await API.get(`/tournaments/${tournamentID}`);
+				console.log('JoinTournament.js: fetchTournament', response.data);
 				updateTournament(response.data);
 			} catch (error) {
-				console.error("Error fetching tournament:", error);
+				addNotification('error', error.response?.data?.error || 'Error fetching tournament data');
 			} finally {
 				setLoading(false);
 			}
 		};
 
 		fetchTournament();
+	}, [tournamentID, addNotification, updateTournament]);
 
-		const eventTypes = ['TOURNAMENT_JOIN', 'TOURNAMENT_LEAVE', 'TOURNAMENT_KICK'];
-		eventTypes.forEach(type => addEventListener(type, handleTournamentUpdate));
-	}, [tournamentID, addEventListener, handleTournamentUpdate]);
+	useEffect(() => {
+		if (tournament?.tournamentID) setUser(prev => ({ ...prev, tournamentID: tournament.tournamentID }));
+	}, [tournament?.tournamentID, setUser]);
 
 	useEffect(() => {
 		setActiveFriends(friends.filter(friend => !!friend.status.online));
@@ -103,7 +63,7 @@ const JoinTournament = () => {
 		try {
 			await API.post(`/tournaments/${tournamentID}/kick`, { user_id: userID });
 		} catch (error) {
-			console.error("Error kicking player:", error);
+			addNotification('error', error.response?.data?.error || 'Error kicking player');
 		}
 	};
 
@@ -111,13 +71,21 @@ const JoinTournament = () => {
 		setInvite(true);
 	};
 
-	const handleInviteFriends = async () => {
+	const handleInviteFriend = async (userID) => {
 		try {
-			const inviteeIDs = activeFriends.map(friend => friend.userID);
-			await API.put(`/tournaments/${tournamentID}`, { participants: inviteeIDs });
-			setInvite(false);
+			await API.put(`/tournaments/${tournamentID}/invite`, { participants: [userID] });
+			addNotification('success', 'Friend invited');
 		} catch (error) {
-			console.error("Error inviting friends:", error);
+			addNotification('error', error.response?.data?.error || 'Error inviting friend');
+		}
+	};
+
+	const handleLeave = async () => {
+		try {
+			const response = await API.delete(`/tournaments/@me`);
+			console.log('JoinTournament.js: handleLeave', response.data);
+		} catch (error) {
+			addNotification('error', error.response?.data?.error || 'Error leaving tournament');
 		}
 	};
 
@@ -125,74 +93,96 @@ const JoinTournament = () => {
 		try {
 			await API.post(`/tournaments/${tournamentID}/start`);
 		} catch (error) {
-			console.error("Error starting tournament:", error);
+			addNotification('error', error.response?.data?.error || 'Error starting tournament');
 		}
 	};
 
-	if (loading) {
-		return <Spinner animation="border" />;
+	if (loading || !tournament) {
+		return (
+			<PageContainer>
+				<Loader/>
+			</PageContainer>
+		);
 	}
+
+	const renderInviteOverlay = () => (
+		<ModalOverlay>
+			<ModalContainer>
+				<h2>Invite Friends</h2>
+				<ActiveFriendContainer>
+					{activeFriends.length ? (
+						activeFriends.map((friend) => (
+							<FriendItem key={friend.userID}>
+								<div className="friend-info">
+									<FriendProfilePicture src={friend.avatarID} alt={`${friend.username}'s avatar`} />
+									{friend.displayName}
+								</div>
+								<PongButton type="button" $width="150px" onClick={() => handleInviteFriend(friend.userID)}>Invite</PongButton>
+							</FriendItem>
+						))
+					) : (
+						<p>No active friends available to invite</p>
+					)}
+				</ActiveFriendContainer>
+				<ButtonContainer>
+					<PongButton type="button" $width="150px" onClick={() => setInvite(false)}>
+						Cancel
+					</PongButton>
+				</ButtonContainer>
+			</ModalContainer>
+		</ModalOverlay>
+	)
 
 	return (
 		<>
 			<PageContainer>
-				<h1>Tournament</h1>
-				<h2>{tournament.name}</h2>
+				<TournamentHeader>
+					<h1>Tournament</h1>
+					<h2>{tournament.name}</h2>
+				</TournamentHeader>
 				<JoinTournamentContainer>
-					<PlayerList>
-						{tournament.participants.map((player) => (
-							<PlayerCard key={player.userID}>
-								{player.displayName || player.username}
-								{tournament.owner.userID === player.userID ? null : (
-									<KickButton onClick={() => handleKickPlayer(player.userID)}>✖</KickButton>
-								)}
-							</PlayerCard>
-						))}
-					</PlayerList>
-					<ButtonContainer>
-						<PongButton type="button" $width="150px" onClick={() => navigate(-1)}>Back</PongButton>
-						<PongButton type="button" $width="150px" onClick={handleInvite}>Invite</PongButton>
-						<PongButton type="button" $width="150px" disabled={isStartDisabled} onClick={handleStartTournament}>Start</PongButton>
-					</ButtonContainer>
-					<WaitingMessage>
-						{isStartDisabled ? (
+					<PlayerListContainer>
+						<h3>Players</h3>
+						<PlayerList>
+							{tournament.participants.map((player) => (
+								<PlayerCard key={player.userID}>
+									<div className="player-info">
+										<i className={`bi bi-${tournament.owner.userID === player.userID ? 'star' : 'person'}-fill ${tournament.owner.userID === player.userID && 'owner'}`}/>
+										<img src={player.avatarID} alt={`${player.username}'s avatar`} />
+										{player.displayName || player.username}
+									</div>
+									{tournament.owner.userID === user.userID && tournament.owner.userID !== player.userID && (
+										<KickButton onClick={() => handleKickPlayer(player.userID)}>✖</KickButton>
+									)}
+								</PlayerCard>
+							))}
+							{isStartDisabled && (
+								<WaitingMessage>
+									<div className="waiting-text">
+										waiting for more players
+										<Spinner animation="border" variant="spinner-border" />
+									</div>
+								</WaitingMessage>
+							)}
+						</PlayerList>
+					</PlayerListContainer>
+					{isStartDisabled && (
+						<WaitingMessage>
+							<p>{tournament.participants.length} / {tournament.maxParticipants} players</p>
+						</WaitingMessage>
+					)}
+					<ButtonContainer $shouldMargin={!isStartDisabled}>
+						<PongButton type="button" $width="150px" onClick={handleLeave}>Back</PongButton>
+						{user.userID === tournament.owner.userID && (
 							<>
-								<p>Waiting for more players to join...</p>
-								<Spinner animation="border" />
+								<PongButton type="button" $width="150px" onClick={handleInvite}>Invite</PongButton>
+								<PongButton type="button" $width="150px" disabled={isStartDisabled} onClick={handleStartTournament}>Start</PongButton>
 							</>
-						) : (
-							<p>Ready to start!</p>
 						)}
-					</WaitingMessage>
+					</ButtonContainer>
 				</JoinTournamentContainer>
 			</PageContainer>
-			{invite && (
-				<ModalOverlay>
-					<ModalContainer>
-						<h2>Invite Friends</h2>
-						<ActiveFriendContainer>
-							{activeFriends.length ? (
-								activeFriends.map((friend) => (
-									<FriendItem key={friend.userID}>
-										<FriendProfilePicture src={friend.avatarID} alt={`${friend.username}'s avatar`} />
-										{friend.displayName || friend.username}
-									</FriendItem>
-								))
-							) : (
-								<p>No active friends available to invite</p>
-							)}
-						</ActiveFriendContainer>
-						<ButtonContainer>
-							<PongButton type="button" $width="150px" onClick={() => setInvite(false)}>
-								Cancel
-							</PongButton>
-							<PongButton type="button" $width="150px" onClick={handleInviteFriends}>
-								Invite
-							</PongButton>
-						</ButtonContainer>
-					</ModalContainer>
-				</ModalOverlay>
-			)}
+			{invite && renderInviteOverlay()}
 		</>
 	);
 };

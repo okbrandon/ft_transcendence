@@ -1,23 +1,22 @@
 import { getDate, getDuration } from '../scripts/match';
 import API from './api';
-import logger from './logger'
 
 export const formatUserData = user => {
 	if (user.displayName === null) {
 		user.displayName = user.username;
 	}
 	if (user.avatarID === 'default' || !user.avatarID) {
-		user.avatarID = '/images/default-profile.png';
+		user.avatarID = '/images/default-profile.webp';
 	}
 	if (!user.bannerID) {
-		user.bannerID = '/images/default-banner.png';
+		user.bannerID = '/images/default-banner.webp';
 	}
 	return user;
 };
 
 export const getUser = async () => {
 	try {
-		logger('Getting current user...');
+		console.log('Getting current user...');
 		const res = await API.get(`users/@me/profile`);
 		const user = formatUserData(res.data);
 		return user;
@@ -29,7 +28,7 @@ export const getUser = async () => {
 
 export const getUserById = async (id) => {
 	try {
-		logger('Getting user by username...');
+		console.log('Getting user by username...');
 		const res = await API.get(`users/${id}/profile`);
 
 		const user = formatUserData(res.data);
@@ -106,8 +105,10 @@ export const getSkin = async (id) => {
 export const formatMatchData = (match) => {
 	const duration = getDuration(match.startedAt, match.finishedAt);
 	const date = getDate(match.finishedAt);
-	const playerA = formatUserData(match.playerA);
-	const playerB = formatUserData(match.playerB);
+	// const playerA = formatUserData(match.players[match.playerA.userID]);
+	// const playerB = formatUserData(match.players[match.playerB.userID]);
+	const playerA = formatUserData(match.players.find(player => player.userID === match.playerA.id));
+	const playerB = formatUserData(match.players.find(player => player.userID === match.playerB.id));
 	const playerAScore = match.scores?.[`${playerA.userID}`] || 0;
 	const playerBScore = match.scores?.[`${playerB.userID}`] || 0;
 	const winner = match.winnerID === playerA.userID ? playerA : playerB;

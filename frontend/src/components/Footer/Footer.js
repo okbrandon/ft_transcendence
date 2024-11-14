@@ -2,9 +2,11 @@ import React from "react";
 import { FooterContainer } from "./styles/Footer.styled";
 import { Title } from "../../styles/shared/Title.styled";
 import { useTranslation, Trans } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 const Footer = () => {
 	const { t } = useTranslation();
+	const navigate = useNavigate();
 
 	return (
 		<FooterContainer>
@@ -18,6 +20,7 @@ const Footer = () => {
 						fourthAuthor: "Hanmin"
 					}} />
 			</p>
+			<p className="privacy-policy" onClick={() => navigate('/privacy-policy')}>Privacy Policy</p>
 			<p>&copy; {t('footer.copyright')}</p>
 		</FooterContainer>
 	);

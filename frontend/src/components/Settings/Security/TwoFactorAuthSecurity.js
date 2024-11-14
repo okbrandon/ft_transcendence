@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import API from '../../../api/api';
-import logger from '../../../api/logger';
 import OTPInputComponent from '../../Auth/OTPInput';
 import { ErrorMessage } from '../../Auth/styles/Authentication.styled';
 import { AvailablePlatformsContainer, PlatformButton } from '../../Auth/styles/TwoFactorAuth.styled';
@@ -27,10 +26,10 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactor
 	const handlePlatform = (platform) => {
 		API.post('auth/totp/request', { platform })
 			.then(() => {
-				logger('2FA: Request sent');
+				console.log('2FA: Request sent');
 			})
 			.catch(err => {
-				logger('2FA: Request failed');
+				console.log('2FA: Request failed');
 				setError(err.response.data.error);
 			});
 	};
@@ -49,12 +48,12 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactor
 		setDisableVerify(true);
 		API.patch('users/@me/profile', { ...submissionData, otp: authCode })
 			.then(res => {
-				logger('2FA: Success');
+				console.log('2FA: Success');
 				setSuccess('Security updated successfully');
 				getUser()
 					.then(res => {
 						setUser(res.data);
-						logger('User data refetched and updated in context:', res.data);
+						console.log('User data refetched and updated in context:', res.data);
 					})
 					.catch(err => {
 						setError(err.response.data.error);
