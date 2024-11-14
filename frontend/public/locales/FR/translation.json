@@ -337,7 +337,7 @@
 	},
 	"friends": {
 		"title": "AMIS",
-		"placeholder": "Rechercher un ami...",
+		"placeholder": "Rechercher parmi vos amis...",
 		"subSections": {
 			"friendList": {
 				"title": "Amis",
@@ -353,6 +353,19 @@
 				"cancelButton": "Annuler",
 				"noResults": "Aucune demande d'ami trouvée."
 			}
+		},
+		"statuses": {
+			"playing": {
+				"ai": "Joue contre l'IA",
+				"multiplayer": "Joue contre un joueur",
+				"local": "Joue localement"
+			},
+			"home": "Dans le lobby",
+			"offline": "Profite de la vie..."
+		},
+		"notifications": {
+			"friendRemoved": "Cette amitié a été terminée.",
+			"challengeSent": "Demande de défi envoyée."
 		}
 	},
 	"chat": {

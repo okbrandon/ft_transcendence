@@ -337,7 +337,7 @@
 	},
 	"friends": {
 		"title": "FRIENDS",
-		"placeholder": "Search for a friend...",
+		"placeholder": "Search among your friends...",
 		"subSections": {
 			"friendList": {
 				"title": "Friends",
@@ -353,6 +353,19 @@
 				"cancelButton": "Revoke",
 				"noResults": "No friend requests found."
 			}
+		},
+		"statuses": {
+			"playing": {
+				"ai": "Playing against AI",
+				"multiplayer": "Playing against a player",
+				"local": "Playing locally"
+			},
+			"home": "In lobby",
+			"offline": "Touching grass..."
+		},
+		"notifications": {
+			"friendRemoved": "This friendship has been terminated.",
+			"challengeSent": "Challenge request has been sent."
 		}
 	},
 	"chat": {

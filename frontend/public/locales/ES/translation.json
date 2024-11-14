@@ -337,7 +337,7 @@
 	},
 	"friends": {
 		"title": "AMIGOS",
-		"placeholder": "Buscar un amigo...",
+		"placeholder": "Buscar entre tus amigos...",
 		"subSections": {
 			"friendList": {
 				"title": "Amigos",
@@ -353,6 +353,19 @@
 				"cancelButton": "Revocar",
 				"noResults": "No se encontraron solicitudes de amistad."
 			}
+		},
+		"statuses": {
+			"playing": {
+				"ai": "Jugando contra la IA",
+				"multiplayer": "Jugando contra un jugador",
+				"local": "Jugando localmente"
+			},
+			"home": "En el vestíbulo",
+			"offline": "Desconectado"
+		},
+		"notifications": {
+			"friendRemoved": "Esta amistad ha sido terminada.",
+			"challengeSent": "Solicitud de desafío enviada."
 		}
 	},
 	"chat": {
