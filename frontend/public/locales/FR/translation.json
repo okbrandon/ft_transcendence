@@ -15,6 +15,7 @@
 			"subTitle": "Tapez le texte suivant pour prouver que vous n'êtes pas un robot :",
 			"phrase": "Je ne suis pas un robot.",
 			"errorMessage": "Veuillez taper la phrase exacte.",
+			"successMessage": "Compte créé avec succès. Veuillez vérifier votre e-mail.",
 			"submitButton": "Soumettre"
 		},
 		"signIn": {

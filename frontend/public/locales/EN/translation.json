@@ -15,6 +15,7 @@
 			"subTitle": "Type the following text to prove you're not a robot:",
 			"phrase": "I am not a robot.",
 			"errorMessage": "Please type the exact phrase.",
+			"successMessage": "Account created successfully. Please verify your email.",
 			"submitButton": "Submit"
 		},
 		"signIn": {
