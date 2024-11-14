@@ -387,8 +387,10 @@ class UserRelationshipsMe(APIView):
 class UserMatches(APIView):
     def get(self, request, userID, *args, **kwargs):
         user = User.objects.get(userID=userID)
-        matches = Match.objects.all()
-        matches = [match for match in matches if match.playerA['id'] == user.userID or match.playerB['id'] == user.userID]
+        matches = Match.objects.filter(
+            models.Q(playerA__id=user.userID) | models.Q(playerB__id=user.userID),
+            finishedAt__isnull=False
+        )
 
         tempered_matches = []
         for match in matches:
@@ -415,8 +417,10 @@ class UserMatches(APIView):
 class UserMatchesMe(APIView):
     def get(self, request, *args, **kwargs):
         me = request.user
-        matches = Match.objects.all()
-        matches = [match for match in matches if match.playerA['id'] == me.userID or match.playerB['id'] == me.userID]
+        matches = Match.objects.filter(
+            models.Q(playerA__id=me.userID) | models.Q(playerB__id=me.userID),
+            finishedAt__isnull=False
+        )
 
         tempered_matches = []
         for match in matches:
