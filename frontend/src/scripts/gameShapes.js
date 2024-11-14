@@ -26,7 +26,7 @@ export const setPaddleAttributes = (terrain, textureUrl = null) => {
 		const paddleTexture = textureLoader.load(`/images/skins/${textureUrl}`, texture => {
 			texture.wrapS = THREE.ClampToEdgeWrapping;
 			texture.wrapT = THREE.ClampToEdgeWrapping;
-			texture.flipY = true;
+			texture.flipY = false;
 			texture.offset.set(0.5, 0.5);
 			texture.repeat.set(0.4, 0.4);
 			texture.rotation = Math.PI / 2;
