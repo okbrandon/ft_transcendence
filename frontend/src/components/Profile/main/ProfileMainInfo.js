@@ -14,6 +14,7 @@ import {
 	SectionContainer,
 } from '../styles/main/ProfileMainInfo.styled';
 import { useRelation } from '../../../context/RelationContext';
+import { useTranslation } from 'react-i18next';
 
 const ProfilePicture = ({ user, profileUser, relation }) => {
 	const navigate = useNavigate();
@@ -24,6 +25,7 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 		((relation[0].sender.userID === user.userID && relation[0].status === 0)
 		|| relation[0].status !== 0));
 	const disableBlockUser = !!(relation.length && relation[0].status === 2);
+	const { t } = useTranslation();
 
 	useEffect(() => {
 		if (!loading) return;
@@ -39,7 +41,7 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 		if (relation.length && relation[0].status === 0) {
 			API.put('users/@me/relationships', { user: profileUser.userID, type: 1 })
 				.then(() => {
-					addNotification('success', 'You are now friends.');
+					addNotification('success', t('friends.notifications.friendAccepted'));
 					setIsRefetch(true);
 				})
 				.catch(err => {
@@ -48,7 +50,7 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 		} else if (profileUser.userID === 'user_ai') {
 			API.put('users/@me/relationships', { user: profileUser.userID, type: 1 })
 				.then(() => {
-					addNotification('success', 'Prune has accepted your friend request.');
+					addNotification('success', t('friends.notifications.pruneAccepted'));
 					setIsRefetch(true);
 					setFriends(prevFriends => [...prevFriends, { userID: profileUser.userID, username: profileUser.username, status: 1 }]);
 				})
@@ -58,7 +60,7 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 		} else {
 			API.put('users/@me/relationships', { user: profileUser.userID, type: 0 })
 				.then(() => {
-					addNotification('success', 'Friend request sent.');
+					addNotification('success', t('friends.notifications.friendRequestSent'));
 					setIsRefetch(true);
 				})
 				.catch(err => {
@@ -72,7 +74,7 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 		setLoading(true);
 		API.delete(`users/@me/relationships/${relation[0].relationshipID}`)
 			.then(() => {
-				addNotification('success', 'Friend removed.');
+				addNotification('success', t('friends.notifications.friendRemoved'));
 				setRelations(prevRelations => prevRelations.filter(prevRelation => prevRelation.relationshipID !== relation[0].relationshipID));
 				setFriends(prevFriends => prevFriends.filter(friend => friend.relationshipID !== relation[0].relationshipID));
 			})
@@ -86,7 +88,7 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 		setLoading(true);
 		API.put('users/@me/relationships', { user: profileUser.userID, type: 2 })
 			.then(() => {
-				addNotification('warning', 'User blocked.');
+				addNotification('warning', t('friends.notifications.userBlocked'));
 				setIsRefetch(true);
 			})
 			.catch(err => {
@@ -123,7 +125,7 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 						<ActionsContainer>
 							<ActionButton type="button" onClick={() => navigate('/settings')}>
 								<i className="bi bi-gear-fill"/>
-								Settings
+								{t('header.profileButton.settings')}
 							</ActionButton>
 						</ActionsContainer>
 					) : profileUser.userID === 'user_ai' ? (
@@ -138,7 +140,7 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 								disabled={disableBlockUser || loading}
 							>
 								<i className="bi bi-ban"/>
-								Block
+								{t('chat.block.title')}
 							</ActionButton>
 							{disableAddFriend ? (
 								<ActionButton
@@ -154,7 +156,7 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 									) : (
 										<>
 											<i className="bi bi-person-dash-fill"/>
-											{relation[0].status === 0 ? 'Cancel Request' : 'Remove Friend'}
+											{relation[0].status === 0 ? t('friends.subSections.friendRequests.cancelButton') : t('friends.subSections.friendList.deleteButton')}
 										</>
 									)}
 								</ActionButton>
@@ -165,7 +167,7 @@ const ProfilePicture = ({ user, profileUser, relation }) => {
 									disabled={loading}
 								>
 									<i className="bi bi-person-fill-add"/>
-									Add Friend
+									{t('friends.subSections.friendList.addButton')}
 								</ActionButton>
 							)}
 						</ActionsContainer>

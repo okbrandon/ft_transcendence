@@ -348,6 +348,7 @@
 				"inviteButton": "Défier",
 				"messageButton": "Message",
 				"deleteButton": "Supprimer",
+				"addButton": "Ajouter un ami",
 				"noResults": "Aucun ami trouvé."
 			},
 			"friendRequests": {
@@ -369,7 +370,11 @@
 		},
 		"notifications": {
 			"friendRemoved": "Cette amitié a été terminée.",
-			"challengeSent": "Demande de défi envoyée."
+			"challengeSent": "Demande de défi envoyée.",
+			"friendRequestSent": "Demande d'ami envoyée.",
+			"friendAccepted": "Vous êtes maintenant amis.",
+			"pruneAccepted": "Prune a accepté votre demande d'ami.",
+			"friendBlocked": "L'utilisateur a été bloqué."
 		}
 	},
 	"chat": {
