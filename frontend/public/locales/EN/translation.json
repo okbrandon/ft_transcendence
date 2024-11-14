@@ -561,5 +561,25 @@
 		"local": {
 			"title": "Local"
 		}
+	},
+	"leaderboard": {
+		"stats": {
+			"gamesPlayed": "Games Played",
+			"gamesWon": "Games Won",
+			"gamesLost": "Games Lost",
+			"score": "Score"
+		},
+		"timeFrame": {
+			"lifetime": "Lifetime",
+			"daily": "Daily",
+			"weekly": "Weekly"
+		},
+		"table": {
+			"columns": {
+				"position": "Pos",
+				"username": "Player Name",
+				"defaultScore": "Score"
+			}
+		}
 	}
 }

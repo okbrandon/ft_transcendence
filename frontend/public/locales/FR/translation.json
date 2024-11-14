@@ -561,5 +561,25 @@
 		"local": {
 			"title": "Local"
 		}
+	},
+	"leaderboard": {
+		"stats": {
+			"gamesPlayed": "Parties Jouées",
+			"gamesWon": "Parties Gagnées",
+			"gamesLost": "Parties Perdues",
+			"score": "Score"
+		},
+		"timeFrame": {
+			"lifetime": "Tout le temps",
+			"daily": "Quotidien",
+			"weekly": "Hebdomadaire"
+		},
+		"table": {
+			"columns": {
+				"position": "Pos",
+				"username": "Nom du Joueur",
+				"defaultScore": "Score"
+			}
+		}
 	}
 }
