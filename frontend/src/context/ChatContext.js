@@ -184,6 +184,8 @@ export const ChatProvider = ({ children }) => {
 					} else if (userFrom.status === 'accepted') {
 						addNotification('info', tRef.current('chat.notifications.friendRequest.accepted', { username: `${userTo.displayName}` }));
 					};
+				} else if (response.type === 'upcoming_match') {
+					addNotification('crab', response.message.content);
 				} else if (response.type === 'challenge_update') {
 					const formattedData = {
 						...response,

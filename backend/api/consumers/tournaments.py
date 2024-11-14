@@ -215,56 +215,38 @@ class TournamentManager:
 
             # Warn players of the next match
             for player in next_match['players']:
-                await self.send_prune_message(player['userID'], f"Your next match in tournament '{self.tournament.name}' is starting soon!")
+                await self.notify_upcoming_match(player['userID'], True)
 
             # Get the next next match
             next_next_match = await self.get_next_unstarted_match()
             if next_next_match:
                 for player in next_next_match['players']:
-                    await self.send_prune_message(player['userID'], f"Your match in tournament '{self.tournament.name}' is coming up next. Please be ready!")
+                    await self.notify_upcoming_match(player['userID'], False)
 
             return next_match
         finally:
             await self.delete_lock(lock_key)
-
-    async def send_prune_message(self, user_id, content):
-        prune_user = await sync_to_async(User.objects.get)(userID="user_ai")
-        conversation = await self.get_or_create_prune_conversation(user_id)
-
-        message = await sync_to_async(conversation.messages.create)(
-            messageID=generate_id("msg"),
-            sender=prune_user,
-            content=content
-        )
-
-        await self.channel_layer.group_send(
-            f"chat_{user_id}",
-            {
-                "type": "conversation_update",
-                "conversationID": conversation.conversationID,
-                "sender": get_safe_profile(UserSerializer(prune_user).data, me=False),
-                "message": MessageSerializer(message).data
-            }
-        )
-    @sync_to_async
-    def get_or_create_prune_conversation(self, user_id):
-        user = User.objects.get(userID=user_id)
-        prune_user = User.objects.get(userID="user_ai")
-
-        conversation = Conversation.objects.filter(
-            participants__userID__in=[user_id, "user_ai"],
-            conversationType='private_message'
-        ).annotate(participant_count=Count('participants')).filter(participant_count=2).first()
-
-        if not conversation:
-            conversation = Conversation.objects.create(
-                conversationID=generate_id("conv"),
-                conversationType='private_message'
+    
+    async def notify_upcoming_match(self, userID, imminent):
+        channel_layer = get_channel_layer()
+        group_name = f"chat_{userID}"
+        
+        message = "Your match is starting soon!" if imminent else "Your match is coming up next. Please be ready!"
+        
+        try:
+            logger.info(f"Sending upcoming match notification to user {userID}. Message: {message}")
+            await channel_layer.group_send(
+                group_name,
+                {
+                    "type": "upcoming_match",
+                    "message": {
+                        "content": message,
+                    }
+                }
             )
-            conversation.participants.add(user, prune_user)
-            conversation.save()
-
-        return conversation
+            logger.info(f"Successfully sent upcoming match notification to user {userID}")
+        except Exception as e:
+            logger.error(f"Failed to send upcoming match notification. User: {userID}, Error: {str(e)}")
 
     @sync_to_async
     def set_match_start_time(self, match_id):

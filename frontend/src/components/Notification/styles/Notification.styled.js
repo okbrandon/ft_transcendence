@@ -85,4 +85,25 @@ export const NotificationContainer = styled.div`
 		border-left-color: #ffaa00;
 		background-color: rgba(50, 50, 20, 0.9);
 	}
+
+	&.crab {
+		border-left-color: #0088ff;
+		background-color: rgba(20, 20, 50, 0.9);
+		flex-direction: row;
+		align-items: center;
+
+		.avatar {
+			margin-right: 16px;
+
+			img {
+				width: 40px;
+				height: 40px;
+				border-radius: 50%;
+			}
+		}
+
+		.message {
+			flex: 1;
+		}
+	}
 `;

@@ -185,6 +185,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
         except Exception as _:
             pass
 
+    async def upcoming_match(self, event):
+        try:
+            await self.send(json.dumps({
+                "type": "upcoming_match",
+                "message": event["message"]
+            }))
+        except Exception as _:
+            pass
+
     async def challenge_update(self, event):
         try:
             await self.send(json.dumps({
