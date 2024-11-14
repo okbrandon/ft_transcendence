@@ -284,6 +284,7 @@
 			"saveButton": "Guardar cambios",
 			"loadingButton": "Guardando...",
 			"successMessage": "Cambios guardados exitosamente.",
+			"noChanges": "No se detectaron cambios.",
 			"subSections": {
 				"signIn": {
 					"title": "Inicio de sesión",

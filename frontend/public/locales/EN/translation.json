@@ -284,6 +284,7 @@
 			"saveButton": "Save Changes",
 			"loadingButton": "Saving...",
 			"successMessage": "Changes saved successfully.",
+			"noChanges": "No changes detected.",
 			"subSections": {
 				"signIn": {
 					"title": "Sign In",

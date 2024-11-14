@@ -118,6 +118,8 @@ const Security = ({ user, setUser }) => {
 				.catch(err => {
 					addNotification('error', `${err?.response?.data?.error || 'An error occurred'}`);
 				});
+		} else {
+			addNotification('info', t('settings.security.noChanges'));
 		}
 	};
 
@@ -142,7 +144,7 @@ const Security = ({ user, setUser }) => {
 					{loading ? t('settings.security.loadingButton') : t('settings.security.saveButton')}
 				</PongButton>
 			</Form>
-			<TwoFactorAuthToggle user={user} handleChange={handleChange}/>
+			<TwoFactorAuthToggle has2FA={has2FA} setHas2FA={setHas2FA}/>
 			{showTwoFactorAuth && (
 				<TwoFactorAuthSecurity
 					formData={formData}

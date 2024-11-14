@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import QRCode from "react-qr-code";
 import TwoFactorAuthDeactivate from "./TwoFactorAuthDeactivate";
 import API from "../../../../api/api";
@@ -16,34 +16,23 @@ import ErrorMessage from "../../../../styles/shared/ErrorMessage.styled";
 import { useNotification } from "../../../../context/NotificationContext";
 import { useTranslation } from "react-i18next";
 
-const TwoFactorAuthToggle = () => {
+const TwoFactorAuthToggle = ({ has2FA, setHas2FA }) => {
 	const { addNotification } = useNotification();
-	const [is2FAEnabled, setIs2FAEnabled] = useState(false);
 	const [show2FA, setShow2FA] = useState(false);
 	const [qrCodeToken, setQrCodeToken] = useState('');
 	const [showQRCode, setShowQRCode] = useState(false);
 	const [error, setError] = useState('');
 	const { t } = useTranslation();
 
-	useEffect(() => {
-		API.get('auth/totp')
-			.then(res => {
-				setIs2FAEnabled(res.data.has_otp);
-			})
-			.catch(err => {
-				addNotification('error', `${err?.response?.data?.error || 'An error occurred'}`);
-			});
-	}, [addNotification]);
-
 	const handleToggle = () => {
-		if (is2FAEnabled) {
+		if (has2FA) {
 			setShow2FA(true);
 		} else {
 			API.post('auth/totp/enable')
 				.then(res => {
 					setQrCodeToken(res.data.token);
 					setShowQRCode(true);
-					setIs2FAEnabled(true);
+					setHas2FA(true);
 					setError('');
 				})
 				.catch(err => {
@@ -56,12 +45,12 @@ const TwoFactorAuthToggle = () => {
 		<>
 			<SubSectionHeading>{t('auth.twoFactor.title')}</SubSectionHeading>
 			<ToggleContainer>
-				<ToggleLabel>{is2FAEnabled ? t('auth.twoFactor.disableButton') : t('auth.twoFactor.enableButton')}</ToggleLabel>
+				<ToggleLabel>{has2FA ? t('auth.twoFactor.disableButton') : t('auth.twoFactor.enableButton')}</ToggleLabel>
 				<ToggleSwitch>
 				<input
 					type="checkbox"
 					id="2fa"
-					checked={is2FAEnabled}
+					checked={has2FA}
 					onChange={handleToggle}
 				/>
 				<Slider/>
@@ -81,7 +70,7 @@ const TwoFactorAuthToggle = () => {
 				<TwoFactorAuthDeactivate
 					setShow2FA={setShow2FA}
 					setShowQRCode={setShowQRCode}
-					setIs2FAEnabled={setIs2FAEnabled}
+					setIs2FAEnabled={setHas2FA}
 				/>}
 			{error && <ErrorMessage>{error}</ErrorMessage>}
 		</>

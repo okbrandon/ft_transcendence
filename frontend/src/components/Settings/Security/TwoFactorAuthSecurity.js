@@ -54,7 +54,7 @@ const TwoFactorAuthSecurity = ({ formData, setUser, setSuccess, setShowTwoFactor
 				setSuccess(t('settings.security.successMessage'));
 				getUser()
 					.then(res => {
-						setUser(res.data);
+						setUser(res);
 						console.log('User data refetched and updated in context:', res.data);
 					})
 					.catch(err => {
