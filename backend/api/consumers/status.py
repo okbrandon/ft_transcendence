@@ -53,7 +53,7 @@ class StatusConsumer(AsyncWebsocketConsumer):
         if connection_count + 1 >= 2:
             try:
                 self.send(json.dumps({
-                    "type": "error",
+                    "type": "connection_error",
                     "message": "You can only have 2 connections at the same time"
                 }))
                 await self.close()
