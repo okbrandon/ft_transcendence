@@ -191,6 +191,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @sync_to_async
     def ensure_conversations_exist(self, user):
+        # If the user is not friend with AI yet, create a Relationship
+        try:
+            ai_user = User.objects.get(userID="user_ai")
+
+            if not Relationship.objects.filter(
+                Q(userA=user.userID, userB=ai_user.userID) | Q(userA=ai_user.userID, userB=user.userID)
+            ).exists():
+                Relationship.objects.create(userA=user.userID, userB=ai_user.userID, status=1)
+        except Exception as _:
+            pass
+
         friends = Relationship.objects.filter(
             Q(userA=user.userID) | Q(userB=user.userID)
         )
@@ -198,8 +209,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             Q(status=2) | Q(status=0),
             Q(userA=user.userID) | Q(userB=user.userID)
         )
-
-        user = User.objects.get(userID=user.userID)
 
         for relationship in friends:
             friend_id = relationship.userA if relationship.userA != user.userID else relationship.userB

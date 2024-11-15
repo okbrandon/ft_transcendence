@@ -10,15 +10,13 @@ from rest_framework.permissions import AllowAny
 from rest_framework.decorators import permission_classes
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from django.db.models import Count
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login
 from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import make_password
 from django.utils import timezone
 from django.contrib.auth.hashers import check_password
 
-from ..models import User, VerificationCode, Relationship, Conversation
-from ..serializers import UserSerializer
+from ..models import User, VerificationCode
 from ..util import generate_id, send_verification_email, send_otp_via_email, send_otp_via_sms
 from ..backends import AuthBackend
 from ..validators import validate_username, validate_email, validate_password, validate_lang
@@ -51,14 +49,6 @@ class AuthRegister(APIView):
             lang=data['lang'],
             money=100000 if skip_email_verification else 0,
             flags=1 if skip_email_verification else 0  # Set EMAIL_VERIFIED flag if skipping verification
-        )
-
-        # Create a relationship with the AI user
-        Relationship.objects.create(
-            relationshipID=generate_id("rel"),
-            userA=user.userID,
-            userB="user_ai",
-            status=1  # Accepted/friends status
         )
 
         if not skip_email_verification:
