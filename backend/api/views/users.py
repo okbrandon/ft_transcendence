@@ -277,6 +277,8 @@ class UserRelationshipsMe(APIView):
 
         if target_user_id == "user_ai":
             return Response({"error": "There's no escaping prune, nice try."}, status=status.HTTP_400_BAD_REQUEST)
+        if target_user_id == me.userID:
+            return Response({"error": "You cannot create a relationship with yourself"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             target_user = User.objects.get(userID=target_user_id)

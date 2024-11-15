@@ -1,5 +1,9 @@
 import re
 import base64
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def validate_username(username):
     if username is None:
@@ -20,12 +24,17 @@ def validate_lang(lang):
 def validate_image(image):
     if image is None:
         return True
+
+    if not image.startswith('data:image/'):
+        return False
+
     try:
-        decoded_image = base64.b64decode(image)
-        if len(decoded_image) > 1 * 1024 * 1024:
+        decoded_image = base64.b64decode(image.split(',')[1])
+
+        if len(decoded_image) * 3 / 4 > 1_048_576:
             return False
         return True
-    except:
+    except Exception as _:
         return False
 
 def validate_phone_number(phone):
