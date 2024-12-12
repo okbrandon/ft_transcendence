@@ -28,7 +28,7 @@
 
 This was a capstone project for the 42 School Common Core, pushing the boundaries of creativity, technical expertise, and software engineering.
 
-## 📦 Installation
+## 📦 Deploying
 
 > [!WARNING]
 > Ensure you have Docker installed and configured properly before proceeding. The project is designed to run in a containerized environment.
@@ -38,14 +38,20 @@ This was a capstone project for the 42 School Common Core, pushing the boundarie
    git clone https://github.com/okbrandon/ft_transcendence.git
    ```
 
-2. Build and run the project:
+2. Configure your environment variables:
+   ```sh
+   cp .env.example .env
+   nvim .env
+   ```
+
+3. Build and run the project:
    ```sh
    make
    ```
 
 > [!NOTE]
 > This command will set up the entire environment, including the frontend, backend, and database, as specified in the project requirements.
-> The frontend should be accessed by your computer hostname followed by the port 8888, like so: `https://hostname:8888`
+> The frontend should be accessed by your computer hostname followed by the port 8888, like so: `https://hostname:8888`. We also provide a ready to use k8s deployment YAML at `/docs/extras/k8s-deploy.yml`
 
 ## 📝 Usage
 
@@ -109,7 +115,7 @@ and some more docs...
 
 ## 🌏 Meta
 
-**evmorvan** - evmorvan@student.42nice.fr<br>
-**hanmpark** - hanmpark@student.42nice.fr<br>
-**kquetat-** - kquetat-@student.42nice.fr<br>
+**evmorvan** – evmorvan@student.42nice.fr<br>
+**hanmpark** – hanmpark@student.42nice.fr<br>
+**kquetat-** – kquetat-@student.42nice.fr<br>
 **bsoubaig** – bsoubaig@student.42nice.fr<br>

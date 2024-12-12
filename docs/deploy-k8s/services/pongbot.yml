@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pongbot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pongbot
+  template:
+    metadata:
+      labels:
+        app: pongbot
+    spec:
+      containers:
+        - name: pongbot
+          image: registry.propel.sh/transcendence/pongbot:latest
+          envFrom:
+            - configMapRef:
+                name: app-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pongbot
+spec:
+  selector:
+    app: pongbot
+  ports:
+    - port: 5000

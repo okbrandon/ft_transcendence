@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: harvester
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: harvester
+  template:
+    metadata:
+      labels:
+        app: harvester
+    spec:
+      containers:
+        - name: harvester
+          image: registry.propel.sh/transcendence/harvester:latest
+          envFrom:
+            - configMapRef:
+                name: app-config
+          volumeMounts:
+            - name: exports-storage
+              mountPath: /exports
+      volumes:
+        - name: exports-storage
+          persistentVolumeClaim:
+            claimName: exports-data

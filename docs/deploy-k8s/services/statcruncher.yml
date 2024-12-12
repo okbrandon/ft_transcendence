@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: statcruncher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: statcruncher
+  template:
+    metadata:
+      labels:
+        app: statcruncher
+    spec:
+      containers:
+        - name: statcruncher
+          image: registry.propel.sh/transcendence/statcruncher:latest
+          envFrom:
+            - configMapRef:
+                name: app-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: statcruncher-svc
+spec:
+  selector:
+    app: statcruncher
+  ports:
+    - port: 9000

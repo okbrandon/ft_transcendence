@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [frontend, backend, harvester, statcruncher]
+        service: [frontend, backend, harvester, statcruncher, pongbot]
 
     steps:
     - name: Checkout code
@@ -27,7 +27,7 @@ jobs:
       uses: docker/login-action@v2
       with:
         registry: registry.propel.sh
-        username: evan
+        username: ${{ secrets.PROPEL_REGISTRY_USER }}
         password: ${{ secrets.PROPEL_REGISTRY_TOKEN }}
 
     - name: Build and push ${{ matrix.service }} image
@@ -35,16 +35,6 @@ jobs:
       with:
         context: ./${{ matrix.service }}
         push: ${{ github.ref == 'refs/heads/main' }}
-        tags: registry.propel.sh/evan/${{ matrix.service }}:latest
+        tags: registry.propel.sh/transcendence/${{ matrix.service }}:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
-
-  trigger-rollout:
-    needs: build-and-push-images
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-    - name: Trigger rollout
-      run: |
-        curl -X POST https://trans.propelapp.dev/rollout \
-        -H "Authorization: Bearer ${{ secrets.PROPEL_ROLLOUT_TOKEN }}"
