@@ -51,7 +51,8 @@ This was a capstone project for the 42 School Common Core, pushing the boundarie
 
 > [!NOTE]
 > This command will set up the entire environment, including the frontend, backend, and database, as specified in the project requirements.
-> The frontend should be accessed by your computer hostname followed by the port 8888, like so: `https://hostname:8888`. We also provide a ready to use k8s deployment YAML at `/docs/extras/k8s-deploy.yml`
+> The frontend should be accessed by your computer hostname followed by the port 8888, like so: `https://hostname:8888`.
+> We also provide a ready to use k8s deployment which you can install with `kubectl install -f docs/deploy-k8s`.
 
 ## 📝 Usage
 
