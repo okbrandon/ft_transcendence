@@ -12,12 +12,27 @@ spec:
       labels:
         app: pongbot
     spec:
+      runtimeClassName: kata
       containers:
         - name: pongbot
           image: registry.propel.sh/transcendence/pongbot:latest
           envFrom:
             - configMapRef:
                 name: app-config
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+            requests:
+              cpu: "0.5"
+              memory: "512Mi"
+          volumeMounts:
+            - name: certs-volume
+              mountPath: /certs
+      volumes:
+        - name: certs-volume
+          secret:
+            secretName: certs
 ---
 apiVersion: v1
 kind: Service
@@ -27,4 +42,4 @@ spec:
   selector:
     app: pongbot
   ports:
-    - port: 5000
+    - port: 5443

@@ -12,15 +12,24 @@ spec:
       labels:
         app: postgres
     spec:
+      runtimeClassName: kata
       containers:
         - name: postgres
           image: postgres
           envFrom:
             - configMapRef:
                 name: app-config
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+            requests:
+              cpu: "0.5"
+              memory: "512Mi"
           volumeMounts:
             - name: postgres-storage
               mountPath: /var/lib/postgresql/data
+              subPath: pgdata
       volumes:
         - name: postgres-storage
           persistentVolumeClaim:

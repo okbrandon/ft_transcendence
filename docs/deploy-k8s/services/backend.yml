@@ -12,24 +12,38 @@ spec:
       labels:
         app: backend
     spec:
+      runtimeClassName: kata
       containers:
         - name: backend
           image: registry.propel.sh/transcendence/backend:latest
           envFrom:
             - configMapRef:
                 name: app-config
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+            requests:
+              cpu: "0.5"
+              memory: "512Mi"
           volumeMounts:
             - name: exports-storage
               mountPath: /exports
+            - name: certs
+              mountPath: /certs
+              readOnly: true
       volumes:
         - name: exports-storage
           persistentVolumeClaim:
             claimName: exports-data
+        - name: certs
+          secret:
+            secretName: certs
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: backend-svc
+  name: backend
 spec:
   selector:
     app: backend

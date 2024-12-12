@@ -12,19 +12,36 @@ spec:
       labels:
         app: frontend
     spec:
+      runtimeClassName: kata
       containers:
         - name: frontend
           image: registry.propel.sh/transcendence/frontend:latest
           envFrom:
             - configMapRef:
                 name: app-config
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+            requests:
+              cpu: "0.5"
+              memory: "512Mi"
+          volumeMounts:
+            - name: certs
+              mountPath: /certs
+          ports:
+            - containerPort: 80
+      volumes:
+        - name: certs
+          secret:
+            secretName: certs
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend-svc
+  name: frontend
 spec:
   selector:
     app: frontend
   ports:
-    - port: 443
+    - port: 80

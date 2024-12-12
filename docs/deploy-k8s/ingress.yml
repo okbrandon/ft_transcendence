@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   name: trans-propelapp-dev-ingress
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-production
+    cert-manager.io/cluster-issuer: letsencrypt-prod
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
 spec:
   rules:
@@ -16,7 +16,7 @@ spec:
               service:
                 name: frontend
                 port:
-                  number: 443
+                  number: 80
   tls:
     - hosts:
         - trans.propelapp.dev
