@@ -185,7 +185,11 @@ class PlatformAvailability(APIView):
         if not user.mfaToken:
             return Response({"error": "MFA is not enabled for this account."}, status=status.HTTP_400_BAD_REQUEST)
 
-        if user.phone_number:
+        # Check if Plivo environment variables are set
+        auth_id = os.getenv("PLIVO_AUTHID")
+        auth_token = os.getenv("PLIVO_AUTHTOKEN")
+
+        if user.phone_number and auth_id and auth_token:
             available_platforms.append("sms")
 
         return Response({
@@ -224,8 +228,12 @@ class RequestTOTP(APIView):
         if platform == 'email':
             send_otp_via_email(user.email, otp)
         elif platform == 'sms':
+            auth_id = os.getenv("PLIVO_AUTHID")
+            auth_token = os.getenv("PLIVO_AUTHTOKEN")
             if not user.phone_number:
                 return Response({"error": "Phone number not set for this account."}, status=status.HTTP_400_BAD_REQUEST)
+            if not auth_id or not auth_token:
+                return Response({"error": "SMS platform is not configured."}, status=status.HTTP_400_BAD_REQUEST)
             send_otp_via_sms(user.phone_number, otp)
 
         return Response({"message": f"OTP sent via {platform}."}, status=status.HTTP_200_OK)

@@ -62,6 +62,10 @@ def send_verification_email(to: str, verification_link: str):
 def send_otp_via_sms(to: str, otp: str):
     auth_id = os.getenv("PLIVO_AUTHID")
     auth_token = os.getenv("PLIVO_AUTHTOKEN")
+
+    if not auth_id or not auth_token:
+        return None
+
     client = RestClient(auth_id, auth_token)
 
     formatted_otp = f"{otp[:3]} {otp[3:]}"

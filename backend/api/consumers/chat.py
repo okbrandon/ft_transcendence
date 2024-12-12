@@ -230,9 +230,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 new_conversation.save()
 
     async def get_ai_response(self, prompt, conversation_id):
+        chat_completion_token = os.environ.get('CHAT_COMPLETION_TOKEN')
+        if not chat_completion_token:
+            return "Chat with Prune is disabled for this demo environment."
+
         url = "https://ai.evan.sh/api/completion"
         headers = {
-            "Authorization": f"Bearer {os.environ.get('CHAT_COMPLETION_TOKEN')}",
+            "Authorization": f"Bearer {chat_completion_token}",
             "Content-Type": "application/json"
         }
         data = {
