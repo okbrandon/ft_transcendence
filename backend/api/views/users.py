@@ -105,7 +105,7 @@ class UserProfileMe(APIView):
             profile = get_safe_profile(serializer.data, me=True)
             return Response(profile, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({"error": f"An error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": f"Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def delete(self, request, *args, **kwargs):
         me = request.user

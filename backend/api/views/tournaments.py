@@ -58,7 +58,7 @@ class Tournaments(APIView):
             )
             tournament.participants.add(request.user)
         except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Internal server error"}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = TournamentSerializer(tournament)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -168,7 +168,7 @@ class UserCurrentTournament(APIView):
             else:
                 return Response({"message": "User is not currently subscribed to any tournament"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def delete(self, request):
         try:
@@ -208,7 +208,7 @@ class UserCurrentTournament(APIView):
             else:
                 return Response({"message": "User is not currently subscribed to any tournament"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class TournamentDetail(APIView):
     def get(self, request, tournamentID):
